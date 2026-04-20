@@ -1,72 +1,66 @@
 import { SignUp } from "@clerk/react";
 import wolfionMark from "@assets/Image_20260421042552_60_2_1776716788241.jpg";
-import imgTees from "@assets/Image_20260416041311_58_2_1776716983907.png";
 import imgPortrait from "@assets/Image_20260416035728_55_2_1776716993092.jpg";
-import imgSocks from "@assets/Image_20260416025624_54_2_1776717008197.jpg";
-import imgLogoWhite from "@assets/Image_20260416024938_44_2_1776717019706.png";
-import imgLogoEmbroidered from "@assets/Gemini_Generated_Image_7q4kiq7q4kiq7q4k_1776717041891.png";
 
 export default function SignUpPage() {
   const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
   return (
-    <div className="min-h-[100dvh] grid grid-cols-1 lg:grid-cols-2 bg-background">
-      {/* Brand showcase */}
-      <aside className="relative hidden lg:block overflow-hidden bg-black text-white order-last lg:order-first">
-        <img
-          src={imgSocks}
-          alt="Wolfion"
-          className="absolute inset-0 h-full w-full object-cover opacity-80"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/10" />
+    <div className="relative min-h-[100dvh] w-full overflow-hidden bg-black">
+      {/* Cinematic full-bleed background */}
+      <img
+        src={imgPortrait}
+        alt=""
+        aria-hidden
+        className="absolute inset-0 h-full w-full object-cover object-[center_30%] opacity-60 scale-105"
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/55 to-black/85" />
 
-        <div className="relative z-10 flex h-full flex-col justify-between p-10">
-          <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-xl bg-white/10 backdrop-blur-md ring-1 ring-white/20 overflow-hidden flex items-center justify-center">
-              <img src={imgLogoWhite} alt="" className="h-full w-full object-contain p-1" />
-            </div>
-            <span className="text-base font-semibold tracking-[0.22em] whitespace-nowrap">WOLFION</span>
+      {/* Centered content */}
+      <main className="relative z-10 min-h-[100dvh] flex flex-col items-center justify-center px-5 py-10">
+        <div className="w-full max-w-[420px] flex flex-col items-center text-white animate-in fade-in slide-in-from-bottom-4 duration-1000 fill-mode-both">
+          {/* Brand mark */}
+          <div className="h-16 w-16 rounded-2xl bg-white shadow-2xl overflow-hidden ring-1 ring-white/20">
+            <img src={wolfionMark} alt="Wolfion" className="h-full w-full object-cover" />
           </div>
 
-          <div className="grid grid-cols-3 gap-3">
-            <figure className="aspect-[3/4] rounded-2xl overflow-hidden ring-1 ring-white/10">
-              <img src={imgPortrait} alt="Wolfion editorial" className="h-full w-full object-cover" />
-            </figure>
-            <figure className="col-span-2 aspect-[4/3] rounded-2xl overflow-hidden ring-1 ring-white/10">
-              <img src={imgTees} alt="Wolfion tees" className="h-full w-full object-cover" />
-            </figure>
-            <figure className="col-span-3 aspect-[16/6] rounded-2xl overflow-hidden ring-1 ring-white/10">
-              <img src={imgLogoEmbroidered} alt="Embroidered Wolfion logo" className="h-full w-full object-cover" />
-            </figure>
-          </div>
+          {/* Wordmark */}
+          <h1 className="mt-6 text-4xl sm:text-5xl font-light tracking-[0.32em] text-white">
+            WOLFION
+          </h1>
+          <p className="mt-2 text-[11px] uppercase tracking-[0.45em] text-white/55">
+            Bapari Socks
+          </p>
 
-          <div>
-            <h2 className="text-3xl font-light leading-tight">
-              Join the house of <span className="italic font-serif text-primary">Wolfion</span>.
-            </h2>
-            <p className="mt-3 text-sm text-white/60 max-w-md">
-              Create your account to track orders, save favorites, and access early drops from our collections.
+          {/* Tagline */}
+          <div className="mt-10 text-center max-w-sm">
+            <p className="text-xl sm:text-2xl font-light leading-snug">
+              Let your fashion <span className="font-serif italic">speak</span> before you do.
+            </p>
+            <p className="mt-3 text-xs sm:text-sm text-white/55 font-light tracking-wide">
+              Sharp design. Uncompromising comfort. Materials that last.
             </p>
           </div>
-        </div>
-      </aside>
 
-      {/* Form panel */}
-      <main className="flex items-center justify-center px-4 py-12 relative overflow-hidden">
-        <div className="lg:hidden absolute top-0 inset-x-0 h-40 overflow-hidden">
-          <img src={imgSocks} alt="" className="h-full w-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-background" />
-        </div>
-
-        <div className="relative z-10 w-full max-w-[400px] lg:mt-0 mt-32">
-          <div className="flex flex-col items-center mb-8">
-            <div className="h-16 w-16 rounded-2xl bg-black flex items-center justify-center shadow-lg shadow-primary/20 overflow-hidden">
-              <img src={wolfionMark} alt="Wolfion" className="h-full w-full object-cover" />
-            </div>
-            <h1 className="mt-4 text-2xl font-semibold">Create account</h1>
-            <p className="text-sm text-muted-foreground">Join Wolfion in under a minute</p>
+          {/* Auth form */}
+          <div className="mt-10 w-full">
+            <SignUp
+              routing="path"
+              path={`${basePath}/sign-up`}
+              signInUrl={`${basePath}/sign-in`}
+              appearance={{
+                elements: {
+                  rootBox: "w-full",
+                  card: "bg-white/95 backdrop-blur-sm shadow-2xl border-0 rounded-2xl",
+                },
+              }}
+            />
           </div>
-          <SignUp routing="path" path={`${basePath}/sign-up`} signInUrl={`${basePath}/sign-in`} />
+
+          {/* Footer */}
+          <p className="mt-8 text-xs text-white/50 tracking-wide">
+            © {new Date().getFullYear()} Wolfion · Built different. Own the rest.
+          </p>
         </div>
       </main>
     </div>
