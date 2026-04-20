@@ -93,7 +93,7 @@ export default function LaborPayrollPage() {
         amount: p.amount,
       })),
     };
-    downloadReport(data, `Ultion_Labor_Payroll_${today}.pdf`);
+    downloadReport(data, `Wolfion_Labor_Payroll_${today}.pdf`);
   }
 
   const totalPayable = workerStats.reduce((a, b) => a + b.remaining, 0);

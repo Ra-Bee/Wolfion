@@ -1070,7 +1070,7 @@ export default function Dashboard() {
       labor: [],
       payments: [],
     };
-    downloadReport(data, `Ultion_Inventory_${today}.pdf`);
+    downloadReport(data, `Wolfion_Inventory_${today}.pdf`);
   }
 
   function handleDownloadReport() {
@@ -1115,7 +1115,7 @@ export default function Dashboard() {
     const stamp = range.startDate === range.endDate
       ? range.startDate
       : `${range.startDate}_to_${range.endDate}`;
-    downloadReport(data, `Ultion_Report_${stamp}.pdf`);
+    downloadReport(data, `Wolfion_Report_${stamp}.pdf`);
     setReportDialogOpen(false);
   }
 

@@ -137,7 +137,7 @@ function drawPageHeader(doc: jsPDF, range: ReportRange) {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(16);
   doc.setTextColor(...TEXT);
-  doc.text("Ultion Inventory Report", logoX + logoSize + 6, logoY + 9);
+  doc.text("Wolfion Inventory Report", logoX + logoSize + 6, logoY + 9);
 
   // Subtitle: range label + date span
   doc.setFont("helvetica", "normal");
@@ -363,7 +363,7 @@ export function generateWolfionReport(data: WolfionReportData): jsPDF {
     doc.setFontSize(8);
     doc.setTextColor(...MUTED);
     doc.text(
-      `Ultion · Page ${i} of ${pages}`,
+      `Wolfion · Page ${i} of ${pages}`,
       pageWidth / 2,
       doc.internal.pageSize.getHeight() - 8,
       { align: "center" },
@@ -376,5 +376,5 @@ export function generateWolfionReport(data: WolfionReportData): jsPDF {
 export function downloadReport(data: WolfionReportData, filename?: string) {
   const doc = generateWolfionReport(data);
   const stamp = new Date().toISOString().slice(0, 10);
-  doc.save(filename || `Ultion_Report_${stamp}.pdf`);
+  doc.save(filename || `Wolfion_Report_${stamp}.pdf`);
 }

@@ -168,7 +168,7 @@ export default function InventoryReportPage() {
     };
 
     const stamp = range.startDate === range.endDate ? range.startDate : `${range.startDate}_to_${range.endDate}`;
-    downloadReport(data, `Ultion_Inventory_${stamp}.pdf`);
+    downloadReport(data, `Wolfion_Inventory_${stamp}.pdf`);
   }
 
   // Future yarn need based on current inventory and per-dozen rates
