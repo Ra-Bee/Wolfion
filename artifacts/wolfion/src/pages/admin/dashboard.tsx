@@ -27,6 +27,7 @@ type SaleEntry = {
   pricePerDozen: number;
   totalValue: number;
   createdAt: string;
+  date?: string;
 };
 
 type YarnUsageEntry = {
@@ -110,7 +111,9 @@ export default function Dashboard() {
   const [saleProductType, setSaleProductType] = useState<ProductType>("short-socks");
   const [saleQuantity, setSaleQuantity] = useState("");
   const [salePrice, setSalePrice] = useState("");
+  const [saleDate, setSaleDate] = useState(getToday());
   const [saleError, setSaleError] = useState("");
+  const [saleConfirm, setSaleConfirm] = useState("");
   const [yarnStockKg, setYarnStockKg] = useState(() => {
     try {
       const stored = localStorage.getItem(yarnStockStorageKey);
@@ -273,6 +276,17 @@ export default function Dashboard() {
     }
     return days;
   }, [dailyEntries]);
+  const liveSaleTotal = (Number(saleQuantity) || 0) * (Number(salePrice) || 0);
+  const sortedSalesEntries = useMemo(() => {
+    const withDate = salesEntries.map((sale) => ({
+      ...sale,
+      date: sale.date ?? sale.createdAt.slice(0, 10),
+    }));
+    return withDate.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : (a.createdAt < b.createdAt ? 1 : -1)));
+  }, [salesEntries]);
+  const todaySales = sortedSalesEntries.filter((sale) => sale.date === getToday());
+  const todaySalesValue = todaySales.reduce((total, sale) => total + sale.totalValue, 0);
+  const todaySalesDozen = todaySales.reduce((total, sale) => total + sale.quantityDozen, 0);
   function formatDateLabel(isoDate: string) {
     const today = getToday();
     const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
@@ -330,6 +344,7 @@ export default function Dashboard() {
       pricePerDozen,
       totalValue,
       createdAt: new Date().toISOString(),
+      date: saleDate || getToday(),
     };
 
     setSalesEntries((current) => [entry, ...current]);
@@ -337,7 +352,10 @@ export default function Dashboard() {
     setSaleProductType("short-socks");
     setSaleQuantity("");
     setSalePrice("");
+    setSaleDate(getToday());
     setSaleError("");
+    setSaleConfirm("Sale saved.");
+    setTimeout(() => setSaleConfirm(""), 1500);
   }
 
   function handleSetYarnStock(event: FormEvent<HTMLFormElement>) {
@@ -810,6 +828,156 @@ export default function Dashboard() {
                 <div className="rounded-xl border border-dashed p-5 text-center">
                   <p className="text-sm font-medium">No daily entries yet</p>
                   <p className="text-xs text-muted-foreground mt-1">Add today's entry to start tracking daily costs.</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-2 border-primary/30 shadow-md">
+          <CardHeader>
+            <CardTitle className="text-2xl">Daily Sales Entry</CardTitle>
+            <CardDescription>Record sales by date. Stock and revenue update automatically.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="rounded-2xl border bg-primary/5 p-5">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Sales today</p>
+                <p className="mt-2 text-3xl font-bold">${todaySalesValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{todaySales.length} sales</p>
+              </div>
+              <div className="rounded-2xl border bg-primary/5 p-5">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Sold today</p>
+                <p className="mt-2 text-3xl font-bold">{todaySalesDozen.toLocaleString()} <span className="text-base font-medium text-muted-foreground">dozen</span></p>
+                <p className="mt-1 text-xs text-muted-foreground">Across all products</p>
+              </div>
+              <div className="rounded-2xl border bg-primary/5 p-5">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">All-time revenue</p>
+                <p className="mt-2 text-3xl font-bold">${totalSalesValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{salesEntries.length} sales total</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleAddSale} className="space-y-5">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="daily-sale-date">Date</label>
+                  <Input
+                    id="daily-sale-date"
+                    type="date"
+                    className="h-12 text-base"
+                    value={saleDate}
+                    onChange={(event) => setSaleDate(event.target.value)}
+                    max={getToday()}
+                    required
+                  />
+                </div>
+                <div className="space-y-2 sm:col-span-2 lg:col-span-2">
+                  <label className="text-sm font-medium" htmlFor="daily-sale-customer">Customer name</label>
+                  <Input
+                    id="daily-sale-customer"
+                    className="h-12 text-base"
+                    placeholder="Customer name"
+                    value={customerName}
+                    onChange={(event) => setCustomerName(event.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="daily-sale-product">Product type</label>
+                  <Select value={saleProductType} onValueChange={(value) => setSaleProductType(value as ProductType)}>
+                    <SelectTrigger id="daily-sale-product" className="h-12 text-base">
+                      <SelectValue placeholder="Choose product" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(productTypeLabels).map(([value, label]) => (
+                        <SelectItem key={value} value={value}>{label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="daily-sale-quantity">Quantity sold (dozen)</label>
+                  <Input
+                    id="daily-sale-quantity"
+                    type="number"
+                    min="1"
+                    step="1"
+                    inputMode="numeric"
+                    className="h-12 text-base"
+                    placeholder="Example: 10"
+                    value={saleQuantity}
+                    onChange={(event) => setSaleQuantity(event.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="daily-sale-price">Price per dozen</label>
+                  <Input
+                    id="daily-sale-price"
+                    type="number"
+                    min="1"
+                    step="0.01"
+                    inputMode="decimal"
+                    className="h-12 text-base"
+                    placeholder="Example: 120"
+                    value={salePrice}
+                    onChange={(event) => setSalePrice(event.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="rounded-2xl border bg-muted/30 p-4 sm:flex sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-xs text-muted-foreground">Total sale value</p>
+                  <p className="mt-1 text-2xl font-bold">${liveSaleTotal.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground sm:mt-0">Quantity × price</p>
+              </div>
+
+              {saleError && (
+                <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{saleError}</p>
+              )}
+              {saleConfirm && (
+                <p className="rounded-lg bg-green-100 px-3 py-2 text-sm font-medium text-green-800">{saleConfirm}</p>
+              )}
+
+              <Button type="submit" size="lg" className="h-14 w-full text-base font-semibold">
+                <Plus className="h-5 w-5" />
+                Save sale
+              </Button>
+            </form>
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-semibold">Sales entries</h3>
+                <span className="text-xs text-muted-foreground">{sortedSalesEntries.length} records</span>
+              </div>
+              {sortedSalesEntries.length > 0 ? (
+                <div className="space-y-2">
+                  {sortedSalesEntries.slice(0, 20).map((sale) => (
+                    <div key={sale.id} className="flex flex-col gap-1 rounded-xl border bg-card/60 p-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <p className="text-base font-semibold">{formatDateLabel(sale.date)} · {sale.customerName}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {productTypeLabels[sale.productType]} · {sale.quantityDozen.toLocaleString()} dozen at ${sale.pricePerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}/dz
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs text-muted-foreground">Total</p>
+                        <p className="text-lg font-bold">${sale.totalValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="rounded-xl border border-dashed p-5 text-center">
+                  <p className="text-sm font-medium">No sales entered yet</p>
+                  <p className="text-xs text-muted-foreground mt-1">Add a sale above to update revenue and reduce stock.</p>
                 </div>
               )}
             </div>
