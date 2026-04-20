@@ -14,8 +14,8 @@ const LINKS = [
   {
     icon: Facebook,
     label: "Facebook",
-    handle: "wolfion.com.au",
-    href: "https://www.facebook.com/wolfion.com.au",
+    handle: "facebook.com/wolfion",
+    href: "https://www.facebook.com/share/1A8R9qhp4y/",
     testid: "contact-facebook",
   },
   {
@@ -28,8 +28,8 @@ const LINKS = [
   {
     icon: Mail,
     label: "Email",
-    handle: "hello@wolfion.com.au",
-    href: "mailto:hello@wolfion.com.au",
+    handle: "wolfion@wolfion.com.au",
+    href: "mailto:wolfion@wolfion.com.au",
     testid: "contact-email",
   },
 ];
@@ -37,38 +37,44 @@ const LINKS = [
 export default function ContactPage() {
   return (
     <ShopLayout>
-      <section className="container mx-auto px-5 py-16 sm:py-24">
-        <div className={`max-w-2xl mb-14 sm:mb-20 ${FADE}`}>
+      <section className="container mx-auto px-5 py-16 sm:py-24 max-w-3xl">
+        <div className={`mb-12 sm:mb-16 ${FADE}`}>
           <p className="text-[11px] uppercase tracking-[0.5em] text-neutral-500 mb-4">Contact</p>
           <h1 className="text-4xl sm:text-6xl font-light tracking-tight leading-[1.05]">
             Get in <span className="font-serif italic">touch.</span>
           </h1>
-          <p className="mt-6 text-base sm:text-lg text-neutral-600 dark:text-neutral-400 font-light leading-relaxed">
+          <p className="mt-5 text-base text-neutral-600 dark:text-neutral-400 font-light leading-relaxed max-w-lg">
             Follow our story and discover the latest pieces from the Wolfion collection.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 max-w-3xl">
+        {/* Clean icon rows */}
+        <div className="divide-y divide-neutral-200 dark:divide-neutral-800 border-y border-neutral-200 dark:border-neutral-800">
           {LINKS.map((link, i) => {
             const Icon = link.icon;
+            const external = !link.href.startsWith("mailto:");
             return (
               <a
                 key={link.label}
                 href={link.href}
-                target={link.href.startsWith("mailto:") ? undefined : "_blank"}
-                rel="noopener noreferrer"
-                className={`group block p-7 sm:p-8 rounded-3xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 hover:border-neutral-900 dark:hover:border-neutral-50 hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 ${FADE}`}
-                style={{ animationDelay: `${i * 100}ms` }}
+                target={external ? "_blank" : undefined}
+                rel={external ? "noopener noreferrer" : undefined}
+                className={`group flex items-center gap-4 sm:gap-6 py-5 sm:py-6 hover:pl-2 transition-all duration-300 ${FADE}`}
+                style={{ animationDelay: `${i * 80}ms` }}
                 data-testid={link.testid}
               >
-                <div className="flex items-start justify-between mb-8">
-                  <div className="h-12 w-12 rounded-2xl bg-neutral-900 dark:bg-neutral-50 text-white dark:text-neutral-900 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <ArrowUpRight className="h-5 w-5 text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-50 group-hover:rotate-12 transition-all duration-500" />
+                <div className="h-11 w-11 sm:h-12 sm:w-12 rounded-full bg-neutral-100 dark:bg-neutral-900 text-neutral-900 dark:text-neutral-50 flex items-center justify-center flex-shrink-0 group-hover:bg-neutral-900 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-neutral-900 transition-colors duration-300">
+                  <Icon className="h-5 w-5" />
                 </div>
-                <p className="text-[10px] uppercase tracking-[0.35em] text-neutral-500 mb-2">{link.label}</p>
-                <p className="text-lg font-medium tracking-tight break-all">{link.handle}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] uppercase tracking-[0.35em] text-neutral-500 mb-0.5">
+                    {link.label}
+                  </p>
+                  <p className="text-base sm:text-lg font-medium tracking-tight truncate text-neutral-900 dark:text-neutral-50">
+                    {link.handle}
+                  </p>
+                </div>
+                <ArrowUpRight className="h-5 w-5 text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-50 group-hover:rotate-12 transition-all duration-300 flex-shrink-0" />
               </a>
             );
           })}

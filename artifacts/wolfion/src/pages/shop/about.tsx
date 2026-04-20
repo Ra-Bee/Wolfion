@@ -1,5 +1,5 @@
 import { ShopLayout } from "@/components/shop-layout";
-import founderImg from "@assets/founder_rabby.jpg";
+import founderImg from "@assets/wd_1776721500513.jpg";
 
 const FADE = "animate-in fade-in slide-in-from-bottom-4 duration-1000 fill-mode-both";
 

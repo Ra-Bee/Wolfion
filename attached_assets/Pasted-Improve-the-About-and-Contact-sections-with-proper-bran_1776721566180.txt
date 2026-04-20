@@ -1,0 +1,79 @@
+Improve the About and Contact sections with proper branding, images, and icons.
+
+-----------------------------------
+1. ABOUT PAGE (FOUNDER PROFILE)
+-----------------------------------
+Title:
+"About the Founder"
+
+- Use uploaded image as founder image (Md Rabby Bapari)
+- Place image beside the text (left image, right text OR top image mobile view)
+
+Content:
+
+Md Rabby Bapari is the founder of Wolfion, a fashion brand rooted in textile engineering, global fashion education, and sustainable design. Beginning his journey in Bangladesh as a textile engineer, he developed strong technical expertise in fabrics and garment construction.
+
+He later studied fashion design in China and is currently pursuing Fashion Design at Curtin University in Australia. His work blends engineering precision with creative vision, shaping Wolfion into a brand focused on ethical, innovative, and long-lasting fashion.
+
+-----------------------------------
+2. CONTACT PAGE (WITH ICONS)
+-----------------------------------
+Create clean contact section with icons and links:
+
+Instagram:
+https://www.instagram.com/wolfion.com.au?igsh=c3FzOTE5Y3o3a2Qz
+
+Facebook:
+https://www.facebook.com/share/1A8R9qhp4y/
+
+Website:
+https://www.wolfion.com.au
+
+Email:
+wolfion@wolfion.com.au
+
+-----------------------------------
+3. ICONS (IMPORTANT)
+-----------------------------------
+Use proper icons:
+
+- Instagram icon
+- Facebook icon
+- Website (globe icon)
+- Email (mail icon)
+
+Each icon should be:
+- Clean
+- Same size
+- Aligned properly
+
+-----------------------------------
+4. CLICKABLE LINKS
+-----------------------------------
+- Make all links clickable
+- Open in new tab
+
+-----------------------------------
+5. DESIGN STYLE
+-----------------------------------
+- Clean layout
+- Minimal spacing
+- Premium fashion brand feel
+
+- Icons + text aligned in rows
+Example:
+[icon] Instagram → link
+[icon] Facebook → link
+[icon] Website → link
+[icon] Email → link
+
+-----------------------------------
+6. MOBILE RESPONSIVE
+-----------------------------------
+- Stack layout vertically on mobile
+- Keep spacing clean
+
+-----------------------------------
+IMPORTANT:
+Keep everything minimal, clean, and professional.
+Use the uploaded image correctly in About section.
