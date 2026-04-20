@@ -2,7 +2,7 @@ import { Link, useLocation } from "wouter";
 import { useUser, useClerk } from "@clerk/react";
 import { useCart } from "@/hooks/use-cart";
 import { useRole } from "@/hooks/use-role";
-import { ShoppingBag, Menu, User, LogOut, Search, ShieldCheck, ChevronDown } from "lucide-react";
+import { ShoppingBag, Menu, User, LogOut, Search, ShieldCheck, ChevronDown, Home as HomeIcon, Store, Mail, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose, SheetFooter } from "@/components/ui/sheet";
 import {
@@ -85,9 +85,9 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                   ))}
 
                   <Accordion type="multiple" className="w-full">
-                    <AccordionItem value="vaporyx" className="border-none">
+                    <AccordionItem value="bapari" className="border-none">
                       <AccordionTrigger className="px-4 h-12 text-base font-light tracking-wide hover:no-underline rounded-md">
-                        Vaporyx
+                        Bapari Socks
                       </AccordionTrigger>
                       <AccordionContent className="pb-1">
                         <div className="flex flex-col">
@@ -190,9 +190,9 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
               <DropdownMenuTrigger asChild>
                 <button
                   className="inline-flex items-center gap-1 text-[12px] uppercase tracking-[0.2em] font-medium whitespace-nowrap text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-50 transition-colors outline-none"
-                  data-testid="nav-vaporyx"
+                  data-testid="nav-bapari"
                 >
-                  Vaporyx
+                  Bapari Socks
                   <ChevronDown className="h-3 w-3 opacity-70" />
                 </button>
               </DropdownMenuTrigger>
@@ -276,18 +276,85 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
             <div className="hidden md:block">
               <Sheet>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" aria-label="Account" data-testid="btn-account" className="active:scale-95 transition-transform">
+                  <Button variant="ghost" size="icon" aria-label="Account & Menu" data-testid="btn-account" className="active:scale-95 transition-transform">
                     <User className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-[320px] p-0 flex flex-col bg-white dark:bg-neutral-950">
+                <SheetContent side="right" className="w-[340px] p-0 flex flex-col bg-white dark:bg-neutral-950">
                   <SheetHeader className="px-6 pt-7 pb-5 text-left border-b border-neutral-200 dark:border-neutral-800">
-                    <SheetTitle className="text-base">Account</SheetTitle>
+                    <SheetTitle className="text-base">{user?.fullName || "Account"}</SheetTitle>
                     <p className="text-xs text-neutral-500 truncate">
-                      {user?.fullName || user?.emailAddresses[0]?.emailAddress}
+                      {user?.emailAddresses[0]?.emailAddress}
                     </p>
                   </SheetHeader>
-                  <div className="flex-1 px-4 py-4 space-y-1">
+                  <nav className="flex-1 px-2 py-3 overflow-y-auto">
+                    <SheetClose asChild>
+                      <Link href="/shop">
+                        <Button variant="ghost" className="w-full justify-start h-11" data-testid="menu-home">
+                          <HomeIcon className="mr-3 h-4 w-4" /> Home
+                        </Button>
+                      </Link>
+                    </SheetClose>
+                    <SheetClose asChild>
+                      <Link href="/products">
+                        <Button variant="ghost" className="w-full justify-start h-11" data-testid="menu-shop">
+                          <Store className="mr-3 h-4 w-4" /> Shop
+                        </Button>
+                      </Link>
+                    </SheetClose>
+
+                    <Accordion type="multiple" className="w-full">
+                      <AccordionItem value="bapari-r" className="border-none">
+                        <AccordionTrigger className="px-4 h-11 text-sm font-medium hover:no-underline rounded-md" data-testid="menu-bapari">
+                          Bapari Socks
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-1">
+                          {VAPORYX_SUBCATS.map((s) => (
+                            <SheetClose asChild key={s.path}>
+                              <Link href={s.path}>
+                                <Button variant="ghost" className="w-full justify-start h-10 pl-10 text-sm font-light text-neutral-600 dark:text-neutral-300">
+                                  {s.label}
+                                </Button>
+                              </Link>
+                            </SheetClose>
+                          ))}
+                        </AccordionContent>
+                      </AccordionItem>
+                      <AccordionItem value="collection-r" className="border-none">
+                        <AccordionTrigger className="px-4 h-11 text-sm font-medium hover:no-underline rounded-md" data-testid="menu-collection">
+                          Collection
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-1">
+                          {COLLECTION_SUBCATS.map((s) => (
+                            <SheetClose asChild key={s.path}>
+                              <Link href={s.path}>
+                                <Button variant="ghost" className="w-full justify-start h-10 pl-10 text-sm font-light text-neutral-600 dark:text-neutral-300">
+                                  {s.label}
+                                </Button>
+                              </Link>
+                            </SheetClose>
+                          ))}
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+
+                    <SheetClose asChild>
+                      <Link href="/contact">
+                        <Button variant="ghost" className="w-full justify-start h-11" data-testid="menu-contact">
+                          <Mail className="mr-3 h-4 w-4" /> Contact
+                        </Button>
+                      </Link>
+                    </SheetClose>
+                    <SheetClose asChild>
+                      <Link href="/about">
+                        <Button variant="ghost" className="w-full justify-start h-11" data-testid="menu-about">
+                          <Info className="mr-3 h-4 w-4" /> About
+                        </Button>
+                      </Link>
+                    </SheetClose>
+
+                    <div className="my-2 border-t border-neutral-200 dark:border-neutral-800" />
+
                     <SheetClose asChild>
                       <Link href="/cart">
                         <Button variant="ghost" className="w-full justify-start h-11">
@@ -307,7 +374,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                         </Button>
                       </SheetClose>
                     )}
-                  </div>
+                  </nav>
                   <SheetFooter className="border-t border-neutral-200 dark:border-neutral-800 p-4">
                     <Button variant="outline" className="w-full" onClick={handleSignOut}>
                       <LogOut className="mr-2 h-4 w-4" /> Sign Out
@@ -342,7 +409,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
             </p>
           </div>
           <div>
-            <div className="text-xs uppercase tracking-widest text-neutral-500 mb-3">Vaporyx</div>
+            <div className="text-xs uppercase tracking-widest text-neutral-500 mb-3">Bapari Socks</div>
             <ul className="space-y-2 text-neutral-700 dark:text-neutral-300">
               {VAPORYX_SUBCATS.map((s) => (
                 <li key={s.path}>

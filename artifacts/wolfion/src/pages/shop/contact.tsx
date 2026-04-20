@@ -1,5 +1,5 @@
 import { ShopLayout } from "@/components/shop-layout";
-import { Instagram, Globe, ArrowUpRight } from "lucide-react";
+import { Instagram, Globe, Facebook, Mail, ArrowUpRight } from "lucide-react";
 
 const FADE = "animate-in fade-in slide-in-from-bottom-4 duration-1000 fill-mode-both";
 
@@ -12,11 +12,25 @@ const LINKS = [
     testid: "contact-instagram",
   },
   {
+    icon: Facebook,
+    label: "Facebook",
+    handle: "wolfion.com.au",
+    href: "https://www.facebook.com/wolfion.com.au",
+    testid: "contact-facebook",
+  },
+  {
     icon: Globe,
     label: "Website",
     handle: "www.wolfion.com.au",
     href: "https://www.wolfion.com.au",
     testid: "contact-website",
+  },
+  {
+    icon: Mail,
+    label: "Email",
+    handle: "hello@wolfion.com.au",
+    href: "mailto:hello@wolfion.com.au",
+    testid: "contact-email",
   },
 ];
 
@@ -41,10 +55,10 @@ export default function ContactPage() {
               <a
                 key={link.label}
                 href={link.href}
-                target="_blank"
+                target={link.href.startsWith("mailto:") ? undefined : "_blank"}
                 rel="noopener noreferrer"
                 className={`group block p-7 sm:p-8 rounded-3xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 hover:border-neutral-900 dark:hover:border-neutral-50 hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 ${FADE}`}
-                style={{ animationDelay: `${i * 120}ms` }}
+                style={{ animationDelay: `${i * 100}ms` }}
                 data-testid={link.testid}
               >
                 <div className="flex items-start justify-between mb-8">
