@@ -102,6 +102,24 @@ export default function Dashboard() {
   const totalProducedDozen = productionEntries.reduce((total, entry) => total + entry.quantityDozen, 0);
   const totalSoldDozen = salesEntries.reduce((total, entry) => total + entry.quantityDozen, 0);
   const totalSalesValue = salesEntries.reduce((total, entry) => total + entry.totalValue, 0);
+  const productionByType = useMemo(() => {
+    return productionEntries.reduce<Record<ProductType, number>>(
+      (totals, entry) => ({
+        ...totals,
+        [entry.productType]: totals[entry.productType] + entry.quantityDozen,
+      }),
+      { "short-socks": 0, "ankle-socks": 0, "kids-socks": 0 },
+    );
+  }, [productionEntries]);
+  const salesByType = useMemo(() => {
+    return salesEntries.reduce<Record<ProductType, number>>(
+      (totals, entry) => ({
+        ...totals,
+        [entry.productType]: totals[entry.productType] + entry.quantityDozen,
+      }),
+      { "short-socks": 0, "ankle-socks": 0, "kids-socks": 0 },
+    );
+  }, [salesEntries]);
   const recentProductionEntries = productionEntries.slice(0, 4);
   const recentSalesEntries = salesEntries.slice(0, 4);
 
@@ -304,24 +322,32 @@ export default function Dashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Inventory</CardTitle>
-              <CardDescription>Current stock by product type</CardDescription>
+              <CardDescription>Current stock per product, updated from production and sales</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {(Object.keys(productTypeLabels) as ProductType[]).map((type) => (
-                  <div key={type} className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">{productTypeLabels[type]}</span>
-                      <span className="text-sm font-bold">{inventory[type].toLocaleString()} dozen</span>
-                    </div>
-                    <div className="h-2 rounded-full bg-muted overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-primary transition-all"
-                        style={{ width: `${Math.min(100, (inventory[type] / Math.max(totalInventoryDozen, 1)) * 100)}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
+              <div className="overflow-x-auto rounded-xl border">
+                <table className="w-full min-w-[520px] text-sm">
+                  <thead className="bg-muted/60 text-muted-foreground">
+                    <tr>
+                      <th className="px-4 py-3 text-left font-medium">Product</th>
+                      <th className="px-4 py-3 text-right font-medium">Opening stock</th>
+                      <th className="px-4 py-3 text-right font-medium">Produced</th>
+                      <th className="px-4 py-3 text-right font-medium">Sold</th>
+                      <th className="px-4 py-3 text-right font-medium">Current stock</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(Object.keys(productTypeLabels) as ProductType[]).map((type) => (
+                      <tr key={type} className="border-t">
+                        <td className="px-4 py-3 font-medium">{productTypeLabels[type]}</td>
+                        <td className="px-4 py-3 text-right">{initialInventory[type].toLocaleString()} dozen</td>
+                        <td className="px-4 py-3 text-right text-green-700">+{productionByType[type].toLocaleString()} dozen</td>
+                        <td className="px-4 py-3 text-right text-destructive">-{salesByType[type].toLocaleString()} dozen</td>
+                        <td className="px-4 py-3 text-right font-bold">{inventory[type].toLocaleString()} dozen</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </CardContent>
           </Card>

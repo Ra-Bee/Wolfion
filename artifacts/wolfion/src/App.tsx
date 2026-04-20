@@ -15,7 +15,7 @@ import CheckoutSuccess from "@/pages/app/checkout-success";
 import AdminDashboard from "@/pages/admin/dashboard";
 import NotFound from "@/pages/not-found";
 import { useRole } from "@/hooks/use-role";
-import wolfionLogo from "@assets/Image_20260416024854_43_2_1776709316015.png";
+import wolfionLogo from "@assets/Rabby_1776709654876.jpg";
 
 const queryClient = new QueryClient();
 

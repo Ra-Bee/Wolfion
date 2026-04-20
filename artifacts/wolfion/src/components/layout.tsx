@@ -6,7 +6,7 @@ import { useCart } from '@/hooks/use-cart';
 import { ShoppingBag, User, LogOut, Menu, X, ArrowRight, ShieldCheck, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from '@/components/ui/sheet';
-import wolfionLogo from "@assets/Image_20260416024854_43_2_1776709316015.png";
+import wolfionLogo from "@assets/Rabby_1776709654876.jpg";
 
 export function CartDrawer({ children }: { children: React.ReactNode }) {
   const { items, updateQuantity, removeItem, clearCart, totalPrice } = useCart();
