@@ -27,6 +27,13 @@ type SaleEntry = {
   createdAt: string;
 };
 
+type YarnUsageEntry = {
+  id: string;
+  productType: ProductType;
+  kgUsed: number;
+  createdAt: string;
+};
+
 const productTypeLabels: Record<ProductType, string> = {
   "short-socks": "Short socks",
   "ankle-socks": "Ankle socks",
@@ -41,6 +48,8 @@ const initialInventory: Record<ProductType, number> = {
 
 const productionStorageKey = "wolfion_production_entries";
 const salesStorageKey = "wolfion_sales_entries";
+const yarnStockStorageKey = "wolfion_yarn_stock_kg";
+const yarnUsageStorageKey = "wolfion_yarn_usage_entries";
 
 function getToday() {
   return new Date().toISOString().slice(0, 10);
@@ -71,6 +80,26 @@ export default function Dashboard() {
   const [saleQuantity, setSaleQuantity] = useState("");
   const [salePrice, setSalePrice] = useState("");
   const [saleError, setSaleError] = useState("");
+  const [yarnStockKg, setYarnStockKg] = useState(() => {
+    try {
+      const stored = localStorage.getItem(yarnStockStorageKey);
+      return stored ? Number(stored) : 0;
+    } catch {
+      return 0;
+    }
+  });
+  const [yarnUsageEntries, setYarnUsageEntries] = useState<YarnUsageEntry[]>(() => {
+    try {
+      const stored = localStorage.getItem(yarnUsageStorageKey);
+      return stored ? JSON.parse(stored) as YarnUsageEntry[] : [];
+    } catch {
+      return [];
+    }
+  });
+  const [currentYarnStock, setCurrentYarnStock] = useState("");
+  const [yarnUsageProductType, setYarnUsageProductType] = useState<ProductType>("short-socks");
+  const [yarnUsageKg, setYarnUsageKg] = useState("");
+  const [yarnError, setYarnError] = useState("");
 
   useEffect(() => {
     localStorage.setItem(productionStorageKey, JSON.stringify(productionEntries));
@@ -79,6 +108,14 @@ export default function Dashboard() {
   useEffect(() => {
     localStorage.setItem(salesStorageKey, JSON.stringify(salesEntries));
   }, [salesEntries]);
+
+  useEffect(() => {
+    localStorage.setItem(yarnStockStorageKey, String(yarnStockKg));
+  }, [yarnStockKg]);
+
+  useEffect(() => {
+    localStorage.setItem(yarnUsageStorageKey, JSON.stringify(yarnUsageEntries));
+  }, [yarnUsageEntries]);
 
   const inventory = useMemo(() => {
     const stockAfterProduction = productionEntries.reduce<Record<ProductType, number>>(
@@ -122,6 +159,16 @@ export default function Dashboard() {
   }, [salesEntries]);
   const recentProductionEntries = productionEntries.slice(0, 4);
   const recentSalesEntries = salesEntries.slice(0, 4);
+  const totalYarnUsedKg = yarnUsageEntries.reduce((total, entry) => total + entry.kgUsed, 0);
+  const remainingYarnKg = Math.max(0, yarnStockKg - totalYarnUsedKg);
+  const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const yarnUsedLast7Days = yarnUsageEntries
+    .filter((entry) => new Date(entry.createdAt).getTime() >= sevenDaysAgo)
+    .reduce((total, entry) => total + entry.kgUsed, 0);
+  const averageDailyYarnUseKg = yarnUsedLast7Days / 7;
+  const estimatedSevenDayNeedKg = averageDailyYarnUseKg * 7;
+  const estimatedYarnShortageKg = Math.max(0, estimatedSevenDayNeedKg - remainingYarnKg);
+  const recentYarnUsageEntries = yarnUsageEntries.slice(0, 4);
 
   function handleAddProduction(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -176,6 +223,47 @@ export default function Dashboard() {
     setSaleQuantity("");
     setSalePrice("");
     setSaleError("");
+  }
+
+  function handleSetYarnStock(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const stockKg = Number(currentYarnStock);
+
+    if (!Number.isFinite(stockKg) || stockKg < 0) {
+      setYarnError("Enter a valid current yarn stock in kg.");
+      return;
+    }
+
+    setYarnStockKg(stockKg);
+    setCurrentYarnStock("");
+    setYarnError("");
+  }
+
+  function handleAddYarnUsage(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const kgUsed = Number(yarnUsageKg);
+
+    if (!Number.isFinite(kgUsed) || kgUsed <= 0) {
+      setYarnError("Enter yarn usage in kg.");
+      return;
+    }
+
+    if (kgUsed > remainingYarnKg) {
+      setYarnError(`Only ${remainingYarnKg.toLocaleString()} kg yarn remaining.`);
+      return;
+    }
+
+    const entry: YarnUsageEntry = {
+      id: crypto.randomUUID(),
+      productType: yarnUsageProductType,
+      kgUsed,
+      createdAt: new Date().toISOString(),
+    };
+
+    setYarnUsageEntries((current) => [entry, ...current]);
+    setYarnUsageProductType("short-socks");
+    setYarnUsageKg("");
+    setYarnError("");
   }
 
   return (
@@ -464,24 +552,93 @@ export default function Dashboard() {
         <div className="grid gap-4 md:grid-cols-2">
           <Card className="col-span-1">
             <CardHeader>
-              <CardTitle>Yarn Supply</CardTitle>
-              <CardDescription>Current raw material levels</CardDescription>
+              <CardTitle>Yarn Management</CardTitle>
+              <CardDescription>Add current yarn stock and yarn usage per production.</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="font-medium text-sm">Cotton Blend</div>
-                  <div className="text-sm">{adminMetrics.yarn.cottonBlend}</div>
+              <div className="space-y-5">
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <div className="rounded-2xl border bg-muted/30 p-4">
+                    <p className="text-xs text-muted-foreground">Current stock</p>
+                    <p className="mt-2 text-2xl font-bold">{yarnStockKg.toLocaleString()} kg</p>
+                  </div>
+                  <div className="rounded-2xl border bg-muted/30 p-4">
+                    <p className="text-xs text-muted-foreground">Remaining yarn</p>
+                    <p className="mt-2 text-2xl font-bold">{remainingYarnKg.toLocaleString()} kg</p>
+                  </div>
+                  <div className="rounded-2xl border bg-muted/30 p-4">
+                    <p className="text-xs text-muted-foreground">7-day shortage</p>
+                    <p className={`mt-2 text-2xl font-bold ${estimatedYarnShortageKg > 0 ? "text-destructive" : "text-green-700"}`}>
+                      {estimatedYarnShortageKg.toLocaleString()} kg
+                    </p>
+                  </div>
                 </div>
-                <Separator />
-                <div className="flex items-center justify-between">
-                  <div className="font-medium text-sm">Merino Wool</div>
-                  <div className="text-sm">{adminMetrics.yarn.merinoWool}</div>
-                </div>
-                <Separator />
-                <div className="flex items-center justify-between">
-                  <div className="font-medium text-sm">Elastane</div>
-                  <div className="text-sm text-amber-600 font-medium">{adminMetrics.yarn.elastane} (Reorder soon)</div>
+
+                <form onSubmit={handleSetYarnStock} className="grid gap-3 sm:grid-cols-[1fr_auto]">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium" htmlFor="current-yarn-stock">Current yarn stock (kg)</label>
+                    <Input
+                      id="current-yarn-stock"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      inputMode="decimal"
+                      placeholder="Example: 500"
+                      value={currentYarnStock}
+                      onChange={(event) => setCurrentYarnStock(event.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="flex items-end">
+                    <Button type="submit" className="w-full">Update stock</Button>
+                  </div>
+                </form>
+
+                <form onSubmit={handleAddYarnUsage} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium" htmlFor="yarn-product-type">Production product</label>
+                    <Select value={yarnUsageProductType} onValueChange={(value) => setYarnUsageProductType(value as ProductType)}>
+                      <SelectTrigger id="yarn-product-type">
+                        <SelectValue placeholder="Choose product" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.entries(productTypeLabels).map(([value, label]) => (
+                          <SelectItem key={value} value={value}>{label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium" htmlFor="yarn-usage-kg">Yarn usage per production (kg)</label>
+                    <Input
+                      id="yarn-usage-kg"
+                      type="number"
+                      min="0.01"
+                      step="0.01"
+                      inputMode="decimal"
+                      placeholder="Example: 18"
+                      value={yarnUsageKg}
+                      onChange={(event) => setYarnUsageKg(event.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="flex items-end">
+                    <Button type="submit" className="w-full">
+                      <Plus className="h-4 w-4" />
+                      Add usage
+                    </Button>
+                  </div>
+                </form>
+
+                {yarnError && (
+                  <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{yarnError}</p>
+                )}
+
+                <div className="rounded-xl border bg-card/60 p-4">
+                  <p className="text-sm font-semibold">Shortage estimate</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Based on {yarnUsedLast7Days.toLocaleString()} kg used in the last 7 days. Estimated need for the next 7 days is {estimatedSevenDayNeedKg.toLocaleString()} kg.
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -489,21 +646,21 @@ export default function Dashboard() {
           
           <Card className="col-span-1">
             <CardHeader>
-              <CardTitle>Recent Sales Activity</CardTitle>
-              <CardDescription>Latest entered sales</CardDescription>
+              <CardTitle>Recent Yarn Usage</CardTitle>
+              <CardDescription>Latest yarn used for production</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {recentSalesEntries.length > 0 ? recentSalesEntries.map((sale) => (
-                  <div key={sale.id} className="flex justify-between items-center">
+                {recentYarnUsageEntries.length > 0 ? recentYarnUsageEntries.map((entry) => (
+                  <div key={entry.id} className="flex justify-between items-center">
                     <div>
-                      <p className="text-sm font-medium">{sale.customerName}</p>
-                      <p className="text-xs text-muted-foreground">{sale.quantityDozen} dozen {productTypeLabels[sale.productType].toLowerCase()}</p>
+                      <p className="text-sm font-medium">{productTypeLabels[entry.productType]}</p>
+                      <p className="text-xs text-muted-foreground">{new Date(entry.createdAt).toLocaleDateString()}</p>
                     </div>
-                    <div className="text-sm font-medium">${sale.totalValue.toLocaleString()}</div>
+                    <div className="text-sm font-medium">{entry.kgUsed.toLocaleString()} kg</div>
                   </div>
                 )) : (
-                  <p className="text-sm text-muted-foreground">Sales entered above will appear here.</p>
+                  <p className="text-sm text-muted-foreground">Yarn usage entered above will appear here.</p>
                 )}
               </div>
             </CardContent>
