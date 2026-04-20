@@ -17,18 +17,26 @@ export default function SignUpPage() {
 
       <main className="relative z-10 min-h-[100dvh] flex flex-col items-center justify-center px-5 py-12">
         <div className="w-full max-w-[420px] flex flex-col items-center animate-in fade-in slide-in-from-bottom-2 duration-700">
-          {/* Single logo at top */}
-          <div className="h-14 w-14 rounded-2xl bg-white shadow-2xl shadow-white/10 overflow-hidden ring-1 ring-white/10">
+          {/* Brand name on top */}
+          <div
+            className="text-2xl font-bold tracking-[0.18em] text-white uppercase"
+            style={{ textShadow: "0 2px 20px rgba(0,0,0,0.5)" }}
+          >
+            Wolfion
+          </div>
+
+          {/* Logo below brand name */}
+          <div className="mt-4 h-16 w-16 rounded-2xl bg-white shadow-2xl shadow-white/10 overflow-hidden ring-1 ring-white/10">
             <img src={wolfionMark} alt="Wolfion" className="h-full w-full object-cover" />
           </div>
 
-          <h1
-            className="mt-6 text-3xl font-semibold tracking-tight text-white"
+          <h2
+            className="mt-8 text-xl font-semibold tracking-tight text-white"
             style={{ textShadow: "0 2px 20px rgba(0,0,0,0.4)" }}
           >
             Create account
-          </h1>
-          <p className="mt-2 text-sm text-white/75">Join Wolfion in under a minute</p>
+          </h2>
+          <p className="mt-3 text-[13px] text-white/70">Join Wolfion in under a minute</p>
 
           {/* Auth form — wrapped in light color-scheme to prevent Clerk auto-dark */}
           <div className="mt-8 w-full" style={{ colorScheme: "light" }}>
