@@ -15,6 +15,7 @@ import CheckoutSuccess from "@/pages/app/checkout-success";
 import AdminDashboard from "@/pages/admin/dashboard";
 import NotFound from "@/pages/not-found";
 import { useRole } from "@/hooks/use-role";
+import wolfionLogo from "@assets/Image_20260416024854_43_2_1776709316015.png";
 
 const queryClient = new QueryClient();
 
@@ -32,7 +33,7 @@ const clerkAppearance = {
   options: {
     logoPlacement: "inside" as const,
     logoLinkUrl: basePath || "/",
-    logoImageUrl: `${window.location.origin}${basePath}/logo.svg`,
+    logoImageUrl: `${window.location.origin}${wolfionLogo}`,
   },
   variables: {
     colorPrimary: "hsl(21 100% 50%)", // primary orange

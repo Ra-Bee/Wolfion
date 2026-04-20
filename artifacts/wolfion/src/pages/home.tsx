@@ -1,13 +1,14 @@
 import { Link } from "wouter";
 import { ArrowRight, ShieldCheck, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import wolfionLogo from "@assets/Image_20260416024854_43_2_1776709316015.png";
 
 export default function Home() {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
       <header className="absolute top-0 w-full z-50 px-6 py-6 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.svg`} alt="Wolfion Logo" className="h-8 w-8" />
+          <img src={wolfionLogo} alt="Wolfion Logo" className="h-9 w-9 rounded-md object-cover" />
           <span className="font-bold text-xl tracking-tight">WOLFION</span>
         </div>
         <div className="flex items-center gap-4">

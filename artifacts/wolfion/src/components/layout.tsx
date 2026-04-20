@@ -6,6 +6,7 @@ import { useCart } from '@/hooks/use-cart';
 import { ShoppingBag, User, LogOut, Menu, X, ArrowRight, ShieldCheck, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from '@/components/ui/sheet';
+import wolfionLogo from "@assets/Image_20260416024854_43_2_1776709316015.png";
 
 export function CartDrawer({ children }: { children: React.ReactNode }) {
   const { items, updateQuantity, removeItem, clearCart, totalPrice } = useCart();
@@ -107,7 +108,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link href={isCustomer ? "/app" : "/admin"} className="flex items-center gap-2">
-            <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.svg`} alt="Wolfion Logo" className="h-8 w-8" />
+            <img src={wolfionLogo} alt="Wolfion Logo" className="h-9 w-9 rounded-md object-cover" />
             <span className="font-bold text-xl tracking-tight hidden sm:inline-block">WOLFION</span>
           </Link>
 

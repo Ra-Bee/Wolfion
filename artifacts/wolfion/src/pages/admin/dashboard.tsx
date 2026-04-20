@@ -17,6 +17,16 @@ type ProductionEntry = {
   quantityDozen: number;
 };
 
+type SaleEntry = {
+  id: string;
+  customerName: string;
+  productType: ProductType;
+  quantityDozen: number;
+  pricePerDozen: number;
+  totalValue: number;
+  createdAt: string;
+};
+
 const productTypeLabels: Record<ProductType, string> = {
   "short-socks": "Short socks",
   "ankle-socks": "Ankle socks",
@@ -30,6 +40,7 @@ const initialInventory: Record<ProductType, number> = {
 };
 
 const productionStorageKey = "wolfion_production_entries";
+const salesStorageKey = "wolfion_sales_entries";
 
 function getToday() {
   return new Date().toISOString().slice(0, 10);
@@ -47,24 +58,52 @@ export default function Dashboard() {
   const [date, setDate] = useState(getToday());
   const [productType, setProductType] = useState<ProductType>("short-socks");
   const [quantity, setQuantity] = useState("");
+  const [salesEntries, setSalesEntries] = useState<SaleEntry[]>(() => {
+    try {
+      const stored = localStorage.getItem(salesStorageKey);
+      return stored ? JSON.parse(stored) as SaleEntry[] : [];
+    } catch {
+      return [];
+    }
+  });
+  const [customerName, setCustomerName] = useState("");
+  const [saleProductType, setSaleProductType] = useState<ProductType>("short-socks");
+  const [saleQuantity, setSaleQuantity] = useState("");
+  const [salePrice, setSalePrice] = useState("");
+  const [saleError, setSaleError] = useState("");
 
   useEffect(() => {
     localStorage.setItem(productionStorageKey, JSON.stringify(productionEntries));
   }, [productionEntries]);
 
+  useEffect(() => {
+    localStorage.setItem(salesStorageKey, JSON.stringify(salesEntries));
+  }, [salesEntries]);
+
   const inventory = useMemo(() => {
-    return productionEntries.reduce<Record<ProductType, number>>(
+    const stockAfterProduction = productionEntries.reduce<Record<ProductType, number>>(
       (stock, entry) => ({
         ...stock,
         [entry.productType]: stock[entry.productType] + entry.quantityDozen,
       }),
       { ...initialInventory },
     );
-  }, [productionEntries]);
+
+    return salesEntries.reduce<Record<ProductType, number>>(
+      (stock, entry) => ({
+        ...stock,
+        [entry.productType]: Math.max(0, stock[entry.productType] - entry.quantityDozen),
+      }),
+      stockAfterProduction,
+    );
+  }, [productionEntries, salesEntries]);
 
   const totalInventoryDozen = Object.values(inventory).reduce((total, value) => total + value, 0);
   const totalProducedDozen = productionEntries.reduce((total, entry) => total + entry.quantityDozen, 0);
+  const totalSoldDozen = salesEntries.reduce((total, entry) => total + entry.quantityDozen, 0);
+  const totalSalesValue = salesEntries.reduce((total, entry) => total + entry.totalValue, 0);
   const recentProductionEntries = productionEntries.slice(0, 4);
+  const recentSalesEntries = salesEntries.slice(0, 4);
 
   function handleAddProduction(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -87,6 +126,40 @@ export default function Dashboard() {
     setQuantity("");
   }
 
+  function handleAddSale(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const quantityDozen = Number(saleQuantity);
+    const pricePerDozen = Number(salePrice);
+
+    if (!customerName.trim() || !Number.isFinite(quantityDozen) || quantityDozen <= 0 || !Number.isFinite(pricePerDozen) || pricePerDozen <= 0) {
+      setSaleError("Enter customer name, quantity, and selling price.");
+      return;
+    }
+
+    if (quantityDozen > inventory[saleProductType]) {
+      setSaleError(`Only ${inventory[saleProductType].toLocaleString()} dozen ${productTypeLabels[saleProductType].toLowerCase()} available.`);
+      return;
+    }
+
+    const totalValue = quantityDozen * pricePerDozen;
+    const entry: SaleEntry = {
+      id: crypto.randomUUID(),
+      customerName: customerName.trim(),
+      productType: saleProductType,
+      quantityDozen,
+      pricePerDozen,
+      totalValue,
+      createdAt: new Date().toISOString(),
+    };
+
+    setSalesEntries((current) => [entry, ...current]);
+    setCustomerName("");
+    setSaleProductType("short-socks");
+    setSaleQuantity("");
+    setSalePrice("");
+    setSaleError("");
+  }
+
   return (
     <AppLayout>
       <div className="container mx-auto px-4 py-8 max-w-6xl space-y-8">
@@ -102,8 +175,8 @@ export default function Dashboard() {
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">${adminMetrics.financials.monthlyRevenue.toLocaleString()}</div>
-              <p className="text-xs text-muted-foreground mt-1">This month • Margin {adminMetrics.financials.profitMargin}</p>
+              <div className="text-2xl font-bold">${(adminMetrics.financials.monthlyRevenue + totalSalesValue).toLocaleString()}</div>
+              <p className="text-xs text-muted-foreground mt-1">${totalSalesValue.toLocaleString()} entered in Sales</p>
             </CardContent>
           </Card>
           
@@ -113,11 +186,11 @@ export default function Dashboard() {
               <Activity className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{adminMetrics.sales.thisMonth.toLocaleString()}</div>
+              <div className="text-2xl font-bold">{totalSoldDozen.toLocaleString()} dozen</div>
               <p className="text-xs text-muted-foreground mt-1">
                 <span className="text-green-600 font-medium flex items-center inline-flex">
-                  <TrendingUp className="h-3 w-3 mr-1" /> {adminMetrics.sales.trend}
-                </span> vs last month
+                  <TrendingUp className="h-3 w-3 mr-1" /> Sales entered
+                </span>
               </p>
             </CardContent>
           </Card>
@@ -140,7 +213,7 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{totalInventoryDozen.toLocaleString()} dozen</div>
-              <p className="text-xs text-muted-foreground mt-1">Updates when production is added</p>
+              <p className="text-xs text-muted-foreground mt-1">Production adds, sales reduce stock</p>
             </CardContent>
           </Card>
         </div>
@@ -254,6 +327,114 @@ export default function Dashboard() {
           </Card>
         </div>
 
+        <Card>
+          <CardHeader>
+            <CardTitle>Sales</CardTitle>
+            <CardDescription>Enter customer sales in dozen. Stock reduces automatically and total sale value is calculated.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleAddSale} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.2fr_1fr_1fr_1fr_auto]">
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="customer-name">Customer name</label>
+                <Input
+                  id="customer-name"
+                  placeholder="Customer name"
+                  value={customerName}
+                  onChange={(event) => setCustomerName(event.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="sale-product-type">Product type</label>
+                <Select value={saleProductType} onValueChange={(value) => setSaleProductType(value as ProductType)}>
+                  <SelectTrigger id="sale-product-type">
+                    <SelectValue placeholder="Choose product" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(productTypeLabels).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>{label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="sale-quantity">Quantity sold in dozen</label>
+                <Input
+                  id="sale-quantity"
+                  type="number"
+                  min="1"
+                  step="1"
+                  inputMode="numeric"
+                  placeholder="Example: 10"
+                  value={saleQuantity}
+                  onChange={(event) => setSaleQuantity(event.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="sale-price">Selling price per dozen</label>
+                <Input
+                  id="sale-price"
+                  type="number"
+                  min="1"
+                  step="0.01"
+                  inputMode="decimal"
+                  placeholder="Example: 120"
+                  value={salePrice}
+                  onChange={(event) => setSalePrice(event.target.value)}
+                  required
+                />
+              </div>
+              <div className="flex items-end">
+                <Button type="submit" className="w-full">
+                  <Plus className="h-4 w-4" />
+                  Add
+                </Button>
+              </div>
+            </form>
+
+            {saleError && (
+              <p className="mt-3 rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{saleError}</p>
+            )}
+
+            <div className="mt-6 grid gap-4 lg:grid-cols-[0.8fr_1.2fr]">
+              <div className="rounded-2xl border bg-muted/30 p-4">
+                <p className="text-sm text-muted-foreground">Calculated total sales value</p>
+                <p className="mt-2 text-3xl font-bold">${totalSalesValue.toLocaleString()}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{totalSoldDozen.toLocaleString()} dozen sold across {salesEntries.length} records</p>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-semibold">Recent sales</h3>
+                  <span className="text-xs text-muted-foreground">{salesEntries.length} records</span>
+                </div>
+                {recentSalesEntries.length > 0 ? (
+                  <div className="space-y-3">
+                    {recentSalesEntries.map((sale) => (
+                      <div key={sale.id} className="flex items-center justify-between rounded-xl border bg-card/60 p-3">
+                        <div>
+                          <p className="text-sm font-medium">{sale.customerName}</p>
+                          <p className="text-xs text-muted-foreground">{sale.quantityDozen.toLocaleString()} dozen {productTypeLabels[sale.productType].toLowerCase()} at ${sale.pricePerDozen.toLocaleString()} per dozen</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-bold">${sale.totalValue.toLocaleString()}</p>
+                          <p className="text-xs text-primary">Stock reduced</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="rounded-xl border border-dashed p-5 text-center">
+                    <p className="text-sm font-medium">No sales entered yet</p>
+                    <p className="text-xs text-muted-foreground mt-1">Add a sale to calculate value and reduce inventory.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         <div className="grid gap-4 md:grid-cols-2">
           <Card className="col-span-1">
             <CardHeader>
@@ -283,24 +464,21 @@ export default function Dashboard() {
           <Card className="col-span-1">
             <CardHeader>
               <CardTitle>Recent Sales Activity</CardTitle>
-              <CardDescription>Live feed</CardDescription>
+              <CardDescription>Latest entered sales</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {[
-                  { id: "ORD-9281", item: "The Everyday Crew (Onyx Black)", qty: 3, amount: "$42.00", time: "2 min ago" },
-                  { id: "ORD-9280", item: "Performance Ankle (Wolf Orange)", qty: 1, amount: "$12.00", time: "15 min ago" },
-                  { id: "ORD-9279", item: "Merino Lounge (Heather Grey)", qty: 2, amount: "$44.00", time: "42 min ago" },
-                  { id: "ORD-9278", item: "The Everyday Crew (Arctic White)", qty: 5, amount: "$70.00", time: "1 hour ago" },
-                ].map((sale) => (
+                {recentSalesEntries.length > 0 ? recentSalesEntries.map((sale) => (
                   <div key={sale.id} className="flex justify-between items-center">
                     <div>
-                      <p className="text-sm font-medium">{sale.id} <span className="text-muted-foreground font-normal text-xs ml-2">{sale.time}</span></p>
-                      <p className="text-xs text-muted-foreground">{sale.qty}x {sale.item}</p>
+                      <p className="text-sm font-medium">{sale.customerName}</p>
+                      <p className="text-xs text-muted-foreground">{sale.quantityDozen} dozen {productTypeLabels[sale.productType].toLowerCase()}</p>
                     </div>
-                    <div className="text-sm font-medium">{sale.amount}</div>
+                    <div className="text-sm font-medium">${sale.totalValue.toLocaleString()}</div>
                   </div>
-                ))}
+                )) : (
+                  <p className="text-sm text-muted-foreground">Sales entered above will appear here.</p>
+                )}
               </div>
             </CardContent>
           </Card>

@@ -1,4 +1,5 @@
 import { SignUp } from "@clerk/react";
+import wolfionLogo from "@assets/Image_20260416024854_43_2_1776709316015.png";
 
 export default function SignUpPage() {
   const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
@@ -11,8 +12,8 @@ export default function SignUpPage() {
       
       <div className="relative z-10 w-full max-w-[400px]">
         <div className="flex justify-center mb-8">
-          <div className="h-12 w-12 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-            <img src={`${basePath}/logo.svg`} alt="Wolfion" className="h-8 w-8 brightness-0 invert" />
+          <div className="h-16 w-16 rounded-2xl bg-black flex items-center justify-center shadow-lg shadow-primary/20 overflow-hidden">
+            <img src={wolfionLogo} alt="Wolfion" className="h-full w-full object-cover" />
           </div>
         </div>
         <SignUp routing="path" path={`${basePath}/sign-up`} signInUrl={`${basePath}/sign-in`} />
