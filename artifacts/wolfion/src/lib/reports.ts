@@ -1,5 +1,6 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import wolfionLogoDataUrl from "@assets/Image_20260416014129_42_2_1776715851070.png?inline";
 
 export type ReportProductionEntry = {
   date: string;
@@ -104,37 +105,64 @@ function sectionTitle(doc: jsPDF, title: string, y: number): number {
   return y + 11;
 }
 
+const HEADER_HEIGHT = 38;
+
 function ensureSpace(doc: jsPDF, y: number, needed: number): number {
   const pageHeight = doc.internal.pageSize.getHeight();
   if (y + needed > pageHeight - 18) {
     doc.addPage();
-    return 18;
+    return HEADER_HEIGHT;
   }
   return y;
+}
+
+function drawPageHeader(doc: jsPDF, range: ReportRange) {
+  const pageWidth = doc.internal.pageSize.getWidth();
+
+  // Clear header background
+  doc.setFillColor(255, 255, 255);
+  doc.rect(0, 0, pageWidth, HEADER_HEIGHT - 4, "F");
+
+  // Logo (top-left, square, proportional)
+  const logoSize = 22;
+  const logoX = 14;
+  const logoY = 6;
+  try {
+    doc.addImage(wolfionLogoDataUrl as string, "PNG", logoX, logoY, logoSize, logoSize, undefined, "FAST");
+  } catch {
+    // ignore if image fails to render in this jsPDF instance
+  }
+
+  // Title beside logo
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.setTextColor(...TEXT);
+  doc.text("Wolfion Inventory Report", logoX + logoSize + 6, logoY + 9);
+
+  // Subtitle: range label + date span
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.setTextColor(...MUTED);
+  doc.text(range.label, logoX + logoSize + 6, logoY + 15);
+  doc.text(`${range.startDate} → ${range.endDate}`, logoX + logoSize + 6, logoY + 20);
+
+  // Generated timestamp on the right
+  doc.setFontSize(8);
+  doc.text(`Generated: ${new Date().toLocaleString()}`, pageWidth - 14, logoY + 20, { align: "right" });
+
+  // Accent rule
+  doc.setDrawColor(...PRIMARY);
+  doc.setLineWidth(0.8);
+  doc.line(14, HEADER_HEIGHT - 4, pageWidth - 14, HEADER_HEIGHT - 4);
+  doc.setLineWidth(0.2);
 }
 
 export function generateWolfionReport(data: WolfionReportData): jsPDF {
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const pageWidth = doc.internal.pageSize.getWidth();
 
-  // Header
-  doc.setFillColor(...PRIMARY);
-  doc.rect(0, 0, pageWidth, 28, "F");
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(20);
-  doc.setTextColor(255, 255, 255);
-  doc.text("WOLFION", 14, 14);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  doc.text("Business Report", 14, 21);
-
-  doc.setFontSize(10);
-  doc.text(data.range.label, pageWidth - 14, 14, { align: "right" });
-  doc.setFontSize(8);
-  doc.text(`${data.range.startDate} → ${data.range.endDate}`, pageWidth - 14, 20, { align: "right" });
-  doc.text(`Generated: ${new Date().toLocaleString()}`, pageWidth - 14, 25, { align: "right" });
-
-  let y = 38;
+  // Header is drawn once per page in the final pass below.
+  let y = HEADER_HEIGHT + 4;
 
   // ====== Filter to range ======
   const production = data.production.filter((e) => inRange(e.date, data.range.startDate, data.range.endDate));
@@ -327,10 +355,11 @@ export function generateWolfionReport(data: WolfionReportData): jsPDF {
     }
   }
 
-  // ====== Footer page numbers ======
+  // ====== Header + footer (every page) ======
   const pages = doc.getNumberOfPages();
   for (let i = 1; i <= pages; i++) {
     doc.setPage(i);
+    drawPageHeader(doc, data.range);
     doc.setFontSize(8);
     doc.setTextColor(...MUTED);
     doc.text(
