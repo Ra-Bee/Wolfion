@@ -441,6 +441,16 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
             </div>
           </div>
         </div>
+        <div className="border-t border-neutral-200 dark:border-neutral-800">
+          <div className="container mx-auto px-6 py-12 sm:py-14 max-w-3xl">
+            <p
+              className="text-center text-sm sm:text-base font-light leading-[1.7] tracking-wide text-neutral-600 dark:text-neutral-400"
+              data-testid="brand-statement"
+            >
+              Wolfion stands for <span className="text-neutral-900 dark:text-neutral-100">fair pay, respect, and responsibility</span> to the people who create our products, along with a commitment to <span className="font-serif italic text-neutral-900 dark:text-neutral-100">sustainability</span>—built into every product we create.
+            </p>
+          </div>
+        </div>
         <div className="border-t border-neutral-200 dark:border-neutral-800 py-5 text-center text-xs text-neutral-500">
           © {new Date().getFullYear()} Wolfion. All rights reserved.
         </div>
