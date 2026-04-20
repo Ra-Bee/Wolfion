@@ -4,7 +4,22 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Activity, DollarSign, Package, Factory, TrendingUp, Plus, Zap, X } from "lucide-react";
+import { Activity, DollarSign, Package, Factory, TrendingUp, Plus, Zap, X, MoreVertical, FileDown, Users, Wrench, LogOut as LogOutIcon, ChevronRight, Trash2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+  DropdownMenuPortal,
+} from "@/components/ui/dropdown-menu";
+import { useClerk } from "@clerk/react";
+import { useLocation } from "wouter";
+import { downloadReport, type WolfionReportData, type ReportRange } from "@/lib/reports";
 import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -139,8 +154,20 @@ type DailyProductionEntry = {
   ironCost: number;
   totalCost: number;
   costPerDozen: number;
+  productType?: ProductType;
   createdAt: string;
 };
+
+type YarnPerDozen = Record<string, number>;
+const yarnPerDozenStorageKey = "wolfion_yarn_per_dozen";
+const defaultYarnPerDozen: YarnPerDozen = {
+  "short-socks": 0.5,
+  "ankle-socks": 0.6,
+  "kids-socks": 0.4,
+  "others": 0.55,
+};
+const yarnPurchasesStorageKey = "wolfion_yarn_purchases";
+type YarnPurchase = { id: string; date: string; kg: number; createdAt: string };
 
 type CostInputs = {
   yarnCostPerDozen: number;
@@ -240,6 +267,7 @@ export default function Dashboard() {
   const [dailyProductionDozen, setDailyProductionDozen] = useState("");
   const [dailyYarnKg, setDailyYarnKg] = useState("");
   const [dailyMachineHours, setDailyMachineHours] = useState("");
+  const [dailyProductType, setDailyProductType] = useState<ProductType>("short-socks");
   const [dailyYarnCostPerKg, setDailyYarnCostPerKg] = useState("");
   const [dailyLaborCost, setDailyLaborCost] = useState("");
   const [dailyPackagingCost, setDailyPackagingCost] = useState("");
@@ -248,6 +276,31 @@ export default function Dashboard() {
   const [dailyConfirm, setDailyConfirm] = useState("");
   const [quickSaleOpen, setQuickSaleOpen] = useState(false);
   const [quickSaleConfirm, setQuickSaleConfirm] = useState("");
+  const [yarnPurchases, setYarnPurchases] = useState<YarnPurchase[]>(() => {
+    try {
+      const stored = localStorage.getItem(yarnPurchasesStorageKey);
+      return stored ? (JSON.parse(stored) as YarnPurchase[]) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [yarnPurchaseDate, setYarnPurchaseDate] = useState(getToday());
+  const [yarnPurchaseKg, setYarnPurchaseKg] = useState("");
+  const [yarnPerDozen, setYarnPerDozen] = useState<YarnPerDozen>(() => {
+    try {
+      const stored = localStorage.getItem(yarnPerDozenStorageKey);
+      return stored ? { ...defaultYarnPerDozen, ...(JSON.parse(stored) as YarnPerDozen) } : defaultYarnPerDozen;
+    } catch {
+      return defaultYarnPerDozen;
+    }
+  });
+  const [reportDialogOpen, setReportDialogOpen] = useState(false);
+  const [reportRangeMode, setReportRangeMode] = useState<"daily" | "monthly" | "yearly" | "custom">("monthly");
+  const [reportCustomStart, setReportCustomStart] = useState(getToday());
+  const [reportCustomEnd, setReportCustomEnd] = useState(getToday());
+  const [reportSingleDate, setReportSingleDate] = useState(getToday());
+  const [reportMonth, setReportMonth] = useState(() => new Date().toISOString().slice(0, 7));
+  const [reportYear, setReportYear] = useState(() => String(new Date().getFullYear()));
   const [yarnCostInput, setYarnCostInput] = useState(() => (costs.yarnCostPerDozen ? String(costs.yarnCostPerDozen) : ""));
   const [laborCostInput, setLaborCostInput] = useState(() => (costs.laborCostPerDozen ? String(costs.laborCostPerDozen) : ""));
   const [packagingCostInput, setPackagingCostInput] = useState(() => (costs.packagingCostPerDozen ? String(costs.packagingCostPerDozen) : ""));
@@ -382,6 +435,14 @@ export default function Dashboard() {
   useEffect(() => {
     localStorage.setItem(productTypesStorageKey, JSON.stringify(productTypes));
   }, [productTypes]);
+
+  useEffect(() => {
+    localStorage.setItem(yarnPurchasesStorageKey, JSON.stringify(yarnPurchases));
+  }, [yarnPurchases]);
+
+  useEffect(() => {
+    localStorage.setItem(yarnPerDozenStorageKey, JSON.stringify(yarnPerDozen));
+  }, [yarnPerDozen]);
 
   const productTypeLabels = useMemo<Record<string, string>>(() => {
     const labels: Record<string, string> = {};
@@ -745,13 +806,23 @@ export default function Dashboard() {
       ironCost,
       totalCost,
       costPerDozen,
+      productType: dailyProductType,
       createdAt: new Date().toISOString(),
     };
 
     setDailyEntries((current) => [entry, ...current]);
+    // Also add to production entries to update inventory by product type
+    const productionEntry: ProductionEntry = {
+      id: crypto.randomUUID(),
+      date: dailyDate,
+      productType: dailyProductType,
+      quantityDozen: totalProductionDozen,
+    };
+    setProductionEntries((current) => [productionEntry, ...current]);
     setDailyProductionDozen("");
     setDailyYarnKg("");
     setDailyMachineHours("");
+    setDailyProductType("short-socks");
     setDailyYarnCostPerKg("");
     setDailyLaborCost("");
     setDailyPackagingCost("");
@@ -930,6 +1001,147 @@ export default function Dashboard() {
   );
   const totalInvestorFunds = investors.reduce((sum, i) => sum + i.amount, 0);
 
+  // ===== Report data builder =====
+  const totalYarnPurchasedKg = yarnPurchases.reduce((s, p) => s + p.kg, 0);
+  const totalYarnUsedFromDailyKg = dailyEntries.reduce((s, e) => s + (e.yarnUsedKg || 0), 0);
+  const totalYarnUsedAllKg = totalYarnUsedKg + totalYarnUsedFromDailyKg;
+  const remainingYarnAvailableKg = Math.max(0, (yarnStockKg + totalYarnPurchasedKg) - totalYarnUsedAllKg);
+  const yarnEfficiency = totalYarnPurchasedKg + yarnStockKg > 0
+    ? (totalYarnUsedAllKg / (totalYarnPurchasedKg + yarnStockKg)) * 100
+    : 0;
+  const futureYarnNeed = useMemo(() => {
+    let total = 0;
+    for (const id of allProductTypeIds) {
+      const stock = inventory[id] || 0;
+      const perDz = yarnPerDozen[id] || 0;
+      total += stock * perDz;
+    }
+    return total;
+  }, [inventory, yarnPerDozen, allProductTypeIds]);
+
+  const { signOut } = useClerk();
+  const [, setLocation] = useLocation();
+
+  function getReportRange(): ReportRange {
+    if (reportRangeMode === "daily") {
+      return { label: `Daily Report — ${reportSingleDate}`, startDate: reportSingleDate, endDate: reportSingleDate };
+    }
+    if (reportRangeMode === "monthly") {
+      const start = `${reportMonth}-01`;
+      const [y, m] = reportMonth.split("-").map(Number);
+      const last = new Date(y, m, 0).getDate();
+      const end = `${reportMonth}-${String(last).padStart(2, "0")}`;
+      return { label: `Monthly Report — ${formatMonthLabel(reportMonth)}`, startDate: start, endDate: end };
+    }
+    if (reportRangeMode === "yearly") {
+      return { label: `Yearly Report — ${reportYear}`, startDate: `${reportYear}-01-01`, endDate: `${reportYear}-12-31` };
+    }
+    return { label: `Custom Report`, startDate: reportCustomStart, endDate: reportCustomEnd };
+  }
+
+  const [reportError, setReportError] = useState("");
+
+  function validateReportRange(): string {
+    if (reportRangeMode === "daily") {
+      if (!reportSingleDate) return "Please choose a date.";
+    } else if (reportRangeMode === "monthly") {
+      if (!/^\d{4}-\d{2}$/.test(reportMonth)) return "Please choose a valid month.";
+    } else if (reportRangeMode === "yearly") {
+      const y = Number(reportYear);
+      if (!Number.isFinite(y) || y < 2000 || y > 2100) return "Please enter a valid year (2000–2100).";
+    } else if (reportRangeMode === "custom") {
+      if (!reportCustomStart || !reportCustomEnd) return "Please choose both start and end dates.";
+      if (reportCustomStart > reportCustomEnd) return "Start date must be before end date.";
+    }
+    return "";
+  }
+
+  function downloadInventorySnapshot() {
+    const today = getToday();
+    const range: ReportRange = { label: `Inventory Report — ${today}`, startDate: today, endDate: today };
+    const data: WolfionReportData = {
+      range,
+      productTypeLabels,
+      production: [],
+      sales: [],
+      daily: [],
+      electricity: [],
+      inventory: allProductTypeIds.map((id) => ({ productType: id, stockDozen: inventory[id] || 0 })),
+      labor: [],
+      payments: [],
+    };
+    downloadReport(data, `Wolfion_Inventory_${today}.pdf`);
+  }
+
+  function handleDownloadReport() {
+    const err = validateReportRange();
+    if (err) { setReportError(err); return; }
+    setReportError("");
+    const range = getReportRange();
+    const data: WolfionReportData = {
+      range,
+      productTypeLabels,
+      production: productionEntries.map((e) => ({
+        date: e.date, productType: e.productType, quantityDozen: e.quantityDozen,
+      })),
+      sales: sortedSalesEntries.map((s) => ({
+        date: s.date, customerName: s.customerName, productType: s.productType,
+        quantityDozen: s.quantityDozen, totalValue: s.totalValue,
+      })),
+      daily: dailyEntries.map((e) => ({
+        date: e.date,
+        totalProductionDozen: e.totalProductionDozen,
+        yarnUsedKg: e.yarnUsedKg,
+        yarnCostPerKg: e.yarnCostPerKg,
+        laborCost: e.laborCost,
+        packagingCost: e.packagingCost,
+        ironCost: e.ironCost,
+        totalCost: e.totalCost,
+      })),
+      electricity: electricityEntries.map((e) => ({ month: e.month, totalBill: e.totalBill })),
+      inventory: allProductTypeIds.map((id) => ({ productType: id, stockDozen: inventory[id] || 0 })),
+      labor: workerStats.map((w) => ({
+        name: w.worker.name,
+        totalEarned: w.totalEarned,
+        totalPaid: w.totalPaid,
+        remaining: w.remaining,
+      })),
+      payments: workerPayments.map((p) => ({
+        workerName: workers.find((w) => w.id === p.workerId)?.name || "Unknown",
+        date: p.date,
+        amount: p.amount,
+      })),
+    };
+    const stamp = range.startDate === range.endDate
+      ? range.startDate
+      : `${range.startDate}_to_${range.endDate}`;
+    downloadReport(data, `Wolfion_Report_${stamp}.pdf`);
+    setReportDialogOpen(false);
+  }
+
+  function handleAddYarnPurchase(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const kg = Number(yarnPurchaseKg);
+    if (!Number.isFinite(kg) || kg <= 0) return;
+    const entry: YarnPurchase = {
+      id: crypto.randomUUID(),
+      date: yarnPurchaseDate,
+      kg,
+      createdAt: new Date().toISOString(),
+    };
+    setYarnPurchases((prev) => [entry, ...prev]);
+    setYarnPurchaseKg("");
+  }
+
+  function scrollToSection(id: string) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function handleSignOutFromMenu() {
+    signOut(() => setLocation('/'));
+  }
+
   const investmentTypeOptions = ["yarn", "machine", "packaging", "rent", "other"];
   const investmentSourceOptions = ["personal", "friend", "loan", "investor", "other"];
   const investmentTypeLabels: Record<string, string> = {
@@ -955,6 +1167,7 @@ export default function Dashboard() {
             <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
             <p className="text-muted-foreground mt-1">Overview of operations, sales, and inventory.</p>
           </div>
+          <div className="flex items-center gap-2 w-full sm:w-auto">
           <Dialog open={quickSaleOpen} onOpenChange={(open) => { setQuickSaleOpen(open); if (!open) setQuickSaleConfirm(""); }}>
             <DialogTrigger asChild>
               <Button size="lg" className="h-14 px-6 text-base font-semibold w-full sm:w-auto">
@@ -988,19 +1201,6 @@ export default function Dashboard() {
                     required
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="quick-product">Product</label>
-                  <Select value={saleProductType} onValueChange={(value) => setSaleProductType(value as ProductType)}>
-                    <SelectTrigger id="quick-product" className="h-12 text-base">
-                      <SelectValue placeholder="Choose product" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.entries(productTypeLabels).map(([value, label]) => (
-                        <SelectItem key={value} value={value}>{label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
                     <label className="text-sm font-medium" htmlFor="quick-quantity">Dozen</label>
@@ -1033,6 +1233,19 @@ export default function Dashboard() {
                     />
                   </div>
                 </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="quick-product">Product type</label>
+                  <Select value={saleProductType} onValueChange={(value) => setSaleProductType(value as ProductType)}>
+                    <SelectTrigger id="quick-product" className="h-12 text-base">
+                      <SelectValue placeholder="Choose product" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(productTypeLabels).map(([value, label]) => (
+                        <SelectItem key={value} value={value}>{label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
                 {Number(saleQuantity) > 0 && Number(saleTotalAmount) > 0 && (
                   <p className="rounded-lg bg-muted px-3 py-2 text-xs text-muted-foreground">
                     Auto: ${(Number(saleTotalAmount) / Number(saleQuantity)).toLocaleString(undefined, { maximumFractionDigits: 2 })} per dozen
@@ -1051,7 +1264,120 @@ export default function Dashboard() {
               </form>
             </DialogContent>
           </Dialog>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon" className="h-14 w-14 rounded-full" aria-label="More actions">
+                <MoreVertical className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-60">
+              <DropdownMenuLabel>Reports & sections</DropdownMenuLabel>
+              <DropdownMenuItem onClick={downloadInventorySnapshot}>
+                <FileDown className="h-4 w-4 mr-2" />
+                Inventory Report
+              </DropdownMenuItem>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                  <FileDown className="h-4 w-4 mr-2" />
+                  Download Report
+                </DropdownMenuSubTrigger>
+                <DropdownMenuPortal>
+                  <DropdownMenuSubContent>
+                    <DropdownMenuItem onClick={() => { setReportRangeMode("daily"); setReportDialogOpen(true); }}>
+                      Daily Report
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => { setReportRangeMode("monthly"); setReportDialogOpen(true); }}>
+                      Monthly Report
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => { setReportRangeMode("yearly"); setReportDialogOpen(true); }}>
+                      Yearly Report
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => { setReportRangeMode("custom"); setReportDialogOpen(true); }}>
+                      Custom Date Range
+                    </DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuPortal>
+              </DropdownMenuSub>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => scrollToSection("labor-payroll")}>
+                <Users className="h-4 w-4 mr-2" />
+                Labor Payroll
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => scrollToSection("yarn-calculation")}>
+                <Wrench className="h-4 w-4 mr-2" />
+                Yarn Calculation
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleSignOutFromMenu} className="text-destructive focus:text-destructive">
+                <LogOutIcon className="h-4 w-4 mr-2" />
+                Sign out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
+        </div>
+
+        <Dialog open={reportDialogOpen} onOpenChange={setReportDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Download Report</DialogTitle>
+              <DialogDescription>Choose a period and download a PDF.</DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-2">
+                {(["daily", "monthly", "yearly", "custom"] as const).map((mode) => (
+                  <Button
+                    key={mode}
+                    type="button"
+                    variant={reportRangeMode === mode ? "default" : "outline"}
+                    className="capitalize"
+                    onClick={() => setReportRangeMode(mode)}
+                  >
+                    {mode === "custom" ? "Custom range" : mode}
+                  </Button>
+                ))}
+              </div>
+              {reportRangeMode === "daily" && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="rep-date">Date</label>
+                  <Input id="rep-date" type="date" value={reportSingleDate} max={getToday()} onChange={(e) => setReportSingleDate(e.target.value)} />
+                </div>
+              )}
+              {reportRangeMode === "monthly" && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="rep-month">Month</label>
+                  <Input id="rep-month" type="month" value={reportMonth} onChange={(e) => setReportMonth(e.target.value)} />
+                </div>
+              )}
+              {reportRangeMode === "yearly" && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="rep-year">Year</label>
+                  <Input id="rep-year" type="number" min="2000" max="2100" value={reportYear} onChange={(e) => setReportYear(e.target.value)} />
+                </div>
+              )}
+              {reportRangeMode === "custom" && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium" htmlFor="rep-start">Start</label>
+                    <Input id="rep-start" type="date" value={reportCustomStart} onChange={(e) => setReportCustomStart(e.target.value)} />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium" htmlFor="rep-end">End</label>
+                    <Input id="rep-end" type="date" value={reportCustomEnd} onChange={(e) => setReportCustomEnd(e.target.value)} />
+                  </div>
+                </div>
+              )}
+              {reportError && (
+                <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{reportError}</p>
+              )}
+              <Button onClick={handleDownloadReport} size="lg" className="w-full">
+                <FileDown className="h-5 w-5" /> Download PDF
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
 
         <Card className="border-2 border-primary/30 shadow-md">
           <CardHeader>
@@ -1258,7 +1584,7 @@ export default function Dashboard() {
             </div>
 
             <form onSubmit={handleAddDailyEntry} className="space-y-5">
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="daily-date">Date</label>
                   <Input
@@ -1272,7 +1598,7 @@ export default function Dashboard() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-production">Total production (dozen)</label>
+                  <label className="text-sm font-medium" htmlFor="daily-production">Quantity (dozen)</label>
                   <Input
                     id="daily-production"
                     type="number"
@@ -1313,6 +1639,19 @@ export default function Dashboard() {
                     value={dailyMachineHours}
                     onChange={(event) => setDailyMachineHours(event.target.value)}
                   />
+                </div>
+                <div className="space-y-2 sm:col-span-2 lg:col-span-2">
+                  <label className="text-sm font-medium" htmlFor="daily-product-type">Product type</label>
+                  <Select value={dailyProductType} onValueChange={(value) => setDailyProductType(value as ProductType)}>
+                    <SelectTrigger id="daily-product-type" className="h-12 text-base">
+                      <SelectValue placeholder="Choose product" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(productTypeLabels).map(([value, label]) => (
+                        <SelectItem key={value} value={value}>{label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
@@ -1498,19 +1837,6 @@ export default function Dashboard() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-sale-product">Product type</label>
-                  <Select value={saleProductType} onValueChange={(value) => setSaleProductType(value as ProductType)}>
-                    <SelectTrigger id="daily-sale-product" className="h-12 text-base">
-                      <SelectValue placeholder="Choose product" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.entries(productTypeLabels).map(([value, label]) => (
-                        <SelectItem key={value} value={value}>{label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="daily-sale-quantity">Quantity (dozen)</label>
                   <Input
                     id="daily-sale-quantity"
@@ -1539,6 +1865,19 @@ export default function Dashboard() {
                     onChange={(event) => setSaleTotalAmount(event.target.value)}
                     required
                   />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="daily-sale-product">Product type</label>
+                  <Select value={saleProductType} onValueChange={(value) => setSaleProductType(value as ProductType)}>
+                    <SelectTrigger id="daily-sale-product" className="h-12 text-base">
+                      <SelectValue placeholder="Choose product" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(productTypeLabels).map(([value, label]) => (
+                        <SelectItem key={value} value={value}>{label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
@@ -1679,7 +2018,99 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-2 border-primary/30 shadow-md">
+        <Card id="yarn-calculation" className="border-2 border-primary/30 shadow-md scroll-mt-24">
+          <CardHeader>
+            <CardTitle className="text-2xl flex items-center gap-2"><Wrench className="h-6 w-6 text-primary" /> Yarn Calculation</CardTitle>
+            <CardDescription>Track yarn purchased, used, remaining, efficiency, and future needs.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+              <div className="rounded-2xl border bg-primary/5 p-4">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Purchased</p>
+                <p className="text-2xl font-bold mt-1">{totalYarnPurchasedKg.toLocaleString(undefined, { maximumFractionDigits: 1 })} kg</p>
+              </div>
+              <div className="rounded-2xl border bg-muted/40 p-4">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Used (total)</p>
+                <p className="text-2xl font-bold mt-1">{totalYarnUsedAllKg.toLocaleString(undefined, { maximumFractionDigits: 1 })} kg</p>
+              </div>
+              <div className="rounded-2xl border bg-muted/40 p-4">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Remaining</p>
+                <p className="text-2xl font-bold mt-1">{remainingYarnAvailableKg.toLocaleString(undefined, { maximumFractionDigits: 1 })} kg</p>
+              </div>
+              <div className="rounded-2xl border bg-muted/40 p-4">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Efficiency</p>
+                <p className="text-2xl font-bold mt-1">{yarnEfficiency.toFixed(1)}%</p>
+              </div>
+              <div className="rounded-2xl border bg-orange-100/50 dark:bg-orange-900/20 p-4">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Future need</p>
+                <p className="text-2xl font-bold mt-1">{futureYarnNeed.toLocaleString(undefined, { maximumFractionDigits: 1 })} kg</p>
+                <p className="text-[10px] text-muted-foreground mt-1">For current stock</p>
+              </div>
+            </div>
+
+            <Separator />
+
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Add yarn purchase</h3>
+              <form onSubmit={handleAddYarnPurchase} className="grid gap-3 sm:grid-cols-3">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="yarn-purchase-date">Date</label>
+                  <Input id="yarn-purchase-date" type="date" className="h-12 text-base" max={getToday()} value={yarnPurchaseDate} onChange={(e) => setYarnPurchaseDate(e.target.value)} required />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="yarn-purchase-kg">Quantity (kg)</label>
+                  <Input id="yarn-purchase-kg" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="Example: 50" value={yarnPurchaseKg} onChange={(e) => setYarnPurchaseKg(e.target.value)} required />
+                </div>
+                <div className="space-y-2 flex items-end">
+                  <Button type="submit" size="lg" className="h-12 w-full">
+                    <Plus className="h-4 w-4" /> Add purchase
+                  </Button>
+                </div>
+              </form>
+              {yarnPurchases.length > 0 && (
+                <div className="rounded-2xl border divide-y max-h-64 overflow-y-auto">
+                  {yarnPurchases.slice(0, 10).map((p) => (
+                    <div key={p.id} className="flex items-center justify-between px-4 py-3">
+                      <div>
+                        <p className="font-medium">{p.kg.toLocaleString(undefined, { maximumFractionDigits: 2 })} kg</p>
+                        <p className="text-xs text-muted-foreground">{formatDateLabel(p.date)}</p>
+                      </div>
+                      <Button variant="ghost" size="icon" onClick={() => setYarnPurchases((prev) => prev.filter((x) => x.id !== p.id))} aria-label="Remove">
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <Separator />
+
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Yarn per dozen (kg)</h3>
+              <p className="text-xs text-muted-foreground">Average yarn consumed to produce 1 dozen of each product.</p>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {allProductTypeIds.map((id) => (
+                  <div key={id} className="space-y-2">
+                    <label className="text-sm font-medium" htmlFor={`ypd-${id}`}>{productTypeLabels[id] || id}</label>
+                    <Input
+                      id={`ypd-${id}`}
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      inputMode="decimal"
+                      className="h-12 text-base"
+                      value={yarnPerDozen[id] ?? ""}
+                      onChange={(e) => setYarnPerDozen((prev) => ({ ...prev, [id]: Number(e.target.value) || 0 }))}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card id="labor-payroll" className="border-2 border-primary/30 shadow-md scroll-mt-24">
           <CardHeader>
             <CardTitle className="text-2xl">Labor Management</CardTitle>
             <CardDescription>Track each worker's earnings, payments, and remaining balance.</CardDescription>
