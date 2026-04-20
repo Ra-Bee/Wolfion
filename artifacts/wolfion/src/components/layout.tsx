@@ -7,7 +7,7 @@ import { ShoppingBag, User, LogOut, Menu, X, ArrowRight, ShieldCheck, Home, Sun,
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, SheetClose } from '@/components/ui/sheet';
 import { useTheme } from '@/hooks/use-theme';
-import wolfionLogo from "@assets/Rabby_1776709654876.jpg";
+import wolfionLogo from "@assets/Image_20260421042552_60_2_1776716788241.jpg";
 
 export function CartDrawer({ children }: { children: React.ReactNode }) {
   const { items, updateQuantity, removeItem, clearCart, totalPrice } = useCart();

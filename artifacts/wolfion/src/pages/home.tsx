@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { ArrowRight, ShieldCheck, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import wolfionLogo from "@assets/Rabby_1776709654876.jpg";
+import wolfionLogo from "@assets/Image_20260421042552_60_2_1776716788241.jpg";
 
 export default function Home() {
   return (

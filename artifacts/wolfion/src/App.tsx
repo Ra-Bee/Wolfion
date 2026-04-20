@@ -23,7 +23,7 @@ import InvestmentsPage from "@/pages/admin/investments";
 import DebtsPage from "@/pages/admin/debts";
 import NotFound from "@/pages/not-found";
 import { useRole } from "@/hooks/use-role";
-import wolfionLogo from "@assets/Rabby_1776709654876.jpg";
+import wolfionLogo from "@assets/Image_20260421042552_60_2_1776716788241.jpg";
 
 const queryClient = new QueryClient();
 

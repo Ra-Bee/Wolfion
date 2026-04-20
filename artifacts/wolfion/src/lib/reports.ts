@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import wolfionLogoDataUrl from "@assets/Image_20260416014129_42_2_1776715851070.png?inline";
+import wolfionLogoDataUrl from "@assets/Image_20260421042552_60_2_1776716788241.jpg?inline";
 
 export type ReportProductionEntry = {
   date: string;
@@ -128,7 +128,7 @@ function drawPageHeader(doc: jsPDF, range: ReportRange) {
   const logoX = 14;
   const logoY = 6;
   try {
-    doc.addImage(wolfionLogoDataUrl as string, "PNG", logoX, logoY, logoSize, logoSize, undefined, "FAST");
+    doc.addImage(wolfionLogoDataUrl as string, "JPEG", logoX, logoY, logoSize, logoSize, undefined, "FAST");
   } catch {
     // ignore if image fails to render in this jsPDF instance
   }
