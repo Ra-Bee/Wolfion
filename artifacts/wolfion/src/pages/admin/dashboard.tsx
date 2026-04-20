@@ -986,6 +986,63 @@ export default function Dashboard() {
           </Dialog>
         </div>
 
+        <Card className="border-2 border-primary/30 shadow-md">
+          <CardHeader>
+            <CardTitle className="text-2xl flex items-center gap-2"><Package className="h-6 w-6 text-primary" /> Summary</CardTitle>
+            <CardDescription>Live stock, sales, profit, and loss across the business.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div>
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Total stock available</h3>
+              <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                <div className="rounded-2xl border bg-card p-5">
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Short socks</p>
+                  <p className="mt-2 text-3xl font-bold">{inventory["short-socks"].toLocaleString()} <span className="text-base font-medium text-muted-foreground">dz</span></p>
+                </div>
+                <div className="rounded-2xl border bg-card p-5">
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Ankle socks</p>
+                  <p className="mt-2 text-3xl font-bold">{inventory["ankle-socks"].toLocaleString()} <span className="text-base font-medium text-muted-foreground">dz</span></p>
+                </div>
+                <div className="rounded-2xl border bg-card p-5">
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Kids socks</p>
+                  <p className="mt-2 text-3xl font-bold">{inventory["kids-socks"].toLocaleString()} <span className="text-base font-medium text-muted-foreground">dz</span></p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Total sold</h3>
+              <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                <div className="rounded-2xl border bg-card p-5">
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Short socks</p>
+                  <p className="mt-2 text-3xl font-bold">{salesByType["short-socks"].toLocaleString()} <span className="text-base font-medium text-muted-foreground">dz</span></p>
+                </div>
+                <div className="rounded-2xl border bg-card p-5">
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Ankle socks</p>
+                  <p className="mt-2 text-3xl font-bold">{salesByType["ankle-socks"].toLocaleString()} <span className="text-base font-medium text-muted-foreground">dz</span></p>
+                </div>
+                <div className="rounded-2xl border bg-card p-5">
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Kids socks</p>
+                  <p className="mt-2 text-3xl font-bold">{salesByType["kids-socks"].toLocaleString()} <span className="text-base font-medium text-muted-foreground">dz</span></p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-2xl border-2 border-green-200 bg-green-50 p-5">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total profit</p>
+                <p className="mt-2 text-3xl font-bold text-green-700">${Math.max(0, totalProfit).toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                <p className="mt-1 text-xs text-muted-foreground">Sales − cost</p>
+              </div>
+              <div className="rounded-2xl border-2 border-red-200 bg-red-50 p-5">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total loss</p>
+                <p className="mt-2 text-3xl font-bold text-red-700">${Math.max(0, -totalProfit).toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                <p className="mt-1 text-xs text-muted-foreground">When cost exceeds sales</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         <Card className="border-2 border-primary/40 shadow-lg bg-gradient-to-br from-primary/5 to-background">
           <CardHeader>
             <CardTitle className="text-2xl flex items-center gap-2"><TrendingUp className="h-6 w-6 text-primary" /> Profit Dashboard</CardTitle>
@@ -1658,71 +1715,6 @@ export default function Dashboard() {
             </div>
           </CardContent>
         </Card>
-
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">${(adminMetrics.financials.monthlyRevenue + totalSalesValue).toLocaleString()}</div>
-              <p className="text-xs text-muted-foreground mt-1">${totalSalesValue.toLocaleString()} entered in Sales</p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium">Units Sold</CardTitle>
-              <Activity className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalSoldDozen.toLocaleString()} dozen</div>
-              <p className="text-xs text-muted-foreground mt-1">
-                <span className="text-green-600 font-medium flex items-center inline-flex">
-                  <TrendingUp className="h-3 w-3 mr-1" /> Sales entered
-                </span>
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium">Active Production</CardTitle>
-              <Factory className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{productionEntries.length || adminMetrics.production.activeBatches} Batches</div>
-              <p className="text-xs text-muted-foreground mt-1">{totalProducedDozen.toLocaleString()} dozen added to stock</p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium">Inventory</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalInventoryDozen.toLocaleString()} dozen</div>
-              <p className="text-xs text-muted-foreground mt-1">Production adds, sales reduce stock</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium">Total Profit</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className={`text-2xl font-bold ${totalProfit >= 0 ? "text-green-700" : "text-destructive"}`}>
-                ${totalProfit.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Cost ${costPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}/dozen
-              </p>
-            </CardContent>
-          </Card>
-        </div>
 
         <Card className="border-2 border-primary/30 shadow-md">
           <CardHeader>
