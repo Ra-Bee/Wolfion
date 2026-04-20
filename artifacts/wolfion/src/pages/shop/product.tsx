@@ -53,7 +53,7 @@ export default function ProductDetail() {
 
           {/* Details */}
           <div className="lg:pt-6 flex flex-col">
-            <p className="text-xs uppercase tracking-[0.3em] text-neutral-500 mb-2">Bapari Socks · {product.color}</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-neutral-500 mb-2">Ultion · {product.color}</p>
             <h1 className="text-3xl sm:text-4xl font-light tracking-tight">{product.name}</h1>
             <p className="mt-3 text-2xl font-light">${product.price.toFixed(2)}</p>
 

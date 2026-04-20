@@ -8,8 +8,8 @@ export default function Home() {
     <div className="min-h-[100dvh] flex flex-col bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
       <header className="absolute top-0 w-full z-50 px-6 py-6 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <img src={wolfionLogo} alt="Bapari Socks" className="h-9 w-9 rounded-md object-cover" />
-          <span className="font-bold text-xl tracking-tight">BAPARI SOCKS</span>
+          <img src={wolfionLogo} alt="Ultion" className="h-9 w-9 rounded-md object-cover" />
+          <span className="font-bold text-xl tracking-tight">ULTION</span>
         </div>
         <div className="flex items-center gap-4">
           <Link href="/sign-in">
@@ -34,7 +34,7 @@ export default function Home() {
           </h1>
           
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed text-balance">
-            Sharp design, uncompromising comfort, and materials that last. Bapari Socks is built for those who know details matter.
+            Sharp design, uncompromising comfort, and materials that last. Ultion is built for those who know details matter.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">

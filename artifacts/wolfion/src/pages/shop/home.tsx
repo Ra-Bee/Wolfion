@@ -5,8 +5,7 @@ import { ProductCard } from "@/components/product-card";
 import { products, categories } from "@/lib/data";
 import imgPortrait from "@assets/Image_20260416035728_55_2_1776716993092.jpg";
 import imgSocks from "@assets/Image_20260416025624_54_2_1776717008197.jpg";
-import imgTees from "@assets/Image_20260416041311_58_2_1776716983907.png";
-import imgEmbroidered from "@assets/Gemini_Generated_Image_7q4kiq7q4kiq7q4k_1776717041891.png";
+import imgWomenswear from "@assets/ultion_womenswear.png";
 
 export default function ShopHome() {
   const featured = products.slice(0, 4);
@@ -15,7 +14,7 @@ export default function ShopHome() {
     <ShopLayout>
       {/* Hero */}
       <section className="relative h-[80vh] min-h-[520px] w-full overflow-hidden bg-black text-white">
-        <img src={imgPortrait} alt="Bapari Socks" className="absolute inset-0 h-full w-full object-cover opacity-80" />
+        <img src={imgPortrait} alt="Ultion" className="absolute inset-0 h-full w-full object-cover opacity-80" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
         <div className="relative z-10 h-full container mx-auto px-5 flex flex-col justify-end pb-16">
           <div className="max-w-2xl">
@@ -25,7 +24,7 @@ export default function ShopHome() {
               <span className="font-serif italic">worn every day.</span>
             </h1>
             <p className="mt-6 text-base text-white/70 max-w-md font-light leading-relaxed">
-              Bapari Socks crafts essentials for the modern wardrobe — engineered fabrics, considered details, and a silhouette that stays sharp.
+              Ultion crafts essentials for the modern wardrobe — engineered fabrics, considered details, and a silhouette that stays sharp.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/products">
@@ -43,12 +42,12 @@ export default function ShopHome() {
         </div>
       </section>
 
-      {/* Collections — sock categories */}
+      {/* Vaporyx — sock categories */}
       <section className="container mx-auto px-5 py-20">
         <div className="flex items-end justify-between mb-10">
           <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-neutral-500 mb-2">Bapari Socks</p>
-            <h2 className="text-3xl sm:text-4xl font-light tracking-tight">Socks Collection</h2>
+            <p className="text-xs uppercase tracking-[0.3em] text-neutral-500 mb-2">Ultion</p>
+            <h2 className="text-3xl sm:text-4xl font-light tracking-tight">Vaporyx · Socks</h2>
           </div>
           <Link href="/products" className="hidden sm:inline-flex items-center text-sm font-medium hover:underline">
             View all <ArrowRight className="ml-2 h-4 w-4" />
@@ -70,26 +69,26 @@ export default function ShopHome() {
         </div>
       </section>
 
-      {/* Collections — Men's & Women's */}
+      {/* Collection — Menswear & Womenswear */}
       <section className="container mx-auto px-5 pb-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
           <Link href="/products?collection=mens" className="group relative block aspect-[16/10] rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
-            <img src={imgTees} alt="Men's Wear" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src={imgPortrait} alt="Menswear" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
             <div className="absolute bottom-6 left-6 right-6 text-white">
               <p className="text-[11px] uppercase tracking-[0.35em] text-white/80 mb-2">Collection</p>
-              <h3 className="text-2xl sm:text-3xl font-light">Men's Wear</h3>
+              <h3 className="text-2xl sm:text-3xl font-light">Menswear</h3>
               <span className="inline-flex items-center mt-3 text-sm font-medium">
                 Shop now <ArrowRight className="ml-2 h-4 w-4" />
               </span>
             </div>
           </Link>
           <Link href="/products?collection=womens" className="group relative block aspect-[16/10] rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
-            <img src={imgPortrait} alt="Women's Wear" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src={imgWomenswear} alt="Womenswear" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
             <div className="absolute bottom-6 left-6 right-6 text-white">
               <p className="text-[11px] uppercase tracking-[0.35em] text-white/80 mb-2">Collection</p>
-              <h3 className="text-2xl sm:text-3xl font-light">Women's Wear</h3>
+              <h3 className="text-2xl sm:text-3xl font-light">Womenswear</h3>
               <span className="inline-flex items-center mt-3 text-sm font-medium">
                 Shop now <ArrowRight className="ml-2 h-4 w-4" />
               </span>
@@ -100,7 +99,7 @@ export default function ShopHome() {
 
       {/* Editorial banner */}
       <section className="relative h-[60vh] min-h-[420px] overflow-hidden">
-        <img src={imgSocks} alt="Bapari Socks craftsmanship" className="absolute inset-0 h-full w-full object-cover" />
+        <img src={imgSocks} alt="Ultion craftsmanship" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-transparent" />
         <div className="relative z-10 h-full container mx-auto px-5 flex items-center">
           <div className="max-w-md text-white">
@@ -130,18 +129,6 @@ export default function ShopHome() {
           {featured.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
-        </div>
-      </section>
-
-      {/* Brand mosaic */}
-      <section className="container mx-auto px-5 pb-20">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-5">
-          <div className="md:col-span-2 aspect-[16/9] rounded-xl overflow-hidden">
-            <img src={imgTees} alt="Bapari Socks apparel" className="h-full w-full object-cover" />
-          </div>
-          <div className="aspect-[16/9] md:aspect-auto rounded-xl overflow-hidden">
-            <img src={imgEmbroidered} alt="Embroidered logo" className="h-full w-full object-cover" />
-          </div>
         </div>
       </section>
     </ShopLayout>

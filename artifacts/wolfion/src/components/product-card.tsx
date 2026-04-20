@@ -29,7 +29,7 @@ export function ProductCard({ product, ratio = "tall" }: Props) {
         {/* Soft gradient sheen */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-        {/* Bapari Socks logo watermark */}
+        {/* Ultion logo watermark */}
         <div className="absolute top-3 right-3 h-9 w-9 rounded-lg bg-white/70 dark:bg-neutral-950/60 backdrop-blur-md flex items-center justify-center shadow-sm ring-1 ring-white/40 dark:ring-neutral-700/40">
           <img src={imgLogoMark} alt="" aria-hidden className="h-6 w-6 object-contain opacity-90" />
         </div>

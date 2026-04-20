@@ -26,16 +26,17 @@ const PRIMARY_NAV = [
   { path: "/products", label: "Shop" },
 ];
 
-const BEPARI_SUBCATS = [
+const VAPORYX_SUBCATS = [
   { path: "/products?category=short", label: "Short Socks" },
   { path: "/products?category=ankle", label: "Ankle Socks" },
   { path: "/products?category=kids", label: "Kids Socks" },
   { path: "/products?category=others", label: "Other Socks" },
 ];
 
-const COLLECTION_NAV = [
-  { path: "/products?collection=mens", label: "Men's Wear" },
-  { path: "/products?collection=womens", label: "Women's Wear" },
+const COLLECTION_SUBCATS = [
+  { path: "/products?collection=mens", label: "Menswear" },
+  { path: "/products?collection=womens", label: "Womenswear" },
+  { path: "/products?collection=kids", label: "Kidswear" },
 ];
 
 export function ShopLayout({ children }: { children: React.ReactNode }) {
@@ -70,7 +71,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
               </SheetTrigger>
               <SheetContent side="left" className="w-[320px] p-0 flex flex-col bg-white dark:bg-neutral-950">
                 <SheetHeader className="px-6 pt-7 pb-5 text-left border-b border-neutral-200 dark:border-neutral-800">
-                  <SheetTitle className="tracking-[0.25em] text-sm">BAPARI SOCKS</SheetTitle>
+                  <SheetTitle className="tracking-[0.3em] text-base">ULTION</SheetTitle>
                 </SheetHeader>
                 <nav className="flex-1 px-2 py-4 overflow-y-auto">
                   {PRIMARY_NAV.map((n) => (
@@ -83,15 +84,33 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                     </SheetClose>
                   ))}
 
-                  {/* Collapsible Collections */}
-                  <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="collections" className="border-none">
+                  <Accordion type="multiple" className="w-full">
+                    <AccordionItem value="vaporyx" className="border-none">
                       <AccordionTrigger className="px-4 h-12 text-base font-light tracking-wide hover:no-underline rounded-md">
-                        Collections
+                        Vaporyx
                       </AccordionTrigger>
                       <AccordionContent className="pb-1">
                         <div className="flex flex-col">
-                          {BEPARI_SUBCATS.map((s) => (
+                          {VAPORYX_SUBCATS.map((s) => (
+                            <SheetClose asChild key={s.path}>
+                              <Link href={s.path}>
+                                <Button variant="ghost" className="w-full justify-start h-11 pl-8 text-sm font-light text-neutral-600 dark:text-neutral-300">
+                                  {s.label}
+                                </Button>
+                              </Link>
+                            </SheetClose>
+                          ))}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    <AccordionItem value="collection" className="border-none">
+                      <AccordionTrigger className="px-4 h-12 text-base font-light tracking-wide hover:no-underline rounded-md">
+                        Collection
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-1">
+                        <div className="flex flex-col">
+                          {COLLECTION_SUBCATS.map((s) => (
                             <SheetClose asChild key={s.path}>
                               <Link href={s.path}>
                                 <Button variant="ghost" className="w-full justify-start h-11 pl-8 text-sm font-light text-neutral-600 dark:text-neutral-300">
@@ -104,16 +123,6 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                       </AccordionContent>
                     </AccordionItem>
                   </Accordion>
-
-                  {COLLECTION_NAV.map((n) => (
-                    <SheetClose asChild key={n.path}>
-                      <Link href={n.path}>
-                        <Button variant="ghost" className="w-full justify-start h-12 text-base font-light tracking-wide">
-                          {n.label}
-                        </Button>
-                      </Link>
-                    </SheetClose>
-                  ))}
 
                   <div className="my-3 border-t border-neutral-200 dark:border-neutral-800" />
                   <SheetClose asChild>
@@ -151,13 +160,13 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
           {/* Logo */}
           <Link href="/shop" className="flex items-center gap-2 flex-shrink-0" data-testid="link-logo">
             <div className="h-8 w-8 rounded-md bg-black flex items-center justify-center overflow-hidden shadow-sm">
-              <img src={imgLogoWhite} alt="Bapari Socks" className="h-full w-full object-contain p-0.5" />
+              <img src={imgLogoWhite} alt="Ultion" className="h-full w-full object-contain p-0.5" />
             </div>
-            <span className="font-semibold tracking-[0.22em] text-[13px] sm:text-sm whitespace-nowrap">BAPARI SOCKS</span>
+            <span className="font-semibold tracking-[0.3em] text-sm sm:text-base whitespace-nowrap">ULTION</span>
           </Link>
 
-          {/* Desktop nav — single horizontal flex row, no overlap */}
-          <nav className="hidden md:flex items-center gap-4 lg:gap-7 flex-1 min-w-0 flex-wrap">
+          {/* Desktop nav — minimal 4 items, no overlap */}
+          <nav className="hidden md:flex items-center gap-7 lg:gap-10 flex-1 min-w-0">
             {PRIMARY_NAV.map((n) => {
               const cleanPath = n.path.split("?")[0];
               const active = location === cleanPath;
@@ -165,7 +174,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                 <Link
                   key={n.path}
                   href={n.path}
-                  className={`text-[11px] lg:text-[12px] uppercase tracking-[0.16em] font-medium whitespace-nowrap transition-colors ${
+                  className={`text-[12px] uppercase tracking-[0.2em] font-medium whitespace-nowrap transition-colors ${
                     active
                       ? "text-neutral-900 dark:text-neutral-50"
                       : "text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-50"
@@ -176,14 +185,14 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
               );
             })}
 
-            {/* Collections dropdown (sock subcategories) */}
+            {/* Vaporyx dropdown — sock subcategories */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
-                  className="inline-flex items-center gap-1 text-[11px] lg:text-[12px] uppercase tracking-[0.16em] font-medium whitespace-nowrap text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-50 transition-colors outline-none"
-                  data-testid="nav-collections"
+                  className="inline-flex items-center gap-1 text-[12px] uppercase tracking-[0.2em] font-medium whitespace-nowrap text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-50 transition-colors outline-none"
+                  data-testid="nav-vaporyx"
                 >
-                  Collections
+                  Vaporyx
                   <ChevronDown className="h-3 w-3 opacity-70" />
                 </button>
               </DropdownMenuTrigger>
@@ -193,10 +202,44 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                 className="w-56 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl border border-neutral-200/70 dark:border-neutral-800/70 shadow-2xl rounded-xl p-2"
               >
                 <DropdownMenuLabel className="text-[10px] uppercase tracking-[0.25em] text-neutral-500 font-medium">
-                  Socks Collection
+                  Socks
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-neutral-200/70 dark:bg-neutral-800/70" />
-                {BEPARI_SUBCATS.map((s) => (
+                {VAPORYX_SUBCATS.map((s) => (
+                  <DropdownMenuItem
+                    key={s.path}
+                    asChild
+                    className="text-sm rounded-lg cursor-pointer focus:bg-neutral-100 dark:focus:bg-neutral-800 py-2.5"
+                  >
+                    <Link href={s.path} data-testid={`vaporyx-${s.label}`}>
+                      {s.label}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Collection dropdown — Menswear / Womenswear / Kidswear */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="inline-flex items-center gap-1 text-[12px] uppercase tracking-[0.2em] font-medium whitespace-nowrap text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-50 transition-colors outline-none"
+                  data-testid="nav-collection"
+                >
+                  Collection
+                  <ChevronDown className="h-3 w-3 opacity-70" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="start"
+                sideOffset={14}
+                className="w-56 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl border border-neutral-200/70 dark:border-neutral-800/70 shadow-2xl rounded-xl p-2"
+              >
+                <DropdownMenuLabel className="text-[10px] uppercase tracking-[0.25em] text-neutral-500 font-medium">
+                  Apparel
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-neutral-200/70 dark:bg-neutral-800/70" />
+                {COLLECTION_SUBCATS.map((s) => (
                   <DropdownMenuItem
                     key={s.path}
                     asChild
@@ -209,16 +252,6 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-
-            {COLLECTION_NAV.map((n) => (
-              <Link
-                key={n.path}
-                href={n.path}
-                className="text-[11px] lg:text-[12px] uppercase tracking-[0.16em] font-medium whitespace-nowrap text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-50 transition-colors"
-              >
-                {n.label}
-              </Link>
-            ))}
           </nav>
 
           {/* Right actions */}
@@ -303,15 +336,15 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
       <footer className="border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 mt-20">
         <div className="container mx-auto px-5 py-12 grid grid-cols-2 md:grid-cols-4 gap-8 text-sm">
           <div className="col-span-2 md:col-span-1">
-            <div className="font-semibold tracking-[0.2em] mb-3">BAPARI SOCKS</div>
+            <div className="font-semibold tracking-[0.3em] mb-3">ULTION</div>
             <p className="text-neutral-500 text-xs leading-relaxed max-w-xs">
               Sharp design. Uncompromising comfort. Crafted for those who know details matter.
             </p>
           </div>
           <div>
-            <div className="text-xs uppercase tracking-widest text-neutral-500 mb-3">Collections</div>
+            <div className="text-xs uppercase tracking-widest text-neutral-500 mb-3">Vaporyx</div>
             <ul className="space-y-2 text-neutral-700 dark:text-neutral-300">
-              {BEPARI_SUBCATS.map((s) => (
+              {VAPORYX_SUBCATS.map((s) => (
                 <li key={s.path}>
                   <Link href={s.path} className="hover:underline">{s.label}</Link>
                 </li>
@@ -319,11 +352,13 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
             </ul>
           </div>
           <div>
-            <div className="text-xs uppercase tracking-widest text-neutral-500 mb-3">Collections</div>
+            <div className="text-xs uppercase tracking-widest text-neutral-500 mb-3">Collection</div>
             <ul className="space-y-2 text-neutral-700 dark:text-neutral-300">
-              <li><Link href="/products?collection=mens" className="hover:underline">Men's Wear</Link></li>
-              <li><Link href="/products?collection=womens" className="hover:underline">Women's Wear</Link></li>
-              <li><Link href="/products" className="hover:underline">Shop All</Link></li>
+              {COLLECTION_SUBCATS.map((s) => (
+                <li key={s.path}>
+                  <Link href={s.path} className="hover:underline">{s.label}</Link>
+                </li>
+              ))}
             </ul>
           </div>
           <div>
@@ -340,7 +375,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
         <div className="border-t border-neutral-200 dark:border-neutral-800 py-5 text-center text-xs text-neutral-500">
-          © {new Date().getFullYear()} Bapari Socks. All rights reserved.
+          © {new Date().getFullYear()} Ultion. All rights reserved.
         </div>
       </footer>
     </div>
