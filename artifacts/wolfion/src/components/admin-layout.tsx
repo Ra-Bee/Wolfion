@@ -4,7 +4,7 @@ import { useRole } from "@/hooks/use-role";
 import { useTheme } from "@/hooks/use-theme";
 import {
   LogOut, Menu, ShieldCheck, Sun, Moon, FileText, Users as UsersIcon,
-  Wrench, Factory, ShoppingCart, TrendingUp, Wallet, HandCoins, LayoutDashboard,
+  Wrench, Factory, ShoppingCart, TrendingUp, Wallet, HandCoins, LayoutDashboard, ShoppingBag,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, SheetClose } from "@/components/ui/sheet";
@@ -34,6 +34,11 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const handleSignOut = () => {
     setRole(null);
     signOut(() => setLocation("/"));
+  };
+
+  const switchToCustomer = () => {
+    setRole("customer");
+    setLocation("/shop");
   };
 
   return (
@@ -96,6 +101,17 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                         </SheetClose>
                       );
                     })}
+                    <div className="my-2 border-t" />
+                    <SheetClose asChild>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start h-11"
+                        onClick={switchToCustomer}
+                        data-testid="switch-to-customer"
+                      >
+                        <ShoppingBag className="mr-3 h-4 w-4" /> Switch to Customer Mode
+                      </Button>
+                    </SheetClose>
                   </div>
                 </nav>
 

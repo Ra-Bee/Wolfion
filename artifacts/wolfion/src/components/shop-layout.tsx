@@ -2,7 +2,7 @@ import { Link, useLocation } from "wouter";
 import { useUser, useClerk } from "@clerk/react";
 import { useCart } from "@/hooks/use-cart";
 import { useRole } from "@/hooks/use-role";
-import { ShoppingBag, Menu, User, LogOut, Search } from "lucide-react";
+import { ShoppingBag, Menu, User, LogOut, Search, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose, SheetFooter } from "@/components/ui/sheet";
 import imgLogoWhite from "@assets/Image_20260416024938_44_2_1776717019706.png";
@@ -18,13 +18,18 @@ const NAV = [
 export function ShopLayout({ children }: { children: React.ReactNode }) {
   const { user } = useUser();
   const { signOut } = useClerk();
-  const { setRole } = useRole();
+  const { setRole, isAdmin } = useRole();
   const { totalItems } = useCart();
   const [location, setLocation] = useLocation();
 
   const handleSignOut = () => {
     setRole(null);
     signOut(() => setLocation("/"));
+  };
+
+  const switchToAdmin = () => {
+    setRole("admin");
+    setLocation("/admin-dashboard");
   };
 
   return (
@@ -62,6 +67,21 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                       </Button>
                     </Link>
                   </SheetClose>
+                  {isAdmin && (
+                    <>
+                      <div className="my-3 border-t border-neutral-200 dark:border-neutral-800" />
+                      <SheetClose asChild>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start h-12 text-base font-light tracking-wide"
+                          onClick={switchToAdmin}
+                          data-testid="switch-to-admin"
+                        >
+                          <ShieldCheck className="mr-3 h-4 w-4" /> Switch to Admin Mode
+                        </Button>
+                      </SheetClose>
+                    </>
+                  )}
                 </nav>
                 <SheetFooter className="border-t border-neutral-200 dark:border-neutral-800 p-4 flex-col gap-2 sm:flex-col">
                   <div className="text-xs text-neutral-500 px-2">Signed in as {user?.emailAddresses[0]?.emailAddress}</div>
@@ -128,6 +148,18 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                         </Button>
                       </Link>
                     </SheetClose>
+                    {isAdmin && (
+                      <SheetClose asChild>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start h-11"
+                          onClick={switchToAdmin}
+                          data-testid="switch-to-admin-desktop"
+                        >
+                          <ShieldCheck className="mr-3 h-4 w-4" /> Switch to Admin Mode
+                        </Button>
+                      </SheetClose>
+                    )}
                   </div>
                   <SheetFooter className="border-t border-neutral-200 dark:border-neutral-800 p-4">
                     <Button variant="outline" className="w-full" onClick={handleSignOut}>

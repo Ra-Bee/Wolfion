@@ -104,33 +104,33 @@ function ClerkQueryClientCacheInvalidator() {
 
 function AppRouter() {
   const { isLoaded, isSignedIn } = useUser();
-  const { role } = useRole();
+  const { role, isAdmin } = useRole();
 
   // Landing redirect based on role
   const HomeRedirect = () => {
     if (!isLoaded) return null;
     if (isSignedIn) {
+      // Non-admins always go straight to /shop
+      if (!isAdmin) return <Redirect to="/shop" />;
+      // Admins must pick a mode first
       if (!role) return <Redirect to="/role-select" />;
       return <Redirect to={role === "admin" ? "/admin-dashboard" : "/shop"} />;
     }
     return <Home />;
   };
 
-  // Customer-only routes (admins are redirected away)
+  // Customer routes — open to everyone signed in (admins can shop too)
   const ShopRouteWrapper = ({ children }: { children: React.ReactNode }) => {
     if (!isLoaded) return null;
     if (!isSignedIn) return <Redirect to="/sign-in" />;
-    if (!role) return <Redirect to="/role-select" />;
-    if (role === "admin") return <Redirect to="/admin-dashboard" />;
     return <>{children}</>;
   };
 
-  // Admin-only routes (customers are redirected away)
+  // Admin routes — strictly admin emails only
   const AdminRouteWrapper = ({ children }: { children: React.ReactNode }) => {
     if (!isLoaded) return null;
     if (!isSignedIn) return <Redirect to="/sign-in" />;
-    if (!role) return <Redirect to="/role-select" />;
-    if (role === "customer") return <Redirect to="/shop" />;
+    if (!isAdmin) return <Redirect to="/shop" />;
     return <>{children}</>;
   };
 
