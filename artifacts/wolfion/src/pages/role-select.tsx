@@ -34,7 +34,7 @@ export default function RoleSelect() {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center space-y-2">
           <div className="mx-auto h-14 w-14 rounded-2xl bg-black overflow-hidden flex items-center justify-center mb-6 shadow-sm">
-            <img src={wolfionLogo} alt="Wolfion" className="h-full w-full object-cover" />
+            <img src={wolfionLogo} alt="Bapari Socks" className="h-full w-full object-cover" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight">Select Mode</h1>
           <p className="text-muted-foreground text-sm">
@@ -67,7 +67,7 @@ export default function RoleSelect() {
             </div>
             <div>
               <h3 className="font-semibold text-base">Customer Mode</h3>
-              <p className="text-sm text-muted-foreground">Shop the Wolfion collection</p>
+              <p className="text-sm text-muted-foreground">Shop the Bapari Socks collection</p>
             </div>
           </button>
         </div>

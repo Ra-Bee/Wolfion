@@ -192,7 +192,7 @@ function ClerkProviderWithRoutes() {
       appearance={clerkAppearance}
       localization={{
         signIn: { start: { title: "Welcome back", subtitle: "Sign in to access your account" } },
-        signUp: { start: { title: "Join Wolfion", subtitle: "Get access to member exclusives." } },
+        signUp: { start: { title: "Join Bapari Socks", subtitle: "Get access to member exclusives." } },
       }}
       routerPush={(to) => setLocation(stripBase(to))}
       routerReplace={(to) => setLocation(stripBase(to), { replace: true })}
