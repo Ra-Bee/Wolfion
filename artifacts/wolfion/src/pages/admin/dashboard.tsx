@@ -50,6 +50,19 @@ const productionStorageKey = "wolfion_production_entries";
 const salesStorageKey = "wolfion_sales_entries";
 const yarnStockStorageKey = "wolfion_yarn_stock_kg";
 const yarnUsageStorageKey = "wolfion_yarn_usage_entries";
+const costStorageKey = "wolfion_cost_inputs";
+
+type CostInputs = {
+  yarnCostPerDozen: number;
+  laborCostPerDozen: number;
+  packagingCostPerDozen: number;
+};
+
+const defaultCosts: CostInputs = {
+  yarnCostPerDozen: 0,
+  laborCostPerDozen: 0,
+  packagingCostPerDozen: 0,
+};
 
 function getToday() {
   return new Date().toISOString().slice(0, 10);
@@ -100,6 +113,17 @@ export default function Dashboard() {
   const [yarnUsageProductType, setYarnUsageProductType] = useState<ProductType>("short-socks");
   const [yarnUsageKg, setYarnUsageKg] = useState("");
   const [yarnError, setYarnError] = useState("");
+  const [costs, setCosts] = useState<CostInputs>(() => {
+    try {
+      const stored = localStorage.getItem(costStorageKey);
+      return stored ? { ...defaultCosts, ...(JSON.parse(stored) as CostInputs) } : defaultCosts;
+    } catch {
+      return defaultCosts;
+    }
+  });
+  const [yarnCostInput, setYarnCostInput] = useState(() => (costs.yarnCostPerDozen ? String(costs.yarnCostPerDozen) : ""));
+  const [laborCostInput, setLaborCostInput] = useState(() => (costs.laborCostPerDozen ? String(costs.laborCostPerDozen) : ""));
+  const [packagingCostInput, setPackagingCostInput] = useState(() => (costs.packagingCostPerDozen ? String(costs.packagingCostPerDozen) : ""));
 
   useEffect(() => {
     localStorage.setItem(productionStorageKey, JSON.stringify(productionEntries));
@@ -116,6 +140,10 @@ export default function Dashboard() {
   useEffect(() => {
     localStorage.setItem(yarnUsageStorageKey, JSON.stringify(yarnUsageEntries));
   }, [yarnUsageEntries]);
+
+  useEffect(() => {
+    localStorage.setItem(costStorageKey, JSON.stringify(costs));
+  }, [costs]);
 
   const inventory = useMemo(() => {
     const stockAfterProduction = productionEntries.reduce<Record<ProductType, number>>(
@@ -169,6 +197,10 @@ export default function Dashboard() {
   const estimatedSevenDayNeedKg = averageDailyYarnUseKg * 7;
   const estimatedYarnShortageKg = Math.max(0, estimatedSevenDayNeedKg - remainingYarnKg);
   const recentYarnUsageEntries = yarnUsageEntries.slice(0, 4);
+  const costPerDozen = costs.yarnCostPerDozen + costs.laborCostPerDozen + costs.packagingCostPerDozen;
+  const totalCostOfSales = totalSoldDozen * costPerDozen;
+  const totalProfit = totalSalesValue - totalCostOfSales;
+  const averageProfitPerSale = salesEntries.length > 0 ? totalProfit / salesEntries.length : 0;
 
   function handleAddProduction(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -266,6 +298,19 @@ export default function Dashboard() {
     setYarnError("");
   }
 
+  function handleSaveCosts(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const yarnCost = Number(yarnCostInput);
+    const laborCost = Number(laborCostInput);
+    const packagingCost = Number(packagingCostInput);
+
+    setCosts({
+      yarnCostPerDozen: Number.isFinite(yarnCost) && yarnCost >= 0 ? yarnCost : 0,
+      laborCostPerDozen: Number.isFinite(laborCost) && laborCost >= 0 ? laborCost : 0,
+      packagingCostPerDozen: Number.isFinite(packagingCost) && packagingCost >= 0 ? packagingCost : 0,
+    });
+  }
+
   return (
     <AppLayout>
       <div className="container mx-auto px-4 py-8 max-w-6xl space-y-8">
@@ -274,7 +319,7 @@ export default function Dashboard() {
           <p className="text-muted-foreground mt-1">Overview of operations, sales, and inventory.</p>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
@@ -320,6 +365,21 @@ export default function Dashboard() {
             <CardContent>
               <div className="text-2xl font-bold">{totalInventoryDozen.toLocaleString()} dozen</div>
               <p className="text-xs text-muted-foreground mt-1">Production adds, sales reduce stock</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardTitle className="text-sm font-medium">Total Profit</CardTitle>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className={`text-2xl font-bold ${totalProfit >= 0 ? "text-green-700" : "text-destructive"}`}>
+                ${totalProfit.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Cost ${costPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}/dozen
+              </p>
             </CardContent>
           </Card>
         </div>
@@ -666,6 +726,116 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Cost Tracking</CardTitle>
+            <CardDescription>Enter cost per dozen. Profit calculates automatically from sales.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSaveCosts} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto]">
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="yarn-cost">Yarn cost per dozen</label>
+                <Input
+                  id="yarn-cost"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  inputMode="decimal"
+                  placeholder="Example: 40"
+                  value={yarnCostInput}
+                  onChange={(event) => setYarnCostInput(event.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="labor-cost">Labor cost per dozen</label>
+                <Input
+                  id="labor-cost"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  inputMode="decimal"
+                  placeholder="Example: 20"
+                  value={laborCostInput}
+                  onChange={(event) => setLaborCostInput(event.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="packaging-cost">Packaging cost per dozen</label>
+                <Input
+                  id="packaging-cost"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  inputMode="decimal"
+                  placeholder="Example: 8"
+                  value={packagingCostInput}
+                  onChange={(event) => setPackagingCostInput(event.target.value)}
+                />
+              </div>
+              <div className="flex items-end">
+                <Button type="submit" className="w-full">Save costs</Button>
+              </div>
+            </form>
+
+            <div className="mt-6 grid gap-3 sm:grid-cols-3">
+              <div className="rounded-2xl border bg-muted/30 p-4">
+                <p className="text-xs text-muted-foreground">Cost per dozen</p>
+                <p className="mt-2 text-2xl font-bold">${costPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                <p className="mt-1 text-xs text-muted-foreground">Yarn + labor + packaging</p>
+              </div>
+              <div className="rounded-2xl border bg-muted/30 p-4">
+                <p className="text-xs text-muted-foreground">Average profit per sale</p>
+                <p className={`mt-2 text-2xl font-bold ${averageProfitPerSale >= 0 ? "text-green-700" : "text-destructive"}`}>
+                  ${averageProfitPerSale.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">Across {salesEntries.length} sales</p>
+              </div>
+              <div className="rounded-2xl border bg-muted/30 p-4">
+                <p className="text-xs text-muted-foreground">Total profit</p>
+                <p className={`mt-2 text-2xl font-bold ${totalProfit >= 0 ? "text-green-700" : "text-destructive"}`}>
+                  ${totalProfit.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">Revenue ${totalSalesValue.toLocaleString()} − Cost ${totalCostOfSales.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+              </div>
+            </div>
+
+            {salesEntries.length > 0 && (
+              <div className="mt-6 overflow-x-auto rounded-xl border">
+                <table className="w-full min-w-[640px] text-sm">
+                  <thead className="bg-muted/60 text-muted-foreground">
+                    <tr>
+                      <th className="px-4 py-3 text-left font-medium">Customer</th>
+                      <th className="px-4 py-3 text-left font-medium">Product</th>
+                      <th className="px-4 py-3 text-right font-medium">Quantity</th>
+                      <th className="px-4 py-3 text-right font-medium">Revenue</th>
+                      <th className="px-4 py-3 text-right font-medium">Cost</th>
+                      <th className="px-4 py-3 text-right font-medium">Profit</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {salesEntries.slice(0, 6).map((sale) => {
+                      const cost = sale.quantityDozen * costPerDozen;
+                      const profit = sale.totalValue - cost;
+                      return (
+                        <tr key={sale.id} className="border-t">
+                          <td className="px-4 py-3 font-medium">{sale.customerName}</td>
+                          <td className="px-4 py-3">{productTypeLabels[sale.productType]}</td>
+                          <td className="px-4 py-3 text-right">{sale.quantityDozen.toLocaleString()} dozen</td>
+                          <td className="px-4 py-3 text-right">${sale.totalValue.toLocaleString()}</td>
+                          <td className="px-4 py-3 text-right">${cost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
+                          <td className={`px-4 py-3 text-right font-bold ${profit >= 0 ? "text-green-700" : "text-destructive"}`}>
+                            ${profit.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </AppLayout>
   );
