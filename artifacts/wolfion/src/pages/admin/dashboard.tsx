@@ -4,13 +4,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Activity, DollarSign, Package, Factory, TrendingUp, Plus, Zap } from "lucide-react";
+import { Activity, DollarSign, Package, Factory, TrendingUp, Plus, Zap, X } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 
-type ProductType = "short-socks" | "ankle-socks" | "kids-socks";
+type ProductType = string;
+
+type ProductTypeOption = {
+  id: string;
+  label: string;
+};
 
 type ProductionEntry = {
   id: string;
@@ -37,16 +42,18 @@ type YarnUsageEntry = {
   createdAt: string;
 };
 
-const productTypeLabels: Record<ProductType, string> = {
-  "short-socks": "Short socks",
-  "ankle-socks": "Ankle socks",
-  "kids-socks": "Kids socks",
-};
+const defaultProductTypes: ProductTypeOption[] = [
+  { id: "short-socks", label: "Short socks" },
+  { id: "ankle-socks", label: "Ankle socks" },
+  { id: "kids-socks", label: "Kids socks" },
+  { id: "others", label: "Others" },
+];
 
-const initialInventory: Record<ProductType, number> = {
+const initialInventory: Record<string, number> = {
   "short-socks": 320,
   "ankle-socks": 260,
   "kids-socks": 140,
+  "others": 0,
 };
 
 const productionStorageKey = "wolfion_production_entries";
@@ -61,6 +68,15 @@ const workLogsStorageKey = "wolfion_worker_logs";
 const workerPaymentsStorageKey = "wolfion_worker_payments";
 const investmentsStorageKey = "wolfion_investments";
 const investorsStorageKey = "wolfion_investors";
+const productTypesStorageKey = "wolfion_product_types";
+
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "") || `type-${Date.now()}`;
+}
 
 type Investment = {
   id: string;
@@ -143,6 +159,20 @@ function getToday() {
 }
 
 export default function Dashboard() {
+  const [productTypes, setProductTypes] = useState<ProductTypeOption[]>(() => {
+    try {
+      const stored = localStorage.getItem(productTypesStorageKey);
+      if (stored) {
+        const parsed = JSON.parse(stored) as ProductTypeOption[];
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {
+      /* fallthrough */
+    }
+    return defaultProductTypes;
+  });
+  const [newProductTypeName, setNewProductTypeName] = useState("");
+  const [productTypeError, setProductTypeError] = useState("");
   const [productionEntries, setProductionEntries] = useState<ProductionEntry[]>(() => {
     try {
       const stored = localStorage.getItem(productionStorageKey);
@@ -349,46 +379,83 @@ export default function Dashboard() {
     localStorage.setItem(investorsStorageKey, JSON.stringify(investors));
   }, [investors]);
 
-  const inventory = useMemo(() => {
-    const stockAfterProduction = productionEntries.reduce<Record<ProductType, number>>(
-      (stock, entry) => ({
-        ...stock,
-        [entry.productType]: stock[entry.productType] + entry.quantityDozen,
-      }),
-      { ...initialInventory },
-    );
+  useEffect(() => {
+    localStorage.setItem(productTypesStorageKey, JSON.stringify(productTypes));
+  }, [productTypes]);
 
-    return salesEntries.reduce<Record<ProductType, number>>(
-      (stock, entry) => ({
-        ...stock,
-        [entry.productType]: Math.max(0, stock[entry.productType] - entry.quantityDozen),
-      }),
-      stockAfterProduction,
-    );
-  }, [productionEntries, salesEntries]);
+  const productTypeLabels = useMemo<Record<string, string>>(() => {
+    const labels: Record<string, string> = {};
+    for (const t of productTypes) labels[t.id] = t.label;
+    for (const entry of productionEntries) if (!labels[entry.productType]) labels[entry.productType] = entry.productType;
+    for (const entry of salesEntries) if (!labels[entry.productType]) labels[entry.productType] = entry.productType;
+    return labels;
+  }, [productTypes, productionEntries, salesEntries]);
+
+  const allProductTypeIds = useMemo<string[]>(() => {
+    const set = new Set<string>(productTypes.map((t) => t.id));
+    for (const entry of productionEntries) set.add(entry.productType);
+    for (const entry of salesEntries) set.add(entry.productType);
+    return Array.from(set);
+  }, [productTypes, productionEntries, salesEntries]);
+
+  const inventory = useMemo(() => {
+    const stock: Record<string, number> = {};
+    for (const id of allProductTypeIds) stock[id] = initialInventory[id] || 0;
+    for (const entry of productionEntries) {
+      stock[entry.productType] = (stock[entry.productType] || 0) + entry.quantityDozen;
+    }
+    for (const entry of salesEntries) {
+      stock[entry.productType] = Math.max(0, (stock[entry.productType] || 0) - entry.quantityDozen);
+    }
+    return stock;
+  }, [productionEntries, salesEntries, allProductTypeIds]);
+
+  function handleAddProductType(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setProductTypeError("");
+    const label = newProductTypeName.trim();
+    if (!label) {
+      setProductTypeError("Enter a product type name.");
+      return;
+    }
+    let id = slugify(label);
+    if (productTypes.some((t) => t.id === id || t.label.toLowerCase() === label.toLowerCase())) {
+      setProductTypeError("That product type already exists.");
+      return;
+    }
+    setProductTypes((prev) => [...prev, { id, label }]);
+    setNewProductTypeName("");
+  }
+
+  function handleRemoveProductType(id: string) {
+    if (productionEntries.some((e) => e.productType === id) || salesEntries.some((e) => e.productType === id)) {
+      setProductTypeError("Cannot remove: this type has production or sales entries.");
+      return;
+    }
+    setProductTypes((prev) => prev.filter((t) => t.id !== id));
+    setProductTypeError("");
+  }
 
   const totalInventoryDozen = Object.values(inventory).reduce((total, value) => total + value, 0);
   const totalProducedDozen = productionEntries.reduce((total, entry) => total + entry.quantityDozen, 0);
   const totalSoldDozen = salesEntries.reduce((total, entry) => total + entry.quantityDozen, 0);
   const totalSalesValue = salesEntries.reduce((total, entry) => total + entry.totalValue, 0);
   const productionByType = useMemo(() => {
-    return productionEntries.reduce<Record<ProductType, number>>(
-      (totals, entry) => ({
-        ...totals,
-        [entry.productType]: totals[entry.productType] + entry.quantityDozen,
-      }),
-      { "short-socks": 0, "ankle-socks": 0, "kids-socks": 0 },
-    );
-  }, [productionEntries]);
+    const totals: Record<string, number> = {};
+    for (const id of allProductTypeIds) totals[id] = 0;
+    for (const entry of productionEntries) {
+      totals[entry.productType] = (totals[entry.productType] || 0) + entry.quantityDozen;
+    }
+    return totals;
+  }, [productionEntries, allProductTypeIds]);
   const salesByType = useMemo(() => {
-    return salesEntries.reduce<Record<ProductType, number>>(
-      (totals, entry) => ({
-        ...totals,
-        [entry.productType]: totals[entry.productType] + entry.quantityDozen,
-      }),
-      { "short-socks": 0, "ankle-socks": 0, "kids-socks": 0 },
-    );
-  }, [salesEntries]);
+    const totals: Record<string, number> = {};
+    for (const id of allProductTypeIds) totals[id] = 0;
+    for (const entry of salesEntries) {
+      totals[entry.productType] = (totals[entry.productType] || 0) + entry.quantityDozen;
+    }
+    return totals;
+  }, [salesEntries, allProductTypeIds]);
   const recentProductionEntries = productionEntries.slice(0, 4);
   const recentSalesEntries = salesEntries.slice(0, 4);
   const totalYarnUsedKg = yarnUsageEntries.reduce((total, entry) => total + entry.kgUsed, 0);
@@ -994,37 +1061,25 @@ export default function Dashboard() {
           <CardContent className="space-y-6">
             <div>
               <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Total stock available</h3>
-              <div className="mt-3 grid gap-3 sm:grid-cols-3">
-                <div className="rounded-2xl border bg-card p-5">
-                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Short socks</p>
-                  <p className="mt-2 text-3xl font-bold">{inventory["short-socks"].toLocaleString()} <span className="text-base font-medium text-muted-foreground">dz</span></p>
-                </div>
-                <div className="rounded-2xl border bg-card p-5">
-                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Ankle socks</p>
-                  <p className="mt-2 text-3xl font-bold">{inventory["ankle-socks"].toLocaleString()} <span className="text-base font-medium text-muted-foreground">dz</span></p>
-                </div>
-                <div className="rounded-2xl border bg-card p-5">
-                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Kids socks</p>
-                  <p className="mt-2 text-3xl font-bold">{inventory["kids-socks"].toLocaleString()} <span className="text-base font-medium text-muted-foreground">dz</span></p>
-                </div>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {allProductTypeIds.map((id) => (
+                  <div key={`stock-${id}`} className="rounded-2xl border bg-card/80 p-5 shadow-sm backdrop-blur transition hover:shadow-lg hover:-translate-y-0.5">
+                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{productTypeLabels[id] || id}</p>
+                    <p className="mt-2 text-3xl font-bold">{(inventory[id] || 0).toLocaleString()} <span className="text-base font-medium text-muted-foreground">dz</span></p>
+                  </div>
+                ))}
               </div>
             </div>
 
             <div>
               <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Total sold</h3>
-              <div className="mt-3 grid gap-3 sm:grid-cols-3">
-                <div className="rounded-2xl border bg-card p-5">
-                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Short socks</p>
-                  <p className="mt-2 text-3xl font-bold">{salesByType["short-socks"].toLocaleString()} <span className="text-base font-medium text-muted-foreground">dz</span></p>
-                </div>
-                <div className="rounded-2xl border bg-card p-5">
-                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Ankle socks</p>
-                  <p className="mt-2 text-3xl font-bold">{salesByType["ankle-socks"].toLocaleString()} <span className="text-base font-medium text-muted-foreground">dz</span></p>
-                </div>
-                <div className="rounded-2xl border bg-card p-5">
-                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Kids socks</p>
-                  <p className="mt-2 text-3xl font-bold">{salesByType["kids-socks"].toLocaleString()} <span className="text-base font-medium text-muted-foreground">dz</span></p>
-                </div>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {allProductTypeIds.map((id) => (
+                  <div key={`sold-${id}`} className="rounded-2xl border bg-card/80 p-5 shadow-sm backdrop-blur transition hover:shadow-lg hover:-translate-y-0.5">
+                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{productTypeLabels[id] || id}</p>
+                    <p className="mt-2 text-3xl font-bold">{(salesByType[id] || 0).toLocaleString()} <span className="text-base font-medium text-muted-foreground">dz</span></p>
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -1124,6 +1179,53 @@ export default function Dashboard() {
                 </div>
               </TabsContent>
             </Tabs>
+          </CardContent>
+        </Card>
+
+        <Card className="border-2 border-primary/30 shadow-md">
+          <CardHeader>
+            <CardTitle className="text-2xl">Product Types</CardTitle>
+            <CardDescription>Manage product categories. Add custom types to fit your factory.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <form onSubmit={handleAddProductType} className="flex flex-col gap-3 sm:flex-row sm:items-end">
+              <div className="flex-1 space-y-2">
+                <label className="text-sm font-medium" htmlFor="new-product-type">Add new product type</label>
+                <Input
+                  id="new-product-type"
+                  className="h-12 text-base"
+                  placeholder="e.g. Sport socks, Wool blend..."
+                  value={newProductTypeName}
+                  onChange={(e) => setNewProductTypeName(e.target.value)}
+                />
+              </div>
+              <Button type="submit" size="lg" className="h-12 px-6 text-base font-semibold sm:w-auto">
+                <Plus className="h-5 w-5" /> Add type
+              </Button>
+            </form>
+            {productTypeError && (
+              <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{productTypeError}</p>
+            )}
+            <div className="flex flex-wrap gap-2">
+              {productTypes.map((t) => {
+                const inUse = productionEntries.some((e) => e.productType === t.id) || salesEntries.some((e) => e.productType === t.id);
+                return (
+                  <div key={t.id} className="flex items-center gap-2 rounded-full border bg-card px-4 py-2 shadow-sm">
+                    <span className="text-sm font-medium">{t.label}</span>
+                    {!inUse && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveProductType(t.id)}
+                        className="text-muted-foreground hover:text-destructive transition"
+                        aria-label={`Remove ${t.label}`}
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </CardContent>
         </Card>
 

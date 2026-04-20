@@ -3,9 +3,10 @@ import { Link, useLocation } from 'wouter';
 import { useUser, useClerk } from '@clerk/react';
 import { useRole } from '@/hooks/use-role';
 import { useCart } from '@/hooks/use-cart';
-import { ShoppingBag, User, LogOut, Menu, X, ArrowRight, ShieldCheck, Home } from 'lucide-react';
+import { ShoppingBag, User, LogOut, Menu, X, ArrowRight, ShieldCheck, Home, Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from '@/components/ui/sheet';
+import { useTheme } from '@/hooks/use-theme';
 import wolfionLogo from "@assets/Rabby_1776709654876.jpg";
 
 export function CartDrawer({ children }: { children: React.ReactNode }) {
@@ -94,6 +95,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const { signOut } = useClerk();
   const { role, setRole } = useRole();
   const { totalItems } = useCart();
+  const { theme, toggleTheme } = useTheme();
   const [, setLocation] = useLocation();
 
   const handleSignOut = () => {
@@ -112,7 +114,16 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             <span className="font-bold text-xl tracking-tight hidden sm:inline-block">WOLFION</span>
           </Link>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+              className="rounded-full transition-transform hover:scale-110"
+            >
+              {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+            </Button>
             {isCustomer && (
               <CartDrawer>
                 <Button variant="ghost" size="icon" className="relative">
