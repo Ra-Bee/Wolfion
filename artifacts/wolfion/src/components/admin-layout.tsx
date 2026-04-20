@@ -62,10 +62,17 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             </div>
           </button>
 
-          <div className="flex items-center gap-1">
-            <span className="hidden md:inline-flex items-center gap-1.5 mr-2 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-semibold tracking-wider uppercase">
-              <ShieldCheck className="h-3 w-3" /> Admin Mode
-            </span>
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={switchToCustomer}
+              className="h-8 px-3 text-[11px] uppercase tracking-[0.15em] font-medium active:scale-95 transition-transform"
+              data-testid="switch-mode-toggle"
+            >
+              <ShoppingBag className="mr-1.5 h-3.5 w-3.5" />
+              Customer Mode
+            </Button>
             <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme" className="rounded-full">
               {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
             </Button>

@@ -26,7 +26,7 @@ const PRIMARY_NAV = [
   { path: "/products", label: "Shop" },
 ];
 
-const WOLFION_SUBCATS = [
+const BAPARI_SUBCATS = [
   { path: "/products?category=short", label: "Short Socks" },
   { path: "/products?category=ankle", label: "Ankle Socks" },
   { path: "/products?category=kids", label: "Kids Socks" },
@@ -85,13 +85,13 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                   ))}
 
                   <Accordion type="multiple" className="w-full">
-                    <AccordionItem value="wolfion" className="border-none">
+                    <AccordionItem value="bapari" className="border-none">
                       <AccordionTrigger className="px-4 h-12 text-base font-light tracking-wide hover:no-underline rounded-md">
-                        Wolfion
+                        Bapari Socks
                       </AccordionTrigger>
                       <AccordionContent className="pb-1">
                         <div className="flex flex-col">
-                          {WOLFION_SUBCATS.map((s) => (
+                          {BAPARI_SUBCATS.map((s) => (
                             <SheetClose asChild key={s.path}>
                               <Link href={s.path}>
                                 <Button variant="ghost" className="w-full justify-start h-11 pl-8 text-sm font-light text-neutral-600 dark:text-neutral-300">
@@ -190,9 +190,9 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
               <DropdownMenuTrigger asChild>
                 <button
                   className="inline-flex items-center gap-1 text-[12px] uppercase tracking-[0.2em] font-medium whitespace-nowrap text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-50 transition-colors outline-none"
-                  data-testid="nav-wolfion"
+                  data-testid="nav-bapari"
                 >
-                  Wolfion
+                  Bapari Socks
                   <ChevronDown className="h-3 w-3 opacity-70" />
                 </button>
               </DropdownMenuTrigger>
@@ -205,13 +205,13 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                   Socks
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-neutral-200/70 dark:bg-neutral-800/70" />
-                {WOLFION_SUBCATS.map((s) => (
+                {BAPARI_SUBCATS.map((s) => (
                   <DropdownMenuItem
                     key={s.path}
                     asChild
                     className="text-sm rounded-lg cursor-pointer focus:bg-neutral-100 dark:focus:bg-neutral-800 py-2.5"
                   >
-                    <Link href={s.path} data-testid={`wolfion-${s.label}`}>
+                    <Link href={s.path} data-testid={`bapari-${s.label}`}>
                       {s.label}
                     </Link>
                   </DropdownMenuItem>
@@ -261,8 +261,8 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                 size="sm"
                 variant="outline"
                 onClick={switchToAdmin}
-                className="hidden sm:inline-flex h-8 px-3 text-[11px] uppercase tracking-[0.15em] font-medium border-neutral-300 dark:border-neutral-700 active:scale-95 transition-transform"
-                data-testid="switch-to-admin"
+                className="h-8 px-3 text-[11px] uppercase tracking-[0.15em] font-medium border-neutral-300 dark:border-neutral-700 active:scale-95 transition-transform"
+                data-testid="switch-mode-toggle"
               >
                 <ShieldCheck className="mr-1.5 h-3.5 w-3.5" />
                 Admin Mode
@@ -342,9 +342,9 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
             </p>
           </div>
           <div>
-            <div className="text-xs uppercase tracking-widest text-neutral-500 mb-3">Wolfion</div>
+            <div className="text-xs uppercase tracking-widest text-neutral-500 mb-3">Bapari Socks</div>
             <ul className="space-y-2 text-neutral-700 dark:text-neutral-300">
-              {WOLFION_SUBCATS.map((s) => (
+              {BAPARI_SUBCATS.map((s) => (
                 <li key={s.path}>
                   <Link href={s.path} className="hover:underline">{s.label}</Link>
                 </li>

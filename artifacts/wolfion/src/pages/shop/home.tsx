@@ -1,15 +1,12 @@
 import { Link } from "wouter";
 import { ArrowRight } from "lucide-react";
 import { ShopLayout } from "@/components/shop-layout";
-import { ProductCard } from "@/components/product-card";
-import { products, categories } from "@/lib/data";
+import { categories } from "@/lib/data";
 import imgPortrait from "@assets/Image_20260416035728_55_2_1776716993092.jpg";
 import imgSocks from "@assets/Image_20260416025624_54_2_1776717008197.jpg";
-import imgWomenswear from "@assets/ultion_womenswear.png";
+import imgWomenswear from "@assets/wolfion_womenswear.png";
 
 export default function ShopHome() {
-  const featured = products.slice(0, 4);
-
   return (
     <ShopLayout>
       {/* Hero */}
@@ -42,12 +39,12 @@ export default function ShopHome() {
         </div>
       </section>
 
-      {/* Wolfion — sock categories */}
+      {/* Bapari Socks — sock categories */}
       <section className="container mx-auto px-5 py-20">
         <div className="flex items-end justify-between mb-10">
           <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-neutral-500 mb-2">Wolfion</p>
-            <h2 className="text-3xl sm:text-4xl font-light tracking-tight">Wolfion · Socks</h2>
+            <p className="text-xs uppercase tracking-[0.3em] text-neutral-500 mb-2">Bapari Socks</p>
+            <h2 className="text-3xl sm:text-4xl font-light tracking-tight">Sock Categories</h2>
           </div>
           <Link href="/products" className="hidden sm:inline-flex items-center text-sm font-medium hover:underline">
             View all <ArrowRight className="ml-2 h-4 w-4" />
@@ -114,23 +111,6 @@ export default function ShopHome() {
         </div>
       </section>
 
-      {/* Featured */}
-      <section className="container mx-auto px-5 py-20">
-        <div className="flex items-end justify-between mb-10">
-          <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-neutral-500 mb-2">Editor's picks</p>
-            <h2 className="text-3xl sm:text-4xl font-light tracking-tight">Featured</h2>
-          </div>
-          <Link href="/products" className="hidden sm:inline-flex items-center text-sm font-medium hover:underline">
-            Shop all <ArrowRight className="ml-2 h-4 w-4" />
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {featured.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
-      </section>
     </ShopLayout>
   );
 }

@@ -12,31 +12,16 @@ export type Product = {
   image: string;
 };
 
+import imgCatShort from "@assets/cat_short.jpg";
+import imgCatAnkle from "@assets/cat_ankle.jpg";
+import imgCatKids from "@assets/cat_kids.jpg";
+import imgCatOthers from "@assets/cat_others.jpg";
+
 export const categories: { id: ProductCategory; label: string; tagline: string; image: string }[] = [
-  {
-    id: "short",
-    label: "Short Socks",
-    tagline: "Low-cut essentials.",
-    image: "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=1200&q=80",
-  },
-  {
-    id: "ankle",
-    label: "Ankle Socks",
-    tagline: "Engineered for movement.",
-    image: "https://images.unsplash.com/photo-1582966772680-860e372bb558?w=1200&q=80",
-  },
-  {
-    id: "kids",
-    label: "Kids Socks",
-    tagline: "Soft. Durable. Playful.",
-    image: "https://images.unsplash.com/photo-1503944583220-79d8926ad5e2?w=1200&q=80",
-  },
-  {
-    id: "others",
-    label: "Others",
-    tagline: "Specialty pieces.",
-    image: "https://images.unsplash.com/photo-1552874869-5c39ec9288dc?w=1200&q=80",
-  },
+  { id: "short", label: "Short Socks", tagline: "Low-cut essentials.", image: imgCatShort },
+  { id: "ankle", label: "Ankle Socks", tagline: "Engineered for movement.", image: imgCatAnkle },
+  { id: "kids", label: "Kids Socks", tagline: "Soft. Durable. Playful.", image: imgCatKids },
+  { id: "others", label: "Others", tagline: "Specialty pieces.", image: imgCatOthers },
 ];
 
 export const products: Product[] = [
