@@ -2,17 +2,40 @@ import { Link, useLocation } from "wouter";
 import { useUser, useClerk } from "@clerk/react";
 import { useCart } from "@/hooks/use-cart";
 import { useRole } from "@/hooks/use-role";
-import { ShoppingBag, Menu, User, LogOut, Search, ShieldCheck } from "lucide-react";
+import { ShoppingBag, Menu, User, LogOut, Search, ShieldCheck, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose, SheetFooter } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import imgLogoWhite from "@assets/Image_20260416024938_44_2_1776717019706.png";
 
-const NAV = [
+const PRIMARY_NAV = [
   { path: "/shop", label: "Home" },
   { path: "/products", label: "Shop" },
-  { path: "/products?category=short", label: "Short" },
-  { path: "/products?category=ankle", label: "Ankle" },
-  { path: "/products?category=kids", label: "Kids" },
+];
+
+const BEPARI_SUBCATS = [
+  { path: "/products?category=short", label: "Short Socks" },
+  { path: "/products?category=ankle", label: "Ankle Socks" },
+  { path: "/products?category=kids", label: "Kids Socks" },
+  { path: "/products?category=others", label: "Other Socks" },
+];
+
+const COLLECTION_NAV = [
+  { path: "/products?collection=mens", label: "Men's Wear" },
+  { path: "/products?collection=womens", label: "Women's Wear" },
 ];
 
 export function ShopLayout({ children }: { children: React.ReactNode }) {
@@ -34,8 +57,8 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-[100dvh] flex flex-col bg-white text-neutral-900 dark:bg-neutral-950 dark:text-neutral-50 antialiased font-sans">
-      {/* Top header — single horizontal row, no overlapping absolute elements */}
-      <header className="sticky top-0 z-40 w-full bg-white/90 dark:bg-neutral-950/90 backdrop-blur-md border-b border-neutral-200/70 dark:border-neutral-800/70">
+      {/* Glassmorphic header — single horizontal row */}
+      <header className="sticky top-0 z-40 w-full bg-white/70 dark:bg-neutral-950/70 backdrop-blur-xl border-b border-neutral-200/60 dark:border-neutral-800/60 shadow-[0_1px_0_rgba(0,0,0,0.02)]">
         <div className="container mx-auto px-4 sm:px-6 h-16 flex items-center gap-3 sm:gap-6">
           {/* Mobile menu trigger */}
           <div className="md:hidden flex-shrink-0">
@@ -45,12 +68,12 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[300px] p-0 flex flex-col bg-white dark:bg-neutral-950">
+              <SheetContent side="left" className="w-[320px] p-0 flex flex-col bg-white dark:bg-neutral-950">
                 <SheetHeader className="px-6 pt-7 pb-5 text-left border-b border-neutral-200 dark:border-neutral-800">
                   <SheetTitle className="tracking-[0.35em] text-base">WOLFION</SheetTitle>
                 </SheetHeader>
-                <nav className="flex-1 px-2 py-4">
-                  {NAV.map((n) => (
+                <nav className="flex-1 px-2 py-4 overflow-y-auto">
+                  {PRIMARY_NAV.map((n) => (
                     <SheetClose asChild key={n.path}>
                       <Link href={n.path}>
                         <Button variant="ghost" className="w-full justify-start h-12 text-base font-light tracking-wide">
@@ -59,6 +82,39 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                       </Link>
                     </SheetClose>
                   ))}
+
+                  {/* Collapsible Bepari Shops */}
+                  <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value="bepari" className="border-none">
+                      <AccordionTrigger className="px-4 h-12 text-base font-light tracking-wide hover:no-underline rounded-md">
+                        Bepari Shops
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-1">
+                        <div className="flex flex-col">
+                          {BEPARI_SUBCATS.map((s) => (
+                            <SheetClose asChild key={s.path}>
+                              <Link href={s.path}>
+                                <Button variant="ghost" className="w-full justify-start h-11 pl-8 text-sm font-light text-neutral-600 dark:text-neutral-300">
+                                  {s.label}
+                                </Button>
+                              </Link>
+                            </SheetClose>
+                          ))}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+
+                  {COLLECTION_NAV.map((n) => (
+                    <SheetClose asChild key={n.path}>
+                      <Link href={n.path}>
+                        <Button variant="ghost" className="w-full justify-start h-12 text-base font-light tracking-wide">
+                          {n.label}
+                        </Button>
+                      </Link>
+                    </SheetClose>
+                  ))}
+
                   <div className="my-3 border-t border-neutral-200 dark:border-neutral-800" />
                   <SheetClose asChild>
                     <Link href="/cart">
@@ -92,21 +148,17 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
             </Sheet>
           </div>
 
-          {/* Logo (left) */}
-          <Link
-            href="/shop"
-            className="flex items-center gap-2 flex-shrink-0"
-            data-testid="link-logo"
-          >
-            <div className="h-8 w-8 rounded-sm bg-black flex items-center justify-center overflow-hidden">
+          {/* Logo */}
+          <Link href="/shop" className="flex items-center gap-2 flex-shrink-0" data-testid="link-logo">
+            <div className="h-8 w-8 rounded-md bg-black flex items-center justify-center overflow-hidden shadow-sm">
               <img src={imgLogoWhite} alt="Wolfion" className="h-full w-full object-contain p-0.5" />
             </div>
             <span className="font-semibold tracking-[0.35em] text-sm sm:text-base">WOLFION</span>
           </Link>
 
-          {/* Desktop nav (center, inline with logo) */}
+          {/* Desktop nav (single horizontal row) */}
           <nav className="hidden md:flex items-center gap-6 lg:gap-8 flex-1 min-w-0">
-            {NAV.map((n) => {
+            {PRIMARY_NAV.map((n) => {
               const cleanPath = n.path.split("?")[0];
               const active = location === cleanPath;
               return (
@@ -123,17 +175,60 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                 </Link>
               );
             })}
+
+            {/* Bepari Shops dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="inline-flex items-center gap-1 text-[12px] uppercase tracking-[0.18em] font-medium whitespace-nowrap text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-50 transition-colors outline-none"
+                  data-testid="nav-bepari"
+                >
+                  Bepari Shops
+                  <ChevronDown className="h-3 w-3 opacity-70" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="start"
+                sideOffset={14}
+                className="w-56 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl border border-neutral-200/70 dark:border-neutral-800/70 shadow-2xl rounded-xl p-2"
+              >
+                <DropdownMenuLabel className="text-[10px] uppercase tracking-[0.25em] text-neutral-500 font-medium">
+                  Sock Categories
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-neutral-200/70 dark:bg-neutral-800/70" />
+                {BEPARI_SUBCATS.map((s) => (
+                  <DropdownMenuItem
+                    key={s.path}
+                    asChild
+                    className="text-sm rounded-lg cursor-pointer focus:bg-neutral-100 dark:focus:bg-neutral-800 py-2.5"
+                  >
+                    <Link href={s.path} data-testid={`bepari-${s.label}`}>
+                      {s.label}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {COLLECTION_NAV.map((n) => (
+              <Link
+                key={n.path}
+                href={n.path}
+                className="text-[12px] uppercase tracking-[0.18em] font-medium whitespace-nowrap text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-50 transition-colors"
+              >
+                {n.label}
+              </Link>
+            ))}
           </nav>
 
           {/* Right actions */}
           <div className="ml-auto flex items-center gap-1 sm:gap-2 flex-shrink-0">
-            {/* Visible Switch to Admin button — admins only */}
             {isAdmin && (
               <Button
                 size="sm"
                 variant="outline"
                 onClick={switchToAdmin}
-                className="hidden sm:inline-flex h-8 px-3 text-[11px] uppercase tracking-[0.15em] font-medium border-neutral-300 dark:border-neutral-700"
+                className="hidden sm:inline-flex h-8 px-3 text-[11px] uppercase tracking-[0.15em] font-medium border-neutral-300 dark:border-neutral-700 active:scale-95 transition-transform"
                 data-testid="switch-to-admin"
               >
                 <ShieldCheck className="mr-1.5 h-3.5 w-3.5" />
@@ -141,15 +236,14 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
               </Button>
             )}
 
-            <Button variant="ghost" size="icon" aria-label="Search" data-testid="btn-search">
+            <Button variant="ghost" size="icon" aria-label="Search" data-testid="btn-search" className="active:scale-95 transition-transform">
               <Search className="h-5 w-5" />
             </Button>
 
-            {/* Account (desktop only) */}
             <div className="hidden md:block">
               <Sheet>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" aria-label="Account" data-testid="btn-account">
+                  <Button variant="ghost" size="icon" aria-label="Account" data-testid="btn-account" className="active:scale-95 transition-transform">
                     <User className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
@@ -191,7 +285,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
             </div>
 
             <Link href="/cart">
-              <Button variant="ghost" size="icon" className="relative" aria-label="Cart" data-testid="link-cart">
+              <Button variant="ghost" size="icon" className="relative active:scale-95 transition-transform" aria-label="Cart" data-testid="link-cart">
                 <ShoppingBag className="h-5 w-5" />
                 {totalItems > 0 && (
                   <span className="absolute top-1 right-1 h-4 min-w-4 px-1 rounded-full bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 text-[10px] font-bold flex items-center justify-center">
@@ -215,21 +309,21 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
             </p>
           </div>
           <div>
-            <div className="text-xs uppercase tracking-widest text-neutral-500 mb-3">Shop</div>
+            <div className="text-xs uppercase tracking-widest text-neutral-500 mb-3">Bepari Shops</div>
             <ul className="space-y-2 text-neutral-700 dark:text-neutral-300">
-              <li><Link href="/products?category=short" className="hover:underline">Short Socks</Link></li>
-              <li><Link href="/products?category=ankle" className="hover:underline">Ankle Socks</Link></li>
-              <li><Link href="/products?category=kids" className="hover:underline">Kids Socks</Link></li>
-              <li><Link href="/products?category=others" className="hover:underline">Others</Link></li>
+              {BEPARI_SUBCATS.map((s) => (
+                <li key={s.path}>
+                  <Link href={s.path} className="hover:underline">{s.label}</Link>
+                </li>
+              ))}
             </ul>
           </div>
           <div>
-            <div className="text-xs uppercase tracking-widest text-neutral-500 mb-3">Help</div>
+            <div className="text-xs uppercase tracking-widest text-neutral-500 mb-3">Collections</div>
             <ul className="space-y-2 text-neutral-700 dark:text-neutral-300">
-              <li>Shipping</li>
-              <li>Returns</li>
-              <li>Size Guide</li>
-              <li>Contact</li>
+              <li><Link href="/products?collection=mens" className="hover:underline">Men's Wear</Link></li>
+              <li><Link href="/products?collection=womens" className="hover:underline">Women's Wear</Link></li>
+              <li><Link href="/products" className="hover:underline">Shop All</Link></li>
             </ul>
           </div>
           <div>
@@ -241,7 +335,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                 placeholder="Your email"
                 className="flex-1 h-9 px-3 text-sm rounded-md border border-neutral-300 dark:border-neutral-700 bg-transparent focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100"
               />
-              <Button size="sm" className="h-9 rounded-md bg-neutral-900 dark:bg-white dark:text-neutral-900">→</Button>
+              <Button size="sm" className="h-9 rounded-md bg-neutral-900 dark:bg-white dark:text-neutral-900 active:scale-95 transition-transform">→</Button>
             </div>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { ArrowRight } from "lucide-react";
 import { ShopLayout } from "@/components/shop-layout";
+import { ProductCard } from "@/components/product-card";
 import { products, categories } from "@/lib/data";
 import imgPortrait from "@assets/Image_20260416035728_55_2_1776716993092.jpg";
 import imgSocks from "@assets/Image_20260416025624_54_2_1776717008197.jpg";
@@ -42,12 +43,12 @@ export default function ShopHome() {
         </div>
       </section>
 
-      {/* Categories */}
+      {/* Bepari Shops — sock categories */}
       <section className="container mx-auto px-5 py-20">
         <div className="flex items-end justify-between mb-10">
           <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-neutral-500 mb-2">Browse</p>
-            <h2 className="text-3xl sm:text-4xl font-light tracking-tight">Categories</h2>
+            <p className="text-xs uppercase tracking-[0.3em] text-neutral-500 mb-2">Bepari Shops</p>
+            <h2 className="text-3xl sm:text-4xl font-light tracking-tight">Sock Categories</h2>
           </div>
           <Link href="/products" className="hidden sm:inline-flex items-center text-sm font-medium hover:underline">
             View all <ArrowRight className="ml-2 h-4 w-4" />
@@ -56,16 +57,44 @@ export default function ShopHome() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {categories.map((c) => (
             <Link key={c.id} href={`/products?category=${c.id}`} className="group block">
-              <div className="relative aspect-[3/4] overflow-hidden rounded-xl bg-neutral-100 dark:bg-neutral-900">
-                <img src={c.image} alt={c.label} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4 text-white">
+              <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-neutral-100 dark:bg-neutral-900 shadow-sm transition-all duration-500 group-hover:shadow-2xl group-hover:-translate-y-1">
+                <img src={c.image} alt={c.label} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                <div className="absolute bottom-5 left-5 right-5 text-white">
                   <h3 className="text-lg font-medium">{c.label}</h3>
-                  <p className="text-xs text-white/70 mt-0.5">{c.tagline}</p>
+                  <p className="text-xs text-white/80 mt-0.5">{c.tagline}</p>
                 </div>
               </div>
             </Link>
           ))}
+        </div>
+      </section>
+
+      {/* Collections — Men's & Women's */}
+      <section className="container mx-auto px-5 pb-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+          <Link href="/products?collection=mens" className="group relative block aspect-[16/10] rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
+            <img src={imgTees} alt="Men's Wear" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+            <div className="absolute bottom-6 left-6 right-6 text-white">
+              <p className="text-[11px] uppercase tracking-[0.35em] text-white/80 mb-2">Collection</p>
+              <h3 className="text-2xl sm:text-3xl font-light">Men's Wear</h3>
+              <span className="inline-flex items-center mt-3 text-sm font-medium">
+                Shop now <ArrowRight className="ml-2 h-4 w-4" />
+              </span>
+            </div>
+          </Link>
+          <Link href="/products?collection=womens" className="group relative block aspect-[16/10] rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
+            <img src={imgPortrait} alt="Women's Wear" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+            <div className="absolute bottom-6 left-6 right-6 text-white">
+              <p className="text-[11px] uppercase tracking-[0.35em] text-white/80 mb-2">Collection</p>
+              <h3 className="text-2xl sm:text-3xl font-light">Women's Wear</h3>
+              <span className="inline-flex items-center mt-3 text-sm font-medium">
+                Shop now <ArrowRight className="ml-2 h-4 w-4" />
+              </span>
+            </div>
+          </Link>
         </div>
       </section>
 
@@ -99,18 +128,7 @@ export default function ShopHome() {
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {featured.map((p) => (
-            <Link key={p.id} href={`/product/${p.id}`} className="group block" data-testid={`product-${p.id}`}>
-              <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-neutral-100 dark:bg-neutral-900 mb-3">
-                <img src={p.image} alt={p.name} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              </div>
-              <div className="flex justify-between items-start gap-3">
-                <div>
-                  <h3 className="text-sm font-medium">{p.name}</h3>
-                  <p className="text-xs text-neutral-500 mt-0.5">{p.color}</p>
-                </div>
-                <span className="text-sm font-medium">${p.price.toFixed(2)}</span>
-              </div>
-            </Link>
+            <ProductCard key={p.id} product={p} />
           ))}
         </div>
       </section>
