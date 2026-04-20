@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { AppLayout } from "@/components/layout";
+import { AdminLayout } from "@/components/admin-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -178,7 +178,7 @@ export default function InventoryReportPage() {
   void futureYarnNeed; void totalYarnPurchased; void totalYarnUsed; // computed for parity, not displayed here
 
   return (
-    <AppLayout>
+    <AdminLayout>
       <div className="container mx-auto px-4 py-8 max-w-5xl space-y-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Inventory Report</h1>
@@ -281,6 +281,6 @@ export default function InventoryReportPage() {
           </CardContent>
         </Card>
       </div>
-    </AppLayout>
+    </AdminLayout>
   );
 }

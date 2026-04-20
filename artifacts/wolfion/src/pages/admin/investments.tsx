@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { AppLayout } from "@/components/layout";
+import { AdminLayout } from "@/components/admin-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -85,7 +85,7 @@ export default function InvestmentsPage() {
   };
 
   return (
-    <AppLayout>
+    <AdminLayout>
       <div className="container mx-auto px-4 py-8 max-w-6xl space-y-6">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-3"><Wallet className="h-8 w-8 text-primary" /> Investment & Investor</h1>
@@ -258,6 +258,6 @@ export default function InvestmentsPage() {
           </CardContent>
         </Card>
       </div>
-    </AppLayout>
+    </AdminLayout>
   );
 }

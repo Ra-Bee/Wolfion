@@ -1,4 +1,4 @@
-import { AppLayout } from "@/components/layout";
+import { AdminLayout } from "@/components/admin-layout";
 import { adminMetrics } from "@/lib/data";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -1160,7 +1160,7 @@ export default function Dashboard() {
   };
 
   return (
-    <AppLayout>
+    <AdminLayout>
       <div className="container mx-auto px-4 py-8 max-w-6xl space-y-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -2299,6 +2299,6 @@ export default function Dashboard() {
         </Card>
 
       </div>
-    </AppLayout>
+    </AdminLayout>
   );
 }

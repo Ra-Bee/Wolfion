@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { AppLayout } from "@/components/layout";
+import { AdminLayout } from "@/components/admin-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { TrendingUp, DollarSign, Package, Factory, Zap, Users as UsersIcon } from "lucide-react";
@@ -73,7 +73,7 @@ export default function ProfitDashboardPage() {
   }, [productTypes, sales]);
 
   return (
-    <AppLayout>
+    <AdminLayout>
       <div className="container mx-auto px-4 py-8 max-w-6xl space-y-6">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-3"><TrendingUp className="h-8 w-8 text-primary" /> Profit Dashboard</h1>
@@ -166,7 +166,7 @@ export default function ProfitDashboardPage() {
           </CardContent>
         </Card>
       </div>
-    </AppLayout>
+    </AdminLayout>
   );
 }
 

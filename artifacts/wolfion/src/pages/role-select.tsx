@@ -13,8 +13,8 @@ export default function RoleSelect() {
 
   useEffect(() => {
     // If role is already selected, redirect to the appropriate app
-    if (role === "customer") setLocation("/app");
-    if (role === "admin") setLocation("/admin");
+    if (role === "customer") setLocation("/shop");
+    if (role === "admin") setLocation("/admin-dashboard");
   }, [role, setLocation]);
 
   const selectRole = (selectedRole: "customer" | "admin") => {

@@ -1,5 +1,5 @@
 import { useMemo, useState, type FormEvent } from "react";
-import { AppLayout } from "@/components/layout";
+import { AdminLayout } from "@/components/admin-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -101,7 +101,7 @@ export default function LaborPayrollPage() {
   const totalEarnedAll = workerStats.reduce((a, b) => a + b.totalEarned, 0);
 
   return (
-    <AppLayout>
+    <AdminLayout>
       <div className="container mx-auto px-4 py-8 max-w-5xl space-y-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -258,6 +258,6 @@ export default function LaborPayrollPage() {
           </CardContent>
         </Card>
       </div>
-    </AppLayout>
+    </AdminLayout>
   );
 }

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { ClerkProvider, SignIn, SignUp, Show, useClerk, useUser } from '@clerk/react';
+import { ClerkProvider, useClerk, useUser } from '@clerk/react';
 import { Switch, Route, Redirect, useLocation, Router as WouterRouter } from 'wouter';
 import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -9,9 +9,13 @@ import Home from "@/pages/home";
 import SignInPage from "@/pages/auth/sign-in";
 import SignUpPage from "@/pages/auth/sign-up";
 import RoleSelect from "@/pages/role-select";
-import Shop from "@/pages/app/shop";
-import ProductDetail from "@/pages/app/product";
-import CheckoutSuccess from "@/pages/app/checkout-success";
+
+import ShopHome from "@/pages/shop/home";
+import Products from "@/pages/shop/products";
+import ProductDetail from "@/pages/shop/product";
+import Cart from "@/pages/shop/cart";
+import CheckoutSuccess from "@/pages/shop/checkout-success";
+
 import AdminDashboard from "@/pages/admin/dashboard";
 import InventoryReportPage from "@/pages/admin/inventory-report";
 import LaborPayrollPage from "@/pages/admin/labor-payroll";
@@ -21,6 +25,7 @@ import DailySalesPage from "@/pages/admin/daily-sales";
 import ProfitDashboardPage from "@/pages/admin/profit";
 import InvestmentsPage from "@/pages/admin/investments";
 import DebtsPage from "@/pages/admin/debts";
+
 import NotFound from "@/pages/not-found";
 import { useRole } from "@/hooks/use-role";
 import wolfionLogo from "@assets/Image_20260421042552_60_2_1776716788241.jpg";
@@ -44,7 +49,7 @@ const clerkAppearance = {
     logoImageUrl: `${window.location.origin}${wolfionLogo}`,
   },
   variables: {
-    colorPrimary: "hsl(21 100% 50%)", // primary orange
+    colorPrimary: "hsl(21 100% 50%)",
     colorBackground: "hsl(0 0% 100%)",
     colorInputBackground: "hsl(0 0% 98%)",
     colorText: "hsl(222 47% 11%)",
@@ -97,59 +102,41 @@ function ClerkQueryClientCacheInvalidator() {
   return null;
 }
 
-// Routes protecting logic
 function AppRouter() {
   const { isLoaded, isSignedIn } = useUser();
   const { role } = useRole();
 
-  // If user hits base path and is signed in, redirect them to role selection or their app
+  // Landing redirect based on role
   const HomeRedirect = () => {
     if (!isLoaded) return null;
     if (isSignedIn) {
-      if (!role) {
-        return <Redirect to="/role-select" />;
-      }
-      return <Redirect to={role === "admin" ? "/admin" : "/app"} />;
+      if (!role) return <Redirect to="/role-select" />;
+      return <Redirect to={role === "admin" ? "/admin-dashboard" : "/shop"} />;
     }
     return <Home />;
   };
 
-  // Protect customer app routes
-  const AppRouteWrapper = ({ children }: { children: React.ReactNode }) => {
+  // Customer-only routes (admins are redirected away)
+  const ShopRouteWrapper = ({ children }: { children: React.ReactNode }) => {
     if (!isLoaded) return null;
-    if (!isSignedIn) {
-      return <Redirect to="/sign-in" />;
-    }
-    if (!role) {
-      return <Redirect to="/role-select" />;
-    }
-    if (role === "admin") {
-      return <Redirect to="/admin" />;
-    }
+    if (!isSignedIn) return <Redirect to="/sign-in" />;
+    if (!role) return <Redirect to="/role-select" />;
+    if (role === "admin") return <Redirect to="/admin-dashboard" />;
     return <>{children}</>;
   };
 
-  // Protect admin routes
+  // Admin-only routes (customers are redirected away)
   const AdminRouteWrapper = ({ children }: { children: React.ReactNode }) => {
     if (!isLoaded) return null;
-    if (!isSignedIn) {
-      return <Redirect to="/sign-in" />;
-    }
-    if (!role) {
-      return <Redirect to="/role-select" />;
-    }
-    if (role === "customer") {
-      return <Redirect to="/app" />;
-    }
+    if (!isSignedIn) return <Redirect to="/sign-in" />;
+    if (!role) return <Redirect to="/role-select" />;
+    if (role === "customer") return <Redirect to="/shop" />;
     return <>{children}</>;
   };
 
-  // Protect role selection (must be signed in, but maybe already has a role)
   const RoleSelectRoute = () => {
     if (!isLoaded) return null;
-    if (!isSignedIn) {
-      return <Redirect to="/sign-in" />;
-    }
+    if (!isSignedIn) return <Redirect to="/sign-in" />;
     return <RoleSelect />;
   };
 
@@ -158,52 +145,38 @@ function AppRouter() {
       <Route path="/" component={HomeRedirect} />
       <Route path="/sign-in/*?" component={SignInPage} />
       <Route path="/sign-up/*?" component={SignUpPage} />
-      
       <Route path="/role-select" component={RoleSelectRoute} />
-      
-      <Route path="/app">
-        <AppRouteWrapper><Shop /></AppRouteWrapper>
-      </Route>
+
+      {/* ===== Customer App ===== */}
+      <Route path="/shop"><ShopRouteWrapper><ShopHome /></ShopRouteWrapper></Route>
+      <Route path="/products"><ShopRouteWrapper><Products /></ShopRouteWrapper></Route>
+      <Route path="/product/:id"><ShopRouteWrapper><ProductDetail /></ShopRouteWrapper></Route>
+      <Route path="/cart"><ShopRouteWrapper><Cart /></ShopRouteWrapper></Route>
+      <Route path="/checkout-success"><ShopRouteWrapper><CheckoutSuccess /></ShopRouteWrapper></Route>
+
+      {/* Legacy customer paths → redirect to new shop */}
+      <Route path="/app"><Redirect to="/shop" /></Route>
       <Route path="/app/product/:id">
-        <AppRouteWrapper><ProductDetail /></AppRouteWrapper>
+        {(params) => <Redirect to={`/product/${params.id}`} />}
       </Route>
-      <Route path="/app/checkout-success">
-        <AppRouteWrapper><CheckoutSuccess /></AppRouteWrapper>
-      </Route>
-      
-      <Route path="/admin">
-        <AdminRouteWrapper><AdminDashboard /></AdminRouteWrapper>
-      </Route>
-      <Route path="/admin/inventory-report">
-        <AdminRouteWrapper><InventoryReportPage /></AdminRouteWrapper>
-      </Route>
-      <Route path="/admin/labor-payroll">
-        <AdminRouteWrapper><LaborPayrollPage /></AdminRouteWrapper>
-      </Route>
-      <Route path="/admin/yarn-calculation">
-        <AdminRouteWrapper><YarnCalculationPage /></AdminRouteWrapper>
-      </Route>
-      <Route path="/admin/daily-production">
-        <AdminRouteWrapper><DailyProductionPage /></AdminRouteWrapper>
-      </Route>
-      <Route path="/admin/daily-sales">
-        <AdminRouteWrapper><DailySalesPage /></AdminRouteWrapper>
-      </Route>
-      <Route path="/admin/profit">
-        <AdminRouteWrapper><ProfitDashboardPage /></AdminRouteWrapper>
-      </Route>
-      <Route path="/admin/investments">
-        <AdminRouteWrapper><InvestmentsPage /></AdminRouteWrapper>
-      </Route>
-      <Route path="/admin/debts">
-        <AdminRouteWrapper><DebtsPage /></AdminRouteWrapper>
-      </Route>
+      <Route path="/app/checkout-success"><Redirect to="/checkout-success" /></Route>
+
+      {/* ===== Admin App ===== */}
+      <Route path="/admin-dashboard"><AdminRouteWrapper><AdminDashboard /></AdminRouteWrapper></Route>
+      <Route path="/admin"><Redirect to="/admin-dashboard" /></Route>
+      <Route path="/admin/inventory-report"><AdminRouteWrapper><InventoryReportPage /></AdminRouteWrapper></Route>
+      <Route path="/admin/labor-payroll"><AdminRouteWrapper><LaborPayrollPage /></AdminRouteWrapper></Route>
+      <Route path="/admin/yarn-calculation"><AdminRouteWrapper><YarnCalculationPage /></AdminRouteWrapper></Route>
+      <Route path="/admin/daily-production"><AdminRouteWrapper><DailyProductionPage /></AdminRouteWrapper></Route>
+      <Route path="/admin/daily-sales"><AdminRouteWrapper><DailySalesPage /></AdminRouteWrapper></Route>
+      <Route path="/admin/profit"><AdminRouteWrapper><ProfitDashboardPage /></AdminRouteWrapper></Route>
+      <Route path="/admin/investments"><AdminRouteWrapper><InvestmentsPage /></AdminRouteWrapper></Route>
+      <Route path="/admin/debts"><AdminRouteWrapper><DebtsPage /></AdminRouteWrapper></Route>
 
       <Route component={NotFound} />
     </Switch>
   );
 }
-
 
 function ClerkProviderWithRoutes() {
   const [, setLocation] = useLocation();
@@ -218,18 +191,8 @@ function ClerkProviderWithRoutes() {
       proxyUrl={clerkProxyUrl}
       appearance={clerkAppearance}
       localization={{
-        signIn: {
-          start: {
-            title: "Welcome back",
-            subtitle: "Sign in to access your account",
-          },
-        },
-        signUp: {
-          start: {
-            title: "Join Wolfion",
-            subtitle: "Get access to member exclusives.",
-          },
-        },
+        signIn: { start: { title: "Welcome back", subtitle: "Sign in to access your account" } },
+        signUp: { start: { title: "Join Wolfion", subtitle: "Get access to member exclusives." } },
       }}
       routerPush={(to) => setLocation(stripBase(to))}
       routerReplace={(to) => setLocation(stripBase(to), { replace: true })}

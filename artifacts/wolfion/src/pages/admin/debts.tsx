@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { AppLayout } from "@/components/layout";
+import { AdminLayout } from "@/components/admin-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -106,7 +106,7 @@ export default function DebtsPage() {
   const debtLabel = (d: Debt) => `${d.personName} — ${money(d.amount)} (${formatDateLabel(d.date)})`;
 
   return (
-    <AppLayout>
+    <AdminLayout>
       <div className="container mx-auto px-4 py-8 max-w-6xl space-y-6">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-3"><HandCoins className="h-8 w-8 text-primary" /> Debt Management</h1>
@@ -289,6 +289,6 @@ export default function DebtsPage() {
           </CardContent>
         </Card>
       </div>
-    </AppLayout>
+    </AdminLayout>
   );
 }
