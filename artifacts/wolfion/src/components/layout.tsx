@@ -3,9 +3,17 @@ import { Link, useLocation } from 'wouter';
 import { useUser, useClerk } from '@clerk/react';
 import { useRole } from '@/hooks/use-role';
 import { useCart } from '@/hooks/use-cart';
-import { ShoppingBag, User, LogOut, Menu, X, ArrowRight, ShieldCheck, Home, Sun, Moon } from 'lucide-react';
+import { ShoppingBag, User, LogOut, Menu, X, ArrowRight, ShieldCheck, Home, Sun, Moon, MoreVertical, FileText, Users as UsersIcon, Wrench } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from '@/components/ui/sheet';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useTheme } from '@/hooks/use-theme';
 import wolfionLogo from "@assets/Rabby_1776709654876.jpg";
 
@@ -137,6 +145,36 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </CartDrawer>
             )}
             
+            {!isCustomer && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" aria-label="Admin actions">
+                    <MoreVertical className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>Management</DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => setLocation('/admin/inventory-report')}>
+                    <FileText className="h-4 w-4 mr-2" />
+                    Inventory Report
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setLocation('/admin/labor-payroll')}>
+                    <UsersIcon className="h-4 w-4 mr-2" />
+                    Labor Payroll
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setLocation('/admin/yarn-calculation')}>
+                    <Wrench className="h-4 w-4 mr-2" />
+                    Yarn Calculation
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Sign out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">

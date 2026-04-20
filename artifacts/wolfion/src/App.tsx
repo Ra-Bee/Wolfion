@@ -13,6 +13,9 @@ import Shop from "@/pages/app/shop";
 import ProductDetail from "@/pages/app/product";
 import CheckoutSuccess from "@/pages/app/checkout-success";
 import AdminDashboard from "@/pages/admin/dashboard";
+import InventoryReportPage from "@/pages/admin/inventory-report";
+import LaborPayrollPage from "@/pages/admin/labor-payroll";
+import YarnCalculationPage from "@/pages/admin/yarn-calculation";
 import NotFound from "@/pages/not-found";
 import { useRole } from "@/hooks/use-role";
 import wolfionLogo from "@assets/Rabby_1776709654876.jpg";
@@ -165,6 +168,15 @@ function AppRouter() {
       
       <Route path="/admin">
         <AdminRouteWrapper><AdminDashboard /></AdminRouteWrapper>
+      </Route>
+      <Route path="/admin/inventory-report">
+        <AdminRouteWrapper><InventoryReportPage /></AdminRouteWrapper>
+      </Route>
+      <Route path="/admin/labor-payroll">
+        <AdminRouteWrapper><LaborPayrollPage /></AdminRouteWrapper>
+      </Route>
+      <Route path="/admin/yarn-calculation">
+        <AdminRouteWrapper><YarnCalculationPage /></AdminRouteWrapper>
       </Route>
 
       <Route component={NotFound} />
