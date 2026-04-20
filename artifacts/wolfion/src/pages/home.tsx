@@ -18,7 +18,7 @@ export default function Home() {
         <div className="w-full max-w-xl mx-auto flex flex-col items-center text-center">
           {/* Wordmark */}
           <h1
-            className="text-6xl sm:text-7xl md:text-8xl font-bold tracking-[0.04em] text-white animate-in fade-in slide-in-from-bottom-3 duration-1000 fill-mode-both"
+            className="text-6xl sm:text-7xl md:text-8xl font-bold tracking-[0.04em] text-white animate-in fade-in duration-700"
             style={{ textShadow: "0 4px 30px rgba(255,255,255,0.08)" }}
             data-testid="landing-wordmark"
           >
@@ -27,17 +27,17 @@ export default function Home() {
 
           {/* Minimal subtext */}
           <p
-            className="mt-6 text-xs sm:text-sm uppercase tracking-[0.4em] text-white/70 font-light animate-in fade-in duration-1000 delay-300 fill-mode-both"
+            className="mt-6 text-xs sm:text-sm uppercase tracking-[0.4em] text-white/70 font-light"
             data-testid="landing-subtext"
           >
             Built on identity
           </p>
 
           {/* Button */}
-          <div className="mt-14 animate-in fade-in slide-in-from-bottom-3 duration-1000 delay-500 fill-mode-both">
+          <div className="mt-14">
             <Link href="/sign-up">
               <button
-                className="group h-13 px-12 py-4 rounded-full bg-white text-black text-sm font-semibold tracking-[0.18em] uppercase shadow-2xl shadow-white/10 hover:bg-neutral-100 hover:shadow-white/20 active:scale-[0.98] transition-all inline-flex items-center justify-center"
+                className="group h-14 px-12 rounded-full bg-white text-black text-sm font-semibold tracking-[0.18em] uppercase shadow-2xl shadow-white/10 hover:bg-neutral-100 hover:shadow-white/20 active:scale-[0.98] transition-all inline-flex items-center justify-center"
                 data-testid="landing-enter-store"
               >
                 Enter Store
