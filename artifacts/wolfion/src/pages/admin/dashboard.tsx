@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Activity, DollarSign, Package, Factory, TrendingUp, Plus, Zap } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 
 type ProductType = "short-socks" | "ankle-socks" | "kids-socks";
@@ -248,6 +249,30 @@ export default function Dashboard() {
     (Number(dailyIronCost) || 0);
   const livePreviewProductionDozen = Number(dailyProductionDozen) || 0;
   const livePreviewCostPerDozen = livePreviewProductionDozen > 0 ? livePreviewTotalCost / livePreviewProductionDozen : 0;
+  const today = getToday();
+  const todayEntries = dailyEntries.filter((entry) => entry.date === today);
+  const todayProductionDozen = todayEntries.reduce((total, entry) => total + entry.totalProductionDozen, 0);
+  const todayTotalCost = todayEntries.reduce((total, entry) => total + entry.totalCost, 0);
+  const todayCostPerDozen = todayProductionDozen > 0 ? todayTotalCost / todayProductionDozen : 0;
+  const last7DaysChartData = useMemo(() => {
+    const days: { date: string; label: string; production: number; cost: number; costPerDozen: number }[] = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const iso = d.toISOString().slice(0, 10);
+      const entries = dailyEntries.filter((entry) => entry.date === iso);
+      const production = entries.reduce((total, entry) => total + entry.totalProductionDozen, 0);
+      const cost = entries.reduce((total, entry) => total + entry.totalCost, 0);
+      days.push({
+        date: iso,
+        label: d.toLocaleDateString(undefined, { weekday: "short" }),
+        production,
+        cost,
+        costPerDozen: production > 0 ? cost / production : 0,
+      });
+    }
+    return days;
+  }, [dailyEntries]);
   function formatDateLabel(isoDate: string) {
     const today = getToday();
     const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
@@ -537,7 +562,25 @@ export default function Dashboard() {
               </div>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-6">
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="rounded-2xl border bg-primary/5 p-5">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Production today</p>
+                <p className="mt-2 text-3xl font-bold">{todayProductionDozen.toLocaleString()} <span className="text-base font-medium text-muted-foreground">dozen</span></p>
+                <p className="mt-1 text-xs text-muted-foreground">{todayEntries.length} entries today</p>
+              </div>
+              <div className="rounded-2xl border bg-primary/5 p-5">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total cost today</p>
+                <p className="mt-2 text-3xl font-bold">${todayTotalCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                <p className="mt-1 text-xs text-muted-foreground">Yarn + labor + packaging + finishing</p>
+              </div>
+              <div className="rounded-2xl border bg-primary/5 p-5">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Cost per dozen</p>
+                <p className="mt-2 text-3xl font-bold">${todayCostPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                <p className="mt-1 text-xs text-muted-foreground">Today's average</p>
+              </div>
+            </div>
+
             <form onSubmit={handleAddDailyEntry} className="space-y-5">
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <div className="space-y-2">
@@ -686,7 +729,52 @@ export default function Dashboard() {
               </Button>
             </form>
 
-            <div className="mt-8 space-y-3">
+            <div className="grid gap-4 lg:grid-cols-2">
+              <div className="rounded-2xl border bg-card p-4">
+                <div className="mb-3 flex items-baseline justify-between">
+                  <h3 className="text-sm font-semibold">Production over last 7 days</h3>
+                  <span className="text-xs text-muted-foreground">in dozen</span>
+                </div>
+                <div className="h-56 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={last7DaysChartData} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                      <XAxis dataKey="label" tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} />
+                      <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} allowDecimals={false} />
+                      <Tooltip
+                        cursor={{ fill: "hsl(var(--muted))", opacity: 0.4 }}
+                        contentStyle={{ borderRadius: 12, border: "1px solid hsl(var(--border))", fontSize: 12 }}
+                        formatter={(value: number) => [`${value.toLocaleString()} dozen`, "Production"]}
+                      />
+                      <Bar dataKey="production" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border bg-card p-4">
+                <div className="mb-3 flex items-baseline justify-between">
+                  <h3 className="text-sm font-semibold">Cost trend</h3>
+                  <span className="text-xs text-muted-foreground">cost per dozen</span>
+                </div>
+                <div className="h-56 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={last7DaysChartData} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                      <XAxis dataKey="label" tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} />
+                      <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} />
+                      <Tooltip
+                        contentStyle={{ borderRadius: 12, border: "1px solid hsl(var(--border))", fontSize: 12 }}
+                        formatter={(value: number) => [`$${value.toLocaleString(undefined, { maximumFractionDigits: 2 })}`, "Cost / dozen"]}
+                      />
+                      <Line type="monotone" dataKey="costPerDozen" stroke="hsl(var(--primary))" strokeWidth={3} dot={{ r: 4, fill: "hsl(var(--primary))" }} activeDot={{ r: 6 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold">Past entries</h3>
                 <span className="text-xs text-muted-foreground">{sortedDailyEntries.length} records</span>
