@@ -15,6 +15,8 @@ import Products from "@/pages/shop/products";
 import ProductDetail from "@/pages/shop/product";
 import Cart from "@/pages/shop/cart";
 import CheckoutSuccess from "@/pages/shop/checkout-success";
+import AboutPage from "@/pages/shop/about";
+import ContactPage from "@/pages/shop/contact";
 
 import AdminDashboard from "@/pages/admin/dashboard";
 import InventoryReportPage from "@/pages/admin/inventory-report";
@@ -153,6 +155,8 @@ function AppRouter() {
       <Route path="/product/:id"><ShopRouteWrapper><ProductDetail /></ShopRouteWrapper></Route>
       <Route path="/cart"><ShopRouteWrapper><Cart /></ShopRouteWrapper></Route>
       <Route path="/checkout-success"><ShopRouteWrapper><CheckoutSuccess /></ShopRouteWrapper></Route>
+      <Route path="/about"><ShopRouteWrapper><AboutPage /></ShopRouteWrapper></Route>
+      <Route path="/contact"><ShopRouteWrapper><ContactPage /></ShopRouteWrapper></Route>
 
       {/* Legacy customer paths → redirect to new shop */}
       <Route path="/app"><Redirect to="/shop" /></Route>
@@ -192,7 +196,7 @@ function ClerkProviderWithRoutes() {
       appearance={clerkAppearance}
       localization={{
         signIn: { start: { title: "Welcome back", subtitle: "Sign in to access your account" } },
-        signUp: { start: { title: "Join Ultion", subtitle: "Get access to member exclusives." } },
+        signUp: { start: { title: "Join Wolfion", subtitle: "Get access to member exclusives." } },
       }}
       routerPush={(to) => setLocation(stripBase(to))}
       routerReplace={(to) => setLocation(stripBase(to), { replace: true })}

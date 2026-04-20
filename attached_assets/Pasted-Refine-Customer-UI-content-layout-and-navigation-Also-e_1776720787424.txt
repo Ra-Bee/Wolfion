@@ -1,0 +1,126 @@
+Refine Customer UI content, layout, and navigation. Also extend menu features similar to admin.
+
+-----------------------------------
+1. HERO TEXT (IMPORTANT FIX)
+-----------------------------------
+Replace current slogan:
+
+- Remove:
+  "Built Different. Worn Better."
+
+- Replace with:
+  "Let your fashion speak before you do."
+
+(Optional secondary line):
+  "Built different. Own the rest."
+
+-----------------------------------
+2. HERO IMAGE ADJUSTMENT
+-----------------------------------
+- Adjust hero image (man photo):
+  - Do NOT show full face completely
+  - Slight crop for cinematic look
+  - Keep premium fashion style
+
+-----------------------------------
+3. BRAND DESCRIPTION FIX
+-----------------------------------
+Replace incorrect text:
+
+- Remove:
+  "Wolfion is not just socks..."
+
+- Replace with:
+
+"Wolfion is not just a brand.
+It’s fashion, preparation, comfort, and identity — built from the ground up."
+
+-----------------------------------
+4. REDUCE SPACE (IMPORTANT)
+-----------------------------------
+- Reduce height of brand description section
+- Avoid large empty spacing
+- Keep it compact and premium
+
+-----------------------------------
+5. KEEP / FIX SECTIONS
+-----------------------------------
+- Keep:
+  "Bapari Socks – Engineered Comfort"
+
+- Keep:
+  "Collection – Everyday Essentials"
+
+-----------------------------------
+6. REMOVE SECTION
+-----------------------------------
+- Remove:
+  "This Week Featured Drop"
+
+-----------------------------------
+7. REORDER SECTIONS
+-----------------------------------
+- Move:
+  "Everyday Essentials" section ABOVE featured products
+
+-----------------------------------
+8. CUSTOMER MENU (LIKE ADMIN MENU)
+-----------------------------------
+In customer mode, inside the top-right menu (same area as cart):
+
+Add full navigation:
+
+- Home
+- Shop
+- Bapari Socks
+    - Short socks
+    - Ankle socks
+    - Kids socks
+    - Other socks
+- Collection
+    - Menswear
+    - Womenswear
+    - Kidswear
+- Contact
+- About
+
+-----------------------------------
+9. CONTACT SECTION 🔥
+-----------------------------------
+Create "Contact" page:
+
+Include:
+- Facebook link
+- Instagram link
+- Other social links
+- Website link
+
+Show:
+- Icons (logo of each platform)
+- Clickable links
+
+-----------------------------------
+10. ABOUT SECTION 🔥
+-----------------------------------
+Create "About" page:
+
+- Display uploaded image (your photo)
+- Add text (I will provide content later)
+
+Layout:
+- Image + text side-by-side
+- Clean and professional
+
+-----------------------------------
+11. UI STYLE
+-----------------------------------
+- Premium fashion brand feel
+- Clean spacing
+- Cinematic visuals
+- Smooth layout
+
+-----------------------------------
+IMPORTANT:
+Customer UI must feel like a real fashion brand.
+Content must be correct, minimal, and premium.
+Navigation must be complete and easy to access.

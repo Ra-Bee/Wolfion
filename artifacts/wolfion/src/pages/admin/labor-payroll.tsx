@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { FileDown, Plus, Trash2, Users, DollarSign } from "lucide-react";
-import { downloadReport, type UltionReportData, type ReportRange } from "@/lib/reports";
+import { downloadReport, type WolfionReportData, type ReportRange } from "@/lib/reports";
 import {
   STORAGE_KEYS,
   defaultProductTypes,
@@ -73,7 +73,7 @@ export default function LaborPayrollPage() {
   function handleDownloadLaborReport() {
     const today = getToday();
     const range: ReportRange = { label: `Labor Payroll Report — ${today}`, startDate: today, endDate: today };
-    const data: UltionReportData = {
+    const data: WolfionReportData = {
       range,
       productTypeLabels,
       production: [],
@@ -93,7 +93,7 @@ export default function LaborPayrollPage() {
         amount: p.amount,
       })),
     };
-    downloadReport(data, `Ultion_Labor_Payroll_${today}.pdf`);
+    downloadReport(data, `Wolfion_Labor_Payroll_${today}.pdf`);
   }
 
   const totalPayable = workerStats.reduce((a, b) => a + b.remaining, 0);

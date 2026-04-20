@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { FileDown, Calendar as CalendarIcon, TrendingUp, Package, DollarSign, Factory } from "lucide-react";
-import { downloadReport, type UltionReportData, type ReportRange } from "@/lib/reports";
+import { downloadReport, type WolfionReportData, type ReportRange } from "@/lib/reports";
 import {
   STORAGE_KEYS,
   defaultProductTypes,
@@ -136,7 +136,7 @@ export default function InventoryReportPage() {
       return { name: w.name, totalEarned: earned, totalPaid: paid, remaining: earned - paid };
     });
 
-    const data: UltionReportData = {
+    const data: WolfionReportData = {
       range,
       productTypeLabels,
       production: filteredProd.map((e) => ({ date: e.date, productType: e.productType, quantityDozen: e.quantityDozen })),
@@ -168,7 +168,7 @@ export default function InventoryReportPage() {
     };
 
     const stamp = range.startDate === range.endDate ? range.startDate : `${range.startDate}_to_${range.endDate}`;
-    downloadReport(data, `Ultion_Inventory_${stamp}.pdf`);
+    downloadReport(data, `Wolfion_Inventory_${stamp}.pdf`);
   }
 
   // Future yarn need based on current inventory and per-dozen rates

@@ -18,15 +18,15 @@ export default function ShopHome() {
       <section className="relative h-[100svh] min-h-[640px] w-full overflow-hidden bg-black text-white">
         <img
           src={imgPortrait}
-          alt="Ultion campaign"
+          alt="Wolfion campaign"
           className="absolute inset-0 h-full w-full object-cover opacity-80 scale-105 animate-in fade-in zoom-in-95 duration-[2000ms] fill-mode-both"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20" />
         <div className="relative z-10 h-full container mx-auto px-5 flex flex-col justify-end pb-20 sm:pb-28">
           <div className={`max-w-3xl ${FADE} delay-300`}>
-            <p className="text-[11px] uppercase tracking-[0.5em] text-white/70 mb-5">Ultion · 2026</p>
+            <p className="text-[11px] uppercase tracking-[0.5em] text-white/70 mb-5">Wolfion · 2026</p>
             <h1 className="text-6xl sm:text-8xl font-light leading-[0.92] tracking-tight">
-              ULTION
+              WOLFION
             </h1>
             <p className="mt-5 text-xl sm:text-2xl text-white/85 font-light tracking-wide">
               Built Different. <span className="font-serif italic text-white">Worn Better.</span>
@@ -55,7 +55,7 @@ export default function ShopHome() {
         <div className={`max-w-3xl mx-auto text-center ${FADE}`}>
           <p className="text-[11px] uppercase tracking-[0.5em] text-neutral-500 mb-8">The brand</p>
           <p className="text-2xl sm:text-4xl font-light leading-[1.35] tracking-tight text-neutral-900 dark:text-neutral-50">
-            Ultion is not just socks.
+            Wolfion is not just socks.
             <br />
             <span className="font-serif italic">It's precision, comfort, and identity</span>
             <br className="hidden sm:block" />
@@ -129,7 +129,7 @@ export default function ShopHome() {
 
       {/* 5 — EDITORIAL CRAFT BANNER */}
       <section className="relative h-[70vh] min-h-[480px] overflow-hidden">
-        <img src={imgSocks} alt="Ultion craftsmanship" className="absolute inset-0 h-full w-full object-cover" />
+        <img src={imgSocks} alt="Wolfion craftsmanship" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 to-transparent" />
         <div className="relative z-10 h-full container mx-auto px-5 flex items-center">
           <div className={`max-w-lg text-white ${FADE}`}>
