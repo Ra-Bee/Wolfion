@@ -5,44 +5,26 @@ export default function SignInPage() {
   const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
   return (
-    <div className="relative min-h-[100dvh] w-full overflow-hidden bg-black text-white">
-      {/* Subtle radial spotlight */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 70% 55% at 50% 35%, rgba(45,45,45,0.6) 0%, rgba(15,15,15,0.9) 50%, #000 85%)",
-        }}
-      />
-
-      <main className="relative z-10 min-h-[100dvh] flex flex-col items-center justify-center px-5 py-12">
+    <div className="min-h-[100dvh] w-full bg-white text-neutral-900" style={{ colorScheme: "light" }}>
+      <main className="min-h-[100dvh] flex flex-col items-center px-5 pt-14 pb-12">
         <div className="w-full max-w-[420px] flex flex-col items-center animate-in fade-in slide-in-from-bottom-2 duration-700">
           {/* Brand name on top */}
-          <div
-            className="text-2xl font-bold tracking-[0.18em] text-white uppercase"
-            style={{ textShadow: "0 2px 20px rgba(0,0,0,0.5)" }}
-          >
-            Wolfion
+          <div className="text-3xl font-bold tracking-tight text-black">
+            WOLFION
           </div>
 
           {/* Logo below brand name */}
-          <div className="mt-4 h-16 w-16 rounded-2xl bg-white shadow-2xl shadow-white/10 overflow-hidden ring-1 ring-white/10">
+          <div className="mt-5 h-16 w-16 rounded-2xl bg-white overflow-hidden ring-1 ring-neutral-200 shadow-sm">
             <img src={wolfionMark} alt="Wolfion" className="h-full w-full object-cover" />
           </div>
 
-          <h2
-            className="mt-8 text-xl font-semibold tracking-tight text-white"
-            style={{ textShadow: "0 2px 20px rgba(0,0,0,0.4)" }}
-          >
+          <h2 className="mt-10 text-xl font-semibold tracking-tight text-black">
             Welcome back
           </h2>
-          <p className="mt-3 text-[13px] text-white/70">Sign in to access your account</p>
+          <p className="mt-2 text-[13px] text-neutral-500">Sign in to access your account</p>
 
-          {/* Auth form — wrapped in light color-scheme to prevent Clerk auto-dark */}
-          <div
-            className="mt-8 w-full"
-            style={{ colorScheme: "light" }}
-          >
+          {/* Auth form */}
+          <div className="mt-8 w-full">
             <SignIn
               routing="path"
               path={`${basePath}/sign-in`}
@@ -53,7 +35,7 @@ export default function SignInPage() {
                   colorBackground: "#ffffff",
                   colorInputBackground: "#ffffff",
                   colorText: "#0a0a0a",
-                  colorTextSecondary: "#525252",
+                  colorTextSecondary: "#6b7280",
                   colorInputText: "#0a0a0a",
                   colorDanger: "#dc2626",
                   borderRadius: "12px",
@@ -61,33 +43,33 @@ export default function SignInPage() {
                 },
                 elements: {
                   rootBox: "w-full",
-                  cardBox: "shadow-2xl rounded-2xl",
-                  card: "!bg-white !text-neutral-900 !shadow-none !border-0 px-6 py-7",
+                  cardBox: "!shadow-none !border-0",
+                  card: "!bg-white !text-neutral-900 !shadow-none !border-0 !p-0",
                   logoBox: "!hidden",
                   logoImage: "!hidden",
                   header: "!hidden",
                   headerTitle: "!hidden",
                   headerSubtitle: "!hidden",
                   socialButtonsBlockButton:
-                    "!bg-white !text-neutral-900 !border !border-neutral-300 hover:!bg-neutral-50 h-11 font-medium",
+                    "!bg-white !text-neutral-900 !border !border-neutral-200 hover:!bg-neutral-50 h-11 font-medium !shadow-sm",
                   socialButtonsBlockButtonText: "!text-neutral-900 !font-medium",
                   socialButtonsBlockButtonArrow: "!text-neutral-900",
                   dividerLine: "!bg-neutral-200",
                   dividerText: "!text-neutral-500",
                   formFieldLabel: "!text-neutral-800 !font-medium",
                   formFieldInput:
-                    "!bg-white !text-neutral-900 !border !border-neutral-300 focus:!border-neutral-900 h-11",
+                    "!bg-white !text-neutral-900 !border !border-neutral-200 focus:!border-neutral-900 h-11 placeholder:!text-neutral-400",
                   formButtonPrimary:
-                    "!bg-neutral-900 hover:!bg-neutral-800 !text-white h-11 font-medium tracking-wide !shadow-none",
-                  footer: "!bg-white !border-t !border-neutral-100",
+                    "!bg-black hover:!bg-neutral-800 !text-white h-11 font-medium tracking-wide !rounded-xl !shadow-sm transition-colors",
+                  footer: "!bg-white !border-0",
                   footerAction: "!bg-white",
                   footerActionText: "!text-neutral-600",
                   footerActionLink:
-                    "!text-neutral-900 hover:!text-neutral-700 !font-semibold !no-underline",
+                    "!text-black hover:!text-neutral-700 !font-semibold !no-underline",
                   identityPreview: "!bg-neutral-50 !border-neutral-200",
                   identityPreviewText: "!text-neutral-900",
                   formFieldAction: "!text-neutral-700",
-                  formResendCodeLink: "!text-neutral-900",
+                  formResendCodeLink: "!text-black",
                   alertText: "!text-neutral-800",
                 },
               }}
