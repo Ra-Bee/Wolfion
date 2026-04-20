@@ -15,9 +15,9 @@ export default function AboutPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-          {/* Founder image */}
-          <div className={`${FADE} delay-100`}>
-            <div className="relative aspect-[4/5] rounded-3xl overflow-hidden bg-neutral-100 dark:bg-neutral-900 shadow-2xl">
+          {/* Founder image — circular */}
+          <div className={`${FADE} delay-100 flex flex-col items-center`}>
+            <div className="relative w-[260px] h-[260px] sm:w-[340px] sm:h-[340px] lg:w-[380px] lg:h-[380px] rounded-full overflow-hidden bg-neutral-100 dark:bg-neutral-900 shadow-2xl ring-1 ring-black/5 dark:ring-white/10">
               <img
                 src={founderImg}
                 alt="Md Rabby Bapari — Founder of Wolfion"
@@ -25,7 +25,7 @@ export default function AboutPage() {
                 data-testid="founder-image"
               />
             </div>
-            <p className="mt-5 text-xs uppercase tracking-[0.35em] text-neutral-500 text-center">
+            <p className="mt-6 text-xs uppercase tracking-[0.35em] text-neutral-500 text-center">
               Md Rabby Bapari · Founder
             </p>
           </div>

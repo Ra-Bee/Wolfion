@@ -58,9 +58,9 @@ export default function ShopHome() {
         <div className={`max-w-3xl mx-auto text-center ${FADE}`}>
           <p className="text-[11px] uppercase tracking-[0.5em] text-neutral-500 mb-5">The brand</p>
           <p className="text-xl sm:text-3xl font-light leading-[1.4] tracking-tight text-neutral-900 dark:text-neutral-50">
-            Wolfion is not just a brand.
+            Wolfion is not just a brand,
             <br />
-            <span className="font-serif italic">It's fashion, preparation, comfort, and identity</span>
+            <span className="font-serif italic">it's a personality, comfort, identity, and fashion</span>
             <span className="text-neutral-500"> — built from the ground up.</span>
           </p>
         </div>
