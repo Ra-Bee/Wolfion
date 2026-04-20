@@ -4,6 +4,10 @@
 
 pnpm workspace monorepo using TypeScript. Each package manages its own dependencies.
 
+## Artifacts
+
+- **Wolfion** (`artifacts/wolfion`) — React + Vite mobile-friendly web app for the Wolfion socks brand. Includes Clerk-powered login/sign-up, local role selection for Admin vs Customer, customer product browsing/cart/simple checkout, and an admin management dashboard with Production, Sales, Inventory, Yarn, and Cost & Profit sections.
+
 ## Stack
 
 - **Monorepo tool**: pnpm workspaces
@@ -15,6 +19,7 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - **Validation**: Zod (`zod/v4`), `drizzle-zod`
 - **API codegen**: Orval (from OpenAPI spec)
 - **Build**: esbuild (CJS bundle)
+- **Auth**: Clerk via Replit-managed auth setup for the Wolfion web app
 
 ## Key Commands
 
