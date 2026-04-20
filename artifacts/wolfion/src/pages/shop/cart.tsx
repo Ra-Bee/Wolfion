@@ -29,7 +29,7 @@ export default function Cart() {
         <div className="container mx-auto px-5 py-32 text-center max-w-md">
           <ShoppingBag className="mx-auto h-12 w-12 text-neutral-300 mb-6" />
           <h1 className="text-3xl font-light tracking-tight mb-3">Your bag is empty</h1>
-          <p className="text-sm text-neutral-500 mb-8">Discover the latest pieces from the Wolfion collection.</p>
+          <p className="text-sm text-neutral-500 mb-8">Discover the latest pieces from the Ultion collection.</p>
           <Link href="/products">
             <Button className="h-12 px-8 rounded-full bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900">
               Shop the collection <ArrowRight className="ml-2 h-4 w-4" />

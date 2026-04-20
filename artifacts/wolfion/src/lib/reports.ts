@@ -56,7 +56,7 @@ export type ReportRange = {
   endDate: string;
 };
 
-export type WolfionReportData = {
+export type UltionReportData = {
   range: ReportRange;
   productTypeLabels: Record<string, string>;
   production: ReportProductionEntry[];
@@ -137,7 +137,7 @@ function drawPageHeader(doc: jsPDF, range: ReportRange) {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(16);
   doc.setTextColor(...TEXT);
-  doc.text("Wolfion Inventory Report", logoX + logoSize + 6, logoY + 9);
+  doc.text("Ultion Inventory Report", logoX + logoSize + 6, logoY + 9);
 
   // Subtitle: range label + date span
   doc.setFont("helvetica", "normal");
@@ -157,7 +157,7 @@ function drawPageHeader(doc: jsPDF, range: ReportRange) {
   doc.setLineWidth(0.2);
 }
 
-export function generateWolfionReport(data: WolfionReportData): jsPDF {
+export function generateUltionReport(data: UltionReportData): jsPDF {
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const pageWidth = doc.internal.pageSize.getWidth();
 
@@ -363,7 +363,7 @@ export function generateWolfionReport(data: WolfionReportData): jsPDF {
     doc.setFontSize(8);
     doc.setTextColor(...MUTED);
     doc.text(
-      `Wolfion · Page ${i} of ${pages}`,
+      `Ultion · Page ${i} of ${pages}`,
       pageWidth / 2,
       doc.internal.pageSize.getHeight() - 8,
       { align: "center" },
@@ -373,8 +373,8 @@ export function generateWolfionReport(data: WolfionReportData): jsPDF {
   return doc;
 }
 
-export function downloadReport(data: WolfionReportData, filename?: string) {
-  const doc = generateWolfionReport(data);
+export function downloadReport(data: UltionReportData, filename?: string) {
+  const doc = generateUltionReport(data);
   const stamp = new Date().toISOString().slice(0, 10);
-  doc.save(filename || `Wolfion_Report_${stamp}.pdf`);
+  doc.save(filename || `Ultion_Report_${stamp}.pdf`);
 }

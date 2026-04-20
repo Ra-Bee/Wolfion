@@ -26,7 +26,7 @@ const PRIMARY_NAV = [
   { path: "/products", label: "Shop" },
 ];
 
-const BAPARI_SUBCATS = [
+const VAPORYX_SUBCATS = [
   { path: "/products?category=short", label: "Short Socks" },
   { path: "/products?category=ankle", label: "Ankle Socks" },
   { path: "/products?category=kids", label: "Kids Socks" },
@@ -71,7 +71,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
               </SheetTrigger>
               <SheetContent side="left" className="w-[320px] p-0 flex flex-col bg-white dark:bg-neutral-950">
                 <SheetHeader className="px-6 pt-7 pb-5 text-left border-b border-neutral-200 dark:border-neutral-800">
-                  <SheetTitle className="tracking-[0.3em] text-base">WOLFION</SheetTitle>
+                  <SheetTitle className="tracking-[0.3em] text-base">ULTION</SheetTitle>
                 </SheetHeader>
                 <nav className="flex-1 px-2 py-4 overflow-y-auto">
                   {PRIMARY_NAV.map((n) => (
@@ -85,13 +85,13 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                   ))}
 
                   <Accordion type="multiple" className="w-full">
-                    <AccordionItem value="bapari" className="border-none">
+                    <AccordionItem value="vaporyx" className="border-none">
                       <AccordionTrigger className="px-4 h-12 text-base font-light tracking-wide hover:no-underline rounded-md">
-                        Bapari Socks
+                        Vaporyx
                       </AccordionTrigger>
                       <AccordionContent className="pb-1">
                         <div className="flex flex-col">
-                          {BAPARI_SUBCATS.map((s) => (
+                          {VAPORYX_SUBCATS.map((s) => (
                             <SheetClose asChild key={s.path}>
                               <Link href={s.path}>
                                 <Button variant="ghost" className="w-full justify-start h-11 pl-8 text-sm font-light text-neutral-600 dark:text-neutral-300">
@@ -160,9 +160,9 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
           {/* Logo */}
           <Link href="/shop" className="flex items-center gap-2 flex-shrink-0" data-testid="link-logo">
             <div className="h-8 w-8 rounded-md bg-black flex items-center justify-center overflow-hidden shadow-sm">
-              <img src={imgLogoWhite} alt="Wolfion" className="h-full w-full object-contain p-0.5" />
+              <img src={imgLogoWhite} alt="Ultion" className="h-full w-full object-contain p-0.5" />
             </div>
-            <span className="font-semibold tracking-[0.3em] text-sm sm:text-base whitespace-nowrap">WOLFION</span>
+            <span className="font-semibold tracking-[0.3em] text-sm sm:text-base whitespace-nowrap">ULTION</span>
           </Link>
 
           {/* Desktop nav — minimal 4 items, no overlap */}
@@ -185,14 +185,14 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
               );
             })}
 
-            {/* Wolfion dropdown — sock subcategories */}
+            {/* Ultion dropdown — sock subcategories */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
                   className="inline-flex items-center gap-1 text-[12px] uppercase tracking-[0.2em] font-medium whitespace-nowrap text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-50 transition-colors outline-none"
-                  data-testid="nav-bapari"
+                  data-testid="nav-vaporyx"
                 >
-                  Bapari Socks
+                  Vaporyx
                   <ChevronDown className="h-3 w-3 opacity-70" />
                 </button>
               </DropdownMenuTrigger>
@@ -205,13 +205,13 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                   Socks
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-neutral-200/70 dark:bg-neutral-800/70" />
-                {BAPARI_SUBCATS.map((s) => (
+                {VAPORYX_SUBCATS.map((s) => (
                   <DropdownMenuItem
                     key={s.path}
                     asChild
                     className="text-sm rounded-lg cursor-pointer focus:bg-neutral-100 dark:focus:bg-neutral-800 py-2.5"
                   >
-                    <Link href={s.path} data-testid={`bapari-${s.label}`}>
+                    <Link href={s.path} data-testid={`vaporyx-${s.label}`}>
                       {s.label}
                     </Link>
                   </DropdownMenuItem>
@@ -336,15 +336,15 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
       <footer className="border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 mt-20">
         <div className="container mx-auto px-5 py-12 grid grid-cols-2 md:grid-cols-4 gap-8 text-sm">
           <div className="col-span-2 md:col-span-1">
-            <div className="font-semibold tracking-[0.3em] mb-3">WOLFION</div>
+            <div className="font-semibold tracking-[0.3em] mb-3">ULTION</div>
             <p className="text-neutral-500 text-xs leading-relaxed max-w-xs">
               Sharp design. Uncompromising comfort. Crafted for those who know details matter.
             </p>
           </div>
           <div>
-            <div className="text-xs uppercase tracking-widest text-neutral-500 mb-3">Bapari Socks</div>
+            <div className="text-xs uppercase tracking-widest text-neutral-500 mb-3">Vaporyx</div>
             <ul className="space-y-2 text-neutral-700 dark:text-neutral-300">
-              {BAPARI_SUBCATS.map((s) => (
+              {VAPORYX_SUBCATS.map((s) => (
                 <li key={s.path}>
                   <Link href={s.path} className="hover:underline">{s.label}</Link>
                 </li>
@@ -375,7 +375,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
         <div className="border-t border-neutral-200 dark:border-neutral-800 py-5 text-center text-xs text-neutral-500">
-          © {new Date().getFullYear()} Wolfion. All rights reserved.
+          © {new Date().getFullYear()} Ultion. All rights reserved.
         </div>
       </footer>
     </div>

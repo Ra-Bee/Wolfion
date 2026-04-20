@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useClerk } from "@clerk/react";
 import { useLocation } from "wouter";
-import { downloadReport, type WolfionReportData, type ReportRange } from "@/lib/reports";
+import { downloadReport, type UltionReportData, type ReportRange } from "@/lib/reports";
 import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -1059,7 +1059,7 @@ export default function Dashboard() {
   function downloadInventorySnapshot() {
     const today = getToday();
     const range: ReportRange = { label: `Inventory Report — ${today}`, startDate: today, endDate: today };
-    const data: WolfionReportData = {
+    const data: UltionReportData = {
       range,
       productTypeLabels,
       production: [],
@@ -1070,7 +1070,7 @@ export default function Dashboard() {
       labor: [],
       payments: [],
     };
-    downloadReport(data, `Wolfion_Inventory_${today}.pdf`);
+    downloadReport(data, `Ultion_Inventory_${today}.pdf`);
   }
 
   function handleDownloadReport() {
@@ -1078,7 +1078,7 @@ export default function Dashboard() {
     if (err) { setReportError(err); return; }
     setReportError("");
     const range = getReportRange();
-    const data: WolfionReportData = {
+    const data: UltionReportData = {
       range,
       productTypeLabels,
       production: productionEntries.map((e) => ({
@@ -1115,7 +1115,7 @@ export default function Dashboard() {
     const stamp = range.startDate === range.endDate
       ? range.startDate
       : `${range.startDate}_to_${range.endDate}`;
-    downloadReport(data, `Wolfion_Report_${stamp}.pdf`);
+    downloadReport(data, `Ultion_Report_${stamp}.pdf`);
     setReportDialogOpen(false);
   }
 

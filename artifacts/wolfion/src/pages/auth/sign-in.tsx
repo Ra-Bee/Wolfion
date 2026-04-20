@@ -15,7 +15,7 @@ export default function SignInPage() {
       <aside className="relative hidden lg:block overflow-hidden bg-black text-white">
         <img
           src={imgPortrait}
-          alt="Wolfion"
+          alt="Ultion"
           className="absolute inset-0 h-full w-full object-cover opacity-70"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/20" />
@@ -25,18 +25,18 @@ export default function SignInPage() {
             <div className="h-12 w-12 rounded-xl bg-white/10 backdrop-blur-md ring-1 ring-white/20 overflow-hidden flex items-center justify-center">
               <img src={imgLogoWhite} alt="" className="h-full w-full object-contain p-1" />
             </div>
-            <span className="text-base font-semibold tracking-[0.22em] whitespace-nowrap">WOLFION</span>
+            <span className="text-base font-semibold tracking-[0.22em] whitespace-nowrap">ULTION</span>
           </div>
 
           <div className="grid grid-cols-3 gap-3">
             <figure className="col-span-2 aspect-[4/3] rounded-2xl overflow-hidden ring-1 ring-white/10">
-              <img src={imgSocks} alt="Wolfion collection" className="h-full w-full object-cover" />
+              <img src={imgSocks} alt="Ultion collection" className="h-full w-full object-cover" />
             </figure>
             <figure className="aspect-[3/4] rounded-2xl overflow-hidden ring-1 ring-white/10">
-              <img src={imgLogoEmbroidered} alt="Embroidered Wolfion logo" className="h-full w-full object-cover" />
+              <img src={imgLogoEmbroidered} alt="Embroidered Ultion logo" className="h-full w-full object-cover" />
             </figure>
             <figure className="col-span-3 aspect-[16/7] rounded-2xl overflow-hidden ring-1 ring-white/10">
-              <img src={imgTees} alt="Wolfion apparel" className="h-full w-full object-cover" />
+              <img src={imgTees} alt="Ultion apparel" className="h-full w-full object-cover" />
             </figure>
           </div>
 
@@ -46,7 +46,7 @@ export default function SignInPage() {
               <span className="italic font-serif text-primary">Uncompromising comfort.</span>
             </h2>
             <p className="mt-3 text-sm text-white/60 max-w-md">
-              Welcome back to Wolfion — sign in to continue shopping the latest pieces from our collection.
+              Welcome back to Ultion — sign in to continue shopping the latest pieces from our collection.
             </p>
           </div>
         </div>
@@ -63,10 +63,10 @@ export default function SignInPage() {
         <div className="relative z-10 w-full max-w-[400px] lg:mt-0 mt-32">
           <div className="flex flex-col items-center mb-8">
             <div className="h-16 w-16 rounded-2xl bg-black flex items-center justify-center shadow-lg shadow-primary/20 overflow-hidden">
-              <img src={wolfionMark} alt="Wolfion" className="h-full w-full object-cover" />
+              <img src={wolfionMark} alt="Ultion" className="h-full w-full object-cover" />
             </div>
             <h1 className="mt-4 text-2xl font-semibold">Welcome back</h1>
-            <p className="text-sm text-muted-foreground">Sign in to your Wolfion account</p>
+            <p className="text-sm text-muted-foreground">Sign in to your Ultion account</p>
           </div>
           <SignIn routing="path" path={`${basePath}/sign-in`} signUpUrl={`${basePath}/sign-up`} />
         </div>

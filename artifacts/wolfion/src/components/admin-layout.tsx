@@ -52,10 +52,10 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             data-testid="link-admin-home"
           >
             <div className="h-8 w-8 rounded-md bg-black overflow-hidden flex items-center justify-center">
-              <img src={wolfionLogo} alt="Wolfion" className="h-full w-full object-cover" />
+              <img src={wolfionLogo} alt="Ultion" className="h-full w-full object-cover" />
             </div>
             <div className="flex items-baseline gap-2 leading-none">
-              <span className="font-bold text-base tracking-wide whitespace-nowrap">WOLFION</span>
+              <span className="font-bold text-base tracking-wide whitespace-nowrap">ULTION</span>
               <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground/70 font-light">
                 Admin
               </span>
