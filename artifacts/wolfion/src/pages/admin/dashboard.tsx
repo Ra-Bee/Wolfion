@@ -4,8 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Activity, DollarSign, Package, Factory, TrendingUp, Plus } from "lucide-react";
+import { Activity, DollarSign, Package, Factory, TrendingUp, Plus, Zap } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 
 type ProductType = "short-socks" | "ankle-socks" | "kids-socks";
@@ -121,6 +122,8 @@ export default function Dashboard() {
       return defaultCosts;
     }
   });
+  const [quickSaleOpen, setQuickSaleOpen] = useState(false);
+  const [quickSaleConfirm, setQuickSaleConfirm] = useState("");
   const [yarnCostInput, setYarnCostInput] = useState(() => (costs.yarnCostPerDozen ? String(costs.yarnCostPerDozen) : ""));
   const [laborCostInput, setLaborCostInput] = useState(() => (costs.laborCostPerDozen ? String(costs.laborCostPerDozen) : ""));
   const [packagingCostInput, setPackagingCostInput] = useState(() => (costs.packagingCostPerDozen ? String(costs.packagingCostPerDozen) : ""));
@@ -314,9 +317,102 @@ export default function Dashboard() {
   return (
     <AppLayout>
       <div className="container mx-auto px-4 py-8 max-w-6xl space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
-          <p className="text-muted-foreground mt-1">Overview of operations, sales, and inventory.</p>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
+            <p className="text-muted-foreground mt-1">Overview of operations, sales, and inventory.</p>
+          </div>
+          <Dialog open={quickSaleOpen} onOpenChange={(open) => { setQuickSaleOpen(open); if (!open) setQuickSaleConfirm(""); }}>
+            <DialogTrigger asChild>
+              <Button size="lg" className="h-14 px-6 text-base font-semibold w-full sm:w-auto">
+                <Zap className="h-5 w-5" />
+                Quick Add Sale
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Quick Add Sale</DialogTitle>
+                <DialogDescription>Fast entry. Stock and revenue update automatically.</DialogDescription>
+              </DialogHeader>
+              <form
+                onSubmit={(event) => {
+                  handleAddSale(event);
+                  if (customerName.trim() && Number(saleQuantity) > 0 && Number(salePrice) > 0 && Number(saleQuantity) <= inventory[saleProductType]) {
+                    setQuickSaleConfirm("Sale added.");
+                    setTimeout(() => { setQuickSaleConfirm(""); setQuickSaleOpen(false); }, 800);
+                  }
+                }}
+                className="space-y-4"
+              >
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="quick-customer">Customer name</label>
+                  <Input
+                    id="quick-customer"
+                    className="h-12 text-base"
+                    placeholder="Customer name"
+                    value={customerName}
+                    onChange={(event) => setCustomerName(event.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="quick-product">Product</label>
+                  <Select value={saleProductType} onValueChange={(value) => setSaleProductType(value as ProductType)}>
+                    <SelectTrigger id="quick-product" className="h-12 text-base">
+                      <SelectValue placeholder="Choose product" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(productTypeLabels).map(([value, label]) => (
+                        <SelectItem key={value} value={value}>{label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium" htmlFor="quick-quantity">Dozen</label>
+                    <Input
+                      id="quick-quantity"
+                      type="number"
+                      min="1"
+                      step="1"
+                      inputMode="numeric"
+                      className="h-12 text-base"
+                      placeholder="10"
+                      value={saleQuantity}
+                      onChange={(event) => setSaleQuantity(event.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium" htmlFor="quick-price">Price / dozen</label>
+                    <Input
+                      id="quick-price"
+                      type="number"
+                      min="1"
+                      step="0.01"
+                      inputMode="decimal"
+                      className="h-12 text-base"
+                      placeholder="120"
+                      value={salePrice}
+                      onChange={(event) => setSalePrice(event.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+                {saleError && (
+                  <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{saleError}</p>
+                )}
+                {quickSaleConfirm && (
+                  <p className="rounded-lg bg-green-100 px-3 py-2 text-sm font-medium text-green-800">{quickSaleConfirm}</p>
+                )}
+                <Button type="submit" size="lg" className="h-14 w-full text-base font-semibold">
+                  <Plus className="h-5 w-5" />
+                  Save Sale
+                </Button>
+              </form>
+            </DialogContent>
+          </Dialog>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
@@ -430,7 +526,7 @@ export default function Dashboard() {
                   />
                 </div>
                 <div className="flex items-end">
-                  <Button type="submit" className="w-full">
+                  <Button type="submit" size="lg" className="h-12 w-full text-base font-semibold">
                     <Plus className="h-4 w-4" />
                     Add
                   </Button>
@@ -560,7 +656,7 @@ export default function Dashboard() {
                 />
               </div>
               <div className="flex items-end">
-                <Button type="submit" className="w-full">
+                <Button type="submit" size="lg" className="h-12 w-full text-base font-semibold">
                   <Plus className="h-4 w-4" />
                   Add
                 </Button>
@@ -650,7 +746,7 @@ export default function Dashboard() {
                     />
                   </div>
                   <div className="flex items-end">
-                    <Button type="submit" className="w-full">Update stock</Button>
+                    <Button type="submit" size="lg" className="h-12 w-full text-base font-semibold">Update stock</Button>
                   </div>
                 </form>
 
@@ -683,7 +779,7 @@ export default function Dashboard() {
                     />
                   </div>
                   <div className="flex items-end">
-                    <Button type="submit" className="w-full">
+                    <Button type="submit" size="lg" className="h-12 w-full text-base font-semibold">
                       <Plus className="h-4 w-4" />
                       Add usage
                     </Button>
@@ -774,7 +870,7 @@ export default function Dashboard() {
                 />
               </div>
               <div className="flex items-end">
-                <Button type="submit" className="w-full">Save costs</Button>
+                <Button type="submit" size="lg" className="h-12 w-full text-base font-semibold">Save costs</Button>
               </div>
             </form>
 
