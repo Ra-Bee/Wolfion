@@ -17,6 +17,7 @@ import Cart from "@/pages/shop/cart";
 import CheckoutSuccess from "@/pages/shop/checkout-success";
 import AboutPage from "@/pages/shop/about";
 import ContactPage from "@/pages/shop/contact";
+import SettingsPage from "@/pages/shop/settings";
 
 import AdminDashboard from "@/pages/admin/dashboard";
 import InventoryReportPage from "@/pages/admin/inventory-report";
@@ -157,6 +158,7 @@ function AppRouter() {
       <Route path="/checkout-success"><ShopRouteWrapper><CheckoutSuccess /></ShopRouteWrapper></Route>
       <Route path="/about"><ShopRouteWrapper><AboutPage /></ShopRouteWrapper></Route>
       <Route path="/contact"><ShopRouteWrapper><ContactPage /></ShopRouteWrapper></Route>
+      <Route path="/settings"><ShopRouteWrapper><SettingsPage /></ShopRouteWrapper></Route>
 
       {/* Legacy customer paths → redirect to new shop */}
       <Route path="/app"><Redirect to="/shop" /></Route>

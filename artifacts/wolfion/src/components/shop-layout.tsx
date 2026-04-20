@@ -2,7 +2,7 @@ import { Link, useLocation } from "wouter";
 import { useUser, useClerk } from "@clerk/react";
 import { useCart } from "@/hooks/use-cart";
 import { useRole } from "@/hooks/use-role";
-import { ShoppingBag, Menu, User, LogOut, Search, ShieldCheck, ChevronDown, Home as HomeIcon, Store, Mail, Info } from "lucide-react";
+import { ShoppingBag, Menu, User, LogOut, Search, ShieldCheck, ChevronDown, Home as HomeIcon, Store, Mail, Info, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose, SheetFooter } from "@/components/ui/sheet";
 import {
@@ -129,6 +129,13 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                     <Link href="/cart">
                       <Button variant="ghost" className="w-full justify-start h-12 text-base font-light tracking-wide">
                         <ShoppingBag className="mr-3 h-4 w-4" /> Cart ({totalItems})
+                      </Button>
+                    </Link>
+                  </SheetClose>
+                  <SheetClose asChild>
+                    <Link href="/settings">
+                      <Button variant="ghost" className="w-full justify-start h-12 text-base font-light tracking-wide" data-testid="menu-settings-mobile">
+                        <Settings className="mr-3 h-4 w-4" /> Settings
                       </Button>
                     </Link>
                   </SheetClose>
@@ -359,6 +366,13 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                       <Link href="/cart">
                         <Button variant="ghost" className="w-full justify-start h-11">
                           <ShoppingBag className="mr-3 h-4 w-4" /> My Cart ({totalItems})
+                        </Button>
+                      </Link>
+                    </SheetClose>
+                    <SheetClose asChild>
+                      <Link href="/settings">
+                        <Button variant="ghost" className="w-full justify-start h-11" data-testid="menu-settings">
+                          <Settings className="mr-3 h-4 w-4" /> Settings
                         </Button>
                       </Link>
                     </SheetClose>
