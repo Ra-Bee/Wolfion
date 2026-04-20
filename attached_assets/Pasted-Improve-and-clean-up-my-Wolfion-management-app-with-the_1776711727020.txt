@@ -1,0 +1,110 @@
+Improve and clean up my Wolfion management app with the following updates:
+
+-----------------------------------
+1. REMOVE DUPLICATE SECTIONS
+-----------------------------------
+- Remove the extra "Production" section at the bottom (add finishing production in dozen)
+- Remove the extra "Sales" section at the bottom
+
+Keep ONLY the main sections at the top.
+
+-----------------------------------
+2. IMPROVE DAILY SALES ENTRY (IMPORTANT)
+-----------------------------------
+Update the Daily Sales Entry form:
+
+- Layout:
+  - First line: Date
+  - Second line (same row):
+    - Customer name
+    - Product type
+    - Quantity (dozen)
+    - Total sale amount
+
+- Remove manual "price per dozen" input
+
+- Automatically calculate:
+  Price per dozen = Total amount ÷ Quantity
+
+- Show:
+  - Total sale amount
+  - Auto-calculated price per dozen
+
+Make the form very clean and fast to use.
+
+-----------------------------------
+3. ADMIN DASHBOARD STRUCTURE
+-----------------------------------
+Reorganize menu in this exact order:
+
+1. Admin Dashboard (summary)
+2. Daily Production Entry
+3. Daily Sales Entry
+4. Monthly Cost (Electricity)
+5. Labor Management
+6. Investment
+7. Investor
+
+-----------------------------------
+4. INVESTMENT SECTION 🔥
+-----------------------------------
+Add "Investment" section:
+
+Fields:
+- Date
+- Investment type (yarn, machine, packaging, rent, etc.)
+- Description (optional)
+- Amount
+- Source of money (e.g. personal, friend, loan)
+
+Show:
+- Total investment
+- List of all investments by date
+
+-----------------------------------
+5. INVESTOR SECTION 🔥
+-----------------------------------
+Add "Investor" section:
+
+Fields:
+- Investor name
+- Date
+- Amount invested
+
+Track:
+- Total invested per investor
+- Total overall investment
+
+-----------------------------------
+6. CONNECT ALL FINANCIAL DATA
+-----------------------------------
+System should combine:
+
+- Daily production
+- Daily sales
+- Costs (yarn, labor, packaging, iron, electricity)
+- Investments
+- Investor funds
+
+Make all calculations accurate and automatic.
+
+-----------------------------------
+7. PROFIT SYSTEM (IMPORTANT)
+-----------------------------------
+Update profit logic:
+
+Profit = Total Sales 
+         - (All costs: yarn + labor + packaging + iron + electricity)
+
+Also show:
+- Net profit after considering investments
+
+-----------------------------------
+8. UI IMPROVEMENT
+-----------------------------------
+- Keep everything mobile-friendly
+- Keep forms simple
+- Keep layout clean and minimal
+- Avoid duplicate sections
+
+Make the system easy enough for daily use without confusion.

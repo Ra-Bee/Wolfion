@@ -59,6 +59,26 @@ const electricityStorageKey = "wolfion_monthly_electricity";
 const workersStorageKey = "wolfion_workers";
 const workLogsStorageKey = "wolfion_worker_logs";
 const workerPaymentsStorageKey = "wolfion_worker_payments";
+const investmentsStorageKey = "wolfion_investments";
+const investorsStorageKey = "wolfion_investors";
+
+type Investment = {
+  id: string;
+  date: string;
+  type: string;
+  description: string;
+  amount: number;
+  source: string;
+  createdAt: string;
+};
+
+type InvestorEntry = {
+  id: string;
+  name: string;
+  date: string;
+  amount: number;
+  createdAt: string;
+};
 
 type ElectricityEntry = {
   id: string;
@@ -146,6 +166,7 @@ export default function Dashboard() {
   const [saleProductType, setSaleProductType] = useState<ProductType>("short-socks");
   const [saleQuantity, setSaleQuantity] = useState("");
   const [salePrice, setSalePrice] = useState("");
+  const [saleTotalAmount, setSaleTotalAmount] = useState("");
   const [saleDate, setSaleDate] = useState(getToday());
   const [saleError, setSaleError] = useState("");
   const [saleConfirm, setSaleConfirm] = useState("");
@@ -252,6 +273,34 @@ export default function Dashboard() {
   const [profitDate, setProfitDate] = useState(getToday());
   const [profitMonth, setProfitMonth] = useState(() => new Date().toISOString().slice(0, 7));
 
+  const [investments, setInvestments] = useState<Investment[]>(() => {
+    try {
+      const stored = localStorage.getItem(investmentsStorageKey);
+      return stored ? JSON.parse(stored) as Investment[] : [];
+    } catch {
+      return [];
+    }
+  });
+  const [invDate, setInvDate] = useState(getToday());
+  const [invType, setInvType] = useState("yarn");
+  const [invDescription, setInvDescription] = useState("");
+  const [invAmount, setInvAmount] = useState("");
+  const [invSource, setInvSource] = useState("personal");
+  const [invError, setInvError] = useState("");
+
+  const [investors, setInvestors] = useState<InvestorEntry[]>(() => {
+    try {
+      const stored = localStorage.getItem(investorsStorageKey);
+      return stored ? JSON.parse(stored) as InvestorEntry[] : [];
+    } catch {
+      return [];
+    }
+  });
+  const [investorName, setInvestorName] = useState("");
+  const [investorDate, setInvestorDate] = useState(getToday());
+  const [investorAmount, setInvestorAmount] = useState("");
+  const [investorError, setInvestorError] = useState("");
+
   useEffect(() => {
     localStorage.setItem(productionStorageKey, JSON.stringify(productionEntries));
   }, [productionEntries]);
@@ -291,6 +340,14 @@ export default function Dashboard() {
   useEffect(() => {
     localStorage.setItem(workerPaymentsStorageKey, JSON.stringify(workerPayments));
   }, [workerPayments]);
+
+  useEffect(() => {
+    localStorage.setItem(investmentsStorageKey, JSON.stringify(investments));
+  }, [investments]);
+
+  useEffect(() => {
+    localStorage.setItem(investorsStorageKey, JSON.stringify(investors));
+  }, [investors]);
 
   const inventory = useMemo(() => {
     const stockAfterProduction = productionEntries.reduce<Record<ProductType, number>>(
@@ -359,7 +416,8 @@ export default function Dashboard() {
   const todayProductionDozen = todayEntries.reduce((total, entry) => total + entry.totalProductionDozen, 0);
   const todayTotalCost = todayEntries.reduce((total, entry) => total + entry.totalCost, 0);
   const todayCostPerDozen = todayProductionDozen > 0 ? todayTotalCost / todayProductionDozen : 0;
-  const liveSaleTotal = (Number(saleQuantity) || 0) * (Number(salePrice) || 0);
+  const liveSaleTotal = Number(saleTotalAmount) || 0;
+  const liveSalePricePerDozen = Number(saleQuantity) > 0 && Number(saleTotalAmount) > 0 ? Number(saleTotalAmount) / Number(saleQuantity) : 0;
   const sortedSalesEntries = useMemo(() => {
     const withDate = salesEntries.map((sale) => ({
       ...sale,
@@ -502,10 +560,10 @@ export default function Dashboard() {
   function handleAddSale(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const quantityDozen = Number(saleQuantity);
-    const pricePerDozen = Number(salePrice);
+    const totalValue = Number(saleTotalAmount);
 
-    if (!customerName.trim() || !Number.isFinite(quantityDozen) || quantityDozen <= 0 || !Number.isFinite(pricePerDozen) || pricePerDozen <= 0) {
-      setSaleError("Enter customer name, quantity, and selling price.");
+    if (!customerName.trim() || !Number.isFinite(quantityDozen) || quantityDozen <= 0 || !Number.isFinite(totalValue) || totalValue <= 0) {
+      setSaleError("Enter customer name, quantity, and total amount.");
       return;
     }
 
@@ -514,7 +572,7 @@ export default function Dashboard() {
       return;
     }
 
-    const totalValue = quantityDozen * pricePerDozen;
+    const pricePerDozen = totalValue / quantityDozen;
     const entry: SaleEntry = {
       id: crypto.randomUUID(),
       customerName: customerName.trim(),
@@ -531,6 +589,7 @@ export default function Dashboard() {
     setSaleProductType("short-socks");
     setSaleQuantity("");
     setSalePrice("");
+    setSaleTotalAmount("");
     setSaleDate(getToday());
     setSaleError("");
     setSaleConfirm("Sale saved.");
@@ -734,6 +793,93 @@ export default function Dashboard() {
     setWorkerPayments((current) => current.filter((p) => p.workerId !== id));
   }
 
+  function handleAddInvestment(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setInvError("");
+    const amount = Number(invAmount);
+    if (!invDate || !invType || !Number.isFinite(amount) || amount <= 0) {
+      setInvError("Enter date, type, and valid amount.");
+      return;
+    }
+    const entry: Investment = {
+      id: crypto.randomUUID(),
+      date: invDate,
+      type: invType,
+      description: invDescription.trim(),
+      amount,
+      source: invSource.trim() || "personal",
+      createdAt: new Date().toISOString(),
+    };
+    setInvestments((current) => [entry, ...current]);
+    setInvAmount("");
+    setInvDescription("");
+  }
+
+  function handleRemoveInvestment(id: string) {
+    setInvestments((current) => current.filter((i) => i.id !== id));
+  }
+
+  function handleAddInvestor(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setInvestorError("");
+    const amount = Number(investorAmount);
+    if (!investorName.trim() || !investorDate || !Number.isFinite(amount) || amount <= 0) {
+      setInvestorError("Enter investor name, date, and amount.");
+      return;
+    }
+    const entry: InvestorEntry = {
+      id: crypto.randomUUID(),
+      name: investorName.trim(),
+      date: investorDate,
+      amount,
+      createdAt: new Date().toISOString(),
+    };
+    setInvestors((current) => [entry, ...current]);
+    setInvestorAmount("");
+  }
+
+  function handleRemoveInvestor(id: string) {
+    setInvestors((current) => current.filter((i) => i.id !== id));
+  }
+
+  const sortedInvestments = useMemo(
+    () => [...investments].sort((a, b) => (a.date < b.date ? 1 : -1)),
+    [investments],
+  );
+  const totalInvestmentAmount = investments.reduce((sum, i) => sum + i.amount, 0);
+
+  const investorTotals = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const e of investors) {
+      map.set(e.name, (map.get(e.name) || 0) + e.amount);
+    }
+    return Array.from(map.entries())
+      .map(([name, total]) => ({ name, total }))
+      .sort((a, b) => b.total - a.total);
+  }, [investors]);
+  const sortedInvestorEntries = useMemo(
+    () => [...investors].sort((a, b) => (a.date < b.date ? 1 : -1)),
+    [investors],
+  );
+  const totalInvestorFunds = investors.reduce((sum, i) => sum + i.amount, 0);
+
+  const investmentTypeOptions = ["yarn", "machine", "packaging", "rent", "other"];
+  const investmentSourceOptions = ["personal", "friend", "loan", "investor", "other"];
+  const investmentTypeLabels: Record<string, string> = {
+    yarn: "Yarn",
+    machine: "Machine",
+    packaging: "Packaging",
+    rent: "Rent",
+    other: "Other",
+  };
+  const investmentSourceLabels: Record<string, string> = {
+    personal: "Personal",
+    friend: "Friend",
+    loan: "Loan",
+    investor: "Investor",
+    other: "Other",
+  };
+
   return (
     <AppLayout>
       <div className="container mx-auto px-4 py-8 max-w-6xl space-y-8">
@@ -757,7 +903,7 @@ export default function Dashboard() {
               <form
                 onSubmit={(event) => {
                   handleAddSale(event);
-                  if (customerName.trim() && Number(saleQuantity) > 0 && Number(salePrice) > 0 && Number(saleQuantity) <= inventory[saleProductType]) {
+                  if (customerName.trim() && Number(saleQuantity) > 0 && Number(saleTotalAmount) > 0 && Number(saleQuantity) <= inventory[saleProductType]) {
                     setQuickSaleConfirm("Sale added.");
                     setTimeout(() => { setQuickSaleConfirm(""); setQuickSaleOpen(false); }, 800);
                   }
@@ -805,21 +951,26 @@ export default function Dashboard() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium" htmlFor="quick-price">Price / dozen</label>
+                    <label className="text-sm font-medium" htmlFor="quick-total">Total amount</label>
                     <Input
-                      id="quick-price"
+                      id="quick-total"
                       type="number"
                       min="1"
                       step="0.01"
                       inputMode="decimal"
                       className="h-12 text-base"
-                      placeholder="120"
-                      value={salePrice}
-                      onChange={(event) => setSalePrice(event.target.value)}
+                      placeholder="1200"
+                      value={saleTotalAmount}
+                      onChange={(event) => setSaleTotalAmount(event.target.value)}
                       required
                     />
                   </div>
                 </div>
+                {Number(saleQuantity) > 0 && Number(saleTotalAmount) > 0 && (
+                  <p className="rounded-lg bg-muted px-3 py-2 text-xs text-muted-foreground">
+                    Auto: ${(Number(saleTotalAmount) / Number(saleQuantity)).toLocaleString(undefined, { maximumFractionDigits: 2 })} per dozen
+                  </p>
+                )}
                 {saleError && (
                   <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{saleError}</p>
                 )}
@@ -1162,20 +1313,21 @@ export default function Dashboard() {
             </div>
 
             <form onSubmit={handleAddSale} className="space-y-5">
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="daily-sale-date">Date</label>
+                <Input
+                  id="daily-sale-date"
+                  type="date"
+                  className="h-12 text-base max-w-xs"
+                  value={saleDate}
+                  onChange={(event) => setSaleDate(event.target.value)}
+                  max={getToday()}
+                  required
+                />
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-sale-date">Date</label>
-                  <Input
-                    id="daily-sale-date"
-                    type="date"
-                    className="h-12 text-base"
-                    value={saleDate}
-                    onChange={(event) => setSaleDate(event.target.value)}
-                    max={getToday()}
-                    required
-                  />
-                </div>
-                <div className="space-y-2 sm:col-span-2 lg:col-span-2">
                   <label className="text-sm font-medium" htmlFor="daily-sale-customer">Customer name</label>
                   <Input
                     id="daily-sale-customer"
@@ -1186,9 +1338,6 @@ export default function Dashboard() {
                     required
                   />
                 </div>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="daily-sale-product">Product type</label>
                   <Select value={saleProductType} onValueChange={(value) => setSaleProductType(value as ProductType)}>
@@ -1203,7 +1352,7 @@ export default function Dashboard() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-sale-quantity">Quantity sold (dozen)</label>
+                  <label className="text-sm font-medium" htmlFor="daily-sale-quantity">Quantity (dozen)</label>
                   <Input
                     id="daily-sale-quantity"
                     type="number"
@@ -1218,28 +1367,32 @@ export default function Dashboard() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-sale-price">Price per dozen</label>
+                  <label className="text-sm font-medium" htmlFor="daily-sale-total">Total sale amount</label>
                   <Input
-                    id="daily-sale-price"
+                    id="daily-sale-total"
                     type="number"
                     min="1"
                     step="0.01"
                     inputMode="decimal"
                     className="h-12 text-base"
-                    placeholder="Example: 120"
-                    value={salePrice}
-                    onChange={(event) => setSalePrice(event.target.value)}
+                    placeholder="Example: 1200"
+                    value={saleTotalAmount}
+                    onChange={(event) => setSaleTotalAmount(event.target.value)}
                     required
                   />
                 </div>
               </div>
 
-              <div className="rounded-2xl border bg-muted/30 p-4 sm:flex sm:items-center sm:justify-between">
+              <div className="grid gap-3 rounded-2xl border bg-muted/30 p-4 sm:grid-cols-2">
                 <div>
-                  <p className="text-xs text-muted-foreground">Total sale value</p>
+                  <p className="text-xs text-muted-foreground">Total sale amount</p>
                   <p className="mt-1 text-2xl font-bold">${liveSaleTotal.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                 </div>
-                <p className="mt-2 text-xs text-muted-foreground sm:mt-0">Quantity × price</p>
+                <div>
+                  <p className="text-xs text-muted-foreground">Auto · Price per dozen</p>
+                  <p className="mt-1 text-2xl font-bold">${liveSalePricePerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                  <p className="text-xs text-muted-foreground">Total ÷ quantity</p>
+                </div>
               </div>
 
               {saleError && (
@@ -1571,458 +1724,167 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
-          <Card>
-            <CardHeader>
-              <CardTitle>Production</CardTitle>
-              <CardDescription>Add finished production in dozen. Inventory increases automatically.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleAddProduction} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto]">
+        <Card className="border-2 border-primary/30 shadow-md">
+          <CardHeader>
+            <CardTitle className="text-2xl">Investment</CardTitle>
+            <CardDescription>Track money put into the business by type and source.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="rounded-2xl border bg-primary/5 p-5">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total investment</p>
+              <p className="mt-2 text-3xl font-bold">${totalInvestmentAmount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{investments.length} entries</p>
+            </div>
+
+            <form onSubmit={handleAddInvestment} className="space-y-5">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="production-date">Date</label>
-                  <Input
-                    id="production-date"
-                    type="date"
-                    value={date}
-                    onChange={(event) => setDate(event.target.value)}
-                    required
-                  />
+                  <label className="text-sm font-medium" htmlFor="inv-date">Date</label>
+                  <Input id="inv-date" type="date" className="h-12 text-base" value={invDate} onChange={(e) => setInvDate(e.target.value)} max={getToday()} required />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="product-type">Product type</label>
-                  <Select value={productType} onValueChange={(value) => setProductType(value as ProductType)}>
-                    <SelectTrigger id="product-type">
-                      <SelectValue placeholder="Choose product" />
-                    </SelectTrigger>
+                  <label className="text-sm font-medium" htmlFor="inv-type">Investment type</label>
+                  <Select value={invType} onValueChange={setInvType}>
+                    <SelectTrigger id="inv-type" className="h-12 text-base"><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      {Object.entries(productTypeLabels).map(([value, label]) => (
-                        <SelectItem key={value} value={value}>{label}</SelectItem>
-                      ))}
+                      {investmentTypeOptions.map((t) => <SelectItem key={t} value={t}>{investmentTypeLabels[t]}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="quantity-dozen">Quantity in dozen</label>
-                  <Input
-                    id="quantity-dozen"
-                    type="number"
-                    min="1"
-                    step="1"
-                    inputMode="numeric"
-                    placeholder="Example: 25"
-                    value={quantity}
-                    onChange={(event) => setQuantity(event.target.value)}
-                    required
-                  />
+                  <label className="text-sm font-medium" htmlFor="inv-amount">Amount</label>
+                  <Input id="inv-amount" type="number" min="0.01" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="Example: 5000" value={invAmount} onChange={(e) => setInvAmount(e.target.value)} required />
                 </div>
-                <div className="flex items-end">
-                  <Button type="submit" size="lg" className="h-12 w-full text-base font-semibold">
-                    <Plus className="h-4 w-4" />
-                    Add
-                  </Button>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="inv-source">Source of money</label>
+                  <Select value={invSource} onValueChange={setInvSource}>
+                    <SelectTrigger id="inv-source" className="h-12 text-base"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {investmentSourceOptions.map((s) => <SelectItem key={s} value={s}>{investmentSourceLabels[s]}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
                 </div>
-              </form>
-
-              <div className="mt-6 space-y-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-semibold">Recent production</h3>
-                  <span className="text-xs text-muted-foreground">{productionEntries.length} records</span>
-                </div>
-                {recentProductionEntries.length > 0 ? (
-                  <div className="space-y-3">
-                    {recentProductionEntries.map((entry) => (
-                      <div key={entry.id} className="flex items-center justify-between rounded-xl border bg-card/60 p-3">
-                        <div>
-                          <p className="text-sm font-medium">{productTypeLabels[entry.productType]}</p>
-                          <p className="text-xs text-muted-foreground">{new Date(`${entry.date}T00:00:00`).toLocaleDateString()}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm font-bold">{entry.quantityDozen.toLocaleString()} dozen</p>
-                          <p className="text-xs text-primary">Added to inventory</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="rounded-xl border border-dashed p-5 text-center">
-                    <p className="text-sm font-medium">No production added yet</p>
-                    <p className="text-xs text-muted-foreground mt-1">Add the first batch to update inventory stock.</p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Inventory</CardTitle>
-              <CardDescription>Current stock per product, updated from production and sales</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto rounded-xl border">
-                <table className="w-full min-w-[520px] text-sm">
-                  <thead className="bg-muted/60 text-muted-foreground">
-                    <tr>
-                      <th className="px-4 py-3 text-left font-medium">Product</th>
-                      <th className="px-4 py-3 text-right font-medium">Opening stock</th>
-                      <th className="px-4 py-3 text-right font-medium">Produced</th>
-                      <th className="px-4 py-3 text-right font-medium">Sold</th>
-                      <th className="px-4 py-3 text-right font-medium">Current stock</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {(Object.keys(productTypeLabels) as ProductType[]).map((type) => (
-                      <tr key={type} className="border-t">
-                        <td className="px-4 py-3 font-medium">{productTypeLabels[type]}</td>
-                        <td className="px-4 py-3 text-right">{initialInventory[type].toLocaleString()} dozen</td>
-                        <td className="px-4 py-3 text-right text-green-700">+{productionByType[type].toLocaleString()} dozen</td>
-                        <td className="px-4 py-3 text-right text-destructive">-{salesByType[type].toLocaleString()} dozen</td>
-                        <td className="px-4 py-3 text-right font-bold">{inventory[type].toLocaleString()} dozen</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Sales</CardTitle>
-            <CardDescription>Enter customer sales in dozen. Stock reduces automatically and total revenue is calculated.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleAddSale} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.2fr_1fr_1fr_1fr_auto]">
-              <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="customer-name">Customer name</label>
-                <Input
-                  id="customer-name"
-                  placeholder="Customer name"
-                  value={customerName}
-                  onChange={(event) => setCustomerName(event.target.value)}
-                  required
-                />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="sale-product-type">Product type</label>
-                <Select value={saleProductType} onValueChange={(value) => setSaleProductType(value as ProductType)}>
-                  <SelectTrigger id="sale-product-type">
-                    <SelectValue placeholder="Choose product" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(productTypeLabels).map(([value, label]) => (
-                      <SelectItem key={value} value={value}>{label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <label className="text-sm font-medium" htmlFor="inv-desc">Description (optional)</label>
+                <Input id="inv-desc" className="h-12 text-base" placeholder="Any note" value={invDescription} onChange={(e) => setInvDescription(e.target.value)} />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="sale-quantity">Quantity sold in dozen</label>
-                <Input
-                  id="sale-quantity"
-                  type="number"
-                  min="1"
-                  step="1"
-                  inputMode="numeric"
-                  placeholder="Example: 10"
-                  value={saleQuantity}
-                  onChange={(event) => setSaleQuantity(event.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="sale-price">Selling price</label>
-                <Input
-                  id="sale-price"
-                  type="number"
-                  min="1"
-                  step="0.01"
-                  inputMode="decimal"
-                  placeholder="Example: 120"
-                  value={salePrice}
-                  onChange={(event) => setSalePrice(event.target.value)}
-                  required
-                />
-              </div>
-              <div className="flex items-end">
-                <Button type="submit" size="lg" className="h-12 w-full text-base font-semibold">
-                  <Plus className="h-4 w-4" />
-                  Add
-                </Button>
-              </div>
+              {invError && <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{invError}</p>}
+              <Button type="submit" size="lg" className="h-14 w-full text-base font-semibold"><Plus className="h-5 w-5" /> Save investment</Button>
             </form>
 
-            {saleError && (
-              <p className="mt-3 rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{saleError}</p>
-            )}
-
-            <div className="mt-6 grid gap-4 lg:grid-cols-[0.8fr_1.2fr]">
-              <div className="rounded-2xl border bg-muted/30 p-4">
-                <p className="text-sm text-muted-foreground">Total revenue</p>
-                <p className="mt-2 text-3xl font-bold">${totalSalesValue.toLocaleString()}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{totalSoldDozen.toLocaleString()} dozen sold across {salesEntries.length} records</p>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-semibold">All investments</h3>
+                <span className="text-xs text-muted-foreground">{investments.length} records</span>
               </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-semibold">Recent sales</h3>
-                  <span className="text-xs text-muted-foreground">{salesEntries.length} records</span>
-                </div>
-                {recentSalesEntries.length > 0 ? (
-                  <div className="space-y-3">
-                    {recentSalesEntries.map((sale) => (
-                      <div key={sale.id} className="flex items-center justify-between rounded-xl border bg-card/60 p-3">
-                        <div>
-                          <p className="text-sm font-medium">{sale.customerName}</p>
-                          <p className="text-xs text-muted-foreground">{sale.quantityDozen.toLocaleString()} dozen {productTypeLabels[sale.productType].toLowerCase()} at ${sale.pricePerDozen.toLocaleString()} per dozen</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm font-bold">${sale.totalValue.toLocaleString()}</p>
-                          <p className="text-xs text-primary">Stock reduced</p>
-                        </div>
+              {sortedInvestments.length > 0 ? (
+                <div className="space-y-2">
+                  {sortedInvestments.map((inv) => (
+                    <div key={inv.id} className="flex flex-col gap-1 rounded-xl border bg-card/60 p-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <p className="text-base font-semibold">{formatDateLabel(inv.date)} · {investmentTypeLabels[inv.type] || inv.type}</p>
+                        <p className="text-xs text-muted-foreground">Source: {investmentSourceLabels[inv.source] || inv.source}{inv.description ? ` · ${inv.description}` : ""}</p>
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="rounded-xl border border-dashed p-5 text-center">
-                    <p className="text-sm font-medium">No sales entered yet</p>
-                    <p className="text-xs text-muted-foreground mt-1">Add a sale to calculate value and reduce inventory.</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          <Card className="col-span-1">
-            <CardHeader>
-              <CardTitle>Yarn Management</CardTitle>
-              <CardDescription>Add current yarn stock and yarn usage per production.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-5">
-                <div className="grid gap-3 sm:grid-cols-3">
-                  <div className="rounded-2xl border bg-muted/30 p-4">
-                    <p className="text-xs text-muted-foreground">Current stock</p>
-                    <p className="mt-2 text-2xl font-bold">{yarnStockKg.toLocaleString()} kg</p>
-                  </div>
-                  <div className="rounded-2xl border bg-muted/30 p-4">
-                    <p className="text-xs text-muted-foreground">Remaining yarn</p>
-                    <p className="mt-2 text-2xl font-bold">{remainingYarnKg.toLocaleString()} kg</p>
-                  </div>
-                  <div className="rounded-2xl border bg-muted/30 p-4">
-                    <p className="text-xs text-muted-foreground">7-day shortage</p>
-                    <p className={`mt-2 text-2xl font-bold ${estimatedYarnShortageKg > 0 ? "text-destructive" : "text-green-700"}`}>
-                      {estimatedYarnShortageKg.toLocaleString()} kg
-                    </p>
-                  </div>
-                </div>
-
-                <form onSubmit={handleSetYarnStock} className="grid gap-3 sm:grid-cols-[1fr_auto]">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium" htmlFor="current-yarn-stock">Current yarn stock (kg)</label>
-                    <Input
-                      id="current-yarn-stock"
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      inputMode="decimal"
-                      placeholder="Example: 500"
-                      value={currentYarnStock}
-                      onChange={(event) => setCurrentYarnStock(event.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="flex items-end">
-                    <Button type="submit" size="lg" className="h-12 w-full text-base font-semibold">Update stock</Button>
-                  </div>
-                </form>
-
-                <form onSubmit={handleAddYarnUsage} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium" htmlFor="yarn-product-type">Production product</label>
-                    <Select value={yarnUsageProductType} onValueChange={(value) => setYarnUsageProductType(value as ProductType)}>
-                      <SelectTrigger id="yarn-product-type">
-                        <SelectValue placeholder="Choose product" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Object.entries(productTypeLabels).map(([value, label]) => (
-                          <SelectItem key={value} value={value}>{label}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium" htmlFor="yarn-usage-kg">Yarn usage per production (kg)</label>
-                    <Input
-                      id="yarn-usage-kg"
-                      type="number"
-                      min="0.01"
-                      step="0.01"
-                      inputMode="decimal"
-                      placeholder="Example: 18"
-                      value={yarnUsageKg}
-                      onChange={(event) => setYarnUsageKg(event.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="flex items-end">
-                    <Button type="submit" size="lg" className="h-12 w-full text-base font-semibold">
-                      <Plus className="h-4 w-4" />
-                      Add usage
-                    </Button>
-                  </div>
-                </form>
-
-                {yarnError && (
-                  <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{yarnError}</p>
-                )}
-
-                <div className="rounded-xl border bg-card/60 p-4">
-                  <p className="text-sm font-semibold">Shortage estimate</p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Based on {yarnUsedLast7Days.toLocaleString()} kg used in the last 7 days. Estimated need for the next 7 days is {estimatedSevenDayNeedKg.toLocaleString()} kg.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="col-span-1">
-            <CardHeader>
-              <CardTitle>Recent Yarn Usage</CardTitle>
-              <CardDescription>Latest yarn used for production</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {recentYarnUsageEntries.length > 0 ? recentYarnUsageEntries.map((entry) => (
-                  <div key={entry.id} className="flex justify-between items-center">
-                    <div>
-                      <p className="text-sm font-medium">{productTypeLabels[entry.productType]}</p>
-                      <p className="text-xs text-muted-foreground">{new Date(entry.createdAt).toLocaleDateString()}</p>
+                      <div className="flex items-center gap-3">
+                        <p className="text-lg font-bold">${inv.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                        <Button variant="ghost" size="sm" onClick={() => handleRemoveInvestment(inv.id)} className="text-destructive">Remove</Button>
+                      </div>
                     </div>
-                    <div className="text-sm font-medium">{entry.kgUsed.toLocaleString()} kg</div>
-                  </div>
-                )) : (
-                  <p className="text-sm text-muted-foreground">Yarn usage entered above will appear here.</p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="rounded-xl border border-dashed p-5 text-center">
+                  <p className="text-sm font-medium">No investments yet</p>
+                  <p className="text-xs text-muted-foreground mt-1">Add an investment above to track business inputs.</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
-        <Card>
+        <Card className="border-2 border-primary/30 shadow-md">
           <CardHeader>
-            <CardTitle>Cost Tracking</CardTitle>
-            <CardDescription>Enter cost per dozen. Profit calculates automatically from sales.</CardDescription>
+            <CardTitle className="text-2xl">Investor</CardTitle>
+            <CardDescription>Track funds invested by each investor.</CardDescription>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSaveCosts} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto]">
-              <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="yarn-cost">Yarn cost per dozen</label>
-                <Input
-                  id="yarn-cost"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  inputMode="decimal"
-                  placeholder="Example: 40"
-                  value={yarnCostInput}
-                  onChange={(event) => setYarnCostInput(event.target.value)}
-                />
+          <CardContent className="space-y-6">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-2xl border bg-primary/5 p-5">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total overall investment</p>
+                <p className="mt-2 text-3xl font-bold">${totalInvestorFunds.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{investors.length} contributions</p>
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="labor-cost">Labor cost per dozen</label>
-                <Input
-                  id="labor-cost"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  inputMode="decimal"
-                  placeholder="Example: 20"
-                  value={laborCostInput}
-                  onChange={(event) => setLaborCostInput(event.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="packaging-cost">Packaging cost per dozen</label>
-                <Input
-                  id="packaging-cost"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  inputMode="decimal"
-                  placeholder="Example: 8"
-                  value={packagingCostInput}
-                  onChange={(event) => setPackagingCostInput(event.target.value)}
-                />
-              </div>
-              <div className="flex items-end">
-                <Button type="submit" size="lg" className="h-12 w-full text-base font-semibold">Save costs</Button>
-              </div>
-            </form>
-
-            <div className="mt-6 grid gap-3 sm:grid-cols-3">
-              <div className="rounded-2xl border bg-muted/30 p-4">
-                <p className="text-xs text-muted-foreground">Cost per dozen</p>
-                <p className="mt-2 text-2xl font-bold">${costPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                <p className="mt-1 text-xs text-muted-foreground">Yarn + labor + packaging</p>
-              </div>
-              <div className="rounded-2xl border bg-muted/30 p-4">
-                <p className="text-xs text-muted-foreground">Average profit per sale</p>
-                <p className={`mt-2 text-2xl font-bold ${averageProfitPerSale >= 0 ? "text-green-700" : "text-destructive"}`}>
-                  ${averageProfitPerSale.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">Across {salesEntries.length} sales</p>
-              </div>
-              <div className="rounded-2xl border bg-muted/30 p-4">
-                <p className="text-xs text-muted-foreground">Total profit</p>
-                <p className={`mt-2 text-2xl font-bold ${totalProfit >= 0 ? "text-green-700" : "text-destructive"}`}>
-                  ${totalProfit.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">Revenue ${totalSalesValue.toLocaleString()} − Cost ${totalCostOfSales.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+              <div className="rounded-2xl border bg-primary/5 p-5">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Investors</p>
+                <p className="mt-2 text-3xl font-bold">{investorTotals.length}</p>
+                <p className="mt-1 text-xs text-muted-foreground">Unique people</p>
               </div>
             </div>
 
-            {salesEntries.length > 0 && (
-              <div className="mt-6 overflow-x-auto rounded-xl border">
-                <table className="w-full min-w-[640px] text-sm">
-                  <thead className="bg-muted/60 text-muted-foreground">
-                    <tr>
-                      <th className="px-4 py-3 text-left font-medium">Customer</th>
-                      <th className="px-4 py-3 text-left font-medium">Product</th>
-                      <th className="px-4 py-3 text-right font-medium">Quantity</th>
-                      <th className="px-4 py-3 text-right font-medium">Revenue</th>
-                      <th className="px-4 py-3 text-right font-medium">Cost</th>
-                      <th className="px-4 py-3 text-right font-medium">Profit</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {salesEntries.slice(0, 6).map((sale) => {
-                      const cost = sale.quantityDozen * costPerDozen;
-                      const profit = sale.totalValue - cost;
-                      return (
-                        <tr key={sale.id} className="border-t">
-                          <td className="px-4 py-3 font-medium">{sale.customerName}</td>
-                          <td className="px-4 py-3">{productTypeLabels[sale.productType]}</td>
-                          <td className="px-4 py-3 text-right">{sale.quantityDozen.toLocaleString()} dozen</td>
-                          <td className="px-4 py-3 text-right">${sale.totalValue.toLocaleString()}</td>
-                          <td className="px-4 py-3 text-right">${cost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
-                          <td className={`px-4 py-3 text-right font-bold ${profit >= 0 ? "text-green-700" : "text-destructive"}`}>
-                            ${profit.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+            <form onSubmit={handleAddInvestor} className="space-y-5">
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="investor-name">Investor name</label>
+                  <Input id="investor-name" className="h-12 text-base" placeholder="Investor name" value={investorName} onChange={(e) => setInvestorName(e.target.value)} required />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="investor-date">Date</label>
+                  <Input id="investor-date" type="date" className="h-12 text-base" value={investorDate} onChange={(e) => setInvestorDate(e.target.value)} max={getToday()} required />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="investor-amount">Amount invested</label>
+                  <Input id="investor-amount" type="number" min="0.01" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="Example: 10000" value={investorAmount} onChange={(e) => setInvestorAmount(e.target.value)} required />
+                </div>
+              </div>
+              {investorError && <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{investorError}</p>}
+              <Button type="submit" size="lg" className="h-14 w-full text-base font-semibold"><Plus className="h-5 w-5" /> Save investor entry</Button>
+            </form>
+
+            {investorTotals.length > 0 && (
+              <div className="space-y-3">
+                <h3 className="text-sm font-semibold">Total per investor</h3>
+                <div className="space-y-2">
+                  {investorTotals.map((it) => (
+                    <div key={it.name} className="flex items-center justify-between rounded-xl border bg-card/60 p-4">
+                      <p className="text-base font-semibold">{it.name}</p>
+                      <p className="text-lg font-bold">${it.total.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-semibold">All investor entries</h3>
+                <span className="text-xs text-muted-foreground">{investors.length} records</span>
+              </div>
+              {sortedInvestorEntries.length > 0 ? (
+                <div className="space-y-2">
+                  {sortedInvestorEntries.map((e) => (
+                    <div key={e.id} className="flex flex-col gap-1 rounded-xl border bg-card/60 p-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <p className="text-base font-semibold">{e.name}</p>
+                        <p className="text-xs text-muted-foreground">{formatDateLabel(e.date)}</p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <p className="text-lg font-bold">${e.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                        <Button variant="ghost" size="sm" onClick={() => handleRemoveInvestor(e.id)} className="text-destructive">Remove</Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="rounded-xl border border-dashed p-5 text-center">
+                  <p className="text-sm font-medium">No investor entries yet</p>
+                  <p className="text-xs text-muted-foreground mt-1">Add an entry above to start tracking.</p>
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
+
       </div>
     </AppLayout>
   );
