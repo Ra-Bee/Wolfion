@@ -8,18 +8,15 @@ export default function SignUpPage() {
     <div className="min-h-[100dvh] w-full bg-white text-neutral-900" style={{ colorScheme: "light" }}>
       <main className="mx-auto w-full max-w-[400px] min-h-[100dvh] flex flex-col items-center px-6 pt-10 pb-10">
         <div className="w-full flex flex-col items-center animate-in fade-in slide-in-from-bottom-2 duration-700">
-          {/* Hero brand name */}
-          <h1
-            className="text-[56px] leading-none font-extrabold tracking-[-0.02em] text-black"
-            style={{ textShadow: "0 1px 2px rgba(0,0,0,0.04)" }}
-          >
-            WOLFION
-          </h1>
-
-          {/* Logo below brand name */}
-          <div className="mt-6 h-14 w-14 rounded-2xl bg-white overflow-hidden ring-1 ring-neutral-200 shadow-sm">
+          {/* Logo on top */}
+          <div className="h-16 w-16 rounded-2xl bg-white overflow-hidden ring-1 ring-neutral-200 shadow-sm">
             <img src={wolfionMark} alt="Wolfion" className="h-full w-full object-cover" />
           </div>
+
+          {/* Brand name below logo */}
+          <h1 className="mt-7 text-2xl font-bold tracking-[-0.01em] text-black">
+            WOLFION
+          </h1>
 
           <h2 className="mt-8 text-lg font-semibold tracking-tight text-black">
             Create account
