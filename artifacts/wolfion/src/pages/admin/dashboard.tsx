@@ -330,7 +330,7 @@ export default function Dashboard() {
         <Card>
           <CardHeader>
             <CardTitle>Sales</CardTitle>
-            <CardDescription>Enter customer sales in dozen. Stock reduces automatically and total sale value is calculated.</CardDescription>
+            <CardDescription>Enter customer sales in dozen. Stock reduces automatically and total revenue is calculated.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleAddSale} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.2fr_1fr_1fr_1fr_auto]">
@@ -372,7 +372,7 @@ export default function Dashboard() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="sale-price">Selling price per dozen</label>
+                <label className="text-sm font-medium" htmlFor="sale-price">Selling price</label>
                 <Input
                   id="sale-price"
                   type="number"
@@ -399,7 +399,7 @@ export default function Dashboard() {
 
             <div className="mt-6 grid gap-4 lg:grid-cols-[0.8fr_1.2fr]">
               <div className="rounded-2xl border bg-muted/30 p-4">
-                <p className="text-sm text-muted-foreground">Calculated total sales value</p>
+                <p className="text-sm text-muted-foreground">Total revenue</p>
                 <p className="mt-2 text-3xl font-bold">${totalSalesValue.toLocaleString()}</p>
                 <p className="mt-1 text-xs text-muted-foreground">{totalSoldDozen.toLocaleString()} dozen sold across {salesEntries.length} records</p>
               </div>

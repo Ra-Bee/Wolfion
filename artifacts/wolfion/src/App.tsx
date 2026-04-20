@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { ClerkProvider, SignIn, SignUp, Show, useClerk, useUser } from '@clerk/react';
-import { Switch, Route, useLocation, Router as WouterRouter } from 'wouter';
+import { Switch, Route, Redirect, useLocation, Router as WouterRouter } from 'wouter';
 import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -93,18 +93,15 @@ function ClerkQueryClientCacheInvalidator() {
 function AppRouter() {
   const { isLoaded, isSignedIn } = useUser();
   const { role } = useRole();
-  const [, setLocation] = useLocation();
 
   // If user hits base path and is signed in, redirect them to role selection or their app
   const HomeRedirect = () => {
     if (!isLoaded) return null;
     if (isSignedIn) {
       if (!role) {
-        setLocation("/role-select");
-        return null;
+        return <Redirect to="/role-select" />;
       }
-      setLocation(role === "admin" ? "/admin" : "/app");
-      return null;
+      return <Redirect to={role === "admin" ? "/admin" : "/app"} />;
     }
     return <Home />;
   };
@@ -113,16 +110,13 @@ function AppRouter() {
   const AppRouteWrapper = ({ children }: { children: React.ReactNode }) => {
     if (!isLoaded) return null;
     if (!isSignedIn) {
-      setLocation("/sign-in");
-      return null;
+      return <Redirect to="/sign-in" />;
     }
     if (!role) {
-      setLocation("/role-select");
-      return null;
+      return <Redirect to="/role-select" />;
     }
     if (role === "admin") {
-      setLocation("/admin");
-      return null;
+      return <Redirect to="/admin" />;
     }
     return <>{children}</>;
   };
@@ -131,16 +125,13 @@ function AppRouter() {
   const AdminRouteWrapper = ({ children }: { children: React.ReactNode }) => {
     if (!isLoaded) return null;
     if (!isSignedIn) {
-      setLocation("/sign-in");
-      return null;
+      return <Redirect to="/sign-in" />;
     }
     if (!role) {
-      setLocation("/role-select");
-      return null;
+      return <Redirect to="/role-select" />;
     }
     if (role === "customer") {
-      setLocation("/app");
-      return null;
+      return <Redirect to="/app" />;
     }
     return <>{children}</>;
   };
@@ -149,8 +140,7 @@ function AppRouter() {
   const RoleSelectRoute = () => {
     if (!isLoaded) return null;
     if (!isSignedIn) {
-      setLocation("/sign-in");
-      return null;
+      return <Redirect to="/sign-in" />;
     }
     return <RoleSelect />;
   };
