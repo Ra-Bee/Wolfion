@@ -1,10 +1,92 @@
 import { AppLayout } from "@/components/layout";
 import { adminMetrics } from "@/lib/data";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, DollarSign, Package, Factory, TrendingUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Activity, DollarSign, Package, Factory, TrendingUp, Plus } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
+
+type ProductType = "short-socks" | "ankle-socks" | "kids-socks";
+
+type ProductionEntry = {
+  id: string;
+  date: string;
+  productType: ProductType;
+  quantityDozen: number;
+};
+
+const productTypeLabels: Record<ProductType, string> = {
+  "short-socks": "Short socks",
+  "ankle-socks": "Ankle socks",
+  "kids-socks": "Kids socks",
+};
+
+const initialInventory: Record<ProductType, number> = {
+  "short-socks": 320,
+  "ankle-socks": 260,
+  "kids-socks": 140,
+};
+
+const productionStorageKey = "wolfion_production_entries";
+
+function getToday() {
+  return new Date().toISOString().slice(0, 10);
+}
 
 export default function Dashboard() {
+  const [productionEntries, setProductionEntries] = useState<ProductionEntry[]>(() => {
+    try {
+      const stored = localStorage.getItem(productionStorageKey);
+      return stored ? JSON.parse(stored) as ProductionEntry[] : [];
+    } catch {
+      return [];
+    }
+  });
+  const [date, setDate] = useState(getToday());
+  const [productType, setProductType] = useState<ProductType>("short-socks");
+  const [quantity, setQuantity] = useState("");
+
+  useEffect(() => {
+    localStorage.setItem(productionStorageKey, JSON.stringify(productionEntries));
+  }, [productionEntries]);
+
+  const inventory = useMemo(() => {
+    return productionEntries.reduce<Record<ProductType, number>>(
+      (stock, entry) => ({
+        ...stock,
+        [entry.productType]: stock[entry.productType] + entry.quantityDozen,
+      }),
+      { ...initialInventory },
+    );
+  }, [productionEntries]);
+
+  const totalInventoryDozen = Object.values(inventory).reduce((total, value) => total + value, 0);
+  const totalProducedDozen = productionEntries.reduce((total, entry) => total + entry.quantityDozen, 0);
+  const recentProductionEntries = productionEntries.slice(0, 4);
+
+  function handleAddProduction(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const quantityDozen = Number(quantity);
+
+    if (!date || !productType || !Number.isFinite(quantityDozen) || quantityDozen <= 0) {
+      return;
+    }
+
+    const entry: ProductionEntry = {
+      id: crypto.randomUUID(),
+      date,
+      productType,
+      quantityDozen,
+    };
+
+    setProductionEntries((current) => [entry, ...current]);
+    setDate(getToday());
+    setProductType("short-socks");
+    setQuantity("");
+  }
+
   return (
     <AppLayout>
       <div className="container mx-auto px-4 py-8 max-w-6xl space-y-8">
@@ -46,8 +128,8 @@ export default function Dashboard() {
               <Factory className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{adminMetrics.production.activeBatches} Batches</div>
-              <p className="text-xs text-muted-foreground mt-1">{adminMetrics.production.unitsInProduction.toLocaleString()} units • Est {adminMetrics.production.estimatedCompletion}</p>
+              <div className="text-2xl font-bold">{productionEntries.length || adminMetrics.production.activeBatches} Batches</div>
+              <p className="text-xs text-muted-foreground mt-1">{totalProducedDozen.toLocaleString()} dozen added to stock</p>
             </CardContent>
           </Card>
           
@@ -57,8 +139,117 @@ export default function Dashboard() {
               <Package className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{adminMetrics.inventory.totalUnits.toLocaleString()}</div>
-              <p className="text-xs text-destructive font-medium mt-1">{adminMetrics.inventory.lowStockAlerts} items low on stock</p>
+              <div className="text-2xl font-bold">{totalInventoryDozen.toLocaleString()} dozen</div>
+              <p className="text-xs text-muted-foreground mt-1">Updates when production is added</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+          <Card>
+            <CardHeader>
+              <CardTitle>Production</CardTitle>
+              <CardDescription>Add finished production in dozen. Inventory increases automatically.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleAddProduction} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto]">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="production-date">Date</label>
+                  <Input
+                    id="production-date"
+                    type="date"
+                    value={date}
+                    onChange={(event) => setDate(event.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="product-type">Product type</label>
+                  <Select value={productType} onValueChange={(value) => setProductType(value as ProductType)}>
+                    <SelectTrigger id="product-type">
+                      <SelectValue placeholder="Choose product" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(productTypeLabels).map(([value, label]) => (
+                        <SelectItem key={value} value={value}>{label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="quantity-dozen">Quantity in dozen</label>
+                  <Input
+                    id="quantity-dozen"
+                    type="number"
+                    min="1"
+                    step="1"
+                    inputMode="numeric"
+                    placeholder="Example: 25"
+                    value={quantity}
+                    onChange={(event) => setQuantity(event.target.value)}
+                    required
+                  />
+                </div>
+                <div className="flex items-end">
+                  <Button type="submit" className="w-full">
+                    <Plus className="h-4 w-4" />
+                    Add
+                  </Button>
+                </div>
+              </form>
+
+              <div className="mt-6 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-semibold">Recent production</h3>
+                  <span className="text-xs text-muted-foreground">{productionEntries.length} records</span>
+                </div>
+                {recentProductionEntries.length > 0 ? (
+                  <div className="space-y-3">
+                    {recentProductionEntries.map((entry) => (
+                      <div key={entry.id} className="flex items-center justify-between rounded-xl border bg-card/60 p-3">
+                        <div>
+                          <p className="text-sm font-medium">{productTypeLabels[entry.productType]}</p>
+                          <p className="text-xs text-muted-foreground">{new Date(`${entry.date}T00:00:00`).toLocaleDateString()}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-bold">{entry.quantityDozen.toLocaleString()} dozen</p>
+                          <p className="text-xs text-primary">Added to inventory</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="rounded-xl border border-dashed p-5 text-center">
+                    <p className="text-sm font-medium">No production added yet</p>
+                    <p className="text-xs text-muted-foreground mt-1">Add the first batch to update inventory stock.</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Inventory</CardTitle>
+              <CardDescription>Current stock by product type</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {(Object.keys(productTypeLabels) as ProductType[]).map((type) => (
+                  <div key={type} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">{productTypeLabels[type]}</span>
+                      <span className="text-sm font-bold">{inventory[type].toLocaleString()} dozen</span>
+                    </div>
+                    <div className="h-2 rounded-full bg-muted overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-primary transition-all"
+                        style={{ width: `${Math.min(100, (inventory[type] / Math.max(totalInventoryDozen, 1)) * 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
         </div>
