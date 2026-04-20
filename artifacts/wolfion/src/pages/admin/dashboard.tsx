@@ -52,6 +52,22 @@ const salesStorageKey = "wolfion_sales_entries";
 const yarnStockStorageKey = "wolfion_yarn_stock_kg";
 const yarnUsageStorageKey = "wolfion_yarn_usage_entries";
 const costStorageKey = "wolfion_cost_inputs";
+const dailyEntriesStorageKey = "wolfion_daily_production_entries";
+
+type DailyProductionEntry = {
+  id: string;
+  date: string;
+  totalProductionDozen: number;
+  yarnUsedKg: number;
+  machineHours: number;
+  yarnCostPerKg: number;
+  laborCost: number;
+  packagingCost: number;
+  ironCost: number;
+  totalCost: number;
+  costPerDozen: number;
+  createdAt: string;
+};
 
 type CostInputs = {
   yarnCostPerDozen: number;
@@ -122,6 +138,24 @@ export default function Dashboard() {
       return defaultCosts;
     }
   });
+  const [dailyEntries, setDailyEntries] = useState<DailyProductionEntry[]>(() => {
+    try {
+      const stored = localStorage.getItem(dailyEntriesStorageKey);
+      return stored ? JSON.parse(stored) as DailyProductionEntry[] : [];
+    } catch {
+      return [];
+    }
+  });
+  const [dailyDate, setDailyDate] = useState(getToday());
+  const [dailyProductionDozen, setDailyProductionDozen] = useState("");
+  const [dailyYarnKg, setDailyYarnKg] = useState("");
+  const [dailyMachineHours, setDailyMachineHours] = useState("");
+  const [dailyYarnCostPerKg, setDailyYarnCostPerKg] = useState("");
+  const [dailyLaborCost, setDailyLaborCost] = useState("");
+  const [dailyPackagingCost, setDailyPackagingCost] = useState("");
+  const [dailyIronCost, setDailyIronCost] = useState("");
+  const [dailyError, setDailyError] = useState("");
+  const [dailyConfirm, setDailyConfirm] = useState("");
   const [quickSaleOpen, setQuickSaleOpen] = useState(false);
   const [quickSaleConfirm, setQuickSaleConfirm] = useState("");
   const [yarnCostInput, setYarnCostInput] = useState(() => (costs.yarnCostPerDozen ? String(costs.yarnCostPerDozen) : ""));
@@ -147,6 +181,10 @@ export default function Dashboard() {
   useEffect(() => {
     localStorage.setItem(costStorageKey, JSON.stringify(costs));
   }, [costs]);
+
+  useEffect(() => {
+    localStorage.setItem(dailyEntriesStorageKey, JSON.stringify(dailyEntries));
+  }, [dailyEntries]);
 
   const inventory = useMemo(() => {
     const stockAfterProduction = productionEntries.reduce<Record<ProductType, number>>(
@@ -200,6 +238,23 @@ export default function Dashboard() {
   const estimatedSevenDayNeedKg = averageDailyYarnUseKg * 7;
   const estimatedYarnShortageKg = Math.max(0, estimatedSevenDayNeedKg - remainingYarnKg);
   const recentYarnUsageEntries = yarnUsageEntries.slice(0, 4);
+  const sortedDailyEntries = useMemo(() => {
+    return [...dailyEntries].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : (a.createdAt < b.createdAt ? 1 : -1)));
+  }, [dailyEntries]);
+  const livePreviewTotalCost =
+    (Number(dailyYarnKg) || 0) * (Number(dailyYarnCostPerKg) || 0) +
+    (Number(dailyLaborCost) || 0) +
+    (Number(dailyPackagingCost) || 0) +
+    (Number(dailyIronCost) || 0);
+  const livePreviewProductionDozen = Number(dailyProductionDozen) || 0;
+  const livePreviewCostPerDozen = livePreviewProductionDozen > 0 ? livePreviewTotalCost / livePreviewProductionDozen : 0;
+  function formatDateLabel(isoDate: string) {
+    const today = getToday();
+    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+    if (isoDate === today) return "Today";
+    if (isoDate === yesterday) return "Yesterday";
+    return new Date(`${isoDate}T00:00:00`).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+  }
   const costPerDozen = costs.yarnCostPerDozen + costs.laborCostPerDozen + costs.packagingCostPerDozen;
   const totalCostOfSales = totalSoldDozen * costPerDozen;
   const totalProfit = totalSalesValue - totalCostOfSales;
@@ -299,6 +354,64 @@ export default function Dashboard() {
     setYarnUsageProductType("short-socks");
     setYarnUsageKg("");
     setYarnError("");
+  }
+
+  function handleAddDailyEntry(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const totalProductionDozen = Number(dailyProductionDozen);
+    const yarnUsedKg = Number(dailyYarnKg);
+    const machineHours = Number(dailyMachineHours);
+    const yarnCostPerKg = Number(dailyYarnCostPerKg);
+    const laborCost = Number(dailyLaborCost);
+    const packagingCost = Number(dailyPackagingCost);
+    const ironCost = Number(dailyIronCost);
+
+    if (!dailyDate || !Number.isFinite(totalProductionDozen) || totalProductionDozen <= 0) {
+      setDailyError("Enter date and total production.");
+      return;
+    }
+    if (
+      !Number.isFinite(yarnUsedKg) || yarnUsedKg < 0 ||
+      !Number.isFinite(machineHours) || machineHours < 0 ||
+      !Number.isFinite(yarnCostPerKg) || yarnCostPerKg < 0 ||
+      !Number.isFinite(laborCost) || laborCost < 0 ||
+      !Number.isFinite(packagingCost) || packagingCost < 0 ||
+      !Number.isFinite(ironCost) || ironCost < 0
+    ) {
+      setDailyError("All numbers must be 0 or more.");
+      return;
+    }
+
+    const totalCost = yarnUsedKg * yarnCostPerKg + laborCost + packagingCost + ironCost;
+    const costPerDozen = totalProductionDozen > 0 ? totalCost / totalProductionDozen : 0;
+
+    const entry: DailyProductionEntry = {
+      id: crypto.randomUUID(),
+      date: dailyDate,
+      totalProductionDozen,
+      yarnUsedKg,
+      machineHours,
+      yarnCostPerKg,
+      laborCost,
+      packagingCost,
+      ironCost,
+      totalCost,
+      costPerDozen,
+      createdAt: new Date().toISOString(),
+    };
+
+    setDailyEntries((current) => [entry, ...current]);
+    setDailyProductionDozen("");
+    setDailyYarnKg("");
+    setDailyMachineHours("");
+    setDailyYarnCostPerKg("");
+    setDailyLaborCost("");
+    setDailyPackagingCost("");
+    setDailyIronCost("");
+    setDailyDate(getToday());
+    setDailyError("");
+    setDailyConfirm("Saved.");
+    setTimeout(() => setDailyConfirm(""), 1500);
   }
 
   function handleSaveCosts(event: FormEvent<HTMLFormElement>) {
@@ -414,6 +527,206 @@ export default function Dashboard() {
             </DialogContent>
           </Dialog>
         </div>
+
+        <Card className="border-2 border-primary/30 shadow-md">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-2xl">Daily Production Entry</CardTitle>
+                <CardDescription>Enter today's production and costs. Totals calculate automatically.</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleAddDailyEntry} className="space-y-5">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="daily-date">Date</label>
+                  <Input
+                    id="daily-date"
+                    type="date"
+                    className="h-12 text-base"
+                    value={dailyDate}
+                    onChange={(event) => setDailyDate(event.target.value)}
+                    max={getToday()}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="daily-production">Total production (dozen)</label>
+                  <Input
+                    id="daily-production"
+                    type="number"
+                    min="0"
+                    step="1"
+                    inputMode="numeric"
+                    className="h-12 text-base"
+                    placeholder="Example: 80"
+                    value={dailyProductionDozen}
+                    onChange={(event) => setDailyProductionDozen(event.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="daily-yarn">Yarn used (kg)</label>
+                  <Input
+                    id="daily-yarn"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    inputMode="decimal"
+                    className="h-12 text-base"
+                    placeholder="Example: 45"
+                    value={dailyYarnKg}
+                    onChange={(event) => setDailyYarnKg(event.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="daily-machine">Machine running hours</label>
+                  <Input
+                    id="daily-machine"
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    inputMode="decimal"
+                    className="h-12 text-base"
+                    placeholder="Example: 9"
+                    value={dailyMachineHours}
+                    onChange={(event) => setDailyMachineHours(event.target.value)}
+                  />
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="daily-yarn-cost">Yarn cost per kg</label>
+                  <Input
+                    id="daily-yarn-cost"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    inputMode="decimal"
+                    className="h-12 text-base"
+                    placeholder="Example: 8"
+                    value={dailyYarnCostPerKg}
+                    onChange={(event) => setDailyYarnCostPerKg(event.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="daily-labor">Labor cost (day)</label>
+                  <Input
+                    id="daily-labor"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    inputMode="decimal"
+                    className="h-12 text-base"
+                    placeholder="Example: 1500"
+                    value={dailyLaborCost}
+                    onChange={(event) => setDailyLaborCost(event.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="daily-packaging">Packaging cost (day)</label>
+                  <Input
+                    id="daily-packaging"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    inputMode="decimal"
+                    className="h-12 text-base"
+                    placeholder="Example: 300"
+                    value={dailyPackagingCost}
+                    onChange={(event) => setDailyPackagingCost(event.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="daily-iron">Iron / finishing cost (day)</label>
+                  <Input
+                    id="daily-iron"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    inputMode="decimal"
+                    className="h-12 text-base"
+                    placeholder="Example: 200"
+                    value={dailyIronCost}
+                    onChange={(event) => setDailyIronCost(event.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div className="rounded-2xl border bg-muted/30 p-4">
+                  <p className="text-xs text-muted-foreground">Total production</p>
+                  <p className="mt-2 text-2xl font-bold">{livePreviewProductionDozen.toLocaleString()} dozen</p>
+                </div>
+                <div className="rounded-2xl border bg-muted/30 p-4">
+                  <p className="text-xs text-muted-foreground">Total cost</p>
+                  <p className="mt-2 text-2xl font-bold">${livePreviewTotalCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                </div>
+                <div className="rounded-2xl border bg-muted/30 p-4">
+                  <p className="text-xs text-muted-foreground">Cost per dozen</p>
+                  <p className="mt-2 text-2xl font-bold">${livePreviewCostPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                </div>
+              </div>
+
+              {dailyError && (
+                <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{dailyError}</p>
+              )}
+              {dailyConfirm && (
+                <p className="rounded-lg bg-green-100 px-3 py-2 text-sm font-medium text-green-800">{dailyConfirm}</p>
+              )}
+
+              <Button type="submit" size="lg" className="h-14 w-full text-base font-semibold">
+                <Plus className="h-5 w-5" />
+                Save day's entry
+              </Button>
+            </form>
+
+            <div className="mt-8 space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-semibold">Past entries</h3>
+                <span className="text-xs text-muted-foreground">{sortedDailyEntries.length} records</span>
+              </div>
+              {sortedDailyEntries.length > 0 ? (
+                <div className="space-y-2">
+                  {sortedDailyEntries.slice(0, 14).map((entry) => (
+                    <div key={entry.id} className="flex flex-col gap-1 rounded-xl border bg-card/60 p-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <p className="text-base font-semibold">{formatDateLabel(entry.date)}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(`${entry.date}T00:00:00`).toLocaleDateString()} · {entry.machineHours.toLocaleString()} hrs · {entry.yarnUsedKg.toLocaleString()} kg yarn
+                        </p>
+                      </div>
+                      <div className="grid grid-cols-3 gap-3 text-right sm:gap-6">
+                        <div>
+                          <p className="text-xs text-muted-foreground">Production</p>
+                          <p className="text-sm font-bold">{entry.totalProductionDozen.toLocaleString()} dz</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Total cost</p>
+                          <p className="text-sm font-bold">${entry.totalCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Per dozen</p>
+                          <p className="text-sm font-bold">${entry.costPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="rounded-xl border border-dashed p-5 text-center">
+                  <p className="text-sm font-medium">No daily entries yet</p>
+                  <p className="text-xs text-muted-foreground mt-1">Add today's entry to start tracking daily costs.</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           <Card>
