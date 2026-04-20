@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Activity, DollarSign, Package, Factory, TrendingUp, Plus, Zap } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 
 type ProductType = "short-socks" | "ankle-socks" | "kids-socks";
@@ -55,6 +55,41 @@ const yarnStockStorageKey = "wolfion_yarn_stock_kg";
 const yarnUsageStorageKey = "wolfion_yarn_usage_entries";
 const costStorageKey = "wolfion_cost_inputs";
 const dailyEntriesStorageKey = "wolfion_daily_production_entries";
+const electricityStorageKey = "wolfion_monthly_electricity";
+const workersStorageKey = "wolfion_workers";
+const workLogsStorageKey = "wolfion_worker_logs";
+const workerPaymentsStorageKey = "wolfion_worker_payments";
+
+type ElectricityEntry = {
+  id: string;
+  month: string;
+  totalBill: number;
+  createdAt: string;
+};
+
+type Worker = {
+  id: string;
+  name: string;
+  payType: "daily" | "per_unit";
+  rate: number;
+  createdAt: string;
+};
+
+type WorkLog = {
+  id: string;
+  workerId: string;
+  date: string;
+  amount: number;
+  createdAt: string;
+};
+
+type WorkerPayment = {
+  id: string;
+  workerId: string;
+  date: string;
+  amount: number;
+  createdAt: string;
+};
 
 type DailyProductionEntry = {
   id: string;
@@ -166,6 +201,57 @@ export default function Dashboard() {
   const [laborCostInput, setLaborCostInput] = useState(() => (costs.laborCostPerDozen ? String(costs.laborCostPerDozen) : ""));
   const [packagingCostInput, setPackagingCostInput] = useState(() => (costs.packagingCostPerDozen ? String(costs.packagingCostPerDozen) : ""));
 
+  const [electricityEntries, setElectricityEntries] = useState<ElectricityEntry[]>(() => {
+    try {
+      const stored = localStorage.getItem(electricityStorageKey);
+      return stored ? JSON.parse(stored) as ElectricityEntry[] : [];
+    } catch {
+      return [];
+    }
+  });
+  const [electricityMonth, setElectricityMonth] = useState(() => new Date().toISOString().slice(0, 7));
+  const [electricityBill, setElectricityBill] = useState("");
+  const [electricityError, setElectricityError] = useState("");
+  const [electricityConfirm, setElectricityConfirm] = useState("");
+
+  const [workers, setWorkers] = useState<Worker[]>(() => {
+    try {
+      const stored = localStorage.getItem(workersStorageKey);
+      return stored ? JSON.parse(stored) as Worker[] : [];
+    } catch {
+      return [];
+    }
+  });
+  const [workLogs, setWorkLogs] = useState<WorkLog[]>(() => {
+    try {
+      const stored = localStorage.getItem(workLogsStorageKey);
+      return stored ? JSON.parse(stored) as WorkLog[] : [];
+    } catch {
+      return [];
+    }
+  });
+  const [workerPayments, setWorkerPayments] = useState<WorkerPayment[]>(() => {
+    try {
+      const stored = localStorage.getItem(workerPaymentsStorageKey);
+      return stored ? JSON.parse(stored) as WorkerPayment[] : [];
+    } catch {
+      return [];
+    }
+  });
+  const [newWorkerName, setNewWorkerName] = useState("");
+  const [newWorkerPayType, setNewWorkerPayType] = useState<"daily" | "per_unit">("daily");
+  const [newWorkerRate, setNewWorkerRate] = useState("");
+  const [workerError, setWorkerError] = useState("");
+  const [logWorkerId, setLogWorkerId] = useState("");
+  const [logDate, setLogDate] = useState(getToday());
+  const [logAmount, setLogAmount] = useState("");
+  const [paymentWorkerId, setPaymentWorkerId] = useState("");
+  const [paymentDate, setPaymentDate] = useState(getToday());
+  const [paymentAmount, setPaymentAmount] = useState("");
+  const [profitTab, setProfitTab] = useState<"daily" | "monthly">("daily");
+  const [profitDate, setProfitDate] = useState(getToday());
+  const [profitMonth, setProfitMonth] = useState(() => new Date().toISOString().slice(0, 7));
+
   useEffect(() => {
     localStorage.setItem(productionStorageKey, JSON.stringify(productionEntries));
   }, [productionEntries]);
@@ -189,6 +275,22 @@ export default function Dashboard() {
   useEffect(() => {
     localStorage.setItem(dailyEntriesStorageKey, JSON.stringify(dailyEntries));
   }, [dailyEntries]);
+
+  useEffect(() => {
+    localStorage.setItem(electricityStorageKey, JSON.stringify(electricityEntries));
+  }, [electricityEntries]);
+
+  useEffect(() => {
+    localStorage.setItem(workersStorageKey, JSON.stringify(workers));
+  }, [workers]);
+
+  useEffect(() => {
+    localStorage.setItem(workLogsStorageKey, JSON.stringify(workLogs));
+  }, [workLogs]);
+
+  useEffect(() => {
+    localStorage.setItem(workerPaymentsStorageKey, JSON.stringify(workerPayments));
+  }, [workerPayments]);
 
   const inventory = useMemo(() => {
     const stockAfterProduction = productionEntries.reduce<Record<ProductType, number>>(
@@ -257,25 +359,6 @@ export default function Dashboard() {
   const todayProductionDozen = todayEntries.reduce((total, entry) => total + entry.totalProductionDozen, 0);
   const todayTotalCost = todayEntries.reduce((total, entry) => total + entry.totalCost, 0);
   const todayCostPerDozen = todayProductionDozen > 0 ? todayTotalCost / todayProductionDozen : 0;
-  const last7DaysChartData = useMemo(() => {
-    const days: { date: string; label: string; production: number; cost: number; costPerDozen: number }[] = [];
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      const iso = d.toISOString().slice(0, 10);
-      const entries = dailyEntries.filter((entry) => entry.date === iso);
-      const production = entries.reduce((total, entry) => total + entry.totalProductionDozen, 0);
-      const cost = entries.reduce((total, entry) => total + entry.totalCost, 0);
-      days.push({
-        date: iso,
-        label: d.toLocaleDateString(undefined, { weekday: "short" }),
-        production,
-        cost,
-        costPerDozen: production > 0 ? cost / production : 0,
-      });
-    }
-    return days;
-  }, [dailyEntries]);
   const liveSaleTotal = (Number(saleQuantity) || 0) * (Number(salePrice) || 0);
   const sortedSalesEntries = useMemo(() => {
     const withDate = salesEntries.map((sale) => ({
@@ -298,6 +381,102 @@ export default function Dashboard() {
   const totalCostOfSales = totalSoldDozen * costPerDozen;
   const totalProfit = totalSalesValue - totalCostOfSales;
   const averageProfitPerSale = salesEntries.length > 0 ? totalProfit / salesEntries.length : 0;
+
+  const sortedElectricityEntries = useMemo(
+    () => [...electricityEntries].sort((a, b) => (a.month < b.month ? 1 : -1)),
+    [electricityEntries],
+  );
+  const monthlyProductionByMonth = useMemo(() => {
+    const totals: Record<string, number> = {};
+    for (const entry of dailyEntries) {
+      const month = entry.date.slice(0, 7);
+      totals[month] = (totals[month] || 0) + entry.totalProductionDozen;
+    }
+    return totals;
+  }, [dailyEntries]);
+  const electricityWithCalc = useMemo(
+    () =>
+      sortedElectricityEntries.map((entry) => {
+        const production = monthlyProductionByMonth[entry.month] || 0;
+        const perDozen = production > 0 ? entry.totalBill / production : 0;
+        return { ...entry, monthlyProduction: production, costPerDozen: perDozen };
+      }),
+    [sortedElectricityEntries, monthlyProductionByMonth],
+  );
+  function electricityPerDozenForDate(isoDate: string): number {
+    const month = isoDate.slice(0, 7);
+    const entry = electricityEntries.find((e) => e.month === month);
+    if (!entry) return 0;
+    const production = monthlyProductionByMonth[month] || 0;
+    return production > 0 ? entry.totalBill / production : 0;
+  }
+
+  const workerStats = useMemo(() => {
+    return workers.map((worker) => {
+      const logs = workLogs.filter((l) => l.workerId === worker.id);
+      const totalUnits = logs.reduce((sum, l) => sum + l.amount, 0);
+      const totalEarned = totalUnits * worker.rate;
+      const totalPaid = workerPayments
+        .filter((p) => p.workerId === worker.id)
+        .reduce((sum, p) => sum + p.amount, 0);
+      return {
+        worker,
+        totalUnits,
+        totalEarned,
+        totalPaid,
+        remaining: totalEarned - totalPaid,
+      };
+    });
+  }, [workers, workLogs, workerPayments]);
+  const totalPayable = workerStats.reduce((sum, s) => sum + s.totalEarned, 0);
+  const totalPaidAll = workerStats.reduce((sum, s) => sum + s.totalPaid, 0);
+  const totalRemainingAll = workerStats.reduce((sum, s) => sum + s.remaining, 0);
+
+  const profitDailyView = useMemo(() => {
+    const dayEntries = dailyEntries.filter((e) => e.date === profitDate);
+    const production = dayEntries.reduce((sum, e) => sum + e.totalProductionDozen, 0);
+    const baseCost = dayEntries.reduce((sum, e) => sum + e.totalCost, 0);
+    const elecPerDozen = electricityPerDozenForDate(profitDate);
+    const electricityCost = elecPerDozen * production;
+    const totalCost = baseCost + electricityCost;
+    const sales = sortedSalesEntries.filter((s) => s.date === profitDate);
+    const salesValue = sales.reduce((sum, s) => sum + s.totalValue, 0);
+    const salesDozen = sales.reduce((sum, s) => sum + s.quantityDozen, 0);
+    return {
+      production,
+      salesValue,
+      salesDozen,
+      totalCost,
+      electricityCost,
+      profit: salesValue - totalCost,
+      costPerDozen: production > 0 ? totalCost / production : 0,
+    };
+  }, [profitDate, dailyEntries, electricityEntries, monthlyProductionByMonth, sortedSalesEntries]);
+
+  const profitMonthlyView = useMemo(() => {
+    const monthEntries = dailyEntries.filter((e) => e.date.startsWith(profitMonth));
+    const production = monthEntries.reduce((sum, e) => sum + e.totalProductionDozen, 0);
+    const baseCost = monthEntries.reduce((sum, e) => sum + e.totalCost, 0);
+    const elec = electricityEntries.find((e) => e.month === profitMonth);
+    const electricityCost = elec ? elec.totalBill : 0;
+    const totalCost = baseCost + electricityCost;
+    const sales = sortedSalesEntries.filter((s) => s.date.startsWith(profitMonth));
+    const salesValue = sales.reduce((sum, s) => sum + s.totalValue, 0);
+    const salesDozen = sales.reduce((sum, s) => sum + s.quantityDozen, 0);
+    return {
+      production,
+      salesValue,
+      salesDozen,
+      totalCost,
+      electricityCost,
+      profit: salesValue - totalCost,
+      costPerDozen: production > 0 ? totalCost / production : 0,
+    };
+  }, [profitMonth, dailyEntries, electricityEntries, sortedSalesEntries]);
+
+  function formatMonthLabel(month: string) {
+    return new Date(`${month}-01T00:00:00`).toLocaleDateString(undefined, { month: "long", year: "numeric" });
+  }
 
   function handleAddProduction(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -470,6 +649,91 @@ export default function Dashboard() {
     });
   }
 
+  function handleAddElectricity(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setElectricityError("");
+    setElectricityConfirm("");
+    const bill = Number(electricityBill);
+    if (!electricityMonth || !Number.isFinite(bill) || bill <= 0) {
+      setElectricityError("Enter a month and a valid bill amount.");
+      return;
+    }
+    setElectricityEntries((current) => {
+      const filtered = current.filter((e) => e.month !== electricityMonth);
+      return [
+        {
+          id: crypto.randomUUID(),
+          month: electricityMonth,
+          totalBill: bill,
+          createdAt: new Date().toISOString(),
+        },
+        ...filtered,
+      ];
+    });
+    setElectricityBill("");
+    setElectricityConfirm(`Saved ${formatMonthLabel(electricityMonth)} electricity bill.`);
+  }
+
+  function handleAddWorker(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setWorkerError("");
+    const rate = Number(newWorkerRate);
+    if (!newWorkerName.trim() || !Number.isFinite(rate) || rate <= 0) {
+      setWorkerError("Enter a name and a valid rate.");
+      return;
+    }
+    const worker: Worker = {
+      id: crypto.randomUUID(),
+      name: newWorkerName.trim(),
+      payType: newWorkerPayType,
+      rate,
+      createdAt: new Date().toISOString(),
+    };
+    setWorkers((current) => [worker, ...current]);
+    setNewWorkerName("");
+    setNewWorkerRate("");
+  }
+
+  function handleAddWorkLog(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const amount = Number(logAmount);
+    if (!logWorkerId || !logDate || !Number.isFinite(amount) || amount <= 0) {
+      return;
+    }
+    const log: WorkLog = {
+      id: crypto.randomUUID(),
+      workerId: logWorkerId,
+      date: logDate,
+      amount,
+      createdAt: new Date().toISOString(),
+    };
+    setWorkLogs((current) => [log, ...current]);
+    setLogAmount("");
+  }
+
+  function handleAddPayment(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const amount = Number(paymentAmount);
+    if (!paymentWorkerId || !paymentDate || !Number.isFinite(amount) || amount <= 0) {
+      return;
+    }
+    const payment: WorkerPayment = {
+      id: crypto.randomUUID(),
+      workerId: paymentWorkerId,
+      date: paymentDate,
+      amount,
+      createdAt: new Date().toISOString(),
+    };
+    setWorkerPayments((current) => [payment, ...current]);
+    setPaymentAmount("");
+  }
+
+  function handleRemoveWorker(id: string) {
+    setWorkers((current) => current.filter((w) => w.id !== id));
+    setWorkLogs((current) => current.filter((l) => l.workerId !== id));
+    setWorkerPayments((current) => current.filter((p) => p.workerId !== id));
+  }
+
   return (
     <AppLayout>
       <div className="container mx-auto px-4 py-8 max-w-6xl space-y-8">
@@ -570,6 +834,90 @@ export default function Dashboard() {
             </DialogContent>
           </Dialog>
         </div>
+
+        <Card className="border-2 border-primary/40 shadow-lg bg-gradient-to-br from-primary/5 to-background">
+          <CardHeader>
+            <CardTitle className="text-2xl flex items-center gap-2"><TrendingUp className="h-6 w-6 text-primary" /> Profit Dashboard</CardTitle>
+            <CardDescription>Live view of your production, sales, costs, and profit.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tabs value={profitTab} onValueChange={(v) => setProfitTab(v as "daily" | "monthly")} className="space-y-5">
+              <TabsList className="grid w-full grid-cols-2 h-12">
+                <TabsTrigger value="daily" className="text-base">Daily View</TabsTrigger>
+                <TabsTrigger value="monthly" className="text-base">Monthly View</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="daily" className="space-y-5">
+                <div className="space-y-2 max-w-xs">
+                  <label className="text-sm font-medium" htmlFor="profit-daily-date">Date</label>
+                  <Input
+                    id="profit-daily-date"
+                    type="date"
+                    className="h-12 text-base"
+                    value={profitDate}
+                    onChange={(e) => setProfitDate(e.target.value)}
+                    max={getToday()}
+                  />
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  <div className="rounded-2xl border bg-card p-5">
+                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Production</p>
+                    <p className="mt-2 text-3xl font-bold">{profitDailyView.production.toLocaleString()} <span className="text-base font-medium text-muted-foreground">dz</span></p>
+                  </div>
+                  <div className="rounded-2xl border bg-card p-5">
+                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total sales</p>
+                    <p className="mt-2 text-3xl font-bold">${profitDailyView.salesValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{profitDailyView.salesDozen.toLocaleString()} dz sold</p>
+                  </div>
+                  <div className="rounded-2xl border bg-card p-5">
+                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total cost</p>
+                    <p className="mt-2 text-3xl font-bold">${profitDailyView.totalCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">incl. ${profitDailyView.electricityCost.toLocaleString(undefined, { maximumFractionDigits: 2 })} electricity</p>
+                  </div>
+                  <div className={`rounded-2xl border p-5 ${profitDailyView.profit >= 0 ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
+                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Profit</p>
+                    <p className={`mt-2 text-3xl font-bold ${profitDailyView.profit >= 0 ? "text-green-700" : "text-red-700"}`}>${profitDailyView.profit.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Sales − Cost</p>
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="monthly" className="space-y-5">
+                <div className="space-y-2 max-w-xs">
+                  <label className="text-sm font-medium" htmlFor="profit-monthly-month">Month</label>
+                  <Input
+                    id="profit-monthly-month"
+                    type="month"
+                    className="h-12 text-base"
+                    value={profitMonth}
+                    onChange={(e) => setProfitMonth(e.target.value)}
+                  />
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  <div className="rounded-2xl border bg-card p-5">
+                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total production</p>
+                    <p className="mt-2 text-3xl font-bold">{profitMonthlyView.production.toLocaleString()} <span className="text-base font-medium text-muted-foreground">dz</span></p>
+                  </div>
+                  <div className="rounded-2xl border bg-card p-5">
+                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total sales</p>
+                    <p className="mt-2 text-3xl font-bold">${profitMonthlyView.salesValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{profitMonthlyView.salesDozen.toLocaleString()} dz sold</p>
+                  </div>
+                  <div className="rounded-2xl border bg-card p-5">
+                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total cost</p>
+                    <p className="mt-2 text-3xl font-bold">${profitMonthlyView.totalCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">incl. ${profitMonthlyView.electricityCost.toLocaleString(undefined, { maximumFractionDigits: 2 })} electricity</p>
+                  </div>
+                  <div className={`rounded-2xl border p-5 ${profitMonthlyView.profit >= 0 ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
+                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total profit</p>
+                    <p className={`mt-2 text-3xl font-bold ${profitMonthlyView.profit >= 0 ? "text-green-700" : "text-red-700"}`}>${profitMonthlyView.profit.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Sales − Cost</p>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
 
         <Card className="border-2 border-primary/30 shadow-md">
           <CardHeader>
@@ -746,51 +1094,6 @@ export default function Dashboard() {
                 Save day's entry
               </Button>
             </form>
-
-            <div className="grid gap-4 lg:grid-cols-2">
-              <div className="rounded-2xl border bg-card p-4">
-                <div className="mb-3 flex items-baseline justify-between">
-                  <h3 className="text-sm font-semibold">Production over last 7 days</h3>
-                  <span className="text-xs text-muted-foreground">in dozen</span>
-                </div>
-                <div className="h-56 w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={last7DaysChartData} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                      <XAxis dataKey="label" tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} />
-                      <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} allowDecimals={false} />
-                      <Tooltip
-                        cursor={{ fill: "hsl(var(--muted))", opacity: 0.4 }}
-                        contentStyle={{ borderRadius: 12, border: "1px solid hsl(var(--border))", fontSize: 12 }}
-                        formatter={(value: number) => [`${value.toLocaleString()} dozen`, "Production"]}
-                      />
-                      <Bar dataKey="production" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-
-              <div className="rounded-2xl border bg-card p-4">
-                <div className="mb-3 flex items-baseline justify-between">
-                  <h3 className="text-sm font-semibold">Cost trend</h3>
-                  <span className="text-xs text-muted-foreground">cost per dozen</span>
-                </div>
-                <div className="h-56 w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={last7DaysChartData} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                      <XAxis dataKey="label" tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} />
-                      <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} />
-                      <Tooltip
-                        contentStyle={{ borderRadius: 12, border: "1px solid hsl(var(--border))", fontSize: 12 }}
-                        formatter={(value: number) => [`$${value.toLocaleString(undefined, { maximumFractionDigits: 2 })}`, "Cost / dozen"]}
-                      />
-                      <Line type="monotone" dataKey="costPerDozen" stroke="hsl(var(--primary))" strokeWidth={3} dot={{ r: 4, fill: "hsl(var(--primary))" }} activeDot={{ r: 6 }} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-            </div>
 
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -978,6 +1281,225 @@ export default function Dashboard() {
                 <div className="rounded-xl border border-dashed p-5 text-center">
                   <p className="text-sm font-medium">No sales entered yet</p>
                   <p className="text-xs text-muted-foreground mt-1">Add a sale above to update revenue and reduce stock.</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-2 border-primary/30 shadow-md">
+          <CardHeader>
+            <CardTitle className="text-2xl flex items-center gap-2"><Zap className="h-6 w-6 text-primary" /> Monthly Cost (Electricity)</CardTitle>
+            <CardDescription>Save monthly electricity bill. Cost per dozen calculates automatically.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <form onSubmit={handleAddElectricity} className="space-y-5">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="elec-month">Month</label>
+                  <Input
+                    id="elec-month"
+                    type="month"
+                    className="h-12 text-base"
+                    value={electricityMonth}
+                    onChange={(e) => setElectricityMonth(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="elec-bill">Total electricity bill</label>
+                  <Input
+                    id="elec-bill"
+                    type="number"
+                    min="1"
+                    step="0.01"
+                    inputMode="decimal"
+                    className="h-12 text-base"
+                    placeholder="Example: 5000"
+                    value={electricityBill}
+                    onChange={(e) => setElectricityBill(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+              {electricityError && <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{electricityError}</p>}
+              {electricityConfirm && <p className="rounded-lg bg-green-100 px-3 py-2 text-sm font-medium text-green-800">{electricityConfirm}</p>}
+              <Button type="submit" size="lg" className="h-14 w-full text-base font-semibold">
+                <Plus className="h-5 w-5" /> Save monthly bill
+              </Button>
+            </form>
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-semibold">Monthly history</h3>
+                <span className="text-xs text-muted-foreground">{electricityWithCalc.length} months</span>
+              </div>
+              {electricityWithCalc.length > 0 ? (
+                <div className="space-y-2">
+                  {electricityWithCalc.map((entry) => (
+                    <div key={entry.id} className="grid gap-2 rounded-xl border bg-card/60 p-4 sm:grid-cols-4">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Month</p>
+                        <p className="text-base font-semibold">{formatMonthLabel(entry.month)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Total bill</p>
+                        <p className="text-base font-bold">${entry.totalBill.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Production</p>
+                        <p className="text-base font-semibold">{entry.monthlyProduction.toLocaleString()} dz</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Cost / dozen</p>
+                        <p className="text-base font-bold">${entry.costPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="rounded-xl border border-dashed p-5 text-center">
+                  <p className="text-sm font-medium">No electricity bills saved yet</p>
+                  <p className="text-xs text-muted-foreground mt-1">Add this month's bill above.</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-2 border-primary/30 shadow-md">
+          <CardHeader>
+            <CardTitle className="text-2xl">Labor Management</CardTitle>
+            <CardDescription>Track each worker's earnings, payments, and remaining balance.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="rounded-2xl border bg-primary/5 p-5">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total payable</p>
+                <p className="mt-2 text-3xl font-bold">${totalPayable.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+              </div>
+              <div className="rounded-2xl border bg-primary/5 p-5">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total paid</p>
+                <p className="mt-2 text-3xl font-bold">${totalPaidAll.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+              </div>
+              <div className={`rounded-2xl border p-5 ${totalRemainingAll > 0 ? "bg-orange-50 border-orange-200" : "bg-green-50 border-green-200"}`}>
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Remaining</p>
+                <p className={`mt-2 text-3xl font-bold ${totalRemainingAll > 0 ? "text-orange-700" : "text-green-700"}`}>${totalRemainingAll.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleAddWorker} className="space-y-4 rounded-2xl border bg-muted/20 p-4">
+              <h3 className="text-sm font-semibold">Add a worker</h3>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="worker-name">Name</label>
+                  <Input id="worker-name" className="h-12 text-base" placeholder="Worker name" value={newWorkerName} onChange={(e) => setNewWorkerName(e.target.value)} required />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="worker-paytype">Pay type</label>
+                  <Select value={newWorkerPayType} onValueChange={(v) => setNewWorkerPayType(v as "daily" | "per_unit")}>
+                    <SelectTrigger id="worker-paytype" className="h-12 text-base"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="daily">Daily wage</SelectItem>
+                      <SelectItem value="per_unit">Per unit</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="worker-rate">{newWorkerPayType === "daily" ? "Wage per day" : "Rate per unit"}</label>
+                  <Input id="worker-rate" type="number" min="0.01" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="Example: 500" value={newWorkerRate} onChange={(e) => setNewWorkerRate(e.target.value)} required />
+                </div>
+              </div>
+              {workerError && <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{workerError}</p>}
+              <Button type="submit" size="lg" className="h-12 w-full text-base font-semibold sm:w-auto"><Plus className="h-5 w-5" /> Add worker</Button>
+            </form>
+
+            {workers.length > 0 && (
+              <div className="grid gap-4 lg:grid-cols-2">
+                <form onSubmit={handleAddWorkLog} className="space-y-4 rounded-2xl border bg-muted/20 p-4">
+                  <h3 className="text-sm font-semibold">Log work done</h3>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium" htmlFor="log-worker">Worker</label>
+                    <Select value={logWorkerId} onValueChange={setLogWorkerId}>
+                      <SelectTrigger id="log-worker" className="h-12 text-base"><SelectValue placeholder="Choose worker" /></SelectTrigger>
+                      <SelectContent>
+                        {workers.map((w) => <SelectItem key={w.id} value={w.id}>{w.name}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium" htmlFor="log-date">Date</label>
+                      <Input id="log-date" type="date" className="h-12 text-base" value={logDate} onChange={(e) => setLogDate(e.target.value)} max={getToday()} required />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium" htmlFor="log-amount">{workers.find(w => w.id === logWorkerId)?.payType === "per_unit" ? "Units done" : "Days worked"}</label>
+                      <Input id="log-amount" type="number" min="0.01" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="Example: 1" value={logAmount} onChange={(e) => setLogAmount(e.target.value)} required />
+                    </div>
+                  </div>
+                  <Button type="submit" size="lg" className="h-12 w-full text-base font-semibold"><Plus className="h-5 w-5" /> Save work</Button>
+                </form>
+
+                <form onSubmit={handleAddPayment} className="space-y-4 rounded-2xl border bg-muted/20 p-4">
+                  <h3 className="text-sm font-semibold">Record a payment</h3>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium" htmlFor="pay-worker">Worker</label>
+                    <Select value={paymentWorkerId} onValueChange={setPaymentWorkerId}>
+                      <SelectTrigger id="pay-worker" className="h-12 text-base"><SelectValue placeholder="Choose worker" /></SelectTrigger>
+                      <SelectContent>
+                        {workers.map((w) => <SelectItem key={w.id} value={w.id}>{w.name}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium" htmlFor="pay-date">Date</label>
+                      <Input id="pay-date" type="date" className="h-12 text-base" value={paymentDate} onChange={(e) => setPaymentDate(e.target.value)} max={getToday()} required />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium" htmlFor="pay-amount">Amount paid</label>
+                      <Input id="pay-amount" type="number" min="0.01" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="Example: 500" value={paymentAmount} onChange={(e) => setPaymentAmount(e.target.value)} required />
+                    </div>
+                  </div>
+                  <Button type="submit" size="lg" className="h-12 w-full text-base font-semibold"><Plus className="h-5 w-5" /> Save payment</Button>
+                </form>
+              </div>
+            )}
+
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold">Workers</h3>
+              {workerStats.length > 0 ? (
+                <div className="space-y-2">
+                  {workerStats.map(({ worker, totalUnits, totalEarned, totalPaid, remaining }) => (
+                    <div key={worker.id} className="rounded-xl border bg-card/60 p-4">
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div>
+                          <p className="text-base font-semibold">{worker.name}</p>
+                          <p className="text-xs text-muted-foreground">{worker.payType === "daily" ? `$${worker.rate}/day` : `$${worker.rate}/unit`} · {totalUnits.toLocaleString()} {worker.payType === "daily" ? "days" : "units"}</p>
+                        </div>
+                        <Button variant="ghost" size="sm" onClick={() => handleRemoveWorker(worker.id)} className="text-destructive">Remove</Button>
+                      </div>
+                      <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                        <div className="rounded-lg bg-muted/40 p-3">
+                          <p className="text-xs text-muted-foreground">Total earned</p>
+                          <p className="text-base font-bold">${totalEarned.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                        </div>
+                        <div className="rounded-lg bg-muted/40 p-3">
+                          <p className="text-xs text-muted-foreground">Already paid</p>
+                          <p className="text-base font-bold">${totalPaid.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                        </div>
+                        <div className={`rounded-lg p-3 ${remaining > 0 ? "bg-orange-100" : "bg-green-100"}`}>
+                          <p className="text-xs text-muted-foreground">Remaining due</p>
+                          <p className={`text-base font-bold ${remaining > 0 ? "text-orange-700" : "text-green-700"}`}>${remaining.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="rounded-xl border border-dashed p-5 text-center">
+                  <p className="text-sm font-medium">No workers yet</p>
+                  <p className="text-xs text-muted-foreground mt-1">Add a worker above to start tracking labor.</p>
                 </div>
               )}
             </div>
