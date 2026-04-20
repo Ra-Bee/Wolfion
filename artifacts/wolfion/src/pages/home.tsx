@@ -1,96 +1,97 @@
 import { Link } from "wouter";
-import { ArrowRight, ShieldCheck, ShoppingBag } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import wolfionLogo from "@assets/Image_20260421042552_60_2_1776716788241.jpg";
+import { ArrowRight } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="min-h-[100dvh] flex flex-col bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
-      <header className="absolute top-0 w-full z-50 px-6 py-6 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <img src={wolfionLogo} alt="Wolfion" className="h-9 w-9 rounded-md object-cover" />
-          <span className="font-bold text-xl tracking-tight">WOLFION</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <Link href="/sign-in">
-            <Button variant="ghost" className="hidden sm:inline-flex font-medium">Log in</Button>
-          </Link>
-          <Link href="/sign-up">
-            <Button className="rounded-full px-6 font-medium bg-foreground text-background hover:bg-foreground/90">Shop Now</Button>
-          </Link>
-        </div>
-      </header>
+    <div className="relative min-h-[100dvh] w-full overflow-hidden bg-black text-white">
+      {/* Layer 1 — base radial spotlight */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 60% at 50% 35%, rgba(60,60,60,0.55) 0%, rgba(20,20,20,0.85) 45%, #000 80%)",
+        }}
+      />
 
-      <main className="flex-1 flex flex-col items-center justify-center pt-24 pb-12 px-6">
-        <div className="max-w-3xl w-full mx-auto text-center space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted text-sm font-medium mb-4">
-            <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse"></span>
-            The new standard in everyday essentials
-          </div>
-          
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tighter leading-[1.1] text-balance">
-            Socks that don't <br className="hidden sm:block" />
-            <span className="text-primary italic font-serif font-medium">compromise.</span>
-          </h1>
-          
-          <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed text-balance">
-            Sharp design, uncompromising comfort, and materials that last. Wolfion is built for those who know details matter.
+      {/* Layer 2 — subtle vertical depth */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/80" />
+
+      {/* Layer 3 — film grain texture (SVG noise) */}
+      <div
+        className="absolute inset-0 opacity-[0.18] mix-blend-overlay pointer-events-none"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")",
+        }}
+      />
+
+      {/* Layer 4 — soft top accent line */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 h-px w-1/2 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+
+      {/* Content */}
+      <main className="relative z-10 min-h-[100dvh] flex flex-col items-center justify-center px-6 py-12">
+        <div className="w-full max-w-xl mx-auto flex flex-col items-center text-center animate-in fade-in slide-in-from-bottom-6 duration-1000 fill-mode-both">
+          {/* Eyebrow */}
+          <p
+            className="text-[10px] uppercase tracking-[0.6em] text-white/45 mb-10 animate-in fade-in duration-1000 delay-100 fill-mode-both"
+            data-testid="landing-eyebrow"
+          >
+            Wolfion · 2026
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
+          {/* Wordmark */}
+          <h1
+            className="text-6xl sm:text-7xl md:text-8xl font-extralight tracking-[0.32em] pl-[0.32em] text-white drop-shadow-[0_4px_30px_rgba(255,255,255,0.08)] animate-in fade-in duration-[1400ms] delay-200 fill-mode-both"
+            data-testid="landing-wordmark"
+          >
+            WOLFION
+          </h1>
+
+          {/* Hairline divider */}
+          <div className="mt-10 h-px w-24 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-in fade-in duration-1000 delay-500 fill-mode-both" />
+
+          {/* Tagline */}
+          <p
+            className="mt-10 text-2xl sm:text-3xl font-light leading-snug text-white max-w-md animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500 fill-mode-both"
+            data-testid="landing-tagline"
+          >
+            Let your fashion <span className="font-serif italic">speak</span> before you do.
+          </p>
+
+          {/* Subtext */}
+          <p
+            className="mt-5 text-sm sm:text-base text-white/55 font-light leading-relaxed max-w-md animate-in fade-in duration-1000 delay-700 fill-mode-both"
+            data-testid="landing-subtext"
+          >
+            Sharp design. Uncompromising comfort. Materials that last.
+          </p>
+
+          {/* Buttons */}
+          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-[900ms] fill-mode-both">
             <Link href="/sign-up" className="w-full sm:w-auto">
-              <Button size="lg" className="w-full rounded-full text-base h-14 px-8 bg-primary hover:bg-primary/90 text-primary-foreground">
-                Get Started <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
+              <button
+                className="group w-full sm:w-auto h-13 px-10 py-4 rounded-full bg-white text-black text-sm font-medium tracking-[0.18em] uppercase shadow-2xl shadow-white/10 hover:bg-neutral-100 hover:shadow-white/20 active:scale-[0.98] transition-all inline-flex items-center justify-center"
+                data-testid="landing-enter-store"
+              >
+                Enter Store
+                <ArrowRight className="ml-2.5 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </button>
             </Link>
             <Link href="/sign-in" className="w-full sm:w-auto">
-              <Button size="lg" variant="outline" className="w-full rounded-full text-base h-14 px-8 border-foreground/10 hover:bg-muted">
-                I already have an account
-              </Button>
+              <button
+                className="w-full sm:w-auto h-13 px-10 py-4 rounded-full bg-transparent border border-white/25 text-white text-sm font-medium tracking-[0.18em] uppercase hover:bg-white/5 hover:border-white/50 active:scale-[0.98] transition-all"
+                data-testid="landing-login"
+              >
+                Login
+              </button>
             </Link>
           </div>
         </div>
 
-        <div className="w-full max-w-5xl mx-auto mt-24 grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-300 fill-mode-both">
-          <div className="relative group overflow-hidden rounded-2xl aspect-[4/5] bg-muted">
-            <img 
-              src="https://images.unsplash.com/photo-1582966772680-860e372bb558?w=800&q=80" 
-              alt="Black socks" 
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-            <div className="absolute bottom-0 left-0 p-6">
-              <p className="text-white font-medium text-lg">The Everyday Crew</p>
-              <p className="text-white/80 text-sm">Onyx Black</p>
-            </div>
-          </div>
-          
-          <div className="relative group overflow-hidden rounded-2xl aspect-[4/5] bg-muted md:-translate-y-8">
-            <img 
-              src="https://images.unsplash.com/photo-1608222351212-18fe0ec7b13b?w=800&q=80" 
-              alt="White socks" 
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-            <div className="absolute bottom-0 left-0 p-6">
-              <p className="text-white font-medium text-lg">The Everyday Crew</p>
-              <p className="text-white/80 text-sm">Arctic White</p>
-            </div>
-          </div>
-          
-          <div className="relative group overflow-hidden rounded-2xl aspect-[4/5] bg-muted">
-            <img 
-              src="https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=800&q=80" 
-              alt="Orange socks" 
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-            <div className="absolute bottom-0 left-0 p-6">
-              <p className="text-white font-medium text-lg">Performance Ankle</p>
-              <p className="text-white/80 text-sm">Wolf Orange</p>
-            </div>
-          </div>
-        </div>
+        {/* Footer */}
+        <p className="absolute bottom-6 left-1/2 -translate-x-1/2 text-[10px] uppercase tracking-[0.4em] text-white/35 animate-in fade-in duration-1000 delay-[1200ms] fill-mode-both">
+          Built different · Own the rest
+        </p>
       </main>
     </div>
   );
