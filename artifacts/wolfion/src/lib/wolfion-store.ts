@@ -8,6 +8,7 @@ export type ProductionEntry = {
   date: string;
   productType: ProductType;
   quantityDozen: number;
+  sourceDailyId?: string;
 };
 
 export type SaleEntry = {
@@ -69,12 +70,48 @@ export type WorkerPayment = {
 };
 
 export type YarnPurchase = { id: string; date: string; kg: number; createdAt: string };
+
+export type Investment = {
+  id: string;
+  date: string;
+  type: string;
+  description: string;
+  amount: number;
+  source: string;
+  createdAt: string;
+};
+
+export type InvestorEntry = {
+  id: string;
+  name: string;
+  date: string;
+  amount: number;
+  createdAt: string;
+};
+
+export type Debt = {
+  id: string;
+  date: string;
+  personName: string;
+  amount: number;
+  description?: string;
+  createdAt: string;
+};
+
+export type DebtPayment = {
+  id: string;
+  debtId: string;
+  date: string;
+  amount: number;
+  createdAt: string;
+};
 export type YarnPerDozen = Record<string, number>;
 export type YarnUsageEntry = {
   id: string;
   productType: ProductType;
   kgUsed: number;
   createdAt: string;
+  sourceDailyId?: string;
 };
 
 export const STORAGE_KEYS = {
@@ -90,6 +127,10 @@ export const STORAGE_KEYS = {
   workerPayments: "wolfion_worker_payments",
   yarnPurchases: "wolfion_yarn_purchases",
   yarnPerDozen: "wolfion_yarn_per_dozen",
+  investments: "wolfion_investments",
+  investors: "wolfion_investors",
+  debts: "wolfion_debts",
+  debtPayments: "wolfion_debt_payments",
 } as const;
 
 export const defaultProductTypes: ProductTypeOption[] = [

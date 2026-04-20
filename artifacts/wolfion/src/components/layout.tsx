@@ -3,17 +3,9 @@ import { Link, useLocation } from 'wouter';
 import { useUser, useClerk } from '@clerk/react';
 import { useRole } from '@/hooks/use-role';
 import { useCart } from '@/hooks/use-cart';
-import { ShoppingBag, User, LogOut, Menu, X, ArrowRight, ShieldCheck, Home, Sun, Moon, MoreVertical, FileText, Users as UsersIcon, Wrench } from 'lucide-react';
+import { ShoppingBag, User, LogOut, Menu, X, ArrowRight, ShieldCheck, Home, Sun, Moon, FileText, Users as UsersIcon, Wrench, Factory, ShoppingCart, TrendingUp, Wallet, HandCoins } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from '@/components/ui/sheet';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, SheetClose } from '@/components/ui/sheet';
 import { useTheme } from '@/hooks/use-theme';
 import wolfionLogo from "@assets/Rabby_1776709654876.jpg";
 
@@ -145,73 +137,94 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </CartDrawer>
             )}
             
-            {!isCustomer && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" aria-label="Admin actions">
-                    <MoreVertical className="h-5 w-5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>Management</DropdownMenuLabel>
-                  <DropdownMenuItem onClick={() => setLocation('/admin/inventory-report')}>
-                    <FileText className="h-4 w-4 mr-2" />
-                    Inventory Report
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setLocation('/admin/labor-payroll')}>
-                    <UsersIcon className="h-4 w-4 mr-2" />
-                    Labor Payroll
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setLocation('/admin/yarn-calculation')}>
-                    <Wrench className="h-4 w-4 mr-2" />
-                    Yarn Calculation
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Sign out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" aria-label="Open menu">
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-                <div className="flex flex-col h-full">
-                  <div className="py-6 border-b">
-                    <p className="font-medium px-4">{user?.fullName || user?.emailAddresses[0]?.emailAddress}</p>
-                    <p className="text-sm text-muted-foreground px-4 mt-1 capitalize">Role: {role}</p>
-                  </div>
-                  
-                  <div className="flex-1 py-4 flex flex-col gap-2 px-2">
-                    {isCustomer ? (
-                      <>
+              <SheetContent side="right" className="w-[300px] sm:w-[380px] p-0 flex flex-col">
+                <SheetHeader className="px-5 pt-6 pb-4 border-b text-left">
+                  <SheetTitle className="text-base">{user?.fullName || user?.emailAddresses[0]?.emailAddress}</SheetTitle>
+                  <p className="text-xs text-muted-foreground capitalize">Role: {role}</p>
+                </SheetHeader>
+
+                <nav className="flex-1 overflow-y-auto py-3 px-2">
+                  {isCustomer ? (
+                    <div className="flex flex-col gap-1">
+                      <SheetClose asChild>
                         <Link href="/app">
-                          <Button variant="ghost" className="w-full justify-start"><Home className="mr-2 h-4 w-4" /> Shop Home</Button>
+                          <Button variant="ghost" className="w-full justify-start h-11"><Home className="mr-3 h-4 w-4" /> Shop Home</Button>
                         </Link>
-                        <Button variant="ghost" className="w-full justify-start" onClick={() => setRole('admin')}><ShieldCheck className="mr-2 h-4 w-4" /> Switch to Admin</Button>
-                      </>
-                    ) : (
-                      <>
-                        <Link href="/admin">
-                          <Button variant="ghost" className="w-full justify-start"><Home className="mr-2 h-4 w-4" /> Dashboard</Button>
-                        </Link>
-                        <Button variant="ghost" className="w-full justify-start" onClick={() => setRole('customer')}><User className="mr-2 h-4 w-4" /> Switch to Customer</Button>
-                      </>
-                    )}
-                  </div>
-                  
-                  <div className="border-t p-4">
-                    <Button variant="outline" className="w-full justify-start text-destructive hover:text-destructive" onClick={handleSignOut}>
-                      <LogOut className="mr-2 h-4 w-4" /> Sign Out
-                    </Button>
-                  </div>
-                </div>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="w-full justify-start h-11" onClick={() => setRole('admin')}>
+                          <ShieldCheck className="mr-3 h-4 w-4" /> Switch to Admin
+                        </Button>
+                      </SheetClose>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-1">
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="w-full justify-start h-11" onClick={() => setLocation('/admin')}>
+                          <Home className="mr-3 h-4 w-4" /> Home (Admin Dashboard)
+                        </Button>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="w-full justify-start h-11" onClick={() => setLocation('/admin/daily-production')}>
+                          <Factory className="mr-3 h-4 w-4" /> Daily Production Entry
+                        </Button>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="w-full justify-start h-11" onClick={() => setLocation('/admin/daily-sales')}>
+                          <ShoppingCart className="mr-3 h-4 w-4" /> Daily Sales Entry
+                        </Button>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="w-full justify-start h-11" onClick={() => setLocation('/admin/profit')}>
+                          <TrendingUp className="mr-3 h-4 w-4" /> Profit Dashboard
+                        </Button>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="w-full justify-start h-11" onClick={() => setLocation('/admin/inventory-report')}>
+                          <FileText className="mr-3 h-4 w-4" /> Inventory Report
+                        </Button>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="w-full justify-start h-11" onClick={() => setLocation('/admin/labor-payroll')}>
+                          <UsersIcon className="mr-3 h-4 w-4" /> Labor Payroll
+                        </Button>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="w-full justify-start h-11" onClick={() => setLocation('/admin/yarn-calculation')}>
+                          <Wrench className="mr-3 h-4 w-4" /> Yarn Calculation
+                        </Button>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="w-full justify-start h-11" onClick={() => setLocation('/admin/investments')}>
+                          <Wallet className="mr-3 h-4 w-4" /> Investment & Investor
+                        </Button>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="w-full justify-start h-11" onClick={() => setLocation('/admin/debts')}>
+                          <HandCoins className="mr-3 h-4 w-4" /> Debt Management
+                        </Button>
+                      </SheetClose>
+                      <div className="my-2 border-t" />
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="w-full justify-start h-11" onClick={() => setRole('customer')}>
+                          <User className="mr-3 h-4 w-4" /> Switch to Customer
+                        </Button>
+                      </SheetClose>
+                    </div>
+                  )}
+                </nav>
+
+                <SheetFooter className="border-t p-4 mt-auto">
+                  <Button variant="outline" className="w-full justify-start text-destructive hover:text-destructive" onClick={handleSignOut}>
+                    <LogOut className="mr-2 h-4 w-4" /> Sign Out
+                  </Button>
+                </SheetFooter>
               </SheetContent>
             </Sheet>
           </div>
