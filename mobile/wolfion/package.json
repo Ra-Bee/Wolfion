@@ -1,0 +1,19 @@
+{
+  "name": "wolfion-android",
+  "version": "1.0.0",
+  "description": "Wolfion Android wrapper (Capacitor) — loads https://wolfion-portal.replit.app",
+  "private": true,
+  "scripts": {
+    "sync": "cap sync android",
+    "open": "cap open android",
+    "build:debug": "cd android && ./gradlew assembleDebug",
+    "build:release": "cd android && ./gradlew assembleRelease"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.2.1",
+    "@capacitor/core": "^6.2.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.2.1"
+  }
+}

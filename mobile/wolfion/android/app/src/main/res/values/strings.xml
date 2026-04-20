@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Wolfion</string>
+    <string name="title_activity_main">Wolfion</string>
+    <string name="package_name">com.wolfion.app</string>
+    <string name="custom_url_scheme">com.wolfion.app</string>
+</resources>
