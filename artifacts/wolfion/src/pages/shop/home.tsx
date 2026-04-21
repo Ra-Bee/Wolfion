@@ -15,14 +15,14 @@ export default function ShopHome() {
   return (
     <ShopLayout>
       {/* 1 — HERO */}
-      <section className="relative h-[100svh] min-h-[640px] w-full overflow-hidden bg-black text-white">
+      <section className="relative h-[75svh] min-h-[480px] sm:h-[90svh] sm:min-h-[600px] w-full overflow-hidden bg-black text-white">
         <img
           src={imgPortrait}
           alt="Wolfion campaign"
           className="absolute inset-0 h-full w-full object-cover object-[center_75%] opacity-80 scale-105 animate-in fade-in zoom-in-95 duration-[2000ms] fill-mode-both"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-black/30" />
-        <div className="relative z-10 h-full container mx-auto px-5 flex flex-col justify-end pb-20 sm:pb-28">
+        <div className="relative z-10 h-full container mx-auto px-5 flex flex-col justify-end pb-12 sm:pb-24">
           <div className={`max-w-3xl ${FADE} delay-300`}>
             <p className="text-[11px] uppercase tracking-[0.5em] text-white/70 mb-5">Wolfion · 2026</p>
             <h1 className="text-6xl sm:text-8xl font-light leading-[0.92] tracking-tight">
