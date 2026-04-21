@@ -30,14 +30,14 @@ export default function RoleSelect() {
   if (!isAdmin) return null;
 
   return (
-    <div className="min-h-[100dvh] flex items-center justify-center bg-muted/30 px-4 py-12">
+    <div className="min-h-[100dvh] flex items-center justify-center bg-black text-white px-4 py-12" style={{ colorScheme: "dark" }}>
       <div className="max-w-md w-full space-y-8">
         <div className="text-center space-y-2">
-          <div className="mx-auto h-14 w-14 rounded-2xl bg-black overflow-hidden flex items-center justify-center mb-6 shadow-sm">
+          <div className="mx-auto h-14 w-14 rounded-2xl bg-white overflow-hidden flex items-center justify-center mb-6 shadow-sm ring-1 ring-white/20">
             <img src={wolfionLogo} alt="Wolfion" className="h-full w-full object-cover" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">Select Mode</h1>
-          <p className="text-muted-foreground text-sm">
+          <h1 className="text-2xl font-bold tracking-tight text-white">Select Mode</h1>
+          <p className="text-white/70 text-sm">
             Welcome, {user?.firstName || user?.emailAddresses[0]?.emailAddress}. Choose how you want to continue.
           </p>
         </div>
@@ -45,35 +45,35 @@ export default function RoleSelect() {
         <div className="grid gap-4 mt-8">
           <button
             onClick={() => setRole("admin")}
-            className="flex items-center gap-4 p-5 rounded-2xl border bg-card hover:border-primary hover:shadow-md transition-all text-left group"
+            className="flex items-center gap-4 p-5 rounded-2xl border border-white/20 bg-neutral-900 hover:border-white hover:shadow-md transition-all text-left group"
             data-testid="select-admin-mode"
           >
-            <div className="h-12 w-12 rounded-full bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+            <div className="h-12 w-12 rounded-full bg-white/10 text-white flex items-center justify-center group-hover:bg-white group-hover:text-black transition-colors">
               <ShieldCheck className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="font-semibold text-base">Admin Mode</h3>
-              <p className="text-sm text-muted-foreground">Manage production, sales, inventory & reports</p>
+              <h3 className="font-semibold text-base text-white">Admin Mode</h3>
+              <p className="text-sm text-white/70">Manage production, sales, inventory & reports</p>
             </div>
           </button>
 
           <button
             onClick={() => setRole("customer")}
-            className="flex items-center gap-4 p-5 rounded-2xl border bg-card hover:border-foreground hover:shadow-md transition-all text-left group"
+            className="flex items-center gap-4 p-5 rounded-2xl border border-white/20 bg-neutral-900 hover:border-white hover:shadow-md transition-all text-left group"
             data-testid="select-customer-mode"
           >
-            <div className="h-12 w-12 rounded-full bg-muted text-foreground flex items-center justify-center group-hover:bg-foreground group-hover:text-background transition-colors">
+            <div className="h-12 w-12 rounded-full bg-white/10 text-white flex items-center justify-center group-hover:bg-white group-hover:text-black transition-colors">
               <ShoppingBag className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="font-semibold text-base">Customer Mode</h3>
-              <p className="text-sm text-muted-foreground">Shop the Wolfion collection</p>
+              <h3 className="font-semibold text-base text-white">Customer Mode</h3>
+              <p className="text-sm text-white/70">Shop the Wolfion collection</p>
             </div>
           </button>
         </div>
 
         <div className="pt-6 text-center">
-          <Button variant="ghost" onClick={handleSignOut} className="text-muted-foreground">
+          <Button variant="ghost" onClick={handleSignOut} className="text-white/70 hover:text-white hover:bg-white/10">
             <LogOut className="mr-2 h-4 w-4" /> Sign out
           </Button>
         </div>
