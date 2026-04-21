@@ -116,14 +116,14 @@ export default function DailyProductionPage() {
             <CardDescription>Yarn use is automatically deducted from yarn stock.</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="grid grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
-              <div className="space-y-1.5 col-span-4 sm:col-span-2 lg:col-span-1">
+            <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-2">
+              <div className="space-y-1.5 col-span-2">
                 <Label htmlFor="date">Date</Label>
                 <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="qty">Total Production (dozen)</Label>
-                <Input id="qty" type="number" step="0.01" min="0" value={qty} onChange={(e) => setQty(e.target.value)} placeholder="e.g. 50" />
+                <Label htmlFor="qty">Production (dz)</Label>
+                <Input id="qty" type="number" step="0.01" min="0" value={qty} onChange={(e) => setQty(e.target.value)} placeholder="50" />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="yarn">Yarn Used (kg)</Label>
@@ -134,22 +134,22 @@ export default function DailyProductionPage() {
                 <Input id="mh" type="number" step="0.1" min="0" value={machineHours} onChange={(e) => setMachineHours(e.target.value)} placeholder="0" />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="yc">Yarn Cost / kg (Tk)</Label>
+                <Label htmlFor="yc">Yarn / kg (Tk)</Label>
                 <Input id="yc" type="number" step="0.01" min="0" value={yarnCost} onChange={(e) => setYarnCost(e.target.value)} placeholder="0" />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="lc">Labor Cost (Tk)</Label>
+                <Label htmlFor="lc">Labor (Tk)</Label>
                 <Input id="lc" type="number" step="0.01" min="0" value={laborCost} onChange={(e) => setLaborCost(e.target.value)} placeholder="0" />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="pc">Packaging Cost (Tk)</Label>
+                <Label htmlFor="pc">Packaging (Tk)</Label>
                 <Input id="pc" type="number" step="0.01" min="0" value={packaging} onChange={(e) => setPackaging(e.target.value)} placeholder="0" />
               </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="ic">Iron Cost (Tk)</Label>
+              <div className="space-y-1.5 col-span-2">
+                <Label htmlFor="ic">Iron / Finishing (Tk)</Label>
                 <Input id="ic" type="number" step="0.01" min="0" value={iron} onChange={(e) => setIron(e.target.value)} placeholder="0" />
               </div>
-              <div className="space-y-1.5 col-span-4">
+              <div className="space-y-1.5 col-span-2">
                 <Label>Product Type</Label>
                 <Select value={productType} onValueChange={setProductType}>
                   <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
@@ -159,14 +159,14 @@ export default function DailyProductionPage() {
                 </Select>
               </div>
 
-              {error && <p className="text-sm text-destructive col-span-4">{error}</p>}
+              {error && <p className="text-sm text-destructive col-span-2">{error}</p>}
 
-              <div className="col-span-4 flex items-center justify-between rounded-lg border bg-muted/30 p-3 text-sm">
+              <div className="col-span-2 flex items-center justify-between rounded-lg border bg-muted/30 p-3 text-sm">
                 <span className="text-muted-foreground">Yarn stock available</span>
                 <span className="font-semibold">{fmt(yarnStockKg)} kg</span>
               </div>
 
-              <Button type="submit" size="lg" className="col-span-4 h-12 text-base font-semibold">
+              <Button type="submit" size="lg" className="col-span-2 h-12 text-base font-semibold">
                 <Plus className="h-5 w-5 mr-1" /> Save Production Entry
               </Button>
             </form>

@@ -34,6 +34,7 @@ export default function ProfitDashboardPage() {
   const thisMonth = new Date().toISOString().slice(0, 7);
 
   const totalRevenue = sales.reduce((s, x) => s + x.totalValue, 0);
+  const totalProductionDozen = daily.reduce((s, x) => s + (x.totalProductionDozen || 0), 0);
   const productionCost = daily.reduce((s, x) => s + x.totalCost, 0);
   const electricityCost = electricity.reduce((s, x) => s + x.totalBill, 0);
   const laborPaid = workerPayments.reduce((s, x) => s + x.amount, 0);
@@ -80,11 +81,11 @@ export default function ProfitDashboardPage() {
           <p className="text-muted-foreground mt-1">Revenue, cost, and profit at a glance.</p>
         </div>
 
-        <div className="grid grid-cols-4 gap-1.5 sm:gap-2.5 lg:gap-3">
-          <KPI title="Revenue" value={money(totalRevenue)} icon={<DollarSign className="h-4 w-4 text-emerald-500" />} accent="emerald" />
-          <KPI title="Cost" value={money(totalCost)} icon={<Package className="h-4 w-4 text-orange-500" />} accent="orange" />
+        <div className="grid grid-cols-2 gap-2">
+          <KPI title="Production" value={`${totalProductionDozen.toLocaleString()} dz`} icon={<Factory className="h-4 w-4 text-primary" />} accent="emerald" />
+          <KPI title="Total Sales" value={money(totalRevenue)} icon={<DollarSign className="h-4 w-4 text-emerald-500" />} accent="emerald" />
+          <KPI title="Total Cost" value={money(totalCost)} icon={<Package className="h-4 w-4 text-orange-500" />} accent="orange" />
           <KPI title="Profit" value={money(totalProfit)} icon={<TrendingUp className="h-4 w-4 text-primary" />} accent={totalProfit >= 0 ? "emerald" : "red"} />
-          <KPI title="This Month" value={money(monthProfit)} icon={<TrendingUp className="h-4 w-4 text-primary" />} accent={monthProfit >= 0 ? "emerald" : "red"} />
         </div>
 
         <Card className="border-2 border-primary/20 shadow-md">

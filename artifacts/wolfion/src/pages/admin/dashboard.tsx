@@ -1477,9 +1477,9 @@ export default function Dashboard() {
 
               <Separator />
 
-              <div className="grid grid-cols-4 gap-1.5 sm:gap-2.5 lg:gap-4">
+              <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-yarn-cost">Yarn cost per kg</label>
+                  <label className="text-sm font-medium" htmlFor="daily-yarn-cost">Yarn / kg</label>
                   <Input
                     id="daily-yarn-cost"
                     type="number"
@@ -1493,7 +1493,7 @@ export default function Dashboard() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-labor">Labor cost (day)</label>
+                  <label className="text-sm font-medium" htmlFor="daily-labor">Labor</label>
                   <Input
                     id="daily-labor"
                     type="number"
@@ -1507,7 +1507,7 @@ export default function Dashboard() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-packaging">Packaging cost (day)</label>
+                  <label className="text-sm font-medium" htmlFor="daily-packaging">Packaging</label>
                   <Input
                     id="daily-packaging"
                     type="number"
@@ -2095,12 +2095,12 @@ export default function Dashboard() {
               <p className="mt-1 text-xs text-muted-foreground">{investments.length} entries</p>
             </div>
 
-            <form onSubmit={handleAddInvestment} className="space-y-5">
-              <div className="grid grid-cols-4 gap-1.5 sm:gap-2.5 lg:gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="inv-date">Date</label>
-                  <Input id="inv-date" type="date" className="h-12 text-base" value={invDate} onChange={(e) => setInvDate(e.target.value)} max={getToday()} required />
-                </div>
+            <form onSubmit={handleAddInvestment} className="space-y-3">
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="inv-date">Date</label>
+                <Input id="inv-date" type="date" className="h-12 text-base" value={invDate} onChange={(e) => setInvDate(e.target.value)} max={getToday()} required />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="inv-type">Investment type</label>
                   <Select value={invType} onValueChange={setInvType}>
@@ -2112,10 +2112,10 @@ export default function Dashboard() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="inv-amount">Amount</label>
-                  <Input id="inv-amount" type="number" min="0.01" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="Example: 5000" value={invAmount} onChange={(e) => setInvAmount(e.target.value)} required />
+                  <Input id="inv-amount" type="number" min="0.01" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="5000" value={invAmount} onChange={(e) => setInvAmount(e.target.value)} required />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="inv-source">Source of money</label>
+                  <label className="text-sm font-medium" htmlFor="inv-source">Source</label>
                   <Select value={invSource} onValueChange={setInvSource}>
                     <SelectTrigger id="inv-source" className="h-12 text-base"><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -2123,10 +2123,10 @@ export default function Dashboard() {
                     </SelectContent>
                   </Select>
                 </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="inv-desc">Description (optional)</label>
-                <Input id="inv-desc" className="h-12 text-base" placeholder="Any note" value={invDescription} onChange={(e) => setInvDescription(e.target.value)} />
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="inv-desc">Description</label>
+                  <Input id="inv-desc" className="h-12 text-base" placeholder="Note" value={invDescription} onChange={(e) => setInvDescription(e.target.value)} />
+                </div>
               </div>
               {invError && <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{invError}</p>}
               <Button type="submit" size="lg" className="h-14 w-full text-base font-semibold"><Plus className="h-5 w-5" /> Save investment</Button>
