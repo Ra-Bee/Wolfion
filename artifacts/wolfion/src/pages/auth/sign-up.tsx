@@ -5,9 +5,9 @@ export default function SignUpPage() {
   const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
   return (
-    <div className="min-h-[100dvh] w-full bg-white text-neutral-900" style={{ colorScheme: "light" }}>
-      <main className="mx-auto w-full max-w-[400px] min-h-[100dvh] flex flex-col items-center justify-center px-5 py-6">
-        <div className="w-full flex flex-col items-center animate-in fade-in slide-in-from-bottom-2 duration-700">
+    <div className="min-h-[100dvh] w-full bg-white text-neutral-900 grid place-items-center" style={{ colorScheme: "light" }}>
+      <main className="w-full max-w-[380px] mx-auto flex flex-col items-center justify-center px-4 py-6">
+        <div className="w-full mx-auto flex flex-col items-center text-center animate-in fade-in slide-in-from-bottom-2 duration-700">
           {/* Logo on top */}
           <div className="h-12 w-12 rounded-xl bg-white overflow-hidden ring-1 ring-neutral-200 shadow-sm">
             <img src={wolfionMark} alt="Wolfion" className="h-full w-full object-cover" />
