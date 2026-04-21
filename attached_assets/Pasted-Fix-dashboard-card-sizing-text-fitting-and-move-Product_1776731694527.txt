@@ -1,0 +1,89 @@
+Fix dashboard card sizing, text fitting, and move Product Type section to the end.
+
+-----------------------------------
+1. CARD / BOX SIZE FIX (CRITICAL)
+-----------------------------------
+- All dashboard boxes (profit, sales, stock, etc.) must have equal size
+
+Apply:
+
+width: 100%;
+height: auto;
+min-height: 70px;
+box-sizing: border-box;
+
+- Ensure boxes do NOT overflow or look stretched
+- Keep consistent padding (8px–12px)
+
+-----------------------------------
+2. TEXT FITTING (VERY IMPORTANT)
+-----------------------------------
+- Ensure all text fits inside boxes
+
+Rules:
+- If text is too large → reduce font size
+- Prevent text overflow
+- Prevent text breaking layout
+
+Apply:
+
+font-size: clamp(10px, 2.5vw, 14px);
+
+-----------------------------------
+3. TEXT OVERFLOW CONTROL
+-----------------------------------
+Apply to all card text:
+
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+
+- Prevent text from spilling outside box
+
+-----------------------------------
+4. NUMBER DISPLAY FIX
+-----------------------------------
+- Numbers (profit, stock, etc.) should be:
+  → slightly larger than labels
+  → but still fit inside box
+
+-----------------------------------
+5. GRID CONSISTENCY
+-----------------------------------
+- Keep strict 4-column layout
+- Ensure all boxes align perfectly
+- No uneven height or width
+
+-----------------------------------
+6. REMOVE WEIRD SPACING
+-----------------------------------
+- No extra padding causing overflow
+- Keep spacing balanced
+
+-----------------------------------
+7. MOVE PRODUCT TYPE (IMPORTANT)
+-----------------------------------
+- Move "Product Type" section to VERY END of page
+
+Correct order:
+
+1. Summary
+2. Profit Dashboard
+3. Daily Production Entry
+4. Daily Sales Entry
+5. (Other sections)
+6. Product Type ← LAST
+
+-----------------------------------
+8. FINAL VISUAL RULE
+-----------------------------------
+- Everything must look balanced
+- No text outside boxes
+- No broken layout
+- Clean dashboard look
+
+-----------------------------------
+IMPORTANT:
+Fix visual balance.
+Boxes must look clean, equal, and fully fitted.
+Product Type must be at the bottom.

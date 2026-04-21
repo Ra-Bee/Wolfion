@@ -1277,9 +1277,9 @@ export default function Dashboard() {
               <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Total stock available</h3>
               <div className="mt-3 grid grid-cols-4 gap-1.5 sm:gap-2.5 lg:gap-3">
                 {allProductTypeIds.map((id) => (
-                  <div key={`stock-${id}`} className="rounded-2xl border bg-white dark:bg-card/80 p-3 sm:p-4 lg:p-5 shadow-sm backdrop-blur transition hover:shadow-lg hover:-translate-y-0.5 text-center">
-                    <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground leading-tight break-words">{productTypeLabels[id] || id}</p>
-                    <p className="mt-1.5 sm:mt-2 text-lg sm:text-2xl lg:text-3xl font-bold">{(inventory[id] || 0).toLocaleString()} <span className="text-[10px] sm:text-xs lg:text-sm font-medium text-muted-foreground">dz</span></p>
+                  <div key={`stock-${id}`} className="rounded-xl border bg-white dark:bg-card/80 p-2 sm:p-3 lg:p-4 shadow-sm backdrop-blur transition hover:shadow-lg hover:-translate-y-0.5 text-center min-h-[70px] flex flex-col items-center justify-center box-border">
+                    <p className="w-full text-[9px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground leading-tight truncate">{productTypeLabels[id] || id}</p>
+                    <p className="mt-1 sm:mt-1.5 w-full text-base sm:text-xl lg:text-2xl font-bold leading-none truncate">{(inventory[id] || 0).toLocaleString()}<span className="ml-0.5 text-[9px] sm:text-xs lg:text-sm font-medium text-muted-foreground"> dz</span></p>
                   </div>
                 ))}
               </div>
@@ -1289,9 +1289,9 @@ export default function Dashboard() {
               <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Total sold</h3>
               <div className="mt-3 grid grid-cols-4 gap-1.5 sm:gap-2.5 lg:gap-3">
                 {allProductTypeIds.map((id) => (
-                  <div key={`sold-${id}`} className="rounded-2xl border bg-white dark:bg-card/80 p-3 sm:p-4 lg:p-5 shadow-sm backdrop-blur transition hover:shadow-lg hover:-translate-y-0.5 text-center">
-                    <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground leading-tight break-words">{productTypeLabels[id] || id}</p>
-                    <p className="mt-1.5 sm:mt-2 text-lg sm:text-2xl lg:text-3xl font-bold">{(salesByType[id] || 0).toLocaleString()} <span className="text-[10px] sm:text-xs lg:text-sm font-medium text-muted-foreground">dz</span></p>
+                  <div key={`sold-${id}`} className="rounded-xl border bg-white dark:bg-card/80 p-2 sm:p-3 lg:p-4 shadow-sm backdrop-blur transition hover:shadow-lg hover:-translate-y-0.5 text-center min-h-[70px] flex flex-col items-center justify-center box-border">
+                    <p className="w-full text-[9px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground leading-tight truncate">{productTypeLabels[id] || id}</p>
+                    <p className="mt-1 sm:mt-1.5 w-full text-base sm:text-xl lg:text-2xl font-bold leading-none truncate">{(salesByType[id] || 0).toLocaleString()}<span className="ml-0.5 text-[9px] sm:text-xs lg:text-sm font-medium text-muted-foreground"> dz</span></p>
                   </div>
                 ))}
               </div>
@@ -1388,53 +1388,6 @@ export default function Dashboard() {
                 </div>
               </TabsContent>
             </Tabs>
-          </CardContent>
-        </Card>
-
-        <Card className="border-2 border-primary/30 shadow-md">
-          <CardHeader>
-            <CardTitle className="text-2xl">Product Types</CardTitle>
-            <CardDescription>Manage product categories. Add custom types to fit your factory.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-5">
-            <form onSubmit={handleAddProductType} className="flex flex-col gap-3 sm:flex-row sm:items-end">
-              <div className="flex-1 space-y-2">
-                <label className="text-sm font-medium" htmlFor="new-product-type">Add new product type</label>
-                <Input
-                  id="new-product-type"
-                  className="h-12 text-base"
-                  placeholder="e.g. Sport socks, Wool blend..."
-                  value={newProductTypeName}
-                  onChange={(e) => setNewProductTypeName(e.target.value)}
-                />
-              </div>
-              <Button type="submit" size="lg" className="h-12 px-6 text-base font-semibold sm:w-auto">
-                <Plus className="h-5 w-5" /> Add type
-              </Button>
-            </form>
-            {productTypeError && (
-              <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{productTypeError}</p>
-            )}
-            <div className="flex flex-wrap gap-2">
-              {productTypes.map((t) => {
-                const inUse = productionEntries.some((e) => e.productType === t.id) || salesEntries.some((e) => e.productType === t.id);
-                return (
-                  <div key={t.id} className="flex items-center gap-2 rounded-full border bg-card px-4 py-2 shadow-sm">
-                    <span className="text-sm font-medium">{t.label}</span>
-                    {!inUse && (
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveProductType(t.id)}
-                        className="text-muted-foreground hover:text-destructive transition"
-                        aria-label={`Remove ${t.label}`}
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
           </CardContent>
         </Card>
 
@@ -2290,6 +2243,53 @@ export default function Dashboard() {
                   <p className="text-xs text-muted-foreground mt-1">Add an entry above to start tracking.</p>
                 </div>
               )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-2 border-primary/30 shadow-md">
+          <CardHeader>
+            <CardTitle className="text-2xl">Product Types</CardTitle>
+            <CardDescription>Manage product categories. Add custom types to fit your factory.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <form onSubmit={handleAddProductType} className="flex flex-col gap-3 sm:flex-row sm:items-end">
+              <div className="flex-1 space-y-2">
+                <label className="text-sm font-medium" htmlFor="new-product-type">Add new product type</label>
+                <Input
+                  id="new-product-type"
+                  className="h-12 text-base"
+                  placeholder="e.g. Sport socks, Wool blend..."
+                  value={newProductTypeName}
+                  onChange={(e) => setNewProductTypeName(e.target.value)}
+                />
+              </div>
+              <Button type="submit" size="lg" className="h-12 px-6 text-base font-semibold sm:w-auto">
+                <Plus className="h-5 w-5" /> Add type
+              </Button>
+            </form>
+            {productTypeError && (
+              <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{productTypeError}</p>
+            )}
+            <div className="flex flex-wrap gap-2">
+              {productTypes.map((t) => {
+                const inUse = productionEntries.some((e) => e.productType === t.id) || salesEntries.some((e) => e.productType === t.id);
+                return (
+                  <div key={t.id} className="flex items-center gap-2 rounded-full border bg-card px-4 py-2 shadow-sm">
+                    <span className="text-sm font-medium">{t.label}</span>
+                    {!inUse && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveProductType(t.id)}
+                        className="text-muted-foreground hover:text-destructive transition"
+                        aria-label={`Remove ${t.label}`}
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </CardContent>
         </Card>
