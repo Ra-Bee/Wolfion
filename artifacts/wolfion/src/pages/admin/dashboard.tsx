@@ -152,6 +152,7 @@ type DailyProductionEntry = {
   laborCost: number;
   packagingCost: number;
   ironCost: number;
+  staffBill?: number;
   totalCost: number;
   costPerDozen: number;
   productType?: ProductType;
@@ -272,6 +273,7 @@ export default function Dashboard() {
   const [dailyLaborCost, setDailyLaborCost] = useState("");
   const [dailyPackagingCost, setDailyPackagingCost] = useState("");
   const [dailyIronCost, setDailyIronCost] = useState("");
+  const [dailyStaffBill, setDailyStaffBill] = useState("");
   const [dailyError, setDailyError] = useState("");
   const [dailyConfirm, setDailyConfirm] = useState("");
   const [quickSaleOpen, setQuickSaleOpen] = useState(false);
@@ -536,7 +538,8 @@ export default function Dashboard() {
     (Number(dailyYarnKg) || 0) * (Number(dailyYarnCostPerKg) || 0) +
     (Number(dailyLaborCost) || 0) +
     (Number(dailyPackagingCost) || 0) +
-    (Number(dailyIronCost) || 0);
+    (Number(dailyIronCost) || 0) +
+    (Number(dailyStaffBill) || 0);
   const livePreviewProductionDozen = Number(dailyProductionDozen) || 0;
   const livePreviewCostPerDozen = livePreviewProductionDozen > 0 ? livePreviewTotalCost / livePreviewProductionDozen : 0;
   const today = getToday();
@@ -774,6 +777,7 @@ export default function Dashboard() {
     const laborCost = Number(dailyLaborCost);
     const packagingCost = Number(dailyPackagingCost);
     const ironCost = Number(dailyIronCost);
+    const staffBill = Number(dailyStaffBill);
 
     if (!dailyDate || !Number.isFinite(totalProductionDozen) || totalProductionDozen <= 0) {
       setDailyError("Enter date and total production.");
@@ -785,13 +789,14 @@ export default function Dashboard() {
       !Number.isFinite(yarnCostPerKg) || yarnCostPerKg < 0 ||
       !Number.isFinite(laborCost) || laborCost < 0 ||
       !Number.isFinite(packagingCost) || packagingCost < 0 ||
-      !Number.isFinite(ironCost) || ironCost < 0
+      !Number.isFinite(ironCost) || ironCost < 0 ||
+      !Number.isFinite(staffBill) || staffBill < 0
     ) {
       setDailyError("All numbers must be 0 or more.");
       return;
     }
 
-    const totalCost = yarnUsedKg * yarnCostPerKg + laborCost + packagingCost + ironCost;
+    const totalCost = yarnUsedKg * yarnCostPerKg + laborCost + packagingCost + ironCost + staffBill;
     const costPerDozen = totalProductionDozen > 0 ? totalCost / totalProductionDozen : 0;
 
     const entry: DailyProductionEntry = {
@@ -804,6 +809,7 @@ export default function Dashboard() {
       laborCost,
       packagingCost,
       ironCost,
+      staffBill,
       totalCost,
       costPerDozen,
       productType: dailyProductType,
@@ -827,6 +833,7 @@ export default function Dashboard() {
     setDailyLaborCost("");
     setDailyPackagingCost("");
     setDailyIronCost("");
+    setDailyStaffBill("");
     setDailyDate(getToday());
     setDailyError("");
     setDailyConfirm("Saved.");
@@ -1439,6 +1446,21 @@ export default function Dashboard() {
                   required
                 />
               </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="daily-product-type">Product type</label>
+                <Select value={dailyProductType} onValueChange={(value) => setDailyProductType(value as ProductType)}>
+                  <SelectTrigger id="daily-product-type" className="h-12 text-base">
+                    <SelectValue placeholder="Choose product" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(productTypeLabels).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>{label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div className="grid grid-cols-3 gap-2">
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="daily-production">Quantity (dz)</label>
@@ -1470,25 +1492,6 @@ export default function Dashboard() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-machine">Machine Hours</label>
-                  <Input
-                    id="daily-machine"
-                    type="number"
-                    min="0"
-                    step="0.1"
-                    inputMode="decimal"
-                    className="h-12 text-base"
-                    placeholder="0"
-                    value={dailyMachineHours}
-                    onChange={(event) => setDailyMachineHours(event.target.value)}
-                  />
-                </div>
-              </div>
-
-              <Separator />
-
-              <div className="grid grid-cols-2 gap-2">
-                <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="daily-yarn-cost">Yarn / kg</label>
                   <Input
                     id="daily-yarn-cost"
@@ -1502,20 +1505,41 @@ export default function Dashboard() {
                     onChange={(event) => setDailyYarnCostPerKg(event.target.value)}
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-labor">Labor</label>
-                  <Input
-                    id="daily-labor"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    inputMode="decimal"
-                    className="h-12 text-base"
-                    placeholder="0"
-                    value={dailyLaborCost}
-                    onChange={(event) => setDailyLaborCost(event.target.value)}
-                  />
-                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="daily-machine">Machine Hours</label>
+                <Input
+                  id="daily-machine"
+                  type="number"
+                  min="0"
+                  step="0.1"
+                  inputMode="decimal"
+                  className="h-12 text-base"
+                  placeholder="0"
+                  value={dailyMachineHours}
+                  onChange={(event) => setDailyMachineHours(event.target.value)}
+                />
+              </div>
+
+              <Separator />
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="daily-labor">Labor</label>
+                <Input
+                  id="daily-labor"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  inputMode="decimal"
+                  className="h-12 text-base"
+                  placeholder="0"
+                  value={dailyLaborCost}
+                  onChange={(event) => setDailyLaborCost(event.target.value)}
+                />
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="daily-packaging">Packaging</label>
                   <Input
@@ -1544,20 +1568,20 @@ export default function Dashboard() {
                     onChange={(event) => setDailyIronCost(event.target.value)}
                   />
                 </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="daily-product-type">Product type</label>
-                <Select value={dailyProductType} onValueChange={(value) => setDailyProductType(value as ProductType)}>
-                  <SelectTrigger id="daily-product-type" className="h-12 text-base">
-                    <SelectValue placeholder="Choose product" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(productTypeLabels).map(([value, label]) => (
-                      <SelectItem key={value} value={value}>{label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="daily-staff">Staff Bill</label>
+                  <Input
+                    id="daily-staff"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    inputMode="decimal"
+                    className="h-12 text-base"
+                    placeholder="0"
+                    value={dailyStaffBill}
+                    onChange={(event) => setDailyStaffBill(event.target.value)}
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 lg:gap-3">

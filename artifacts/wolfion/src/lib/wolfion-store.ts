@@ -32,6 +32,7 @@ export type DailyProductionEntry = {
   laborCost: number;
   packagingCost: number;
   ironCost: number;
+  staffBill?: number;
   totalCost: number;
   costPerDozen: number;
   productType?: ProductType;
