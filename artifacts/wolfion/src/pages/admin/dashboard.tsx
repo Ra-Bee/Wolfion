@@ -536,19 +536,15 @@ export default function Dashboard() {
   const sortedDailyEntries = useMemo(() => {
     return [...dailyEntries].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : (a.createdAt < b.createdAt ? 1 : -1)));
   }, [dailyEntries]);
-  const livePreviewTotalCost =
-    (Number(dailyYarnKg) || 0) * (Number(dailyYarnCostPerKg) || 0) +
-    (Number(dailyLaborCost) || 0) +
-    (Number(dailyPackagingCost) || 0) +
-    (Number(dailyIronCost) || 0) +
-    (Number(dailyStaffBill) || 0);
-  const livePreviewProductionDozen = Number(dailyProductionDozen) || 0;
-  const livePreviewCostPerDozen = livePreviewProductionDozen > 0 ? livePreviewTotalCost / livePreviewProductionDozen : 0;
   const today = getToday();
   const todayEntries = dailyEntries.filter((entry) => entry.date === today);
   const todayProductionDozen = todayEntries.reduce((total, entry) => total + entry.totalProductionDozen, 0);
   const todayTotalCost = todayEntries.reduce((total, entry) => total + entry.totalCost, 0);
   const todayCostPerDozen = todayProductionDozen > 0 ? todayTotalCost / todayProductionDozen : 0;
+  const todayLaborCost = todayEntries.reduce(
+    (total, entry) => total + (entry.laborCost || 0) + (entry.packagingCost || 0) + (entry.ironCost || 0) + (entry.staffBill || 0),
+    0,
+  );
   const liveSaleTotal = Number(saleTotalAmount) || 0;
   const liveSalePricePerDozen = Number(saleQuantity) > 0 && Number(saleTotalAmount) > 0 ? Number(saleTotalAmount) / Number(saleQuantity) : 0;
   const sortedSalesEntries = useMemo(() => {
@@ -776,10 +772,12 @@ export default function Dashboard() {
     const yarnUsedKg = Number(dailyYarnKg);
     const machineHours = Number(dailyMachineHours);
     const yarnCostPerKg = Number(dailyYarnCostPerKg);
-    const laborCost = Number(dailyLaborCost);
     const packagingCost = Number(dailyPackagingCost);
     const ironCost = Number(dailyIronCost);
     const staffBill = Number(dailyStaffBill);
+    const laborCost = (Number.isFinite(packagingCost) ? packagingCost : 0)
+      + (Number.isFinite(ironCost) ? ironCost : 0)
+      + (Number.isFinite(staffBill) ? staffBill : 0);
 
     if (!dailyDate || !Number.isFinite(totalProductionDozen) || totalProductionDozen <= 0) {
       setDailyError("Enter date and total production.");
@@ -1342,18 +1340,14 @@ export default function Dashboard() {
             </div>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 lg:gap-3">
+            <div className="grid grid-cols-2 gap-1.5 sm:gap-2.5 lg:gap-3">
               <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
-                <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Today</p>
+                <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Total daily production</p>
                 <p className="text-[13px] sm:text-base font-semibold truncate">{todayProductionDozen.toLocaleString()} <span className="text-[10px] font-normal text-muted-foreground">dz</span></p>
               </div>
               <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
-                <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Cost</p>
-                <p className="text-[13px] sm:text-base font-semibold truncate">${todayTotalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
-              </div>
-              <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
-                <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Per dozen</p>
-                <p className="text-[13px] sm:text-base font-semibold truncate">${todayCostPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Total labor cost</p>
+                <p className="text-[13px] sm:text-base font-semibold truncate">${todayLaborCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
               </div>
             </div>
 
@@ -1475,36 +1469,6 @@ export default function Dashboard() {
                     value={dailyStaffBill}
                     onChange={(event) => setDailyStaffBill(event.target.value)}
                   />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="daily-labor">Total labor cost (day)</label>
-                <Input
-                  id="daily-labor"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  inputMode="decimal"
-                  className="h-12 text-base"
-                  placeholder="0"
-                  value={dailyLaborCost}
-                  onChange={(event) => setDailyLaborCost(event.target.value)}
-                />
-              </div>
-
-              <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 lg:gap-3">
-                <div className="rounded-lg border bg-muted/30 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
-                  <p className="text-[10px] sm:text-[11px] text-muted-foreground truncate uppercase tracking-wide">Production</p>
-                  <p className="text-[13px] sm:text-base font-semibold truncate">{livePreviewProductionDozen.toLocaleString()} <span className="text-[10px] font-normal text-muted-foreground">dz</span></p>
-                </div>
-                <div className="rounded-lg border bg-muted/30 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
-                  <p className="text-[10px] sm:text-[11px] text-muted-foreground truncate uppercase tracking-wide">Total cost</p>
-                  <p className="text-[13px] sm:text-base font-semibold truncate">${livePreviewTotalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
-                </div>
-                <div className="rounded-lg border bg-muted/30 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
-                  <p className="text-[10px] sm:text-[11px] text-muted-foreground truncate uppercase tracking-wide">Per dozen</p>
-                  <p className="text-[13px] sm:text-base font-semibold truncate">${livePreviewCostPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                 </div>
               </div>
 
