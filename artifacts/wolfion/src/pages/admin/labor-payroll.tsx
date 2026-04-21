@@ -183,7 +183,7 @@ export default function LaborPayrollPage() {
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-medium" htmlFor="pay-amount">Amount paid</label>
-                      <Input id="pay-amount" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="Example: 200" value={paymentAmount} onChange={(e) => setPaymentAmount(e.target.value)} required />
+                      <Input id="pay-amount" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="" value={paymentAmount} onChange={(e) => setPaymentAmount(e.target.value)} required />
                     </div>
                     <div className="space-y-2 flex items-end">
                       <Button type="submit" size="lg" className="h-12 w-full">
