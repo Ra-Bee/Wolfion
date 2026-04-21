@@ -1336,7 +1336,7 @@ export default function Dashboard() {
                     max={getToday()}
                   />
                 </div>
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="grid grid-cols-4 gap-1.5 sm:gap-2.5 lg:gap-3">
                   <div className="rounded-2xl border bg-card p-5">
                     <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Production</p>
                     <p className="mt-2 text-3xl font-bold">{profitDailyView.production.toLocaleString()} <span className="text-base font-medium text-muted-foreground">dz</span></p>
@@ -1370,7 +1370,7 @@ export default function Dashboard() {
                     onChange={(e) => setProfitMonth(e.target.value)}
                   />
                 </div>
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="grid grid-cols-4 gap-1.5 sm:gap-2.5 lg:gap-3">
                   <div className="rounded-2xl border bg-card p-5">
                     <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total production</p>
                     <p className="mt-2 text-3xl font-bold">{profitMonthlyView.production.toLocaleString()} <span className="text-base font-medium text-muted-foreground">dz</span></p>
@@ -1453,7 +1453,7 @@ export default function Dashboard() {
             </div>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 lg:gap-3">
               <div className="rounded-2xl border bg-primary/5 p-5">
                 <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Production today</p>
                 <p className="mt-2 text-3xl font-bold">{todayProductionDozen.toLocaleString()} <span className="text-base font-medium text-muted-foreground">dozen</span></p>
@@ -1472,7 +1472,7 @@ export default function Dashboard() {
             </div>
 
             <form onSubmit={handleAddDailyEntry} className="space-y-5">
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 lg:gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="daily-date">Date</label>
                   <Input
@@ -1545,7 +1545,7 @@ export default function Dashboard() {
 
               <Separator />
 
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid grid-cols-4 gap-1.5 sm:gap-2.5 lg:gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="daily-yarn-cost">Yarn cost per kg</label>
                   <Input
@@ -1604,7 +1604,7 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-3">
+              <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 lg:gap-3">
                 <div className="rounded-2xl border bg-muted/30 p-4">
                   <p className="text-xs text-muted-foreground">Total production</p>
                   <p className="mt-2 text-2xl font-bold">{livePreviewProductionDozen.toLocaleString()} dozen</p>
@@ -1680,7 +1680,7 @@ export default function Dashboard() {
             <CardDescription>Record sales by date. Stock and revenue update automatically.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 lg:gap-3">
               <div className="rounded-2xl border bg-primary/5 p-5">
                 <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Sales today</p>
                 <p className="mt-2 text-3xl font-bold">${todaySalesValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
@@ -1712,7 +1712,7 @@ export default function Dashboard() {
                 />
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid grid-cols-4 gap-1.5 sm:gap-2.5 lg:gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="daily-sale-customer">Customer name</label>
                   <Input
@@ -1912,7 +1912,7 @@ export default function Dashboard() {
             <CardDescription>Track yarn purchased, used, remaining, efficiency, and future needs.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5 lg:gap-3">
               <div className="rounded-2xl border bg-primary/5 p-4">
                 <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Purchased</p>
                 <p className="text-2xl font-bold mt-1">{totalYarnPurchasedKg.toLocaleString(undefined, { maximumFractionDigits: 1 })} kg</p>
@@ -1940,7 +1940,7 @@ export default function Dashboard() {
 
             <div className="space-y-3">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Add yarn purchase</h3>
-              <form onSubmit={handleAddYarnPurchase} className="grid gap-3 sm:grid-cols-3">
+              <form onSubmit={handleAddYarnPurchase} className="grid grid-cols-3 gap-1.5 sm:gap-2.5 lg:gap-3">
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="yarn-purchase-date">Date</label>
                   <Input id="yarn-purchase-date" type="date" className="h-12 text-base" max={getToday()} value={yarnPurchaseDate} onChange={(e) => setYarnPurchaseDate(e.target.value)} required />
@@ -1977,7 +1977,7 @@ export default function Dashboard() {
             <div className="space-y-3">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Yarn per dozen (kg)</h3>
               <p className="text-xs text-muted-foreground">Average yarn consumed to produce 1 dozen of each product.</p>
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid grid-cols-4 gap-1.5 sm:gap-2.5 lg:gap-3">
                 {allProductTypeIds.map((id) => (
                   <div key={id} className="space-y-2">
                     <label className="text-sm font-medium" htmlFor={`ypd-${id}`}>{productTypeLabels[id] || id}</label>
@@ -2004,7 +2004,7 @@ export default function Dashboard() {
             <CardDescription>Track each worker's earnings, payments, and remaining balance.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 lg:gap-3">
               <div className="rounded-2xl border bg-primary/5 p-5">
                 <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total payable</p>
                 <p className="mt-2 text-3xl font-bold">${totalPayable.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
@@ -2021,7 +2021,7 @@ export default function Dashboard() {
 
             <form onSubmit={handleAddWorker} className="space-y-4 rounded-2xl border bg-muted/20 p-4">
               <h3 className="text-sm font-semibold">Add a worker</h3>
-              <div className="grid gap-4 sm:grid-cols-3">
+              <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 lg:gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="worker-name">Name</label>
                   <Input id="worker-name" className="h-12 text-base" placeholder="Worker name" value={newWorkerName} onChange={(e) => setNewWorkerName(e.target.value)} required />
@@ -2110,7 +2110,7 @@ export default function Dashboard() {
                         </div>
                         <Button variant="ghost" size="sm" onClick={() => handleRemoveWorker(worker.id)} className="text-destructive">Remove</Button>
                       </div>
-                      <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                      <div className="mt-3 grid grid-cols-3 gap-1.5 sm:gap-2.5 lg:gap-3">
                         <div className="rounded-lg bg-muted/40 p-3">
                           <p className="text-xs text-muted-foreground">Total earned</p>
                           <p className="text-base font-bold">${totalEarned.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
@@ -2150,7 +2150,7 @@ export default function Dashboard() {
             </div>
 
             <form onSubmit={handleAddInvestment} className="space-y-5">
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid grid-cols-4 gap-1.5 sm:gap-2.5 lg:gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="inv-date">Date</label>
                   <Input id="inv-date" type="date" className="h-12 text-base" value={invDate} onChange={(e) => setInvDate(e.target.value)} max={getToday()} required />
@@ -2236,7 +2236,7 @@ export default function Dashboard() {
             </div>
 
             <form onSubmit={handleAddInvestor} className="space-y-5">
-              <div className="grid gap-4 sm:grid-cols-3">
+              <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 lg:gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="investor-name">Investor name</label>
                   <Input id="investor-name" className="h-12 text-base" placeholder="Investor name" value={investorName} onChange={(e) => setInvestorName(e.target.value)} required />
