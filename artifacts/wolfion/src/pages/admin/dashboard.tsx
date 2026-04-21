@@ -1943,18 +1943,18 @@ export default function Dashboard() {
             <CardDescription>Track each worker's earnings, payments, and remaining balance.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 lg:gap-3">
-              <div className="rounded-2xl border bg-primary/5 p-5">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total payable</p>
-                <p className="mt-2 text-3xl font-bold">${totalPayable.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5">
+              <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
+                <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Total payable</p>
+                <p className="text-[13px] sm:text-base font-semibold truncate">${totalPayable.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
               </div>
-              <div className="rounded-2xl border bg-primary/5 p-5">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total paid</p>
-                <p className="mt-2 text-3xl font-bold">${totalPaidAll.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+              <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
+                <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Total paid</p>
+                <p className="text-[13px] sm:text-base font-semibold truncate">${totalPaidAll.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
               </div>
-              <div className={`rounded-2xl border p-5 ${totalRemainingAll > 0 ? "bg-orange-50 border-orange-200" : "bg-green-50 border-green-200"}`}>
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Remaining</p>
-                <p className={`mt-2 text-3xl font-bold ${totalRemainingAll > 0 ? "text-orange-700" : "text-green-700"}`}>${totalRemainingAll.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+              <div className={`rounded-lg border p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border ${totalRemainingAll > 0 ? "bg-orange-50 border-orange-200" : "bg-green-50 border-green-200"}`}>
+                <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Remaining</p>
+                <p className={`text-[13px] sm:text-base font-semibold truncate ${totalRemainingAll > 0 ? "text-orange-700" : "text-green-700"}`}>${totalRemainingAll.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
               </div>
             </div>
 
