@@ -1454,7 +1454,7 @@ export default function Dashboard() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-machine">Hours</label>
+                  <label className="text-sm font-medium" htmlFor="daily-machine">Machine Hours</label>
                   <Input
                     id="daily-machine"
                     type="number"
