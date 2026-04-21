@@ -45,41 +45,41 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     <div className="min-h-[100dvh] flex flex-col bg-background">
       {/* Admin top bar — distinctly utilitarian */}
       <header className="sticky top-0 z-50 w-full border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/70">
-        <div className="container mx-auto px-4 h-14 flex items-center justify-between">
+        <div className="container mx-auto px-3 sm:px-4 h-14 flex items-center justify-between gap-2 max-w-full overflow-hidden">
           <button
             onClick={() => setLocation("/admin-dashboard")}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 min-w-0 flex-shrink"
             data-testid="link-admin-home"
           >
-            <div className="h-8 w-8 rounded-md bg-black overflow-hidden flex items-center justify-center">
+            <div className="h-8 w-8 rounded-md bg-black overflow-hidden flex items-center justify-center flex-shrink-0">
               <img src={wolfionLogo} alt="Wolfion" className="h-full w-full object-cover" />
             </div>
-            <div className="flex items-baseline gap-2 leading-none">
-              <span className="font-bold text-base tracking-wide whitespace-nowrap">WOLFION</span>
-              <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground/70 font-light">
+            <div className="flex items-baseline gap-1.5 sm:gap-2 leading-none min-w-0">
+              <span className="font-bold text-sm sm:text-base tracking-wide whitespace-nowrap">WOLFION</span>
+              <span className="text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.25em] text-muted-foreground/70 font-light whitespace-nowrap">
                 Admin
               </span>
             </div>
           </button>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
             <Button
               size="sm"
               variant="outline"
               onClick={switchToCustomer}
-              className="h-8 px-3 text-[11px] uppercase tracking-[0.15em] font-medium active:scale-95 transition-transform"
+              className="hidden sm:inline-flex h-8 px-3 text-[11px] uppercase tracking-[0.15em] font-medium active:scale-95 transition-transform"
               data-testid="switch-mode-toggle"
             >
               <ShoppingBag className="mr-1.5 h-3.5 w-3.5" />
               Customer Mode
             </Button>
-            <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme" className="rounded-full">
+            <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme" className="rounded-full h-9 w-9">
               {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
             </Button>
 
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Open menu" data-testid="button-admin-menu">
+                <Button variant="ghost" size="icon" aria-label="Open menu" className="h-9 w-9" data-testid="button-admin-menu">
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
