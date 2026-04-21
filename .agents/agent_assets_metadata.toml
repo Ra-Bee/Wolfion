@@ -34,10 +34,10 @@ title = "generated_image"
 id = "Z8dcSbzTuOcZ42cy_qinK"
 uri = "file://downloads/wolfion-android-apk-builder.tar.gz"
 type = "unspecified"
-title = "Wolfion APK Builder (download & build on your computer)"
+title = "1"
 
 [[outputs]]
 id = "2W3I8utQaYbuvNW0hcn-0"
 uri = "file://attached_assets/exports/wolfion-android-apk-builder.tar.gz"
 type = "unspecified"
-title = "wolfion-android-apk-builder.tar.gz"
+title = "wolfion-android-apk-builder.tar.gz (with new icon)"
