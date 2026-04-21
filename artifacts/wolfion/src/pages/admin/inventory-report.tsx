@@ -270,7 +270,7 @@ export default function InventoryReportPage() {
             <CardDescription>Live stock per product type.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-3 gap-2 sm:gap-3 lg:grid-cols-4">
+            <div className="grid grid-cols-4 gap-1.5 sm:gap-2.5 lg:gap-3">
               {allProductTypeIds.map((id) => (
                 <div key={id} className="rounded-2xl border bg-white dark:bg-muted/30 p-3 sm:p-4 shadow-sm text-center">
                   <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground leading-tight break-words">{productTypeLabels[id] || id}</p>

@@ -18,6 +18,7 @@ import CheckoutSuccess from "@/pages/shop/checkout-success";
 import AboutPage from "@/pages/shop/about";
 import ContactPage from "@/pages/shop/contact";
 import SettingsPage from "@/pages/shop/settings";
+import DevPreviewPage from "@/pages/dev-preview";
 
 import AdminDashboard from "@/pages/admin/dashboard";
 import InventoryReportPage from "@/pages/admin/inventory-report";
@@ -146,6 +147,7 @@ function AppRouter() {
   return (
     <Switch>
       <Route path="/" component={HomeRedirect} />
+      <Route path="/dev-preview" component={DevPreviewPage} />
       <Route path="/sign-in/*?" component={SignInPage} />
       <Route path="/sign-up/*?" component={SignUpPage} />
       <Route path="/role-select" component={RoleSelectRoute} />
