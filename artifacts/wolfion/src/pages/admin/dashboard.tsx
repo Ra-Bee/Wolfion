@@ -2069,7 +2069,7 @@ export default function Dashboard() {
 
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="uni-next-date">Next payment date</label>
+                  <label className="text-sm font-medium" htmlFor="uni-next-date">Payment date</label>
                   <Input id="uni-next-date" type="date" className="h-12 text-base" value={uniNextPaymentDate} onChange={(e) => setUniNextPaymentDate(e.target.value)} />
                 </div>
                 <div className="space-y-2">
