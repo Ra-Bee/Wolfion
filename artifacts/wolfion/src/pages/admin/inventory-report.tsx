@@ -270,11 +270,11 @@ export default function InventoryReportPage() {
             <CardDescription>Live stock per product type.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 lg:grid-cols-4">
               {allProductTypeIds.map((id) => (
-                <div key={id} className="rounded-2xl border bg-muted/30 p-4">
-                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{productTypeLabels[id] || id}</p>
-                  <p className="text-2xl font-bold mt-1">{(inv[id] || 0).toLocaleString()} <span className="text-sm font-normal text-muted-foreground">dz</span></p>
+                <div key={id} className="rounded-2xl border bg-white dark:bg-muted/30 p-3 sm:p-4 shadow-sm text-center">
+                  <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground leading-tight break-words">{productTypeLabels[id] || id}</p>
+                  <p className="text-lg sm:text-2xl font-bold mt-1.5 sm:mt-1">{(inv[id] || 0).toLocaleString()} <span className="text-[10px] sm:text-sm font-normal text-muted-foreground">dz</span></p>
                 </div>
               ))}
             </div>

@@ -1275,11 +1275,11 @@ export default function Dashboard() {
           <CardContent className="space-y-6">
             <div>
               <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Total stock available</h3>
-              <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="mt-3 grid grid-cols-3 gap-2 sm:gap-3 lg:grid-cols-4">
                 {allProductTypeIds.map((id) => (
-                  <div key={`stock-${id}`} className="rounded-2xl border bg-card/80 p-5 shadow-sm backdrop-blur transition hover:shadow-lg hover:-translate-y-0.5">
-                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{productTypeLabels[id] || id}</p>
-                    <p className="mt-2 text-3xl font-bold">{(inventory[id] || 0).toLocaleString()} <span className="text-base font-medium text-muted-foreground">dz</span></p>
+                  <div key={`stock-${id}`} className="rounded-2xl border bg-white dark:bg-card/80 p-3 sm:p-4 lg:p-5 shadow-sm backdrop-blur transition hover:shadow-lg hover:-translate-y-0.5 text-center">
+                    <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground leading-tight break-words">{productTypeLabels[id] || id}</p>
+                    <p className="mt-1.5 sm:mt-2 text-lg sm:text-2xl lg:text-3xl font-bold">{(inventory[id] || 0).toLocaleString()} <span className="text-[10px] sm:text-xs lg:text-sm font-medium text-muted-foreground">dz</span></p>
                   </div>
                 ))}
               </div>
@@ -1287,11 +1287,11 @@ export default function Dashboard() {
 
             <div>
               <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Total sold</h3>
-              <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="mt-3 grid grid-cols-3 gap-2 sm:gap-3 lg:grid-cols-4">
                 {allProductTypeIds.map((id) => (
-                  <div key={`sold-${id}`} className="rounded-2xl border bg-card/80 p-5 shadow-sm backdrop-blur transition hover:shadow-lg hover:-translate-y-0.5">
-                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{productTypeLabels[id] || id}</p>
-                    <p className="mt-2 text-3xl font-bold">{(salesByType[id] || 0).toLocaleString()} <span className="text-base font-medium text-muted-foreground">dz</span></p>
+                  <div key={`sold-${id}`} className="rounded-2xl border bg-white dark:bg-card/80 p-3 sm:p-4 lg:p-5 shadow-sm backdrop-blur transition hover:shadow-lg hover:-translate-y-0.5 text-center">
+                    <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground leading-tight break-words">{productTypeLabels[id] || id}</p>
+                    <p className="mt-1.5 sm:mt-2 text-lg sm:text-2xl lg:text-3xl font-bold">{(salesByType[id] || 0).toLocaleString()} <span className="text-[10px] sm:text-xs lg:text-sm font-medium text-muted-foreground">dz</span></p>
                   </div>
                 ))}
               </div>
