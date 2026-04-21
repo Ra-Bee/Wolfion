@@ -1528,19 +1528,6 @@ export default function Dashboard() {
                     onChange={(event) => setDailyMachineHours(event.target.value)}
                   />
                 </div>
-                <div className="space-y-2 sm:col-span-2 lg:col-span-2">
-                  <label className="text-sm font-medium" htmlFor="daily-product-type">Product type</label>
-                  <Select value={dailyProductType} onValueChange={(value) => setDailyProductType(value as ProductType)}>
-                    <SelectTrigger id="daily-product-type" className="h-12 text-base">
-                      <SelectValue placeholder="Choose product" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.entries(productTypeLabels).map(([value, label]) => (
-                        <SelectItem key={value} value={value}>{label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
               </div>
 
               <Separator />
@@ -1602,6 +1589,20 @@ export default function Dashboard() {
                     onChange={(event) => setDailyIronCost(event.target.value)}
                   />
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="daily-product-type">Product type</label>
+                <Select value={dailyProductType} onValueChange={(value) => setDailyProductType(value as ProductType)}>
+                  <SelectTrigger id="daily-product-type" className="h-12 text-base">
+                    <SelectValue placeholder="Choose product" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(productTypeLabels).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>{label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 lg:gap-3">
