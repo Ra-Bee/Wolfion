@@ -131,7 +131,7 @@ export default function YarnCalculationPage() {
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium" htmlFor="yp-kg">Quantity (kg)</label>
-                <Input id="yp-kg" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="" value={purchaseKg} onChange={(e) => setPurchaseKg(e.target.value)} required />
+                <Input id="yp-kg" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={purchaseKg} onChange={(e) => setPurchaseKg(e.target.value)} required />
               </div>
               <div className="space-y-2 flex items-end">
                 <Button type="submit" size="lg" className="h-12 w-full">

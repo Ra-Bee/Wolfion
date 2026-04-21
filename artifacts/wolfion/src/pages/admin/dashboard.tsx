@@ -1433,7 +1433,7 @@ export default function Dashboard() {
                     step="1"
                     inputMode="numeric"
                     className="h-12 text-base"
-                    placeholder=""
+                    placeholder="0"
                     value={dailyProductionDozen}
                     onChange={(event) => setDailyProductionDozen(event.target.value)}
                     required
@@ -1448,7 +1448,7 @@ export default function Dashboard() {
                     step="0.01"
                     inputMode="decimal"
                     className="h-12 text-base"
-                    placeholder=""
+                    placeholder="0"
                     value={dailyYarnKg}
                     onChange={(event) => setDailyYarnKg(event.target.value)}
                   />
@@ -1462,7 +1462,7 @@ export default function Dashboard() {
                     step="0.1"
                     inputMode="decimal"
                     className="h-12 text-base"
-                    placeholder=""
+                    placeholder="0"
                     value={dailyMachineHours}
                     onChange={(event) => setDailyMachineHours(event.target.value)}
                   />
@@ -1481,7 +1481,7 @@ export default function Dashboard() {
                     step="0.01"
                     inputMode="decimal"
                     className="h-12 text-base"
-                    placeholder=""
+                    placeholder="0"
                     value={dailyYarnCostPerKg}
                     onChange={(event) => setDailyYarnCostPerKg(event.target.value)}
                   />
@@ -1495,7 +1495,7 @@ export default function Dashboard() {
                     step="0.01"
                     inputMode="decimal"
                     className="h-12 text-base"
-                    placeholder=""
+                    placeholder="0"
                     value={dailyLaborCost}
                     onChange={(event) => setDailyLaborCost(event.target.value)}
                   />
@@ -1509,7 +1509,7 @@ export default function Dashboard() {
                     step="0.01"
                     inputMode="decimal"
                     className="h-12 text-base"
-                    placeholder=""
+                    placeholder="0"
                     value={dailyPackagingCost}
                     onChange={(event) => setDailyPackagingCost(event.target.value)}
                   />
@@ -1523,7 +1523,7 @@ export default function Dashboard() {
                     step="0.01"
                     inputMode="decimal"
                     className="h-12 text-base"
-                    placeholder=""
+                    placeholder="0"
                     value={dailyIronCost}
                     onChange={(event) => setDailyIronCost(event.target.value)}
                   />
@@ -1788,7 +1788,7 @@ export default function Dashboard() {
                     step="0.01"
                     inputMode="decimal"
                     className="h-12 text-base"
-                    placeholder=""
+                    placeholder="0"
                     value={electricityBill}
                     onChange={(e) => setElectricityBill(e.target.value)}
                     required
@@ -1881,7 +1881,7 @@ export default function Dashboard() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="yarn-purchase-kg">Quantity (kg)</label>
-                  <Input id="yarn-purchase-kg" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="" value={yarnPurchaseKg} onChange={(e) => setYarnPurchaseKg(e.target.value)} required />
+                  <Input id="yarn-purchase-kg" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={yarnPurchaseKg} onChange={(e) => setYarnPurchaseKg(e.target.value)} required />
                 </div>
                 <div className="space-y-2 flex items-end">
                   <Button type="submit" size="lg" className="h-12 w-full">
@@ -1972,7 +1972,7 @@ export default function Dashboard() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="worker-rate">{newWorkerPayType === "daily" ? "Wage per day" : "Rate per unit"}</label>
-                  <Input id="worker-rate" type="number" min="0.01" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="" value={newWorkerRate} onChange={(e) => setNewWorkerRate(e.target.value)} required />
+                  <Input id="worker-rate" type="number" min="0.01" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={newWorkerRate} onChange={(e) => setNewWorkerRate(e.target.value)} required />
                 </div>
               </div>
               {workerError && <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{workerError}</p>}
@@ -1999,7 +1999,7 @@ export default function Dashboard() {
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-medium" htmlFor="log-amount">{workers.find(w => w.id === logWorkerId)?.payType === "per_unit" ? "Units done" : "Days worked"}</label>
-                      <Input id="log-amount" type="number" min="0.01" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="" value={logAmount} onChange={(e) => setLogAmount(e.target.value)} required />
+                      <Input id="log-amount" type="number" min="0.01" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={logAmount} onChange={(e) => setLogAmount(e.target.value)} required />
                     </div>
                   </div>
                   <Button type="submit" size="lg" className="h-12 w-full text-base font-semibold"><Plus className="h-5 w-5" /> Save work</Button>
@@ -2023,7 +2023,7 @@ export default function Dashboard() {
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-medium" htmlFor="pay-amount">Amount paid</label>
-                      <Input id="pay-amount" type="number" min="0.01" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="" value={paymentAmount} onChange={(e) => setPaymentAmount(e.target.value)} required />
+                      <Input id="pay-amount" type="number" min="0.01" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={paymentAmount} onChange={(e) => setPaymentAmount(e.target.value)} required />
                     </div>
                   </div>
                   <Button type="submit" size="lg" className="h-12 w-full text-base font-semibold"><Plus className="h-5 w-5" /> Save payment</Button>
@@ -2181,7 +2181,7 @@ export default function Dashboard() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="investor-amount">Amount invested</label>
-                  <Input id="investor-amount" type="number" min="0.01" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="" value={investorAmount} onChange={(e) => setInvestorAmount(e.target.value)} required />
+                  <Input id="investor-amount" type="number" min="0.01" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={investorAmount} onChange={(e) => setInvestorAmount(e.target.value)} required />
                 </div>
               </div>
               {investorError && <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{investorError}</p>}
