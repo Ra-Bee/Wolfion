@@ -169,7 +169,7 @@ export default function LaborPayrollPage() {
                     <div className={`rounded-2xl border p-4 ${selectedStat.remaining > 0 ? "bg-orange-100/50 dark:bg-orange-900/20" : "bg-green-100/40 dark:bg-green-900/20"}`}>
                       <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Remaining due</p>
                       <p className={`text-2xl font-bold mt-1 ${selectedStat.remaining > 0 ? "text-orange-700 dark:text-orange-400" : "text-green-700 dark:text-green-400"}`}>
-                        ${selectedStat.remaining.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                        Tk {selectedStat.remaining.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                       </p>
                     </div>
                   </div>
@@ -247,7 +247,7 @@ export default function LaborPayrollPage() {
                         <td className="py-3 pr-4">Tk {s.totalEarned.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
                         <td className="py-3 pr-4">Tk {s.totalPaid.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
                         <td className={`py-3 font-semibold ${s.remaining > 0 ? "text-orange-600 dark:text-orange-400" : "text-green-700 dark:text-green-400"}`}>
-                          ${s.remaining.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                          Tk {s.remaining.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                         </td>
                       </tr>
                     ))}

@@ -122,7 +122,7 @@ export default function ProductDetail() {
                 {added ? (
                   <><Check className="mr-2 h-4 w-4" /> Added</>
                 ) : (
-                  <>Add to Bag — ${(product.price * quantity).toFixed(2)}</>
+                  <>Add to Bag — Tk {(product.price * quantity).toFixed(2)}</>
                 )}
               </Button>
               <Button variant="outline" size="icon" className="h-14 w-14 rounded-full border-neutral-300 dark:border-neutral-700" aria-label="Save">

@@ -1310,7 +1310,7 @@ export default function Dashboard() {
                 </div>
                 {Number(saleQuantity) > 0 && Number(saleTotalAmount) > 0 && (
                   <p className="rounded-lg bg-muted px-3 py-2 text-xs text-muted-foreground">
-                    Auto: ${(Number(saleTotalAmount) / Number(saleQuantity)).toLocaleString(undefined, { maximumFractionDigits: 2 })} per dozen
+                    Auto: Tk {(Number(saleTotalAmount) / Number(saleQuantity)).toLocaleString(undefined, { maximumFractionDigits: 2 })} per dozen
                   </p>
                 )}
                 {saleError && (
@@ -1722,7 +1722,7 @@ export default function Dashboard() {
                       <div>
                         <p className="text-base font-semibold">{formatDateLabel(sale.date)} · {sale.customerName}</p>
                         <p className="text-xs text-muted-foreground">
-                          {productTypeLabels[sale.productType]} · {sale.quantityDozen.toLocaleString()} dozen at ${sale.pricePerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}/dz
+                          {productTypeLabels[sale.productType]} · {sale.quantityDozen.toLocaleString()} dozen at Tk {sale.pricePerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}/dz
                         </p>
                       </div>
                       <div className="text-right">

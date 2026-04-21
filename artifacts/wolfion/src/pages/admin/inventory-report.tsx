@@ -253,7 +253,7 @@ export default function InventoryReportPage() {
               <div className={`rounded-2xl border p-4 ${previewStats.profit >= 0 ? "bg-green-100/40 dark:bg-green-900/20" : "bg-red-100/40 dark:bg-red-900/20"}`}>
                 <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted-foreground"><TrendingUp className="h-3.5 w-3.5" /> Profit</div>
                 <p className={`text-2xl font-bold mt-1 ${previewStats.profit >= 0 ? "text-green-700 dark:text-green-400" : "text-red-700 dark:text-red-400"}`}>
-                  ${previewStats.profit.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                  Tk {previewStats.profit.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                 </p>
               </div>
             </div>
