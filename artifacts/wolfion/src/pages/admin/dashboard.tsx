@@ -1510,7 +1510,7 @@ export default function Dashboard() {
               <Separator />
 
               <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="daily-labor">Labor</label>
+                <label className="text-sm font-medium" htmlFor="daily-labor">Total labor cost (day)</label>
                 <Input
                   id="daily-labor"
                   type="number"
