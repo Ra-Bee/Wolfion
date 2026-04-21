@@ -1,16 +1,14 @@
 import { SignUp } from "@clerk/react";
-import signUpBg from "@assets/Image_20260421101422_75_2_1776737858250.jpg";
 
 export default function SignUpPage() {
   const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
   return (
     <div
-      className="relative min-h-[100dvh] w-full text-neutral-900 grid place-items-center bg-cover bg-center"
-      style={{ colorScheme: "light", backgroundImage: `url(${signUpBg})` }}
+      className="min-h-[100dvh] w-full bg-white text-neutral-900 grid place-items-center"
+      style={{ colorScheme: "light" }}
     >
-      <div className="absolute inset-0 bg-white/70 backdrop-blur-sm" />
-      <main className="relative z-10 w-full max-w-[380px] mx-auto flex flex-col items-center justify-center px-4 py-6">
+      <main className="w-full max-w-[380px] mx-auto flex flex-col items-center justify-center px-4 py-6">
         <div className="w-full mx-auto flex flex-col items-center text-center animate-in fade-in slide-in-from-bottom-2 duration-700">
           {/* Brand name */}
           <h1 className="text-xl font-bold tracking-[-0.01em] text-black">
