@@ -1675,9 +1675,21 @@ export default function Dashboard() {
               </div>
 
               <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="daily-sale-customer">Customer name</label>
+                <Input
+                  id="daily-sale-customer"
+                  className="h-12 text-base"
+                  placeholder="e.g. Karim"
+                  value={customerName}
+                  onChange={(event) => setCustomerName(event.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
                 <label className="text-sm font-medium" htmlFor="daily-sale-product">Product type</label>
                 <Select value={saleProductType} onValueChange={(value) => setSaleProductType(value as ProductType)}>
-                  <SelectTrigger id="daily-sale-product" className="h-12 text-base">
+                  <SelectTrigger id="daily-sale-product" className="h-10 text-sm">
                     <SelectValue placeholder="Choose product" />
                   </SelectTrigger>
                   <SelectContent>
@@ -1688,18 +1700,7 @@ export default function Dashboard() {
                 </Select>
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-sale-customer">Customer name</label>
-                  <Input
-                    id="daily-sale-customer"
-                    className="h-12 text-base"
-                    placeholder="e.g. Karim"
-                    value={customerName}
-                    onChange={(event) => setCustomerName(event.target.value)}
-                    required
-                  />
-                </div>
+              <div className="grid grid-cols-3 gap-2">
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="daily-sale-quantity">Quantity (dz)</label>
                   <Input
