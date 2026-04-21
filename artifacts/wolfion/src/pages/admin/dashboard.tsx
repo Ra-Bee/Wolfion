@@ -1330,84 +1330,6 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-2 border-primary/40 shadow-lg bg-gradient-to-br from-primary/5 to-background">
-          <CardHeader>
-            <CardTitle className="text-2xl flex items-center gap-2"><TrendingUp className="h-6 w-6 text-primary" /> Profit Dashboard</CardTitle>
-            <CardDescription>Live view of your production, sales, costs, and profit.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Tabs value={profitTab} onValueChange={(v) => setProfitTab(v as "daily" | "monthly")} className="space-y-5">
-              <TabsList className="grid w-full grid-cols-2 h-12">
-                <TabsTrigger value="daily" className="text-base">Daily View</TabsTrigger>
-                <TabsTrigger value="monthly" className="text-base">Monthly View</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="daily" className="space-y-5">
-                <div className="space-y-2 max-w-xs">
-                  <label className="text-sm font-medium" htmlFor="profit-daily-date">Date</label>
-                  <Input
-                    id="profit-daily-date"
-                    type="date"
-                    className="h-12 text-base"
-                    value={profitDate}
-                    onChange={(e) => setProfitDate(e.target.value)}
-                    max={getToday()}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-1.5">
-                  <div className="rounded-lg border bg-card p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
-                    <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Production</p>
-                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">{profitDailyView.production.toLocaleString()} <span className="text-[10px] font-normal text-muted-foreground">dz</span></p>
-                  </div>
-                  <div className="rounded-lg border bg-card p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
-                    <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Total sales</p>
-                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">${profitDailyView.salesValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
-                  </div>
-                  <div className="rounded-lg border bg-card p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
-                    <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Total cost</p>
-                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">${profitDailyView.totalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
-                  </div>
-                  <div className={`rounded-lg border p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border ${profitDailyView.profit >= 0 ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
-                    <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Profit</p>
-                    <p className={`text-[12px] sm:text-sm font-semibold truncate leading-tight ${profitDailyView.profit >= 0 ? "text-green-700" : "text-red-700"}`}>${profitDailyView.profit.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
-                  </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="monthly" className="space-y-5">
-                <div className="space-y-2 max-w-xs">
-                  <label className="text-sm font-medium" htmlFor="profit-monthly-month">Month</label>
-                  <Input
-                    id="profit-monthly-month"
-                    type="month"
-                    className="h-12 text-base"
-                    value={profitMonth}
-                    onChange={(e) => setProfitMonth(e.target.value)}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-1.5">
-                  <div className="rounded-lg border bg-card p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
-                    <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Production</p>
-                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">{profitMonthlyView.production.toLocaleString()} <span className="text-[10px] font-normal text-muted-foreground">dz</span></p>
-                  </div>
-                  <div className="rounded-lg border bg-card p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
-                    <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Total sales</p>
-                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">${profitMonthlyView.salesValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
-                  </div>
-                  <div className="rounded-lg border bg-card p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
-                    <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Total cost</p>
-                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">${profitMonthlyView.totalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
-                  </div>
-                  <div className={`rounded-lg border p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border ${profitMonthlyView.profit >= 0 ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
-                    <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Profit</p>
-                    <p className={`text-[12px] sm:text-sm font-semibold truncate leading-tight ${profitMonthlyView.profit >= 0 ? "text-green-700" : "text-red-700"}`}>${profitMonthlyView.profit.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
-                  </div>
-                </div>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
-
         <Card className="border-2 border-primary/30 shadow-md">
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -1636,6 +1558,84 @@ export default function Dashboard() {
                 </div>
               )}
             </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-2 border-primary/40 shadow-lg bg-gradient-to-br from-primary/5 to-background">
+          <CardHeader>
+            <CardTitle className="text-2xl flex items-center gap-2"><TrendingUp className="h-6 w-6 text-primary" /> Profit Dashboard</CardTitle>
+            <CardDescription>Live view of your production, sales, costs, and profit.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tabs value={profitTab} onValueChange={(v) => setProfitTab(v as "daily" | "monthly")} className="space-y-5">
+              <TabsList className="grid w-full grid-cols-2 h-12">
+                <TabsTrigger value="daily" className="text-base">Daily View</TabsTrigger>
+                <TabsTrigger value="monthly" className="text-base">Monthly View</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="daily" className="space-y-5">
+                <div className="space-y-2 max-w-xs">
+                  <label className="text-sm font-medium" htmlFor="profit-daily-date">Date</label>
+                  <Input
+                    id="profit-daily-date"
+                    type="date"
+                    className="h-12 text-base"
+                    value={profitDate}
+                    onChange={(e) => setProfitDate(e.target.value)}
+                    max={getToday()}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-1.5">
+                  <div className="rounded-lg border bg-card p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
+                    <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Production</p>
+                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">{profitDailyView.production.toLocaleString()} <span className="text-[10px] font-normal text-muted-foreground">dz</span></p>
+                  </div>
+                  <div className="rounded-lg border bg-card p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
+                    <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Total sales</p>
+                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">${profitDailyView.salesValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                  </div>
+                  <div className="rounded-lg border bg-card p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
+                    <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Total cost</p>
+                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">${profitDailyView.totalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                  </div>
+                  <div className={`rounded-lg border p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border ${profitDailyView.profit >= 0 ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
+                    <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Profit</p>
+                    <p className={`text-[12px] sm:text-sm font-semibold truncate leading-tight ${profitDailyView.profit >= 0 ? "text-green-700" : "text-red-700"}`}>${profitDailyView.profit.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="monthly" className="space-y-5">
+                <div className="space-y-2 max-w-xs">
+                  <label className="text-sm font-medium" htmlFor="profit-monthly-month">Month</label>
+                  <Input
+                    id="profit-monthly-month"
+                    type="month"
+                    className="h-12 text-base"
+                    value={profitMonth}
+                    onChange={(e) => setProfitMonth(e.target.value)}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-1.5">
+                  <div className="rounded-lg border bg-card p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
+                    <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Production</p>
+                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">{profitMonthlyView.production.toLocaleString()} <span className="text-[10px] font-normal text-muted-foreground">dz</span></p>
+                  </div>
+                  <div className="rounded-lg border bg-card p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
+                    <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Total sales</p>
+                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">${profitMonthlyView.salesValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                  </div>
+                  <div className="rounded-lg border bg-card p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
+                    <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Total cost</p>
+                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">${profitMonthlyView.totalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                  </div>
+                  <div className={`rounded-lg border p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border ${profitMonthlyView.profit >= 0 ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
+                    <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Profit</p>
+                    <p className={`text-[12px] sm:text-sm font-semibold truncate leading-tight ${profitMonthlyView.profit >= 0 ? "text-green-700" : "text-red-700"}`}>${profitMonthlyView.profit.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
           </CardContent>
         </Card>
 
