@@ -1331,25 +1331,22 @@ export default function Dashboard() {
                     max={getToday()}
                   />
                 </div>
-                <div className="grid grid-cols-4 gap-1.5 sm:gap-2.5 lg:gap-3">
-                  <div className="rounded-2xl border bg-card p-5">
-                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Production</p>
-                    <p className="mt-2 text-3xl font-bold">{profitDailyView.production.toLocaleString()} <span className="text-base font-medium text-muted-foreground">dz</span></p>
+                <div className="grid grid-cols-2 gap-1.5">
+                  <div className="rounded-lg border bg-card p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
+                    <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Production</p>
+                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">{profitDailyView.production.toLocaleString()} <span className="text-[10px] font-normal text-muted-foreground">dz</span></p>
                   </div>
-                  <div className="rounded-2xl border bg-card p-5">
-                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total sales</p>
-                    <p className="mt-2 text-3xl font-bold">${profitDailyView.salesValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">{profitDailyView.salesDozen.toLocaleString()} dz sold</p>
+                  <div className="rounded-lg border bg-card p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
+                    <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Total sales</p>
+                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">${profitDailyView.salesValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
                   </div>
-                  <div className="rounded-2xl border bg-card p-5">
-                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total cost</p>
-                    <p className="mt-2 text-3xl font-bold">${profitDailyView.totalCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">incl. ${profitDailyView.electricityCost.toLocaleString(undefined, { maximumFractionDigits: 2 })} electricity</p>
+                  <div className="rounded-lg border bg-card p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
+                    <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Total cost</p>
+                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">${profitDailyView.totalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
                   </div>
-                  <div className={`rounded-2xl border p-5 ${profitDailyView.profit >= 0 ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
-                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Profit</p>
-                    <p className={`mt-2 text-3xl font-bold ${profitDailyView.profit >= 0 ? "text-green-700" : "text-red-700"}`}>${profitDailyView.profit.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">Sales − Cost</p>
+                  <div className={`rounded-lg border p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border ${profitDailyView.profit >= 0 ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
+                    <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Profit</p>
+                    <p className={`text-[12px] sm:text-sm font-semibold truncate leading-tight ${profitDailyView.profit >= 0 ? "text-green-700" : "text-red-700"}`}>${profitDailyView.profit.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
                   </div>
                 </div>
               </TabsContent>
@@ -1365,25 +1362,22 @@ export default function Dashboard() {
                     onChange={(e) => setProfitMonth(e.target.value)}
                   />
                 </div>
-                <div className="grid grid-cols-4 gap-1.5 sm:gap-2.5 lg:gap-3">
-                  <div className="rounded-2xl border bg-card p-5">
-                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total production</p>
-                    <p className="mt-2 text-3xl font-bold">{profitMonthlyView.production.toLocaleString()} <span className="text-base font-medium text-muted-foreground">dz</span></p>
+                <div className="grid grid-cols-2 gap-1.5">
+                  <div className="rounded-lg border bg-card p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
+                    <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Production</p>
+                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">{profitMonthlyView.production.toLocaleString()} <span className="text-[10px] font-normal text-muted-foreground">dz</span></p>
                   </div>
-                  <div className="rounded-2xl border bg-card p-5">
-                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total sales</p>
-                    <p className="mt-2 text-3xl font-bold">${profitMonthlyView.salesValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">{profitMonthlyView.salesDozen.toLocaleString()} dz sold</p>
+                  <div className="rounded-lg border bg-card p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
+                    <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Total sales</p>
+                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">${profitMonthlyView.salesValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
                   </div>
-                  <div className="rounded-2xl border bg-card p-5">
-                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total cost</p>
-                    <p className="mt-2 text-3xl font-bold">${profitMonthlyView.totalCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">incl. ${profitMonthlyView.electricityCost.toLocaleString(undefined, { maximumFractionDigits: 2 })} electricity</p>
+                  <div className="rounded-lg border bg-card p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
+                    <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Total cost</p>
+                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">${profitMonthlyView.totalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
                   </div>
-                  <div className={`rounded-2xl border p-5 ${profitMonthlyView.profit >= 0 ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
-                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total profit</p>
-                    <p className={`mt-2 text-3xl font-bold ${profitMonthlyView.profit >= 0 ? "text-green-700" : "text-red-700"}`}>${profitMonthlyView.profit.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">Sales − Cost</p>
+                  <div className={`rounded-lg border p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border ${profitMonthlyView.profit >= 0 ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
+                    <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Profit</p>
+                    <p className={`text-[12px] sm:text-sm font-semibold truncate leading-tight ${profitMonthlyView.profit >= 0 ? "text-green-700" : "text-red-700"}`}>${profitMonthlyView.profit.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
                   </div>
                 </div>
               </TabsContent>
