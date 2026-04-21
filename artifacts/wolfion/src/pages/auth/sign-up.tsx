@@ -6,25 +6,25 @@ export default function SignUpPage() {
 
   return (
     <div className="min-h-[100dvh] w-full bg-white text-neutral-900" style={{ colorScheme: "light" }}>
-      <main className="mx-auto w-full max-w-[400px] min-h-[100dvh] flex flex-col items-center px-6 pt-10 pb-10">
+      <main className="mx-auto w-full max-w-[400px] min-h-[100dvh] flex flex-col items-center px-5 pt-5 pb-6">
         <div className="w-full flex flex-col items-center animate-in fade-in slide-in-from-bottom-2 duration-700">
           {/* Logo on top */}
-          <div className="h-16 w-16 rounded-2xl bg-white overflow-hidden ring-1 ring-neutral-200 shadow-sm">
+          <div className="h-12 w-12 rounded-xl bg-white overflow-hidden ring-1 ring-neutral-200 shadow-sm">
             <img src={wolfionMark} alt="Wolfion" className="h-full w-full object-cover" />
           </div>
 
           {/* Brand name below logo */}
-          <h1 className="mt-7 text-2xl font-bold tracking-[-0.01em] text-black">
+          <h1 className="mt-3 text-xl font-bold tracking-[-0.01em] text-black">
             WOLFION
           </h1>
 
-          <h2 className="mt-8 text-lg font-semibold tracking-tight text-black">
+          <h2 className="mt-4 text-base font-semibold tracking-tight text-black">
             Create account
           </h2>
-          <p className="mt-1.5 text-[13px] text-neutral-500">Join Wolfion in under a minute</p>
+          <p className="mt-1 text-[12px] text-neutral-500">Join Wolfion in under a minute</p>
 
           {/* Auth form */}
-          <div className="mt-6 w-full">
+          <div className="mt-3 w-full">
             <SignUp
               routing="path"
               path={`${basePath}/sign-up`}
