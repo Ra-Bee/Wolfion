@@ -81,28 +81,28 @@ export default function DailySalesPage() {
             <CardDescription>Total auto-calculates from quantity × price.</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            <form onSubmit={handleSubmit} className="grid grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
               <div className="space-y-1.5 col-span-2 lg:col-span-1">
                 <Label htmlFor="d">Date</Label>
                 <Input id="d" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
               </div>
-              <div className="space-y-1.5 col-span-2 lg:col-span-2">
+              <div className="space-y-1.5 col-span-2 lg:col-span-3">
                 <Label htmlFor="c">Customer Name</Label>
                 <Input id="c" value={customer} onChange={(e) => setCustomer(e.target.value)} placeholder="e.g. Karim Traders" />
               </div>
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 col-span-2 lg:col-span-1">
                 <Label htmlFor="q">Quantity (dozen)</Label>
                 <Input id="q" type="number" step="0.01" min="0" value={qty} onChange={(e) => setQty(e.target.value)} placeholder="0" />
               </div>
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 col-span-2 lg:col-span-1">
                 <Label htmlFor="p">Price / dozen (Tk)</Label>
                 <Input id="p" type="number" step="0.01" min="0" value={pricePerDozen} onChange={(e) => setPrice(e.target.value)} placeholder="0" />
               </div>
-              <div className="rounded-lg border bg-muted/30 p-3 flex items-center justify-between col-span-2 lg:col-span-1">
+              <div className="rounded-lg border bg-muted/30 p-3 flex items-center justify-between col-span-4 lg:col-span-2">
                 <span className="text-sm text-muted-foreground">Total</span>
                 <span className="text-lg font-bold">{money(totalPreview)}</span>
               </div>
-              <div className="space-y-1.5 col-span-2 lg:col-span-3">
+              <div className="space-y-1.5 col-span-4">
                 <Label>Product Type</Label>
                 <Select value={productType} onValueChange={setProductType}>
                   <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
@@ -112,9 +112,9 @@ export default function DailySalesPage() {
                 </Select>
               </div>
 
-              {error && <p className="text-sm text-destructive col-span-2 lg:col-span-3">{error}</p>}
+              {error && <p className="text-sm text-destructive col-span-4">{error}</p>}
 
-              <Button type="submit" size="lg" className="col-span-2 lg:col-span-3 h-12 text-base font-semibold">
+              <Button type="submit" size="lg" className="col-span-4 h-12 text-base font-semibold">
                 <Plus className="h-5 w-5 mr-1" /> Save Sale
               </Button>
             </form>
