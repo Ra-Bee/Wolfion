@@ -60,7 +60,12 @@ export default function SignUpPage() {
                   dividerText: "!text-white/60",
                   formFieldLabel: "!text-white !font-medium",
                   formFieldInput:
-                    "!bg-neutral-900 !text-white !border !border-white/20 focus:!border-white h-11 placeholder:!text-white/40",
+                    "!bg-neutral-900 !text-white !border !border-white focus:!border-white h-11 placeholder:!text-white/50",
+                  formFieldHintText: "!text-white",
+                  formFieldInfoText: "!text-white",
+                  formFieldWarningText: "!text-white",
+                  formFieldSuccessText: "!text-white",
+                  formFieldErrorText: "!text-red-300",
                   formButtonPrimary:
                     "!bg-white hover:!bg-neutral-200 !text-black h-11 font-medium tracking-wide !rounded-xl !shadow-sm transition-colors",
                   footer: "!bg-black !border-0",
