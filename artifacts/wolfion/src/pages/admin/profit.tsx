@@ -176,11 +176,11 @@ function KPI({ title, value, icon, accent }: { title: string; value: string; ico
     : "border-red-500/30 bg-red-500/5";
   return (
     <Card className={`border-2 ${ring} shadow-sm`}>
-      <CardContent className="p-5 flex items-center gap-3">
-        <div className="rounded-full bg-background border p-2">{icon}</div>
-        <div className="min-w-0">
-          <p className="text-xs text-muted-foreground">{title}</p>
-          <p className="text-xl font-bold truncate">{value}</p>
+      <CardContent className="p-2 sm:p-4 lg:p-5 flex flex-col sm:flex-row items-center gap-1.5 sm:gap-3 text-center sm:text-left">
+        <div className="rounded-full bg-background border p-1.5 sm:p-2 shrink-0">{icon}</div>
+        <div className="min-w-0 w-full">
+          <p className="text-[9px] sm:text-xs text-muted-foreground leading-tight uppercase tracking-wide">{title}</p>
+          <p className="text-sm sm:text-lg lg:text-xl font-bold truncate">{value}</p>
         </div>
       </CardContent>
     </Card>
@@ -189,11 +189,11 @@ function KPI({ title, value, icon, accent }: { title: string; value: string; ico
 
 function Tile({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="rounded-lg border bg-muted/30 p-4 flex items-center gap-3">
-      <div className="rounded-full bg-background border p-2 text-primary">{icon}</div>
-      <div>
-        <p className="text-xs text-muted-foreground">{label}</p>
-        <p className="font-semibold">{value}</p>
+    <div className="rounded-lg border bg-muted/30 p-2 sm:p-4 flex flex-col sm:flex-row items-center gap-1.5 sm:gap-3 text-center sm:text-left">
+      <div className="rounded-full bg-background border p-1.5 sm:p-2 text-primary shrink-0">{icon}</div>
+      <div className="min-w-0 w-full">
+        <p className="text-[9px] sm:text-xs text-muted-foreground leading-tight uppercase tracking-wide">{label}</p>
+        <p className="text-sm sm:text-base font-semibold truncate">{value}</p>
       </div>
     </div>
   );
