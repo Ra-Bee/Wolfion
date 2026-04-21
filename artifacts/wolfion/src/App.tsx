@@ -192,6 +192,7 @@ function AppRouter() {
 
       <Route component={NotFound} />
     </Switch>
+    </Suspense>
   );
 }
 
