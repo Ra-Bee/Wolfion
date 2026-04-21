@@ -81,7 +81,7 @@ export default function ProfitDashboardPage() {
           <p className="text-muted-foreground mt-1">Revenue, cost, and profit at a glance.</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-1.5">
           <KPI title="Production" value={`${totalProductionDozen.toLocaleString()} dz`} icon={<Factory className="h-4 w-4 text-primary" />} accent="emerald" />
           <KPI title="Total Sales" value={money(totalRevenue)} icon={<DollarSign className="h-4 w-4 text-emerald-500" />} accent="emerald" />
           <KPI title="Total Cost" value={money(totalCost)} icon={<Package className="h-4 w-4 text-orange-500" />} accent="orange" />
@@ -177,9 +177,9 @@ function KPI({ title, value, icon, accent }: { title: string; value: string; ico
     : "border-red-500/30 bg-red-500/5";
   return (
     <Card className={`border ${ring} shadow-sm`}>
-      <CardContent className="p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
-        <p className="text-[10px] sm:text-[11px] text-muted-foreground uppercase tracking-wide truncate">{title}</p>
-        <p className="text-[13px] sm:text-base font-semibold truncate">{value}</p>
+      <CardContent className="p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
+        <p className="text-[9px] sm:text-[10px] text-muted-foreground uppercase tracking-wide truncate leading-tight">{title}</p>
+        <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">{value}</p>
       </CardContent>
     </Card>
   );
