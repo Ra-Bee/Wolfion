@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import type { Product } from "@/lib/data";
-import imgLogoMark from "@assets/Image_20260421084152_72_2_1776732289773.jpg";
+import imgLogoMark from "@assets/Image_20260416024938_44_2_1776717019706.png";
 
 type Props = {
   product: Product;

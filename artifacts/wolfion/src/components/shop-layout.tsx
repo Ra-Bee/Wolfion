@@ -19,7 +19,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import imgLogoWhite from "@assets/Image_20260421084152_72_2_1776732289773.jpg";
+import imgLogoWhite from "@assets/Image_20260416024938_44_2_1776717019706.png";
 
 const PRIMARY_NAV = [
   { path: "/shop", label: "Home" },

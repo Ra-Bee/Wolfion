@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import wolfionLogoDataUrl from "@assets/Image_20260421084152_72_2_1776732289773.jpg?inline";
+import wolfionLogoDataUrl from "@assets/Image_20260421042552_60_2_1776716788241.jpg?inline";
 
 export type ReportProductionEntry = {
   date: string;

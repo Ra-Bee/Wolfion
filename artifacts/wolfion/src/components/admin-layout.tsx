@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, SheetClose } from "@/components/ui/sheet";
-import wolfionLogo from "@assets/Image_20260421084152_72_2_1776732289773.jpg";
+import wolfionLogo from "@assets/Image_20260421042552_60_2_1776716788241.jpg";
 
 type AdminNavItem = { path: string; label: string; icon: React.ComponentType<{ className?: string }> };
 

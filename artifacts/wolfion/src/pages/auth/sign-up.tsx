@@ -1,5 +1,5 @@
 import { SignUp } from "@clerk/react";
-import wolfionMark from "@assets/Image_20260421084152_72_2_1776732289773.jpg";
+import wolfionMark from "@assets/Image_20260421042552_60_2_1776716788241.jpg";
 
 export default function SignUpPage() {
   const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
