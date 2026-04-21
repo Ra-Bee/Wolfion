@@ -1652,20 +1652,20 @@ export default function Dashboard() {
                 />
               </div>
 
-              <div className="grid grid-cols-4 gap-1.5 sm:gap-2.5 lg:gap-4">
+              <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="daily-sale-customer">Customer name</label>
                   <Input
                     id="daily-sale-customer"
                     className="h-12 text-base"
-                    placeholder="Customer name"
+                    placeholder="e.g. Karim"
                     value={customerName}
                     onChange={(event) => setCustomerName(event.target.value)}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-sale-quantity">Quantity (dozen)</label>
+                  <label className="text-sm font-medium" htmlFor="daily-sale-quantity">Quantity (dz)</label>
                   <Input
                     id="daily-sale-quantity"
                     type="number"
@@ -1673,14 +1673,14 @@ export default function Dashboard() {
                     step="1"
                     inputMode="numeric"
                     className="h-12 text-base"
-                    placeholder="Example: 10"
+                    placeholder="10"
                     value={saleQuantity}
                     onChange={(event) => setSaleQuantity(event.target.value)}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-sale-total">Total sale amount</label>
+                  <label className="text-sm font-medium" htmlFor="daily-sale-total">Total sale</label>
                   <Input
                     id="daily-sale-total"
                     type="number"
@@ -1688,13 +1688,22 @@ export default function Dashboard() {
                     step="0.01"
                     inputMode="decimal"
                     className="h-12 text-base"
-                    placeholder="Example: 1200"
+                    placeholder="1200"
                     value={saleTotalAmount}
                     onChange={(event) => setSaleTotalAmount(event.target.value)}
                     required
                   />
                 </div>
                 <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="daily-sale-price">Price / dozen</label>
+                  <Input
+                    id="daily-sale-price"
+                    readOnly
+                    className="h-12 text-base bg-muted/30 font-semibold"
+                    value={`$${liveSalePricePerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}`}
+                  />
+                </div>
+                <div className="space-y-2 col-span-2">
                   <label className="text-sm font-medium" htmlFor="daily-sale-product">Product type</label>
                   <Select value={saleProductType} onValueChange={(value) => setSaleProductType(value as ProductType)}>
                     <SelectTrigger id="daily-sale-product" className="h-12 text-base">
@@ -1706,18 +1715,6 @@ export default function Dashboard() {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
-              </div>
-
-              <div className="grid gap-3 rounded-2xl border bg-muted/30 p-4 sm:grid-cols-2">
-                <div>
-                  <p className="text-xs text-muted-foreground">Total sale amount</p>
-                  <p className="mt-1 text-2xl font-bold">${liveSaleTotal.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Auto · Price per dozen</p>
-                  <p className="mt-1 text-2xl font-bold">${liveSalePricePerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                  <p className="text-xs text-muted-foreground">Total ÷ quantity</p>
                 </div>
               </div>
 
