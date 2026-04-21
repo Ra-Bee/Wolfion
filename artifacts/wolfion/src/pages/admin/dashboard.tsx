@@ -1402,20 +1402,17 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 lg:gap-3">
-              <div className="rounded-2xl border bg-primary/5 p-5">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Production today</p>
-                <p className="mt-2 text-3xl font-bold">{todayProductionDozen.toLocaleString()} <span className="text-base font-medium text-muted-foreground">dozen</span></p>
-                <p className="mt-1 text-xs text-muted-foreground">{todayEntries.length} entries today</p>
+              <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
+                <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Today</p>
+                <p className="text-[13px] sm:text-base font-semibold truncate">{todayProductionDozen.toLocaleString()} <span className="text-[10px] font-normal text-muted-foreground">dz</span></p>
               </div>
-              <div className="rounded-2xl border bg-primary/5 p-5">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total cost today</p>
-                <p className="mt-2 text-3xl font-bold">${todayTotalCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                <p className="mt-1 text-xs text-muted-foreground">Yarn + labor + packaging + finishing</p>
+              <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
+                <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Cost</p>
+                <p className="text-[13px] sm:text-base font-semibold truncate">${todayTotalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
               </div>
-              <div className="rounded-2xl border bg-primary/5 p-5">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Cost per dozen</p>
-                <p className="mt-2 text-3xl font-bold">${todayCostPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                <p className="mt-1 text-xs text-muted-foreground">Today's average</p>
+              <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
+                <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Per dozen</p>
+                <p className="text-[13px] sm:text-base font-semibold truncate">${todayCostPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
               </div>
             </div>
 
@@ -1524,7 +1521,7 @@ export default function Dashboard() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-iron">Iron / finishing cost (day)</label>
+                  <label className="text-sm font-medium" htmlFor="daily-iron">Iron Finishing</label>
                   <Input
                     id="daily-iron"
                     type="number"
@@ -1554,17 +1551,17 @@ export default function Dashboard() {
               </div>
 
               <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 lg:gap-3">
-                <div className="rounded-2xl border bg-muted/30 p-4">
-                  <p className="text-xs text-muted-foreground">Total production</p>
-                  <p className="mt-2 text-2xl font-bold">{livePreviewProductionDozen.toLocaleString()} dozen</p>
+                <div className="rounded-lg border bg-muted/30 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
+                  <p className="text-[10px] sm:text-[11px] text-muted-foreground truncate uppercase tracking-wide">Production</p>
+                  <p className="text-[13px] sm:text-base font-semibold truncate">{livePreviewProductionDozen.toLocaleString()} <span className="text-[10px] font-normal text-muted-foreground">dz</span></p>
                 </div>
-                <div className="rounded-2xl border bg-muted/30 p-4">
-                  <p className="text-xs text-muted-foreground">Total cost</p>
-                  <p className="mt-2 text-2xl font-bold">${livePreviewTotalCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                <div className="rounded-lg border bg-muted/30 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
+                  <p className="text-[10px] sm:text-[11px] text-muted-foreground truncate uppercase tracking-wide">Total cost</p>
+                  <p className="text-[13px] sm:text-base font-semibold truncate">${livePreviewTotalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
                 </div>
-                <div className="rounded-2xl border bg-muted/30 p-4">
-                  <p className="text-xs text-muted-foreground">Cost per dozen</p>
-                  <p className="mt-2 text-2xl font-bold">${livePreviewCostPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                <div className="rounded-lg border bg-muted/30 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
+                  <p className="text-[10px] sm:text-[11px] text-muted-foreground truncate uppercase tracking-wide">Per dozen</p>
+                  <p className="text-[13px] sm:text-base font-semibold truncate">${livePreviewCostPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                 </div>
               </div>
 

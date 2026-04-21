@@ -80,11 +80,11 @@ export default function ProfitDashboardPage() {
           <p className="text-muted-foreground mt-1">Revenue, cost, and profit at a glance.</p>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
-          <KPI title="Total Revenue" value={money(totalRevenue)} icon={<DollarSign className="h-5 w-5 text-emerald-500" />} accent="emerald" />
-          <KPI title="Total Cost" value={money(totalCost)} icon={<Package className="h-5 w-5 text-orange-500" />} accent="orange" />
-          <KPI title="Total Profit" value={money(totalProfit)} icon={<TrendingUp className="h-5 w-5 text-primary" />} accent={totalProfit >= 0 ? "emerald" : "red"} />
-          <KPI title="This Month Profit" value={money(monthProfit)} icon={<TrendingUp className="h-5 w-5 text-primary" />} accent={monthProfit >= 0 ? "emerald" : "red"} />
+        <div className="grid grid-cols-4 gap-1.5 sm:gap-2.5 lg:gap-3">
+          <KPI title="Revenue" value={money(totalRevenue)} icon={<DollarSign className="h-4 w-4 text-emerald-500" />} accent="emerald" />
+          <KPI title="Cost" value={money(totalCost)} icon={<Package className="h-4 w-4 text-orange-500" />} accent="orange" />
+          <KPI title="Profit" value={money(totalProfit)} icon={<TrendingUp className="h-4 w-4 text-primary" />} accent={totalProfit >= 0 ? "emerald" : "red"} />
+          <KPI title="This Month" value={money(monthProfit)} icon={<TrendingUp className="h-4 w-4 text-primary" />} accent={monthProfit >= 0 ? "emerald" : "red"} />
         </div>
 
         <Card className="border-2 border-primary/20 shadow-md">
@@ -93,9 +93,9 @@ export default function ProfitDashboardPage() {
             <CardDescription>Where the money is going.</CardDescription>
           </CardHeader>
           <CardContent className="grid grid-cols-3 gap-2 sm:gap-4">
-            <Tile icon={<Factory className="h-5 w-5" />} label="Production cost" value={money(productionCost)} />
-            <Tile icon={<Zap className="h-5 w-5" />} label="Electricity" value={money(electricityCost)} />
-            <Tile icon={<UsersIcon className="h-5 w-5" />} label="Labor paid" value={money(laborPaid)} />
+            <Tile icon={<Factory className="h-4 w-4" />} label="Production" value={money(productionCost)} />
+            <Tile icon={<Zap className="h-4 w-4" />} label="Electricity" value={money(electricityCost)} />
+            <Tile icon={<UsersIcon className="h-4 w-4" />} label="Labor" value={money(laborPaid)} />
           </CardContent>
         </Card>
 
@@ -175,13 +175,10 @@ function KPI({ title, value, icon, accent }: { title: string; value: string; ico
     : accent === "orange" ? "border-orange-500/30 bg-orange-500/5"
     : "border-red-500/30 bg-red-500/5";
   return (
-    <Card className={`border-2 ${ring} shadow-sm`}>
-      <CardContent className="p-3 sm:p-4 lg:p-5 flex items-center gap-2 sm:gap-3">
-        <div className="rounded-full bg-background border p-1.5 sm:p-2 shrink-0">{icon}</div>
-        <div className="min-w-0 flex-1">
-          <p className="text-[10px] sm:text-xs text-muted-foreground leading-tight uppercase tracking-wide">{title}</p>
-          <p className="text-base sm:text-lg lg:text-xl font-bold truncate">{value}</p>
-        </div>
+    <Card className={`border ${ring} shadow-sm`}>
+      <CardContent className="p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
+        <p className="text-[10px] sm:text-[11px] text-muted-foreground uppercase tracking-wide truncate">{title}</p>
+        <p className="text-[13px] sm:text-base font-semibold truncate">{value}</p>
       </CardContent>
     </Card>
   );
@@ -189,12 +186,9 @@ function KPI({ title, value, icon, accent }: { title: string; value: string; ico
 
 function Tile({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="rounded-lg border bg-muted/30 p-2 sm:p-4 flex flex-col sm:flex-row items-center gap-1.5 sm:gap-3 text-center sm:text-left">
-      <div className="rounded-full bg-background border p-1.5 sm:p-2 text-primary shrink-0">{icon}</div>
-      <div className="min-w-0 w-full">
-        <p className="text-[9px] sm:text-xs text-muted-foreground leading-tight uppercase tracking-wide">{label}</p>
-        <p className="text-sm sm:text-base font-semibold truncate">{value}</p>
-      </div>
+    <div className="rounded-lg border bg-muted/30 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
+      <p className="text-[10px] sm:text-[11px] text-muted-foreground uppercase tracking-wide truncate">{label}</p>
+      <p className="text-[13px] sm:text-base font-semibold truncate">{value}</p>
     </div>
   );
 }
