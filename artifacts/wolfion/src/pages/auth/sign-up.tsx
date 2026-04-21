@@ -1,4 +1,5 @@
 import { SignUp } from "@clerk/react";
+import wolfionMark from "@assets/Image_20260421042552_60_2_1776716788241.jpg";
 
 export default function SignUpPage() {
   const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
@@ -10,8 +11,12 @@ export default function SignUpPage() {
     >
       <main className="w-full max-w-[380px] mx-auto flex flex-col items-center justify-center px-4 py-6">
         <div className="w-full mx-auto flex flex-col items-center text-center animate-in fade-in slide-in-from-bottom-2 duration-700">
+          {/* Logo */}
+          <div className="h-12 w-12 rounded-xl bg-white overflow-hidden ring-1 ring-neutral-200 shadow-sm">
+            <img src={wolfionMark} alt="Wolfion" className="h-full w-full object-cover" />
+          </div>
           {/* Brand name */}
-          <h1 className="text-xl font-bold tracking-[-0.01em] text-black">
+          <h1 className="mt-3 text-xl font-bold tracking-[-0.01em] text-black">
             WOLFION
           </h1>
 
