@@ -138,6 +138,7 @@ export const defaultProductTypes: ProductTypeOption[] = [
   { id: "short-socks", label: "Short socks" },
   { id: "ankle-socks", label: "Ankle socks" },
   { id: "kids-socks", label: "Kids socks" },
+  { id: "mixed", label: "Mixed" },
   { id: "others", label: "Others" },
 ];
 
@@ -145,6 +146,7 @@ export const initialInventory: Record<string, number> = {
   "short-socks": 320,
   "ankle-socks": 260,
   "kids-socks": 140,
+  "mixed": 0,
   "others": 0,
 };
 
