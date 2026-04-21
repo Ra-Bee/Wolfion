@@ -1410,22 +1410,22 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <form onSubmit={handleAddDailyEntry} className="space-y-5">
-              <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 lg:gap-4">
+            <form onSubmit={handleAddDailyEntry} className="space-y-3">
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="daily-date">Date</label>
+                <Input
+                  id="daily-date"
+                  type="date"
+                  className="h-12 text-base"
+                  value={dailyDate}
+                  onChange={(event) => setDailyDate(event.target.value)}
+                  max={getToday()}
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-3 gap-2">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-date">Date</label>
-                  <Input
-                    id="daily-date"
-                    type="date"
-                    className="h-12 text-base"
-                    value={dailyDate}
-                    onChange={(event) => setDailyDate(event.target.value)}
-                    max={getToday()}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-production">Quantity (dozen)</label>
+                  <label className="text-sm font-medium" htmlFor="daily-production">Quantity (dz)</label>
                   <Input
                     id="daily-production"
                     type="number"
@@ -1440,7 +1440,7 @@ export default function Dashboard() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-yarn">Yarn used (kg)</label>
+                  <label className="text-sm font-medium" htmlFor="daily-yarn">Yarn (kg)</label>
                   <Input
                     id="daily-yarn"
                     type="number"
@@ -1454,7 +1454,7 @@ export default function Dashboard() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-machine">Machine running hours</label>
+                  <label className="text-sm font-medium" htmlFor="daily-machine">Hours</label>
                   <Input
                     id="daily-machine"
                     type="number"
