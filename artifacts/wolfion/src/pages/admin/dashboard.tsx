@@ -1270,7 +1270,7 @@ export default function Dashboard() {
         <Card className="border-2 border-primary/30 shadow-md">
           <CardHeader>
             <CardTitle className="text-2xl flex items-center gap-2"><Package className="h-6 w-6 text-primary" /> Summary</CardTitle>
-            <CardDescription>Live stock, sales, profit, and loss across the business.</CardDescription>
+            <CardDescription>Live stock, sales, and profit across the business.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div>
@@ -1297,17 +1297,12 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl border-2 border-green-200 bg-green-50 p-5">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total profit</p>
-                <p className="mt-2 text-3xl font-bold text-green-700">${Math.max(0, totalProfit).toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                <p className="mt-1 text-xs text-muted-foreground">Sales − cost</p>
-              </div>
-              <div className="rounded-2xl border-2 border-red-200 bg-red-50 p-5">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total loss</p>
-                <p className="mt-2 text-3xl font-bold text-red-700">${Math.max(0, -totalProfit).toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                <p className="mt-1 text-xs text-muted-foreground">When cost exceeds sales</p>
-              </div>
+            <div className={`rounded-2xl border-2 p-5 ${totalProfit >= 0 ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}`}>
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{totalProfit >= 0 ? "Total profit" : "Total loss"}</p>
+              <p className={`mt-2 text-3xl font-bold ${totalProfit >= 0 ? "text-green-700" : "text-red-700"}`}>
+                {totalProfit < 0 ? "−" : ""}${Math.abs(totalProfit).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">{totalProfit >= 0 ? "Sales − cost" : "Cost exceeds sales"}</p>
             </div>
           </CardContent>
         </Card>
