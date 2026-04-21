@@ -1509,21 +1509,6 @@ export default function Dashboard() {
 
               <Separator />
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="daily-labor">Total labor cost (day)</label>
-                <Input
-                  id="daily-labor"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  inputMode="decimal"
-                  className="h-12 text-base"
-                  placeholder="0"
-                  value={dailyLaborCost}
-                  onChange={(event) => setDailyLaborCost(event.target.value)}
-                />
-              </div>
-
               <div className="grid grid-cols-3 gap-2">
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="daily-packaging">Packaging</label>
@@ -1567,6 +1552,21 @@ export default function Dashboard() {
                     onChange={(event) => setDailyStaffBill(event.target.value)}
                   />
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="daily-labor">Total labor cost (day)</label>
+                <Input
+                  id="daily-labor"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  inputMode="decimal"
+                  className="h-12 text-base"
+                  placeholder="0"
+                  value={dailyLaborCost}
+                  onChange={(event) => setDailyLaborCost(event.target.value)}
+                />
               </div>
 
               <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 lg:gap-3">
