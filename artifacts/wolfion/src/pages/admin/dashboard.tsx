@@ -1492,34 +1492,19 @@ export default function Dashboard() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-yarn-cost">Yarn / kg</label>
+                  <label className="text-sm font-medium" htmlFor="daily-machine">Machine Hours</label>
                   <Input
-                    id="daily-yarn-cost"
+                    id="daily-machine"
                     type="number"
                     min="0"
-                    step="0.01"
+                    step="0.1"
                     inputMode="decimal"
                     className="h-12 text-base"
                     placeholder="0"
-                    value={dailyYarnCostPerKg}
-                    onChange={(event) => setDailyYarnCostPerKg(event.target.value)}
+                    value={dailyMachineHours}
+                    onChange={(event) => setDailyMachineHours(event.target.value)}
                   />
                 </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="daily-machine">Machine Hours</label>
-                <Input
-                  id="daily-machine"
-                  type="number"
-                  min="0"
-                  step="0.1"
-                  inputMode="decimal"
-                  className="h-12 text-base"
-                  placeholder="0"
-                  value={dailyMachineHours}
-                  onChange={(event) => setDailyMachineHours(event.target.value)}
-                />
               </div>
 
               <Separator />
