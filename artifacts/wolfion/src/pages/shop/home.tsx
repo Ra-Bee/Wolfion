@@ -77,7 +77,7 @@ export default function ShopHome() {
             View all <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-7">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-7">
           {sockCats.map((c, i) => (
             <Link
               key={c.id}
@@ -111,7 +111,7 @@ export default function ShopHome() {
             <h2 className="text-4xl sm:text-5xl font-light tracking-tight">Everyday Essentials</h2>
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
           {[
             { href: "/products?collection=mens", img: imgPortrait, label: "Menswear", pos: "object-[center_25%]" },
             { href: "/products?collection=womens", img: imgWomenswear, label: "Womenswear", pos: "object-center" },
