@@ -1307,7 +1307,7 @@ export default function Dashboard() {
             {(() => {
               const dailyProfit = todaySalesValue - todayTotalCost;
               return (
-                <div className={`rounded-2xl border-2 p-4 sm:p-5 ${totalProfit >= 0 ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}`}>
+                <div className="rounded-2xl border-2 border-green-200 bg-green-50 p-4 sm:p-5">
                   <div className="grid grid-cols-2 gap-3 sm:gap-4 divide-x divide-green-200/60">
                     <div className="pr-2">
                       <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground">{totalProfit >= 0 ? "Total profit" : "Total loss"}</p>
