@@ -1,17 +1,17 @@
 import { Link } from "wouter";
 import { ArrowRight } from "lucide-react";
+import landingBg from "@assets/Image_20260421101023_74_2_1776737450129.jpg";
 
 export default function Home() {
   return (
     <div className="relative min-h-[100dvh] w-full overflow-hidden bg-black text-white">
-      {/* Subtle radial spotlight with slow drift */}
+      {/* Background image with slow drift */}
       <div
-        className="absolute inset-0 animate-[wolfion-drift_18s_ease-in-out_infinite_alternate]"
-        style={{
-          background:
-            "radial-gradient(ellipse 70% 55% at 50% 40%, rgba(55,55,55,0.65) 0%, rgba(18,18,18,0.92) 50%, #000 85%)",
-        }}
+        className="absolute inset-0 animate-[wolfion-drift_18s_ease-in-out_infinite_alternate] bg-cover bg-center"
+        style={{ backgroundImage: `url(${landingBg})` }}
       />
+      {/* Dark overlay for text legibility */}
+      <div className="absolute inset-0 bg-black/35" />
 
       <style>{`
         @keyframes wolfion-drift {
