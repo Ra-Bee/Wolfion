@@ -80,7 +80,7 @@ export default function ProfitDashboardPage() {
           <p className="text-muted-foreground mt-1">Revenue, cost, and profit at a glance.</p>
         </div>
 
-        <div className="grid grid-cols-4 gap-1.5 sm:gap-2.5 lg:gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
           <KPI title="Total Revenue" value={money(totalRevenue)} icon={<DollarSign className="h-5 w-5 text-emerald-500" />} accent="emerald" />
           <KPI title="Total Cost" value={money(totalCost)} icon={<Package className="h-5 w-5 text-orange-500" />} accent="orange" />
           <KPI title="Total Profit" value={money(totalProfit)} icon={<TrendingUp className="h-5 w-5 text-primary" />} accent={totalProfit >= 0 ? "emerald" : "red"} />
@@ -176,11 +176,11 @@ function KPI({ title, value, icon, accent }: { title: string; value: string; ico
     : "border-red-500/30 bg-red-500/5";
   return (
     <Card className={`border-2 ${ring} shadow-sm`}>
-      <CardContent className="p-2 sm:p-4 lg:p-5 flex flex-col sm:flex-row items-center gap-1.5 sm:gap-3 text-center sm:text-left">
+      <CardContent className="p-3 sm:p-4 lg:p-5 flex items-center gap-2 sm:gap-3">
         <div className="rounded-full bg-background border p-1.5 sm:p-2 shrink-0">{icon}</div>
-        <div className="min-w-0 w-full">
-          <p className="text-[9px] sm:text-xs text-muted-foreground leading-tight uppercase tracking-wide">{title}</p>
-          <p className="text-sm sm:text-lg lg:text-xl font-bold truncate">{value}</p>
+        <div className="min-w-0 flex-1">
+          <p className="text-[10px] sm:text-xs text-muted-foreground leading-tight uppercase tracking-wide">{title}</p>
+          <p className="text-base sm:text-lg lg:text-xl font-bold truncate">{value}</p>
         </div>
       </CardContent>
     </Card>
