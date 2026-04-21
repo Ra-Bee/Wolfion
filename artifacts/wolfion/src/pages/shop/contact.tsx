@@ -1,38 +1,8 @@
 import { ShopLayout } from "@/components/shop-layout";
-import { Instagram, Globe, Facebook, Mail, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import { CONTACT_LINKS as LINKS } from "@/lib/contact-info";
 
 const FADE = "animate-in fade-in slide-in-from-bottom-4 duration-1000 fill-mode-both";
-
-const LINKS = [
-  {
-    icon: Instagram,
-    label: "Instagram",
-    handle: "@wolfion.com.au",
-    href: "https://www.instagram.com/wolfion.com.au?igsh=c3FzOTE5Y3o3a2Qz",
-    testid: "contact-instagram",
-  },
-  {
-    icon: Facebook,
-    label: "Facebook",
-    handle: "facebook.com/wolfion",
-    href: "https://www.facebook.com/share/1A8R9qhp4y/",
-    testid: "contact-facebook",
-  },
-  {
-    icon: Globe,
-    label: "Website",
-    handle: "www.wolfion.com.au",
-    href: "https://www.wolfion.com.au",
-    testid: "contact-website",
-  },
-  {
-    icon: Mail,
-    label: "Email",
-    handle: "wolfion@wolfion.com.au",
-    href: "mailto:wolfion@wolfion.com.au",
-    testid: "contact-email",
-  },
-];
 
 export default function ContactPage() {
   return (

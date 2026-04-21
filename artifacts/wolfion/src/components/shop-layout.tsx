@@ -20,6 +20,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import imgLogoWhite from "@assets/Image_20260416024938_44_2_1776717019706.png";
+import { CONTACT_LINKS } from "@/lib/contact-info";
 
 const PRIMARY_NAV = [
   { path: "/shop", label: "Home" },
@@ -454,6 +455,31 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
               />
               <Button size="sm" className="h-9 rounded-md bg-neutral-900 dark:bg-white dark:text-neutral-900 active:scale-95 transition-transform">→</Button>
             </div>
+          </div>
+        </div>
+
+        {/* Social / Contact links */}
+        <div className="container mx-auto px-5 pb-8">
+          <div className="text-xs uppercase tracking-widest text-neutral-500 mb-3 text-center sm:text-left">Follow us</div>
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
+            {CONTACT_LINKS.map((link) => {
+              const Icon = link.icon;
+              const external = !link.href.startsWith("mailto:");
+              return (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  target={external ? "_blank" : undefined}
+                  rel={external ? "noopener noreferrer" : undefined}
+                  aria-label={link.label}
+                  title={`${link.label} · ${link.handle}`}
+                  className="h-10 w-10 rounded-full border border-neutral-200 dark:border-neutral-800 flex items-center justify-center text-neutral-700 dark:text-neutral-300 hover:bg-neutral-900 hover:text-white dark:hover:bg-white dark:hover:text-neutral-900 transition-colors"
+                  data-testid={`footer-${link.testid}`}
+                >
+                  <Icon className="h-4 w-4" />
+                </a>
+              );
+            })}
           </div>
         </div>
         <div className="border-t border-neutral-200 dark:border-neutral-800">
