@@ -1620,21 +1620,18 @@ export default function Dashboard() {
             <CardDescription>Record sales by date. Stock and revenue update automatically.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 lg:gap-3">
-              <div className="rounded-2xl border bg-primary/5 p-5">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Sales today</p>
-                <p className="mt-2 text-3xl font-bold">${todaySalesValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{todaySales.length} sales</p>
+            <div className="grid grid-cols-3 gap-1.5">
+              <div className="rounded-lg border bg-primary/5 p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
+                <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Sales today</p>
+                <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">${todaySalesValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
               </div>
-              <div className="rounded-2xl border bg-primary/5 p-5">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Sold today</p>
-                <p className="mt-2 text-3xl font-bold">{todaySalesDozen.toLocaleString()} <span className="text-base font-medium text-muted-foreground">dozen</span></p>
-                <p className="mt-1 text-xs text-muted-foreground">Across all products</p>
+              <div className="rounded-lg border bg-primary/5 p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
+                <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Sold today</p>
+                <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">{todaySalesDozen.toLocaleString()} <span className="text-[10px] font-normal text-muted-foreground">dz</span></p>
               </div>
-              <div className="rounded-2xl border bg-primary/5 p-5">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">All-time revenue</p>
-                <p className="mt-2 text-3xl font-bold">${totalSalesValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{salesEntries.length} sales total</p>
+              <div className="rounded-lg border bg-primary/5 p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
+                <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">All-time</p>
+                <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">${totalSalesValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
               </div>
             </div>
 
