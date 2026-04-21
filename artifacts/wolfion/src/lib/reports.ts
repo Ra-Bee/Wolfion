@@ -146,8 +146,20 @@ function drawPageHeader(doc: jsPDF, range: ReportRange) {
   doc.text(range.label, logoX + logoSize + 6, logoY + 15);
   doc.text(`${range.startDate} → ${range.endDate}`, logoX + logoSize + 6, logoY + 20);
 
-  // Generated timestamp on the right
+  // Centered tagline at the top — "Bapari Socks"
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(13);
+  doc.setTextColor(...PRIMARY);
+  doc.text("Bapari Socks", pageWidth / 2, logoY + 8, { align: "center" });
+  doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
+  doc.setTextColor(...MUTED);
+  doc.text("Wolfion Brand", pageWidth / 2, logoY + 13, { align: "center" });
+
+  // Generated timestamp on the right
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  doc.setTextColor(...MUTED);
   doc.text(`Generated: ${new Date().toLocaleString()}`, pageWidth - 14, logoY + 20, { align: "right" });
 
   // Accent rule
