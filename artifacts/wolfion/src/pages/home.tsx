@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { ArrowRight } from "lucide-react";
-import landingBg from "@assets/Image_20260421101023_74_2_1776737450129.jpg";
+import landingBg from "@assets/Image_20260421101422_75_2_1776737693221.jpg";
 
 export default function Home() {
   return (
