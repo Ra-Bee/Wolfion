@@ -1674,6 +1674,20 @@ export default function Dashboard() {
                 />
               </div>
 
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="daily-sale-product">Product type</label>
+                <Select value={saleProductType} onValueChange={(value) => setSaleProductType(value as ProductType)}>
+                  <SelectTrigger id="daily-sale-product" className="h-12 text-base">
+                    <SelectValue placeholder="Choose product" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(productTypeLabels).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>{label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="daily-sale-customer">Customer name</label>
@@ -1724,19 +1738,6 @@ export default function Dashboard() {
                     className="h-12 text-base bg-muted/30 font-semibold"
                     value={`$${liveSalePricePerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}`}
                   />
-                </div>
-                <div className="space-y-2 col-span-2">
-                  <label className="text-sm font-medium" htmlFor="daily-sale-product">Product type</label>
-                  <Select value={saleProductType} onValueChange={(value) => setSaleProductType(value as ProductType)}>
-                    <SelectTrigger id="daily-sale-product" className="h-12 text-base">
-                      <SelectValue placeholder="Choose product" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.entries(productTypeLabels).map(([value, label]) => (
-                        <SelectItem key={value} value={value}>{label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
                 </div>
               </div>
 
