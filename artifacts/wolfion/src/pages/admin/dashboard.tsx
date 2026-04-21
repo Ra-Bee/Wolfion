@@ -1297,13 +1297,29 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className={`rounded-2xl border-2 p-5 ${totalProfit >= 0 ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}`}>
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{totalProfit >= 0 ? "Total profit" : "Total loss"}</p>
-              <p className={`mt-2 text-3xl font-bold ${totalProfit >= 0 ? "text-green-700" : "text-red-700"}`}>
-                {totalProfit < 0 ? "−" : ""}${Math.abs(totalProfit).toLocaleString(undefined, { maximumFractionDigits: 2 })}
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">{totalProfit >= 0 ? "Sales − cost" : "Cost exceeds sales"}</p>
-            </div>
+            {(() => {
+              const dailyProfit = todaySalesValue - todayTotalCost;
+              return (
+                <div className={`rounded-2xl border-2 p-4 sm:p-5 ${totalProfit >= 0 ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}`}>
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4 divide-x divide-green-200/60">
+                    <div className="pr-2">
+                      <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground">{totalProfit >= 0 ? "Total profit" : "Total loss"}</p>
+                      <p className={`mt-1 sm:mt-2 text-xl sm:text-3xl font-bold leading-tight truncate ${totalProfit >= 0 ? "text-green-700" : "text-red-700"}`}>
+                        {totalProfit < 0 ? "−" : ""}${Math.abs(totalProfit).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                      </p>
+                      <p className="mt-1 text-[10px] sm:text-xs text-muted-foreground">{totalProfit >= 0 ? "Sales − cost" : "Cost exceeds sales"}</p>
+                    </div>
+                    <div className="pl-3 sm:pl-4">
+                      <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground">{dailyProfit >= 0 ? "Daily profit" : "Daily loss"}</p>
+                      <p className={`mt-1 sm:mt-2 text-xl sm:text-3xl font-bold leading-tight truncate ${dailyProfit >= 0 ? "text-green-700" : "text-red-700"}`}>
+                        {dailyProfit < 0 ? "−" : ""}${Math.abs(dailyProfit).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                      </p>
+                      <p className="mt-1 text-[10px] sm:text-xs text-muted-foreground">Today's sales − cost</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
           </CardContent>
         </Card>
 
