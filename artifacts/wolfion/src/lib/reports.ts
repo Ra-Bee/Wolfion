@@ -146,17 +146,13 @@ function drawPageHeader(doc: jsPDF, range: ReportRange) {
   doc.text(range.label, logoX + logoSize + 6, logoY + 15);
   doc.text(`${range.startDate} → ${range.endDate}`, logoX + logoSize + 6, logoY + 20);
 
-  // Centered tagline at the top — "Bapari Socks"
+  // Top-right corner — "Bapari Socks" brand mark
   doc.setFont("helvetica", "bold");
   doc.setFontSize(13);
   doc.setTextColor(...PRIMARY);
-  doc.text("Bapari Socks", pageWidth / 2, logoY + 8, { align: "center" });
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8);
-  doc.setTextColor(...MUTED);
-  doc.text("Wolfion Brand", pageWidth / 2, logoY + 13, { align: "center" });
+  doc.text("Bapari Socks", pageWidth - 14, logoY + 8, { align: "right" });
 
-  // Generated timestamp on the right
+  // Generated timestamp under it
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
   doc.setTextColor(...MUTED);
