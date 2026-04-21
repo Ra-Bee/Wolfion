@@ -1534,20 +1534,20 @@ export default function Dashboard() {
                 <div className="pr-2">
                   <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground">Total daily production</p>
                   <p className="mt-1 sm:mt-2 text-xl sm:text-3xl font-bold leading-tight truncate text-green-700">
-                    {todayProductionDozen.toLocaleString()}<span className="ml-1 text-xs sm:text-sm font-medium text-muted-foreground">dz</span>
+                    {todayProductionDozen.toLocaleString()} <span className="text-xs sm:text-sm font-medium text-muted-foreground">dz</span>
                   </p>
                 </div>
                 <div className="pl-3 sm:pl-4">
                   <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground">Total cost</p>
                   <p className="mt-1 sm:mt-2 text-xl sm:text-3xl font-bold leading-tight truncate text-green-700">
-                    ${todayTotalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    Tk {todayTotalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                   </p>
                 </div>
               </div>
               <div className="mt-3 sm:mt-4 border-t border-green-200/60 pt-3 sm:pt-4">
                 <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground">Cost per dozen</p>
                 <p className="mt-1 sm:mt-2 text-xl sm:text-3xl font-bold leading-tight truncate text-green-700">
-                  ${todayCostPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                  Tk {todayCostPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                 </p>
               </div>
             </div>
