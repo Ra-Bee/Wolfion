@@ -1367,14 +1367,14 @@ export default function Dashboard() {
                     <div className="pr-2">
                       <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground">{totalProfit >= 0 ? "Total profit" : "Total loss"}</p>
                       <p className={`mt-1 sm:mt-2 text-xl sm:text-3xl font-bold leading-tight truncate ${totalProfit >= 0 ? "text-green-700" : "text-red-700"}`}>
-                        {totalProfit < 0 ? "−" : ""}${Math.abs(totalProfit).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                        {totalProfit < 0 ? "−" : ""}Tk {Math.abs(totalProfit).toLocaleString(undefined, { maximumFractionDigits: 2 })}
                       </p>
                       <p className="mt-1 text-[10px] sm:text-xs text-muted-foreground">{totalProfit >= 0 ? "Sales − cost" : "Cost exceeds sales"}</p>
                     </div>
                     <div className="pl-3 sm:pl-4">
                       <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground">{dailyProfit >= 0 ? "Daily profit" : "Daily loss"}</p>
                       <p className={`mt-1 sm:mt-2 text-xl sm:text-3xl font-bold leading-tight truncate ${dailyProfit >= 0 ? "text-green-700" : "text-red-700"}`}>
-                        {dailyProfit < 0 ? "−" : ""}${Math.abs(dailyProfit).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                        {dailyProfit < 0 ? "−" : ""}Tk {Math.abs(dailyProfit).toLocaleString(undefined, { maximumFractionDigits: 2 })}
                       </p>
                       <p className="mt-1 text-[10px] sm:text-xs text-muted-foreground">Today's sales − cost</p>
                     </div>
