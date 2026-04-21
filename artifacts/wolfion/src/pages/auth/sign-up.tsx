@@ -11,19 +11,22 @@ export default function SignUpPage() {
     >
       <main className="w-full max-w-[380px] mx-auto -translate-x-5 flex flex-col items-center justify-center px-4 py-6">
         <div className="w-full mx-auto flex flex-col items-center text-center animate-in fade-in slide-in-from-bottom-2 duration-700">
-          {/* Logo */}
-          <div className="h-12 w-12 rounded-xl bg-white overflow-hidden ring-1 ring-white/20 shadow-sm">
-            <img src={wolfionMark} alt="Wolfion" className="h-full w-full object-cover" />
-          </div>
-          {/* Brand name */}
-          <h1 className="mt-3 text-xl font-bold tracking-[-0.01em] text-white">
-            WOLFION
-          </h1>
+          {/* Header block (logo + titles) — nudged right */}
+          <div className="flex flex-col items-center translate-x-4">
+            {/* Logo */}
+            <div className="h-12 w-12 rounded-xl bg-white overflow-hidden ring-1 ring-white/20 shadow-sm">
+              <img src={wolfionMark} alt="Wolfion" className="h-full w-full object-cover" />
+            </div>
+            {/* Brand name */}
+            <h1 className="mt-3 text-xl font-bold tracking-[-0.01em] text-white">
+              WOLFION
+            </h1>
 
-          <h2 className="mt-4 text-base font-semibold tracking-tight text-white">
-            Create account
-          </h2>
-          <p className="mt-1 text-[12px] text-white/70">Join Wolfion in under a minute</p>
+            <h2 className="mt-4 text-base font-semibold tracking-tight text-white">
+              Create account
+            </h2>
+            <p className="mt-1 text-[12px] text-white/70">Join Wolfion in under a minute</p>
+          </div>
 
           {/* Auth form */}
           <div className="mt-3 w-full">
