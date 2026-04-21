@@ -1,0 +1,98 @@
+Fix layout, restore missing features, and apply consistent grid system across all sections.
+
+-----------------------------------
+1. RESTORE MODE SWITCH (CRITICAL)
+-----------------------------------
+Bring back the mode switch at the top:
+
+- Show button in header:
+  → If in Admin → "Customer Mode"
+  → If in Customer → "Admin Mode"
+
+- Must be visible at top right
+- Must work both directions
+
+-----------------------------------
+2. HEADER FIX
+-----------------------------------
+Top bar must contain in ONE LINE:
+
+- Logo
+- "Admin" or "Customer"
+- Switch button
+- Menu button
+
+Use flex:
+display: flex;
+justify-content: space-between;
+align-items: center;
+
+Ensure:
+- No overlap
+- No wrapping to second line
+
+-----------------------------------
+3. GLOBAL GRID SYSTEM (VERY IMPORTANT)
+-----------------------------------
+Apply to ALL sections:
+
+Rule:
+- 4 items → 4 in one row
+- 3 items → 3 in one row
+- 2 items → 2 in one row
+- 1 item → full width
+
+Use:
+
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+gap: 10px;
+
+Limit max columns to 4
+
+-----------------------------------
+4. APPLY GRID TO ALL SECTIONS
+-----------------------------------
+Apply above system to:
+
+- Summary (Total Stock)
+- Profit Dashboard → MUST be 4 in a row
+- Daily Production Entry → follow grid (3 items = 3 in row)
+- Daily Sales Entry → same grid
+- All dashboard sections
+
+-----------------------------------
+5. DAILY PRODUCTION ENTRY LAYOUT
+-----------------------------------
+- Arrange items side by side (grid)
+- NOT one under another
+
+-----------------------------------
+6. DAILY SALES ENTRY LAYOUT
+-----------------------------------
+- Same structure as production
+- Use grid layout (not vertical stacking)
+
+-----------------------------------
+7. PRODUCT TYPE POSITION
+-----------------------------------
+- Move "Product Type" section to the END of the page
+- Do NOT keep it in the middle
+
+-----------------------------------
+8. REMOVE VERTICAL STACKING
+-----------------------------------
+- Avoid long vertical layout
+- Always prefer row-based layout
+
+-----------------------------------
+9. MOBILE FIT FIX
+-----------------------------------
+- No horizontal scrolling
+- Everything must fit screen
+
+-----------------------------------
+IMPORTANT:
+- Restore switch button (admin/customer)
+- Apply grid layout everywhere
+- Keep everything clean, aligned, and side-by-side

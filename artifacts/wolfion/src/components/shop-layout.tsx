@@ -268,11 +268,12 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                 size="sm"
                 variant="outline"
                 onClick={switchToAdmin}
-                className="h-8 px-3 text-[11px] uppercase tracking-[0.15em] font-medium border-neutral-300 dark:border-neutral-700 active:scale-95 transition-transform"
+                className="h-8 px-2 sm:px-3 text-[10px] sm:text-[11px] uppercase tracking-[0.12em] sm:tracking-[0.15em] font-medium border-neutral-300 dark:border-neutral-700 active:scale-95 transition-transform"
                 data-testid="switch-mode-toggle"
               >
-                <ShieldCheck className="mr-1.5 h-3.5 w-3.5" />
-                Admin Mode
+                <ShieldCheck className="h-3.5 w-3.5 sm:mr-1.5" />
+                <span className="hidden sm:inline">Admin Mode</span>
+                <span className="sm:hidden ml-1">Admin</span>
               </Button>
             )}
 

@@ -80,7 +80,7 @@ export default function ProfitDashboardPage() {
           <p className="text-muted-foreground mt-1">Revenue, cost, and profit at a glance.</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
           <KPI title="Total Revenue" value={money(totalRevenue)} icon={<DollarSign className="h-5 w-5 text-emerald-500" />} accent="emerald" />
           <KPI title="Total Cost" value={money(totalCost)} icon={<Package className="h-5 w-5 text-orange-500" />} accent="orange" />
           <KPI title="Total Profit" value={money(totalProfit)} icon={<TrendingUp className="h-5 w-5 text-primary" />} accent={totalProfit >= 0 ? "emerald" : "red"} />
@@ -92,7 +92,7 @@ export default function ProfitDashboardPage() {
             <CardTitle>Cost Breakdown</CardTitle>
             <CardDescription>Where the money is going.</CardDescription>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <CardContent className="grid grid-cols-3 gap-2 sm:gap-4">
             <Tile icon={<Factory className="h-5 w-5" />} label="Production cost" value={money(productionCost)} />
             <Tile icon={<Zap className="h-5 w-5" />} label="Electricity" value={money(electricityCost)} />
             <Tile icon={<UsersIcon className="h-5 w-5" />} label="Labor paid" value={money(laborPaid)} />
