@@ -1474,14 +1474,20 @@ export default function Dashboard() {
               </Button>
             </form>
 
-            <div className="grid grid-cols-2 gap-1.5 sm:gap-2.5 lg:gap-3">
-              <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
-                <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Total daily production</p>
-                <p className="text-[13px] sm:text-base font-semibold truncate">{todayProductionDozen.toLocaleString()} <span className="text-[10px] font-normal text-muted-foreground">dz</span></p>
-              </div>
-              <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
-                <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Total labor cost</p>
-                <p className="text-[13px] sm:text-base font-semibold truncate">${todayLaborCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+            <div className="rounded-2xl border-2 border-green-200 bg-green-50 p-4 sm:p-5">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 divide-x divide-green-200/60">
+                <div className="pr-2">
+                  <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground">Total daily production</p>
+                  <p className="mt-1 sm:mt-2 text-xl sm:text-3xl font-bold leading-tight truncate text-green-700">
+                    {todayProductionDozen.toLocaleString()}<span className="ml-1 text-xs sm:text-sm font-medium text-muted-foreground">dz</span>
+                  </p>
+                </div>
+                <div className="pl-3 sm:pl-4">
+                  <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground">Total labor cost</p>
+                  <p className="mt-1 sm:mt-2 text-xl sm:text-3xl font-bold leading-tight truncate text-green-700">
+                    ${todayLaborCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                  </p>
+                </div>
               </div>
             </div>
 
