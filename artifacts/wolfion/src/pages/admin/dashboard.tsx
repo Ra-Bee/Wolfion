@@ -1574,11 +1574,11 @@ export default function Dashboard() {
                         </div>
                         <div>
                           <p className="text-xs text-muted-foreground">Total cost</p>
-                          <p className="text-sm font-bold">${entry.totalCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                          <p className="text-sm font-bold">Tk {entry.totalCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                         </div>
                         <div>
                           <p className="text-xs text-muted-foreground">Per dozen</p>
-                          <p className="text-sm font-bold">${entry.costPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                          <p className="text-sm font-bold">Tk {entry.costPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                         </div>
                       </div>
                     </div>
@@ -1603,7 +1603,7 @@ export default function Dashboard() {
             <div className="grid grid-cols-3 gap-1.5">
               <div className="rounded-lg border bg-primary/5 p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
                 <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Sales today</p>
-                <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">${todaySalesValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">Tk {todaySalesValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
               </div>
               <div className="rounded-lg border bg-primary/5 p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
                 <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Sold today</p>
@@ -1611,7 +1611,7 @@ export default function Dashboard() {
               </div>
               <div className="rounded-lg border bg-primary/5 p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
                 <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">All-time</p>
-                <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">${totalSalesValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">Tk {totalSalesValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
               </div>
             </div>
 
@@ -1692,7 +1692,7 @@ export default function Dashboard() {
                     id="daily-sale-price"
                     readOnly
                     className="h-12 text-base bg-muted/30 font-semibold"
-                    value={`$${liveSalePricePerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}`}
+                    value={`Tk ${liveSalePricePerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}`}
                   />
                 </div>
               </div>
@@ -1727,7 +1727,7 @@ export default function Dashboard() {
                       </div>
                       <div className="text-right">
                         <p className="text-xs text-muted-foreground">Total</p>
-                        <p className="text-lg font-bold">${sale.totalValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                        <p className="text-lg font-bold">Tk {sale.totalValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                       </div>
                     </div>
                   ))}
@@ -1773,15 +1773,15 @@ export default function Dashboard() {
                   </div>
                   <div className="rounded-lg border bg-card p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
                     <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Total sales</p>
-                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">${profitDailyView.salesValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">Tk {profitDailyView.salesValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
                   </div>
                   <div className="rounded-lg border bg-card p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
                     <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Total cost</p>
-                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">${profitDailyView.totalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">Tk {profitDailyView.totalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
                   </div>
                   <div className={`rounded-lg border p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border ${profitDailyView.profit >= 0 ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
                     <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Profit</p>
-                    <p className={`text-[12px] sm:text-sm font-semibold truncate leading-tight ${profitDailyView.profit >= 0 ? "text-green-700" : "text-red-700"}`}>${profitDailyView.profit.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                    <p className={`text-[12px] sm:text-sm font-semibold truncate leading-tight ${profitDailyView.profit >= 0 ? "text-green-700" : "text-red-700"}`}>Tk {profitDailyView.profit.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
                   </div>
                 </div>
               </TabsContent>
@@ -1804,15 +1804,15 @@ export default function Dashboard() {
                   </div>
                   <div className="rounded-lg border bg-card p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
                     <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Total sales</p>
-                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">${profitMonthlyView.salesValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">Tk {profitMonthlyView.salesValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
                   </div>
                   <div className="rounded-lg border bg-card p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
                     <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Total cost</p>
-                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">${profitMonthlyView.totalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                    <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">Tk {profitMonthlyView.totalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
                   </div>
                   <div className={`rounded-lg border p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border ${profitMonthlyView.profit >= 0 ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
                     <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Profit</p>
-                    <p className={`text-[12px] sm:text-sm font-semibold truncate leading-tight ${profitMonthlyView.profit >= 0 ? "text-green-700" : "text-red-700"}`}>${profitMonthlyView.profit.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                    <p className={`text-[12px] sm:text-sm font-semibold truncate leading-tight ${profitMonthlyView.profit >= 0 ? "text-green-700" : "text-red-700"}`}>Tk {profitMonthlyView.profit.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
                   </div>
                 </div>
               </TabsContent>
@@ -1877,7 +1877,7 @@ export default function Dashboard() {
                       </div>
                       <div>
                         <p className="text-xs text-muted-foreground">Total bill</p>
-                        <p className="text-base font-bold">${entry.totalBill.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                        <p className="text-base font-bold">Tk {entry.totalBill.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                       </div>
                       <div>
                         <p className="text-xs text-muted-foreground">Production</p>
@@ -1885,7 +1885,7 @@ export default function Dashboard() {
                       </div>
                       <div>
                         <p className="text-xs text-muted-foreground">Cost / dozen</p>
-                        <p className="text-base font-bold">${entry.costPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                        <p className="text-base font-bold">Tk {entry.costPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                       </div>
                     </div>
                   ))}
@@ -2001,15 +2001,15 @@ export default function Dashboard() {
             <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5">
               <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
                 <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Total payable</p>
-                <p className="text-[13px] sm:text-base font-semibold truncate">${totalPayable.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                <p className="text-[13px] sm:text-base font-semibold truncate">Tk {totalPayable.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
               </div>
               <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
                 <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Total paid</p>
-                <p className="text-[13px] sm:text-base font-semibold truncate">${totalPaidAll.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                <p className="text-[13px] sm:text-base font-semibold truncate">Tk {totalPaidAll.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
               </div>
               <div className={`rounded-lg border p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border ${totalRemainingAll > 0 ? "bg-orange-50 border-orange-200" : "bg-green-50 border-green-200"}`}>
                 <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Remaining</p>
-                <p className={`text-[13px] sm:text-base font-semibold truncate ${totalRemainingAll > 0 ? "text-orange-700" : "text-green-700"}`}>${totalRemainingAll.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                <p className={`text-[13px] sm:text-base font-semibold truncate ${totalRemainingAll > 0 ? "text-orange-700" : "text-green-700"}`}>Tk {totalRemainingAll.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
               </div>
             </div>
 
@@ -2057,11 +2057,11 @@ export default function Dashboard() {
                   <div className="grid grid-cols-2 gap-2">
                     <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
                       <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Bill</p>
-                      <p className="text-[13px] sm:text-base font-semibold truncate">${billAmount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                      <p className="text-[13px] sm:text-base font-semibold truncate">Tk {billAmount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                     </div>
                     <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
                       <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Due</p>
-                      <p className="text-[13px] sm:text-base font-semibold truncate">${dueAfter.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                      <p className="text-[13px] sm:text-base font-semibold truncate">Tk {dueAfter.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                     </div>
                   </div>
                 );
@@ -2092,22 +2092,22 @@ export default function Dashboard() {
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
                           <p className="text-base font-semibold">{worker.name}</p>
-                          <p className="text-xs text-muted-foreground">{worker.payType === "daily" ? `$${worker.rate}/day` : `$${worker.rate}/unit`} · {totalUnits.toLocaleString()} {worker.payType === "daily" ? "days" : "units"}</p>
+                          <p className="text-xs text-muted-foreground">{worker.payType === "daily" ? `Tk ${worker.rate}/day` : `Tk ${worker.rate}/unit`} · {totalUnits.toLocaleString()} {worker.payType === "daily" ? "days" : "units"}</p>
                         </div>
                         <Button variant="ghost" size="sm" onClick={() => handleRemoveWorker(worker.id)} className="text-destructive">Remove</Button>
                       </div>
                       <div className="mt-3 grid grid-cols-3 gap-1.5 sm:gap-2.5 lg:gap-3">
                         <div className="rounded-lg bg-muted/40 p-3">
                           <p className="text-xs text-muted-foreground">Total earned</p>
-                          <p className="text-base font-bold">${totalEarned.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                          <p className="text-base font-bold">Tk {totalEarned.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                         </div>
                         <div className="rounded-lg bg-muted/40 p-3">
                           <p className="text-xs text-muted-foreground">Already paid</p>
-                          <p className="text-base font-bold">${totalPaid.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                          <p className="text-base font-bold">Tk {totalPaid.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                         </div>
                         <div className={`rounded-lg p-3 ${remaining > 0 ? "bg-orange-100" : "bg-green-100"}`}>
                           <p className="text-xs text-muted-foreground">Remaining due</p>
-                          <p className={`text-base font-bold ${remaining > 0 ? "text-orange-700" : "text-green-700"}`}>${remaining.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                          <p className={`text-base font-bold ${remaining > 0 ? "text-orange-700" : "text-green-700"}`}>Tk {remaining.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                         </div>
                       </div>
                     </div>
@@ -2131,7 +2131,7 @@ export default function Dashboard() {
           <CardContent className="space-y-6">
             <div className="rounded-2xl border bg-primary/5 p-5">
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total investment</p>
-              <p className="mt-2 text-3xl font-bold">${totalInvestmentAmount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+              <p className="mt-2 text-3xl font-bold">Tk {totalInvestmentAmount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
               <p className="mt-1 text-xs text-muted-foreground">{investments.length} entries</p>
             </div>
 
@@ -2186,7 +2186,7 @@ export default function Dashboard() {
                         <p className="text-xs text-muted-foreground">Source: {investmentSourceLabels[inv.source] || inv.source}{inv.description ? ` · ${inv.description}` : ""}</p>
                       </div>
                       <div className="flex items-center gap-3">
-                        <p className="text-lg font-bold">${inv.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                        <p className="text-lg font-bold">Tk {inv.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                         <Button variant="ghost" size="sm" onClick={() => handleRemoveInvestment(inv.id)} className="text-destructive">Remove</Button>
                       </div>
                     </div>
@@ -2211,7 +2211,7 @@ export default function Dashboard() {
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="rounded-2xl border bg-primary/5 p-5">
                 <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total overall investment</p>
-                <p className="mt-2 text-3xl font-bold">${totalInvestorFunds.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                <p className="mt-2 text-3xl font-bold">Tk {totalInvestorFunds.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                 <p className="mt-1 text-xs text-muted-foreground">{investors.length} contributions</p>
               </div>
               <div className="rounded-2xl border bg-primary/5 p-5">
@@ -2247,7 +2247,7 @@ export default function Dashboard() {
                   {investorTotals.map((it) => (
                     <div key={it.name} className="flex items-center justify-between rounded-xl border bg-card/60 p-4">
                       <p className="text-base font-semibold">{it.name}</p>
-                      <p className="text-lg font-bold">${it.total.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                      <p className="text-lg font-bold">Tk {it.total.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                     </div>
                   ))}
                 </div>
@@ -2268,7 +2268,7 @@ export default function Dashboard() {
                         <p className="text-xs text-muted-foreground">{formatDateLabel(e.date)}</p>
                       </div>
                       <div className="flex items-center gap-3">
-                        <p className="text-lg font-bold">${e.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                        <p className="text-lg font-bold">Tk {e.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                         <Button variant="ghost" size="sm" onClick={() => handleRemoveInvestor(e.id)} className="text-destructive">Remove</Button>
                       </div>
                     </div>

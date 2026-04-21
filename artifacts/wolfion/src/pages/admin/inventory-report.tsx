@@ -243,12 +243,12 @@ export default function InventoryReportPage() {
               </div>
               <div className="rounded-2xl border bg-muted/30 p-4">
                 <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted-foreground"><DollarSign className="h-3.5 w-3.5" /> Sales</div>
-                <p className="text-2xl font-bold mt-1">${previewStats.salesAmount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                <p className="text-2xl font-bold mt-1">Tk {previewStats.salesAmount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">{previewStats.salesDz.toLocaleString()} dz sold</p>
               </div>
               <div className="rounded-2xl border bg-muted/30 p-4">
                 <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted-foreground"><Package className="h-3.5 w-3.5" /> Cost</div>
-                <p className="text-2xl font-bold mt-1">${previewStats.totalCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                <p className="text-2xl font-bold mt-1">Tk {previewStats.totalCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
               </div>
               <div className={`rounded-2xl border p-4 ${previewStats.profit >= 0 ? "bg-green-100/40 dark:bg-green-900/20" : "bg-red-100/40 dark:bg-red-900/20"}`}>
                 <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted-foreground"><TrendingUp className="h-3.5 w-3.5" /> Profit</div>

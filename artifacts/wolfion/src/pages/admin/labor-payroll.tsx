@@ -116,15 +116,15 @@ export default function LaborPayrollPage() {
         <div className="grid gap-3 sm:grid-cols-3">
           <div className="rounded-2xl border bg-primary/5 p-4">
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total payable</p>
-            <p className="text-2xl font-bold mt-1">${totalPayable.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+            <p className="text-2xl font-bold mt-1">Tk {totalPayable.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
           </div>
           <div className="rounded-2xl border bg-muted/30 p-4">
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total earned</p>
-            <p className="text-2xl font-bold mt-1">${totalEarnedAll.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+            <p className="text-2xl font-bold mt-1">Tk {totalEarnedAll.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
           </div>
           <div className="rounded-2xl border bg-muted/30 p-4">
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total paid</p>
-            <p className="text-2xl font-bold mt-1">${totalPaidAll.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+            <p className="text-2xl font-bold mt-1">Tk {totalPaidAll.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
           </div>
         </div>
 
@@ -160,11 +160,11 @@ export default function LaborPayrollPage() {
                   <div className="grid gap-3 sm:grid-cols-3">
                     <div className="rounded-2xl border bg-muted/40 p-4">
                       <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total earned</p>
-                      <p className="text-2xl font-bold mt-1">${selectedStat.totalEarned.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                      <p className="text-2xl font-bold mt-1">Tk {selectedStat.totalEarned.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                     </div>
                     <div className="rounded-2xl border bg-muted/40 p-4">
                       <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total paid</p>
-                      <p className="text-2xl font-bold mt-1">${selectedStat.totalPaid.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                      <p className="text-2xl font-bold mt-1">Tk {selectedStat.totalPaid.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                     </div>
                     <div className={`rounded-2xl border p-4 ${selectedStat.remaining > 0 ? "bg-orange-100/50 dark:bg-orange-900/20" : "bg-green-100/40 dark:bg-green-900/20"}`}>
                       <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Remaining due</p>
@@ -204,7 +204,7 @@ export default function LaborPayrollPage() {
                         {selectedHistory.map((p) => (
                           <div key={p.id} className="flex items-center justify-between px-4 py-3">
                             <div>
-                              <p className="font-medium">${p.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                              <p className="font-medium">Tk {p.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                               <p className="text-xs text-muted-foreground">{formatDateLabel(p.date)}</p>
                             </div>
                             <Button variant="ghost" size="icon" onClick={() => handleRemovePayment(p.id)} aria-label="Remove payment">
@@ -244,8 +244,8 @@ export default function LaborPayrollPage() {
                     {workerStats.map((s) => (
                       <tr key={s.worker.id} className="border-b last:border-0">
                         <td className="py-3 pr-4 font-medium">{s.worker.name}</td>
-                        <td className="py-3 pr-4">${s.totalEarned.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
-                        <td className="py-3 pr-4">${s.totalPaid.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
+                        <td className="py-3 pr-4">Tk {s.totalEarned.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
+                        <td className="py-3 pr-4">Tk {s.totalPaid.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
                         <td className={`py-3 font-semibold ${s.remaining > 0 ? "text-orange-600 dark:text-orange-400" : "text-green-700 dark:text-green-400"}`}>
                           ${s.remaining.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                         </td>

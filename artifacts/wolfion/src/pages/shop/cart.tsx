@@ -97,7 +97,7 @@ export default function Cart() {
                         <Plus className="h-3 w-3" />
                       </button>
                     </div>
-                    <span className="text-sm font-medium">${(item.product.price * item.quantity).toFixed(2)}</span>
+                    <span className="text-sm font-medium">Tk {(item.product.price * item.quantity).toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -118,17 +118,17 @@ export default function Cart() {
             <h2 className="text-xs uppercase tracking-[0.3em] text-neutral-500 mb-6">Order Summary</h2>
 
             <div className="space-y-3 text-sm">
-              <div className="flex justify-between"><span className="text-neutral-500">Subtotal</span><span>${totalPrice.toFixed(2)}</span></div>
+              <div className="flex justify-between"><span className="text-neutral-500">Subtotal</span><span>Tk {totalPrice.toFixed(2)}</span></div>
               <div className="flex justify-between">
                 <span className="text-neutral-500">Shipping</span>
-                <span>{shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}</span>
+                <span>{shipping === 0 ? "Free" : `Tk ${shipping.toFixed(2)}`}</span>
               </div>
-              <div className="flex justify-between"><span className="text-neutral-500">Estimated tax</span><span>${tax.toFixed(2)}</span></div>
+              <div className="flex justify-between"><span className="text-neutral-500">Estimated tax</span><span>Tk {tax.toFixed(2)}</span></div>
             </div>
 
             <div className="border-t border-neutral-200 dark:border-neutral-800 mt-6 pt-6 flex justify-between items-baseline">
               <span className="text-sm font-medium">Total</span>
-              <span className="text-2xl font-light">${grandTotal.toFixed(2)}</span>
+              <span className="text-2xl font-light">Tk {grandTotal.toFixed(2)}</span>
             </div>
 
             <Button

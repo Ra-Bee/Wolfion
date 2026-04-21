@@ -73,7 +73,7 @@ const TEXT: [number, number, number] = [30, 30, 30];
 const MUTED: [number, number, number] = [120, 120, 120];
 
 function fmtMoney(n: number): string {
-  return `$${(n || 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+  return `Tk ${(n || 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
 }
 function fmtNum(n: number): string {
   return (n || 0).toLocaleString();

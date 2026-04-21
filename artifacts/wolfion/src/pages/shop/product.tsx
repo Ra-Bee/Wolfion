@@ -55,7 +55,7 @@ export default function ProductDetail() {
           <div className="lg:pt-6 flex flex-col">
             <p className="text-xs uppercase tracking-[0.3em] text-neutral-500 mb-2">Wolfion · {product.color}</p>
             <h1 className="text-3xl sm:text-4xl font-light tracking-tight">{product.name}</h1>
-            <p className="mt-3 text-2xl font-light">${product.price.toFixed(2)}</p>
+            <p className="mt-3 text-2xl font-light">Tk {product.price.toFixed(2)}</p>
 
             <p className="mt-8 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400 max-w-md">
               {product.description}
@@ -162,7 +162,7 @@ export default function ProductDetail() {
                       <h3 className="text-sm font-medium">{p.name}</h3>
                       <p className="text-xs text-neutral-500 mt-0.5">{p.color}</p>
                     </div>
-                    <span className="text-sm font-medium">${p.price.toFixed(2)}</span>
+                    <span className="text-sm font-medium">Tk {p.price.toFixed(2)}</span>
                   </div>
                 </Link>
               ))}
