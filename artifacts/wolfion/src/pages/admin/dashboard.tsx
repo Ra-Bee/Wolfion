@@ -1211,7 +1211,7 @@ export default function Dashboard() {
                       step="1"
                       inputMode="numeric"
                       className="h-12 text-base"
-                      placeholder="10"
+                      placeholder="0"
                       value={saleQuantity}
                       onChange={(event) => setSaleQuantity(event.target.value)}
                       required
@@ -1226,7 +1226,7 @@ export default function Dashboard() {
                       step="0.01"
                       inputMode="decimal"
                       className="h-12 text-base"
-                      placeholder="1200"
+                      placeholder="0"
                       value={saleTotalAmount}
                       onChange={(event) => setSaleTotalAmount(event.target.value)}
                       required
@@ -1670,7 +1670,7 @@ export default function Dashboard() {
                     step="1"
                     inputMode="numeric"
                     className="h-12 text-base"
-                    placeholder="10"
+                    placeholder="0"
                     value={saleQuantity}
                     onChange={(event) => setSaleQuantity(event.target.value)}
                     required
@@ -1685,7 +1685,7 @@ export default function Dashboard() {
                     step="0.01"
                     inputMode="decimal"
                     className="h-12 text-base"
-                    placeholder="1200"
+                    placeholder="0"
                     value={saleTotalAmount}
                     onChange={(event) => setSaleTotalAmount(event.target.value)}
                     required
@@ -2100,7 +2100,7 @@ export default function Dashboard() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="inv-amount">Amount</label>
-                  <Input id="inv-amount" type="number" min="0.01" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="5000" value={invAmount} onChange={(e) => setInvAmount(e.target.value)} required />
+                  <Input id="inv-amount" type="number" min="0.01" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={invAmount} onChange={(e) => setInvAmount(e.target.value)} required />
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="inv-source">Source</label>

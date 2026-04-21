@@ -123,7 +123,7 @@ export default function DailyProductionPage() {
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="qty">Production (dz)</Label>
-                <Input id="qty" type="number" step="0.01" min="0" value={qty} onChange={(e) => setQty(e.target.value)} placeholder="50" />
+                <Input id="qty" type="number" step="0.01" min="0" value={qty} onChange={(e) => setQty(e.target.value)} placeholder="0" />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="yarn">Yarn Used (kg)</Label>
