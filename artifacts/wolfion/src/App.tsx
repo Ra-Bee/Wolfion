@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, lazy, Suspense } from "react";
 import { ClerkProvider, useClerk, useUser } from '@clerk/react';
 import { Switch, Route, Redirect, useLocation, Router as WouterRouter } from 'wouter';
 import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
@@ -11,26 +11,34 @@ import SignUpPage from "@/pages/auth/sign-up";
 import RoleSelect from "@/pages/role-select";
 
 import ShopHome from "@/pages/shop/home";
-import Products from "@/pages/shop/products";
-import ProductDetail from "@/pages/shop/product";
-import Cart from "@/pages/shop/cart";
-import CheckoutSuccess from "@/pages/shop/checkout-success";
-import AboutPage from "@/pages/shop/about";
-import ContactPage from "@/pages/shop/contact";
-import SettingsPage from "@/pages/shop/settings";
-import DevPreviewPage from "@/pages/dev-preview";
+const Products = lazy(() => import("@/pages/shop/products"));
+const ProductDetail = lazy(() => import("@/pages/shop/product"));
+const Cart = lazy(() => import("@/pages/shop/cart"));
+const CheckoutSuccess = lazy(() => import("@/pages/shop/checkout-success"));
+const AboutPage = lazy(() => import("@/pages/shop/about"));
+const ContactPage = lazy(() => import("@/pages/shop/contact"));
+const SettingsPage = lazy(() => import("@/pages/shop/settings"));
+const DevPreviewPage = lazy(() => import("@/pages/dev-preview"));
 
-import AdminDashboard from "@/pages/admin/dashboard";
-import InventoryReportPage from "@/pages/admin/inventory-report";
-import LaborPayrollPage from "@/pages/admin/labor-payroll";
-import YarnCalculationPage from "@/pages/admin/yarn-calculation";
-import DailyProductionPage from "@/pages/admin/daily-production";
-import DailySalesPage from "@/pages/admin/daily-sales";
-import ProfitDashboardPage from "@/pages/admin/profit";
-import InvestmentsPage from "@/pages/admin/investments";
-import DebtsPage from "@/pages/admin/debts";
+const AdminDashboard = lazy(() => import("@/pages/admin/dashboard"));
+const InventoryReportPage = lazy(() => import("@/pages/admin/inventory-report"));
+const LaborPayrollPage = lazy(() => import("@/pages/admin/labor-payroll"));
+const YarnCalculationPage = lazy(() => import("@/pages/admin/yarn-calculation"));
+const DailyProductionPage = lazy(() => import("@/pages/admin/daily-production"));
+const DailySalesPage = lazy(() => import("@/pages/admin/daily-sales"));
+const ProfitDashboardPage = lazy(() => import("@/pages/admin/profit"));
+const InvestmentsPage = lazy(() => import("@/pages/admin/investments"));
+const DebtsPage = lazy(() => import("@/pages/admin/debts"));
 
 import NotFound from "@/pages/not-found";
+
+function PageFallback() {
+  return (
+    <div className="min-h-[60vh] flex items-center justify-center">
+      <div className="h-8 w-8 rounded-full border-2 border-neutral-300 border-t-neutral-900 dark:border-neutral-700 dark:border-t-neutral-100 animate-spin" />
+    </div>
+  );
+}
 import { useRole } from "@/hooks/use-role";
 import wolfionLogo from "@assets/Image_20260421042552_60_2_1776716788241.jpg";
 
@@ -145,6 +153,7 @@ function AppRouter() {
   };
 
   return (
+    <Suspense fallback={<PageFallback />}>
     <Switch>
       <Route path="/" component={HomeRedirect} />
       <Route path="/dev-preview" component={DevPreviewPage} />
