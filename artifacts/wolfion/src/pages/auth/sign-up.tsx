@@ -10,7 +10,7 @@ export default function SignUpPage() {
       style={{ colorScheme: "light", backgroundImage: `url(${signUpBg})` }}
     >
       <div className="absolute inset-0 bg-white/70 backdrop-blur-sm" />
-      <main className="relative z-10 w-full max-w-[380px] mr-auto ml-6 sm:ml-10 flex flex-col items-center justify-center px-4 py-6">
+      <main className="relative z-10 w-full max-w-[380px] mx-auto flex flex-col items-center justify-center px-4 py-6">
         <div className="w-full mx-auto flex flex-col items-center text-center animate-in fade-in slide-in-from-bottom-2 duration-700">
           {/* Brand name */}
           <h1 className="text-xl font-bold tracking-[-0.01em] text-black">
