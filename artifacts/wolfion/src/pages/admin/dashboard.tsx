@@ -65,9 +65,9 @@ const defaultProductTypes: ProductTypeOption[] = [
 ];
 
 const initialInventory: Record<string, number> = {
-  "short-socks": 320,
-  "ankle-socks": 260,
-  "kids-socks": 140,
+  "short-socks": 0,
+  "ankle-socks": 0,
+  "kids-socks": 0,
   "others": 0,
 };
 
