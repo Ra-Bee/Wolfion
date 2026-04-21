@@ -1340,17 +1340,6 @@ export default function Dashboard() {
             </div>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid grid-cols-2 gap-1.5 sm:gap-2.5 lg:gap-3">
-              <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
-                <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Total daily production</p>
-                <p className="text-[13px] sm:text-base font-semibold truncate">{todayProductionDozen.toLocaleString()} <span className="text-[10px] font-normal text-muted-foreground">dz</span></p>
-              </div>
-              <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
-                <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Total labor cost</p>
-                <p className="text-[13px] sm:text-base font-semibold truncate">${todayLaborCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
-              </div>
-            </div>
-
             <form onSubmit={handleAddDailyEntry} className="space-y-3">
               <div className="space-y-2">
                 <label className="text-sm font-medium" htmlFor="daily-date">Date</label>
@@ -1484,6 +1473,17 @@ export default function Dashboard() {
                 Save day's entry
               </Button>
             </form>
+
+            <div className="grid grid-cols-2 gap-1.5 sm:gap-2.5 lg:gap-3">
+              <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
+                <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Total daily production</p>
+                <p className="text-[13px] sm:text-base font-semibold truncate">{todayProductionDozen.toLocaleString()} <span className="text-[10px] font-normal text-muted-foreground">dz</span></p>
+              </div>
+              <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
+                <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Total labor cost</p>
+                <p className="text-[13px] sm:text-base font-semibold truncate">${todayLaborCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+              </div>
+            </div>
 
             <div className="space-y-3">
               <div className="flex items-center justify-between">
