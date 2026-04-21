@@ -4,7 +4,7 @@ import { useUser, useClerk } from "@clerk/react";
 import { ShoppingBag, ShieldCheck, LogOut } from "lucide-react";
 import { useRole } from "@/hooks/use-role";
 import { Button } from "@/components/ui/button";
-import wolfionLogo from "@assets/Image_20260421042552_60_2_1776716788241.jpg";
+import wolfionLogo from "@assets/Image_20260421084152_72_2_1776732289773.jpg";
 
 export default function RoleSelect() {
   const { user } = useUser();
