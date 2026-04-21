@@ -125,6 +125,7 @@ type Worker = {
   name: string;
   payType: "daily" | "per_unit";
   rate: number;
+  nextPaymentDate?: string;
   createdAt: string;
 };
 
@@ -349,6 +350,11 @@ export default function Dashboard() {
   const [newWorkerName, setNewWorkerName] = useState("");
   const [newWorkerPayType, setNewWorkerPayType] = useState<"daily" | "per_unit">("daily");
   const [newWorkerRate, setNewWorkerRate] = useState("");
+  const [uniDate, setUniDate] = useState(getToday());
+  const [uniBillUnits, setUniBillUnits] = useState("");
+  const [uniNextPaymentDate, setUniNextPaymentDate] = useState("");
+  const [uniPayingNow, setUniPayingNow] = useState("");
+  const [uniConfirm, setUniConfirm] = useState("");
   const [workerError, setWorkerError] = useState("");
   const [logWorkerId, setLogWorkerId] = useState("");
   const [logDate, setLogDate] = useState(getToday());
@@ -881,21 +887,70 @@ export default function Dashboard() {
   function handleAddWorker(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setWorkerError("");
+    setUniConfirm("");
+    const name = newWorkerName.trim();
     const rate = Number(newWorkerRate);
-    if (!newWorkerName.trim() || !Number.isFinite(rate) || rate <= 0) {
-      setWorkerError("Enter a name and a valid rate.");
+    const billUnits = Number(uniBillUnits);
+    const payingNow = Number(uniPayingNow);
+    if (!uniDate || !name || !Number.isFinite(rate) || rate <= 0) {
+      setWorkerError("Enter date, name, and a valid wage.");
       return;
     }
-    const worker: Worker = {
-      id: crypto.randomUUID(),
-      name: newWorkerName.trim(),
-      payType: newWorkerPayType,
-      rate,
-      createdAt: new Date().toISOString(),
-    };
-    setWorkers((current) => [worker, ...current]);
+    if (uniBillUnits !== "" && (!Number.isFinite(billUnits) || billUnits < 0)) {
+      setWorkerError("Bill units must be 0 or more.");
+      return;
+    }
+    if (uniPayingNow !== "" && (!Number.isFinite(payingNow) || payingNow < 0)) {
+      setWorkerError("Payment must be 0 or more.");
+      return;
+    }
+
+    const existing = workers.find((w) => w.name.trim().toLowerCase() === name.toLowerCase());
+    let workerId: string;
+    if (existing) {
+      workerId = existing.id;
+      setWorkers((current) => current.map((w) => w.id === existing.id ? { ...w, payType: newWorkerPayType, rate, nextPaymentDate: uniNextPaymentDate || w.nextPaymentDate } : w));
+    } else {
+      workerId = crypto.randomUUID();
+      const worker: Worker = {
+        id: workerId,
+        name,
+        payType: newWorkerPayType,
+        rate,
+        nextPaymentDate: uniNextPaymentDate || undefined,
+        createdAt: new Date().toISOString(),
+      };
+      setWorkers((current) => [worker, ...current]);
+    }
+
+    if (Number.isFinite(billUnits) && billUnits > 0) {
+      const log: WorkLog = {
+        id: crypto.randomUUID(),
+        workerId,
+        date: uniDate,
+        amount: billUnits,
+        createdAt: new Date().toISOString(),
+      };
+      setWorkLogs((current) => [log, ...current]);
+    }
+
+    if (Number.isFinite(payingNow) && payingNow > 0) {
+      const payment: WorkerPayment = {
+        id: crypto.randomUUID(),
+        workerId,
+        date: uniDate,
+        amount: payingNow,
+        createdAt: new Date().toISOString(),
+      };
+      setWorkerPayments((current) => [payment, ...current]);
+    }
+
+    setUniConfirm(`Saved entry for ${name}.`);
     setNewWorkerName("");
     setNewWorkerRate("");
+    setUniBillUnits("");
+    setUniPayingNow("");
+    setUniNextPaymentDate("");
   }
 
   function handleAddWorkLog(event: FormEvent<HTMLFormElement>) {
@@ -1958,15 +2013,22 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <form onSubmit={handleAddWorker} className="space-y-4 rounded-2xl border bg-muted/20 p-4">
-              <h3 className="text-sm font-semibold">Add a worker</h3>
-              <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 lg:gap-4">
+            <form onSubmit={handleAddWorker} className="space-y-3 rounded-2xl border bg-muted/20 p-4">
+              <h3 className="text-sm font-semibold">Worker entry</h3>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="uni-date">Date</label>
+                <Input id="uni-date" type="date" className="h-12 text-base" value={uniDate} onChange={(e) => setUniDate(e.target.value)} max={getToday()} required />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="worker-name">Name</label>
+                <Input id="worker-name" className="h-12 text-base" placeholder="Worker name" value={newWorkerName} onChange={(e) => setNewWorkerName(e.target.value)} required />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="worker-name">Name</label>
-                  <Input id="worker-name" className="h-12 text-base" placeholder="Worker name" value={newWorkerName} onChange={(e) => setNewWorkerName(e.target.value)} required />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="worker-paytype">Pay type</label>
+                  <label className="text-sm font-medium" htmlFor="worker-paytype">Pay for</label>
                   <Select value={newWorkerPayType} onValueChange={(v) => setNewWorkerPayType(v as "daily" | "per_unit")}>
                     <SelectTrigger id="worker-paytype" className="h-12 text-base"><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -1976,65 +2038,50 @@ export default function Dashboard() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="worker-rate">{newWorkerPayType === "daily" ? "Wage per day" : "Rate per unit"}</label>
+                  <label className="text-sm font-medium" htmlFor="worker-rate">{newWorkerPayType === "daily" ? "Wage / day" : "Rate / unit"}</label>
                   <Input id="worker-rate" type="number" min="0.01" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={newWorkerRate} onChange={(e) => setNewWorkerRate(e.target.value)} required />
                 </div>
               </div>
-              {workerError && <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{workerError}</p>}
-              <Button type="submit" size="lg" className="h-12 w-full text-base font-semibold sm:w-auto"><Plus className="h-5 w-5" /> Add worker</Button>
-            </form>
 
-            {workers.length > 0 && (
-              <div className="grid gap-4 lg:grid-cols-2">
-                <form onSubmit={handleAddWorkLog} className="space-y-4 rounded-2xl border bg-muted/20 p-4">
-                  <h3 className="text-sm font-semibold">Log work done</h3>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium" htmlFor="log-worker">Worker</label>
-                    <Select value={logWorkerId} onValueChange={setLogWorkerId}>
-                      <SelectTrigger id="log-worker" className="h-12 text-base"><SelectValue placeholder="Choose worker" /></SelectTrigger>
-                      <SelectContent>
-                        {workers.map((w) => <SelectItem key={w.id} value={w.id}>{w.name}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium" htmlFor="log-date">Date</label>
-                      <Input id="log-date" type="date" className="h-12 text-base" value={logDate} onChange={(e) => setLogDate(e.target.value)} max={getToday()} required />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium" htmlFor="log-amount">{workers.find(w => w.id === logWorkerId)?.payType === "per_unit" ? "Units done" : "Days worked"}</label>
-                      <Input id="log-amount" type="number" min="0.01" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={logAmount} onChange={(e) => setLogAmount(e.target.value)} required />
-                    </div>
-                  </div>
-                  <Button type="submit" size="lg" className="h-12 w-full text-base font-semibold"><Plus className="h-5 w-5" /> Save work</Button>
-                </form>
+              <Separator />
 
-                <form onSubmit={handleAddPayment} className="space-y-4 rounded-2xl border bg-muted/20 p-4">
-                  <h3 className="text-sm font-semibold">Record a payment</h3>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium" htmlFor="pay-worker">Worker</label>
-                    <Select value={paymentWorkerId} onValueChange={setPaymentWorkerId}>
-                      <SelectTrigger id="pay-worker" className="h-12 text-base"><SelectValue placeholder="Choose worker" /></SelectTrigger>
-                      <SelectContent>
-                        {workers.map((w) => <SelectItem key={w.id} value={w.id}>{w.name}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium" htmlFor="pay-date">Date</label>
-                      <Input id="pay-date" type="date" className="h-12 text-base" value={paymentDate} onChange={(e) => setPaymentDate(e.target.value)} max={getToday()} required />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium" htmlFor="pay-amount">Amount paid</label>
-                      <Input id="pay-amount" type="number" min="0.01" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={paymentAmount} onChange={(e) => setPaymentAmount(e.target.value)} required />
-                    </div>
-                  </div>
-                  <Button type="submit" size="lg" className="h-12 w-full text-base font-semibold"><Plus className="h-5 w-5" /> Save payment</Button>
-                </form>
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="uni-bill">Bill ({newWorkerPayType === "daily" ? "days worked" : "units done"})</label>
+                <Input id="uni-bill" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={uniBillUnits} onChange={(e) => setUniBillUnits(e.target.value)} />
               </div>
-            )}
+
+              {(() => {
+                const billAmount = (Number(newWorkerRate) || 0) * (Number(uniBillUnits) || 0);
+                const dueAfter = Math.max(0, billAmount - (Number(uniPayingNow) || 0));
+                return (
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
+                      <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Bill</p>
+                      <p className="text-[13px] sm:text-base font-semibold truncate">${billAmount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                    </div>
+                    <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
+                      <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Due</p>
+                      <p className="text-[13px] sm:text-base font-semibold truncate">${dueAfter.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="uni-next-date">Next payment date</label>
+                  <Input id="uni-next-date" type="date" className="h-12 text-base" value={uniNextPaymentDate} onChange={(e) => setUniNextPaymentDate(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="uni-paying">Paying now</label>
+                  <Input id="uni-paying" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={uniPayingNow} onChange={(e) => setUniPayingNow(e.target.value)} />
+                </div>
+              </div>
+
+              {workerError && <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{workerError}</p>}
+              {uniConfirm && <p className="rounded-lg bg-green-100 px-3 py-2 text-sm font-medium text-green-800">{uniConfirm}</p>}
+              <Button type="submit" size="lg" className="h-14 w-full text-base font-semibold"><Plus className="h-5 w-5" /> Save entry</Button>
+            </form>
 
             <div className="space-y-3">
               <h3 className="text-sm font-semibold">Workers</h3>
