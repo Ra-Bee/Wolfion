@@ -30,6 +30,24 @@ uri = "file://attached_assets/generated_images/generated_image_3.png"
 type = "image"
 title = "generated_image"
 
+[[generated]]
+id = "vIdjUelsPQzjXug0v39dm"
+uri = "file://attached_assets/generated_images/product_sport_no_show.png"
+type = "image"
+title = "sport no-show charcoal socks"
+
+[[generated]]
+id = "QjMDUOG8BPjP1-Na5WXR2"
+uri = "file://attached_assets/generated_images/product_kids_pink_crew.png"
+type = "image"
+title = "kids pink crew socks"
+
+[[generated]]
+id = "cU7aAudKXE4e8_RWJJw0h"
+uri = "file://attached_assets/generated_images/product_wool_hiker_forest.png"
+type = "image"
+title = "wool hiker forest socks"
+
 [[outputs]]
 id = "Z8dcSbzTuOcZ42cy_qinK"
 uri = "file://downloads/wolfion-android-apk-builder.tar.gz"

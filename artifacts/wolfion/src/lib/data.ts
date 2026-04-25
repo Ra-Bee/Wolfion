@@ -16,6 +16,9 @@ import imgCatShort from "@assets/cat_short.jpg";
 import imgCatAnkle from "@assets/cat_ankle.jpg";
 import imgCatKids from "@assets/cat_kids.jpg";
 import imgCatOthers from "@assets/cat_others.jpg";
+import imgSportNoShow from "@assets/generated_images/product_sport_no_show.png";
+import imgKidsPinkCrew from "@assets/generated_images/product_kids_pink_crew.png";
+import imgWoolHikerForest from "@assets/generated_images/product_wool_hiker_forest.png";
 
 export const categories: { id: ProductCategory; label: string; tagline: string; image: string }[] = [
   { id: "short", label: "Short Socks", tagline: "Low-cut essentials.", image: imgCatShort },
@@ -89,7 +92,7 @@ export const products: Product[] = [
     sizes: ["M", "L"],
     description: "Cushioned sole, mesh top — built for runners and gym days.",
     inventory: 540,
-    image: "https://images.unsplash.com/photo-1517260911205-8a3bfa7af5ab?w=800&q=80",
+    image: imgSportNoShow,
   },
   {
     id: "p_7",
@@ -111,7 +114,7 @@ export const products: Product[] = [
     sizes: ["XS", "S", "M"],
     description: "Bright, comfortable, and built to last through every adventure.",
     inventory: 280,
-    image: "https://images.unsplash.com/photo-1596870188184-9ace0fed1ec6?w=800&q=80",
+    image: imgKidsPinkCrew,
   },
   {
     id: "p_9",
@@ -122,7 +125,7 @@ export const products: Product[] = [
     sizes: ["M", "L", "XL"],
     description: "Heavy-cushion merino designed for the trail. Moisture-wicking and odor-resistant.",
     inventory: 95,
-    image: "https://images.unsplash.com/photo-1565098228567-bcedeb96b59e?w=800&q=80",
+    image: imgWoolHikerForest,
   },
 ];
 
