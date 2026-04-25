@@ -287,9 +287,15 @@ export default function Cart() {
             </div>
           </div>
 
-          {/* Summary — glass card */}
+          {/* Summary — soft glass card */}
           <aside className="lg:sticky lg:top-24">
-            <GlassCard padding="p-6 sm:p-8" rounded="rounded-3xl" haloOpacity={0.30}>
+            <GlassCard
+              padding="p-6 sm:p-8"
+              rounded="rounded-3xl"
+              haloOpacity={0.08}
+              ringed={false}
+              sheen={false}
+            >
             <h2 className="text-xs uppercase tracking-[0.3em] text-neutral-500 mb-6">Order Summary</h2>
 
             <div className="space-y-3 text-sm">
