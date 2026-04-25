@@ -482,17 +482,17 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
         <div
           aria-hidden
           className="absolute top-[-10%] left-[-5%] h-[45vh] w-[45vh] rounded-full opacity-20 blur-[120px] pointer-events-none"
-          style={{ background: "radial-gradient(circle, #1ABBC4 0%, transparent 70%)" }}
+          style={{ background: "radial-gradient(circle, #FB7185 0%, transparent 70%)" }}
         />
         <div
           aria-hidden
           className="absolute top-[20%] right-[-10%] h-[40vh] w-[40vh] rounded-full opacity-20 blur-[110px] pointer-events-none"
-          style={{ background: "radial-gradient(circle, #6E3CFB 0%, transparent 70%)" }}
+          style={{ background: "radial-gradient(circle, #F59E0B 0%, transparent 70%)" }}
         />
         <div
           aria-hidden
           className="absolute bottom-[-10%] left-[40%] h-[40vh] w-[40vh] rounded-full opacity-15 blur-[110px] pointer-events-none"
-          style={{ background: "radial-gradient(circle, #D4AF37 0%, transparent 70%)" }}
+          style={{ background: "radial-gradient(circle, #9333EA 0%, transparent 70%)" }}
         />
         {/* Top hairline */}
         <div
@@ -500,7 +500,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
           className="absolute inset-x-0 top-0 h-[1px] pointer-events-none"
           style={{
             background:
-              "linear-gradient(90deg, transparent 0%, rgba(26,187,196,0.5) 30%, rgba(212,175,55,0.5) 70%, transparent 100%)",
+              "linear-gradient(90deg, transparent 0%, rgba(251,113,133,0.5) 30%, rgba(147,51,234,0.5) 70%, transparent 100%)",
           }}
         />
 
@@ -511,7 +511,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
               className="font-semibold tracking-[0.3em] mb-3 text-2xl"
               style={{
                 background:
-                  "linear-gradient(135deg, #0E8B92 0%, #6E3CFB 50%, #D4AF37 100%)",
+                  "linear-gradient(135deg, #BE185D 0%, #F59E0B 50%, #9333EA 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
@@ -526,11 +526,11 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
 
           {/* Bapari Socks links */}
           <div>
-            <div className="text-[10px] uppercase tracking-[0.3em] text-[#0E8B92] dark:text-[#5BD4DC] mb-3 font-semibold">Bapari Socks</div>
+            <div className="text-[10px] uppercase tracking-[0.3em] text-[#BE185D] dark:text-[#FDA4AF] mb-3 font-semibold">Bapari Socks</div>
             <ul className="space-y-2 text-neutral-700 dark:text-neutral-300">
               {VAPORYX_SUBCATS.map((s) => (
                 <li key={s.path}>
-                  <Link href={s.path} className="hover:text-[#0E8B92] dark:hover:text-[#5BD4DC] transition-colors">{s.label}</Link>
+                  <Link href={s.path} className="hover:text-[#BE185D] dark:hover:text-[#FDA4AF] transition-colors">{s.label}</Link>
                 </li>
               ))}
             </ul>
@@ -538,11 +538,11 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
 
           {/* Collection links */}
           <div>
-            <div className="text-[10px] uppercase tracking-[0.3em] text-[#6E3CFB] dark:text-[#9D7BFF] mb-3 font-semibold">Collection</div>
+            <div className="text-[10px] uppercase tracking-[0.3em] text-[#F59E0B] dark:text-[#FCD34D] mb-3 font-semibold">Collection</div>
             <ul className="space-y-2 text-neutral-700 dark:text-neutral-300">
               {COLLECTION_SUBCATS.map((s) => (
                 <li key={s.path}>
-                  <Link href={s.path} className="hover:text-[#6E3CFB] dark:hover:text-[#9D7BFF] transition-colors">{s.label}</Link>
+                  <Link href={s.path} className="hover:text-[#F59E0B] dark:hover:text-[#FCD34D] transition-colors">{s.label}</Link>
                 </li>
               ))}
             </ul>
@@ -550,7 +550,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
 
           {/* Newsletter — glass card */}
           <div className="col-span-2 md:col-span-1">
-            <div className="text-[10px] uppercase tracking-[0.3em] text-[#B8941F] dark:text-[#D4AF37] mb-3 font-semibold">Newsletter</div>
+            <div className="text-[10px] uppercase tracking-[0.3em] text-[#7E22CE] dark:text-[#9333EA] mb-3 font-semibold">Newsletter</div>
             <p className="text-xs text-neutral-600 dark:text-neutral-400 mb-3">Drops, releases, and stories.</p>
             <div className="relative">
               {/* Glow halo */}
@@ -559,7 +559,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                 className="absolute -inset-1 rounded-2xl blur-md opacity-40 pointer-events-none"
                 style={{
                   background:
-                    "linear-gradient(135deg, #1ABBC4 0%, #6E3CFB 50%, #D4AF37 100%)",
+                    "linear-gradient(135deg, #FB7185 0%, #F59E0B 50%, #9333EA 100%)",
                 }}
               />
               {/* Gradient ring */}
@@ -567,7 +567,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                 className="relative rounded-2xl p-[1px]"
                 style={{
                   background:
-                    "linear-gradient(135deg, rgba(26,187,196,0.6) 0%, rgba(110,60,251,0.4) 50%, rgba(212,175,55,0.6) 100%)",
+                    "linear-gradient(135deg, rgba(251,113,133,0.6) 0%, rgba(245,158,11,0.4) 50%, rgba(147,51,234,0.6) 100%)",
                 }}
               >
                 <div
@@ -594,10 +594,10 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                   />
                   <Button
                     size="sm"
-                    className="h-9 px-4 rounded-[11px] text-white font-semibold border-0 active:scale-95 transition-transform shadow-[0_6px_20px_-6px_rgba(26,187,196,0.6)]"
+                    className="h-9 px-4 rounded-[11px] text-white font-semibold border-0 active:scale-95 transition-transform shadow-[0_6px_20px_-6px_rgba(251,113,133,0.6)]"
                     style={{
                       background:
-                        "linear-gradient(135deg, #1ABBC4 0%, #6E3CFB 60%, #D4AF37 100%)",
+                        "linear-gradient(135deg, #FB7185 0%, #F59E0B 60%, #9333EA 100%)",
                     }}
                   >
                     →
@@ -632,7 +632,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                     className="absolute -inset-1 rounded-full blur-md opacity-0 group-hover:opacity-70 transition-opacity duration-500 pointer-events-none"
                     style={{
                       background:
-                        "linear-gradient(135deg, #1ABBC4 0%, #6E3CFB 50%, #D4AF37 100%)",
+                        "linear-gradient(135deg, #FB7185 0%, #F59E0B 50%, #9333EA 100%)",
                     }}
                   />
                   {/* Gradient ring */}
@@ -640,7 +640,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                     className="relative rounded-full p-[1px] transition-transform duration-500 group-hover:-translate-y-0.5"
                     style={{
                       background:
-                        "linear-gradient(135deg, rgba(26,187,196,0.5) 0%, rgba(110,60,251,0.4) 50%, rgba(212,175,55,0.5) 100%)",
+                        "linear-gradient(135deg, rgba(251,113,133,0.5) 0%, rgba(245,158,11,0.4) 50%, rgba(147,51,234,0.5) 100%)",
                     }}
                   >
                     <div
@@ -677,14 +677,14 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
               className="absolute -inset-2 rounded-[26px] blur-xl opacity-25 pointer-events-none"
               style={{
                 background:
-                  "linear-gradient(135deg, #1ABBC4 0%, #6E3CFB 50%, #D4AF37 100%)",
+                  "linear-gradient(135deg, #FB7185 0%, #F59E0B 50%, #9333EA 100%)",
               }}
             />
             <div
               className="relative rounded-[20px] p-[1px]"
               style={{
                 background:
-                  "linear-gradient(135deg, rgba(26,187,196,0.4) 0%, rgba(110,60,251,0.3) 50%, rgba(212,175,55,0.4) 100%)",
+                  "linear-gradient(135deg, rgba(251,113,133,0.4) 0%, rgba(245,158,11,0.3) 50%, rgba(147,51,234,0.4) 100%)",
               }}
             >
               <div
@@ -711,7 +711,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                   Wolfion stands for{" "}
                   <span className="text-neutral-900 dark:text-neutral-100 font-medium">fair pay, respect, and responsibility</span>{" "}
                   to the people who create our products, along with a commitment to{" "}
-                  <span className="font-serif italic text-[#0E8B92] dark:text-[#5BD4DC] font-medium">sustainability</span>—built into every product we create.
+                  <span className="font-serif italic text-[#BE185D] dark:text-[#FDA4AF] font-medium">sustainability</span>—built into every product we create.
                 </p>
               </div>
             </div>
@@ -725,7 +725,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
             className="absolute inset-x-0 top-0 h-[1px] pointer-events-none"
             style={{
               background:
-                "linear-gradient(90deg, transparent 0%, rgba(26,187,196,0.4) 30%, rgba(212,175,55,0.4) 70%, transparent 100%)",
+                "linear-gradient(90deg, transparent 0%, rgba(251,113,133,0.4) 30%, rgba(147,51,234,0.4) 70%, transparent 100%)",
             }}
           />
           <div className="py-5 text-center text-xs text-neutral-600 dark:text-neutral-500">
