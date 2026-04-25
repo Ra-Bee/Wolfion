@@ -20,9 +20,74 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" as="image" href="/splash.jpg" fetchpriority="high" />
+    <style>
+      html, body { margin: 0; padding: 0; background: #0c4f55; }
+      #wolfion-splash {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: #0c4f55 url("/splash.jpg") center / cover no-repeat;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 18vh;
+        opacity: 1;
+        transition: opacity 420ms ease;
+        pointer-events: auto;
+      }
+      #wolfion-splash.is-hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+      #wolfion-splash .ws-dots {
+        display: inline-flex;
+        gap: 8px;
+      }
+      #wolfion-splash .ws-dots span {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.85);
+        animation: ws-bounce 1.1s ease-in-out infinite;
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.25);
+      }
+      #wolfion-splash .ws-dots span:nth-child(2) { animation-delay: 0.18s; }
+      #wolfion-splash .ws-dots span:nth-child(3) { animation-delay: 0.36s; }
+      @keyframes ws-bounce {
+        0%, 80%, 100% { transform: translateY(0); opacity: 0.5; }
+        40% { transform: translateY(-8px); opacity: 1; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #wolfion-splash .ws-dots span { animation: none; opacity: 0.85; }
+        #wolfion-splash { transition: none; }
+      }
+    </style>
   </head>
   <body>
+    <div id="wolfion-splash" aria-hidden="true">
+      <div class="ws-dots" aria-label="Loading"><span></span><span></span><span></span></div>
+    </div>
     <div id="root"></div>
+    <script>
+      (function () {
+        var MIN_VISIBLE_MS = 600;
+        var shownAt = Date.now();
+        function hide() {
+          var el = document.getElementById("wolfion-splash");
+          if (!el) return;
+          var elapsed = Date.now() - shownAt;
+          var wait = Math.max(0, MIN_VISIBLE_MS - elapsed);
+          setTimeout(function () {
+            el.classList.add("is-hidden");
+            setTimeout(function () { el.parentNode && el.parentNode.removeChild(el); }, 500);
+          }, wait);
+        }
+        window.__wolfionHideSplash = hide;
+        // Safety net: if React never signals, hide after 8s anyway.
+        setTimeout(hide, 8000);
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
     <script>
       if ("serviceWorker" in navigator) {

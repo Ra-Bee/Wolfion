@@ -1,5 +1,5 @@
-const CACHE = "wolfion-shell-v2";
-const SHELL = ["/", "/app-icon.jpg", "/favicon-32.png", "/favicon-192.png", "/logo.svg", "/manifest.webmanifest"];
+const CACHE = "wolfion-shell-v3";
+const SHELL = ["/", "/app-icon.jpg", "/favicon-32.png", "/favicon-192.png", "/splash.jpg", "/logo.svg", "/manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
