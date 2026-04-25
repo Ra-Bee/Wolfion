@@ -323,49 +323,33 @@ export default function ShopHome() {
         <img src={imgSocks} alt="Wolfion craftsmanship" className="absolute inset-0 h-full w-full object-cover" />
         {/* subtle left-side gradient only, photo stays clean */}
         <div className="absolute inset-y-0 left-0 w-2/3 bg-gradient-to-r from-black/45 to-transparent pointer-events-none" />
-        <div className="relative z-10 h-full container mx-auto px-4 sm:px-5 flex items-center">
-          <div className={`max-w-md ${FADE}`}>
-            {/* iOS Liquid Glass card */}
-            <div
-              className="rounded-[24px] p-[1px]"
-              style={{
-                background:
-                  "linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.3) 100%)",
-              }}
+        <div className="relative z-10 h-full container mx-auto px-5 flex items-center">
+          <div className={`max-w-md ${FADE}`} style={{ textShadow: "0 2px 16px rgba(0,0,0,0.6)" }}>
+            <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 mb-4 bg-white/[0.12] backdrop-blur-md border border-white/25 text-[10px] uppercase tracking-[0.3em] text-white">
+              <Sparkles className="h-3 w-3 text-amber-300" />
+              The Craft
+            </div>
+            <h2
+              className="text-4xl sm:text-6xl font-light leading-[1.05] tracking-tight text-white"
+              style={{ filter: "drop-shadow(0 4px 18px rgba(0,0,0,0.5))" }}
             >
-              <div
-                className="rounded-[23px] px-5 py-5 sm:px-7 sm:py-7 border border-white/15 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.5)]"
+              Every stitch
+              <br />
+              <span
+                className="font-serif italic"
                 style={{
-                  background:
-                    "linear-gradient(180deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.06) 100%)",
-                  backdropFilter: "blur(22px) saturate(170%)",
-                  WebkitBackdropFilter: "blur(22px) saturate(170%)",
+                  background: "linear-gradient(135deg, #B8E8EC 0%, #D4AF37 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
                 }}
               >
-                <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 mb-3 bg-white/[0.10] backdrop-blur-md border border-white/20 text-[10px] uppercase tracking-[0.3em] text-white/90">
-                  <Sparkles className="h-3 w-3 text-amber-300" />
-                  The Craft
-                </div>
-                <h2 className="text-3xl sm:text-5xl font-light leading-[1.05] tracking-tight text-white">
-                  Every stitch
-                  <br />
-                  <span
-                    className="font-serif italic"
-                    style={{
-                      background: "linear-gradient(135deg, #B8E8EC 0%, #D4AF37 100%)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      backgroundClip: "text",
-                    }}
-                  >
-                    considered.
-                  </span>
-                </h2>
-                <p className="mt-3 text-[13px] sm:text-sm text-white/90 leading-relaxed font-light">
-                  Spun from Pima cotton and Italian merino. Tensioned by hand. Finished without compromise.
-                </p>
-              </div>
-            </div>
+                considered.
+              </span>
+            </h2>
+            <p className="mt-4 text-sm sm:text-base text-white/95 leading-relaxed font-light max-w-sm">
+              Spun from Pima cotton and Italian merino. Tensioned by hand. Finished without compromise.
+            </p>
           </div>
         </div>
       </section>
