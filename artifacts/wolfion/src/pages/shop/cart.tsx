@@ -42,10 +42,10 @@ type PayOption = {
 };
 
 const PAYMENT_OPTIONS: PayOption[] = [
+  { id: "card", label: "Credit / Debit Card", hint: "Visa, Mastercard, Amex", badge: "Card", bg: "bg-neutral-900", logoUrl: "https://cdn.simpleicons.org/visa/ffffff" },
   { id: "bkash", label: "bKash", hint: "Mobile wallet · instant", badge: "bKash", bg: "bg-[#E2136E]", logoUrl: bkashLogo },
   { id: "nagad", label: "Nagad", hint: "Mobile wallet · instant", badge: "Nagad", bg: "bg-[#EC1C24]", logoUrl: nagadLogo },
   { id: "rocket", label: "Rocket", hint: "DBBL mobile banking", badge: "Rocket", bg: "bg-[#8C3494]", logoUrl: rocketLogo },
-  { id: "card", label: "Credit / Debit Card", hint: "Visa, Mastercard, Amex", badge: "Card", bg: "bg-neutral-900", logoUrl: "https://cdn.simpleicons.org/visa/ffffff" },
   { id: "paypal", label: "PayPal", hint: "Sign in with your PayPal account", badge: "PayPal", bg: "bg-[#003087]", logoUrl: "https://cdn.simpleicons.org/paypal/ffffff" },
   { id: "alipay", label: "Alipay", hint: "Scan to pay · 支付宝", badge: "Alipay", bg: "bg-[#1677FF]", logoUrl: "https://cdn.simpleicons.org/alipay/ffffff" },
   { id: "wechat", label: "WeChat Pay", hint: "Scan to pay · 微信支付", badge: "WeChat", bg: "bg-[#07C160]", logoUrl: "https://cdn.simpleicons.org/wechat/ffffff" },
