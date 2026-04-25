@@ -1,10 +1,19 @@
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRoute, useLocation, Link } from "wouter";
 import { ShopLayout } from "@/components/shop-layout";
 import { products } from "@/lib/data";
 import { useCart } from "@/hooks/use-cart";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Check, Minus, Plus, Heart, Truck, RotateCcw, ShieldCheck } from "lucide-react";
+import {
+  ArrowLeft,
+  Check,
+  Minus,
+  Plus,
+  Heart,
+  Truck,
+  RotateCcw,
+  ShieldCheck,
+} from "lucide-react";
 
 export default function ProductDetail() {
   const [, params] = useRoute("/product/:id");
@@ -12,16 +21,35 @@ export default function ProductDetail() {
   const { addItem } = useCart();
 
   const product = products.find((p) => p.id === params?.id);
-  const [selectedSize, setSelectedSize] = useState<string>(product?.sizes[0] || "");
+
+  const gallery = useMemo(() => {
+    if (!product) return [] as string[];
+    const all = product.images?.length ? product.images : [product.image];
+    return Array.from(new Set([product.image, ...all]));
+  }, [product]);
+
+  const [selectedSize, setSelectedSize] = useState<string>(
+    product?.sizes[0] || "",
+  );
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+  const [activeImage, setActiveImage] = useState(0);
+
+  // Reset gallery position when product changes
+  useEffect(() => {
+    setActiveImage(0);
+  }, [product?.id]);
 
   if (!product) {
     return (
       <ShopLayout>
         <div className="container mx-auto px-5 py-32 text-center">
           <h2 className="text-2xl font-light">Product not found</h2>
-          <Button variant="link" onClick={() => setLocation("/products")} className="mt-4">
+          <Button
+            variant="link"
+            onClick={() => setLocation("/products")}
+            className="mt-4"
+          >
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to shop
           </Button>
         </div>
@@ -36,26 +64,76 @@ export default function ProductDetail() {
     setTimeout(() => setAdded(false), 1800);
   };
 
-  const related = products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
+  const related = products
+    .filter((p) => p.category === product.category && p.id !== product.id)
+    .slice(0, 4);
 
   return (
     <ShopLayout>
       <div className="container mx-auto px-5 pt-6 pb-20 max-w-7xl">
-        <button onClick={() => setLocation("/products")} className="mb-6 text-xs uppercase tracking-widest text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-50 inline-flex items-center">
+        <button
+          onClick={() => setLocation("/products")}
+          className="mb-6 text-xs uppercase tracking-widest text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-50 inline-flex items-center"
+        >
           <ArrowLeft className="mr-2 h-3.5 w-3.5" /> Back
         </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
-          {/* Image */}
-          <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-neutral-100 dark:bg-neutral-900">
-            <img src={product.image} alt={product.name} className="absolute inset-0 h-full w-full object-cover" />
+          {/* Image gallery */}
+          <div className="flex flex-col gap-3">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-neutral-100 dark:bg-neutral-900">
+              <img
+                src={gallery[activeImage]}
+                alt={product.name}
+                className="absolute inset-0 h-full w-full object-cover transition-opacity duration-500"
+                key={gallery[activeImage]}
+              />
+              {product.badge && (
+                <span className="absolute top-4 left-4 backdrop-blur-md bg-white/90 dark:bg-neutral-950/90 text-[10px] uppercase tracking-widest px-3 py-1.5 rounded-full shadow-sm">
+                  {product.badge === "new"
+                    ? "New"
+                    : product.badge === "bestseller"
+                      ? "Bestseller"
+                      : "Limited"}
+                </span>
+              )}
+            </div>
+            {gallery.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                {gallery.map((src, idx) => (
+                  <button
+                    key={src}
+                    onClick={() => setActiveImage(idx)}
+                    className={`relative shrink-0 w-20 h-24 rounded-xl overflow-hidden border-2 transition-all ${
+                      activeImage === idx
+                        ? "border-neutral-900 dark:border-white"
+                        : "border-transparent opacity-60 hover:opacity-100"
+                    }`}
+                    aria-label={`View image ${idx + 1}`}
+                    data-testid={`gallery-thumb-${idx}`}
+                  >
+                    <img
+                      src={src}
+                      alt=""
+                      className="absolute inset-0 h-full w-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Details */}
           <div className="lg:pt-6 flex flex-col">
-            <p className="text-xs uppercase tracking-[0.3em] text-neutral-500 mb-2">Wolfion · {product.color}</p>
-            <h1 className="text-3xl sm:text-4xl font-light tracking-tight">{product.name}</h1>
-            <p className="mt-3 text-2xl font-light">Tk {product.price.toFixed(2)}</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-neutral-500 mb-2">
+              Wolfion · {product.color}
+            </p>
+            <h1 className="text-3xl sm:text-4xl font-light tracking-tight">
+              {product.name}
+            </h1>
+            <p className="mt-3 text-2xl font-light">
+              Tk {product.price.toFixed(2)}
+            </p>
 
             <p className="mt-8 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400 max-w-md">
               {product.description}
@@ -64,8 +142,12 @@ export default function ProductDetail() {
             {/* Size */}
             <div className="mt-10">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs uppercase tracking-[0.2em] text-neutral-500">Size</span>
-                <button className="text-xs uppercase tracking-widest text-neutral-500 hover:underline">Size guide</button>
+                <span className="text-xs uppercase tracking-[0.2em] text-neutral-500">
+                  Size
+                </span>
+                <button className="text-xs uppercase tracking-widest text-neutral-500 hover:underline">
+                  Size guide
+                </button>
               </div>
               <div className="flex flex-wrap gap-2">
                 {product.sizes.map((size) => (
@@ -87,7 +169,9 @@ export default function ProductDetail() {
 
             {/* Quantity */}
             <div className="mt-8">
-              <span className="text-xs uppercase tracking-[0.2em] text-neutral-500 block mb-3">Quantity</span>
+              <span className="text-xs uppercase tracking-[0.2em] text-neutral-500 block mb-3">
+                Quantity
+              </span>
               <div className="inline-flex items-center border border-neutral-300 dark:border-neutral-700 rounded-full">
                 <button
                   className="h-11 w-11 flex items-center justify-center hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-l-full"
@@ -96,7 +180,9 @@ export default function ProductDetail() {
                 >
                   <Minus className="h-3.5 w-3.5" />
                 </button>
-                <span className="w-12 text-center text-sm font-medium">{quantity}</span>
+                <span className="w-12 text-center text-sm font-medium">
+                  {quantity}
+                </span>
                 <button
                   className="h-11 w-11 flex items-center justify-center hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-r-full"
                   onClick={() => setQuantity((q) => q + 1)}
@@ -120,12 +206,19 @@ export default function ProductDetail() {
                 data-testid="add-to-cart"
               >
                 {added ? (
-                  <><Check className="mr-2 h-4 w-4" /> Added</>
+                  <>
+                    <Check className="mr-2 h-4 w-4" /> Added
+                  </>
                 ) : (
                   <>Add to Bag — Tk {(product.price * quantity).toFixed(2)}</>
                 )}
               </Button>
-              <Button variant="outline" size="icon" className="h-14 w-14 rounded-full border-neutral-300 dark:border-neutral-700" aria-label="Save">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-14 w-14 rounded-full border-neutral-300 dark:border-neutral-700"
+                aria-label="Save"
+              >
                 <Heart className="h-5 w-5" />
               </Button>
             </div>
@@ -134,15 +227,21 @@ export default function ProductDetail() {
             <div className="mt-10 grid grid-cols-3 gap-4 pt-6 border-t border-neutral-200 dark:border-neutral-800">
               <div className="text-center">
                 <Truck className="mx-auto h-5 w-5 text-neutral-500 mb-2" />
-                <p className="text-[11px] uppercase tracking-wider text-neutral-500">Free shipping</p>
+                <p className="text-[11px] uppercase tracking-wider text-neutral-500">
+                  Free shipping
+                </p>
               </div>
               <div className="text-center">
                 <RotateCcw className="mx-auto h-5 w-5 text-neutral-500 mb-2" />
-                <p className="text-[11px] uppercase tracking-wider text-neutral-500">Free returns</p>
+                <p className="text-[11px] uppercase tracking-wider text-neutral-500">
+                  Free returns
+                </p>
               </div>
               <div className="text-center">
                 <ShieldCheck className="mx-auto h-5 w-5 text-neutral-500 mb-2" />
-                <p className="text-[11px] uppercase tracking-wider text-neutral-500">2-year warranty</p>
+                <p className="text-[11px] uppercase tracking-wider text-neutral-500">
+                  2-year warranty
+                </p>
               </div>
             </div>
           </div>
@@ -150,19 +249,33 @@ export default function ProductDetail() {
 
         {related.length > 0 && (
           <section className="mt-24">
-            <h2 className="text-2xl font-light tracking-tight mb-8">You may also like</h2>
+            <h2 className="text-2xl font-light tracking-tight mb-8">
+              You may also like
+            </h2>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               {related.map((p) => (
-                <Link key={p.id} href={`/product/${p.id}`} className="group block">
+                <Link
+                  key={p.id}
+                  href={`/product/${p.id}`}
+                  className="group block"
+                >
                   <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-neutral-100 dark:bg-neutral-900 mb-3">
-                    <img src={p.image} alt={p.name} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <img
+                      src={p.image}
+                      alt={p.name}
+                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
                   </div>
                   <div className="flex justify-between items-start gap-3">
                     <div>
                       <h3 className="text-sm font-medium">{p.name}</h3>
-                      <p className="text-xs text-neutral-500 mt-0.5">{p.color}</p>
+                      <p className="text-xs text-neutral-500 mt-0.5">
+                        {p.color}
+                      </p>
                     </div>
-                    <span className="text-sm font-medium">Tk {p.price.toFixed(2)}</span>
+                    <span className="text-sm font-medium">
+                      Tk {p.price.toFixed(2)}
+                    </span>
                   </div>
                 </Link>
               ))}
