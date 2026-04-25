@@ -64,7 +64,7 @@ export default function ShopHome() {
                 <p className="mt-3 text-lg sm:text-2xl text-white/95 font-light tracking-wide leading-snug">
                   Let your fashion <span className="font-serif italic text-white">speak</span> before you do.
                 </p>
-                <p className="mt-2 text-[11px] sm:text-xs text-white/70 font-light tracking-[0.18em] uppercase">
+                <p className="mt-2 text-[11px] sm:text-xs text-white/90 font-medium tracking-[0.18em] uppercase drop-shadow-sm">
                   Built different. Own the rest.
                 </p>
                 <div className="mt-5">
@@ -131,19 +131,10 @@ export default function ShopHome() {
               </div>
               <p className="text-sm sm:text-base font-light leading-[1.5] tracking-tight text-neutral-900 dark:text-neutral-50">
                 Wolfion isn't just a brand —{" "}
-                <span
-                  className="font-serif italic"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, #1ABBC4 0%, #D4AF37 100%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                  }}
-                >
+                <span className="font-serif italic font-medium text-[#0E8B92] dark:text-[#5BD4DC]">
                   it's personality, comfort, identity & fashion
                 </span>
-                <span className="text-neutral-500 dark:text-neutral-400">, built from the ground up.</span>
+                <span className="text-neutral-700 dark:text-neutral-300">, built from the ground up.</span>
               </p>
             </div>
           </div>
@@ -226,19 +217,19 @@ export default function ShopHome() {
                           "linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.2) 50%, transparent 70%)",
                       }}
                     />
-                    {/* Liquid Glass label chip */}
+                    {/* Liquid Glass label chip — dark glass for readability on any photo */}
                     <div className="absolute bottom-2 left-2 right-2 sm:bottom-3 sm:left-3 sm:right-3">
                       <div
-                        className="rounded-2xl px-3 py-2.5 border border-white/25 shadow-[0_8px_24px_-6px_rgba(0,0,0,0.4)]"
+                        className="rounded-2xl px-3 py-2.5 border border-white/15 shadow-[0_8px_24px_-6px_rgba(0,0,0,0.5)]"
                         style={{
                           background:
-                            "linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 100%)",
+                            "linear-gradient(180deg, rgba(8,18,28,0.62) 0%, rgba(8,18,28,0.45) 100%)",
                           backdropFilter: "blur(20px) saturate(170%)",
                           WebkitBackdropFilter: "blur(20px) saturate(170%)",
                         }}
                       >
-                        <h3 className="text-[13px] sm:text-sm font-semibold text-white tracking-wide leading-tight">{c.label}</h3>
-                        <p className="text-[10px] sm:text-[11px] text-white/85 mt-0.5 font-light leading-tight truncate">{c.tagline}</p>
+                        <h3 className="text-[13px] sm:text-sm font-semibold text-white tracking-wide leading-tight drop-shadow-sm">{c.label}</h3>
+                        <p className="text-[10px] sm:text-[11px] text-white/90 mt-0.5 font-light leading-tight truncate">{c.tagline}</p>
                       </div>
                     </div>
                   </div>
@@ -321,20 +312,20 @@ export default function ShopHome() {
                           "linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.18) 50%, transparent 70%)",
                       }}
                     />
-                    {/* Liquid Glass label chip */}
+                    {/* Liquid Glass label chip — dark glass for readability on any photo */}
                     <div className="absolute bottom-2 left-2 right-2 sm:bottom-3 sm:left-3 sm:right-3">
                       <div
-                        className="rounded-2xl px-3 py-2.5 border border-white/25 shadow-[0_8px_24px_-6px_rgba(0,0,0,0.4)]"
+                        className="rounded-2xl px-3 py-2.5 border border-white/15 shadow-[0_8px_24px_-6px_rgba(0,0,0,0.5)]"
                         style={{
                           background:
-                            "linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 100%)",
+                            "linear-gradient(180deg, rgba(8,18,28,0.62) 0%, rgba(8,18,28,0.45) 100%)",
                           backdropFilter: "blur(20px) saturate(170%)",
                           WebkitBackdropFilter: "blur(20px) saturate(170%)",
                         }}
                       >
-                        <p className="text-[9px] uppercase tracking-[0.35em] text-white/75 leading-none">Collection</p>
-                        <h3 className="text-[15px] sm:text-base font-semibold text-white tracking-wide leading-tight mt-1">{col.label}</h3>
-                        <span className="inline-flex items-center mt-1 text-[11px] text-white/85 font-light">
+                        <p className="text-[9px] uppercase tracking-[0.35em] text-white/85 leading-none">Collection</p>
+                        <h3 className="text-[15px] sm:text-base font-semibold text-white tracking-wide leading-tight mt-1 drop-shadow-sm">{col.label}</h3>
+                        <span className="inline-flex items-center mt-1 text-[11px] text-white/95 font-light">
                           Shop now <ArrowRight className="ml-1.5 h-3 w-3 transition-transform group-hover:translate-x-1" />
                         </span>
                       </div>
