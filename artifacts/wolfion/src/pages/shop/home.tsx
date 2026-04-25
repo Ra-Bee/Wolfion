@@ -15,25 +15,15 @@ export default function ShopHome() {
   return (
     <ShopLayout>
       {/* 1 — HERO */}
-      <section className="relative w-full bg-gradient-to-b from-neutral-950 via-black to-neutral-950 px-3 pt-3 pb-5 sm:px-5 sm:pt-5 sm:pb-8">
-        {/* Outer sunset halo — soft glow lifting the frame off the page */}
+      <section className="relative w-full bg-white dark:bg-neutral-950 px-3 pt-3 pb-5 sm:px-5 sm:pt-5 sm:pb-8">
+        {/* 3D beveled frame — soft neutral bevel (light top-left, dark bottom-right) */}
         <div
-          aria-hidden
-          className="absolute inset-2 sm:inset-4 rounded-[24px] sm:rounded-[32px] blur-2xl opacity-60 pointer-events-none"
+          className="relative rounded-[24px] sm:rounded-[32px] p-[2px] sm:p-[3px]"
           style={{
             background:
-              "linear-gradient(135deg, #FB7185 0%, #F59E0B 45%, #9333EA 100%)",
-          }}
-        />
-
-        {/* 3D beveled frame — thicker gradient ring (light top-left, dark bottom-right) */}
-        <div
-          className="relative rounded-[24px] sm:rounded-[32px] p-[3px] sm:p-[4px]"
-          style={{
-            background:
-              "linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(252,211,77,0.7) 25%, rgba(251,113,133,0.55) 55%, rgba(147,51,234,0.5) 80%, rgba(0,0,0,0.75) 100%)",
+              "linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.55) 100%)",
             boxShadow:
-              "0 30px 80px -18px rgba(0,0,0,0.75), 0 12px 36px -12px rgba(245,158,11,0.45), 0 0 0 1px rgba(255,255,255,0.05), inset 0 2px 0 rgba(255,255,255,0.55), inset 0 -2px 0 rgba(0,0,0,0.55)",
+              "0 24px 60px -22px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -1px 0 rgba(0,0,0,0.35)",
           }}
         >
           {/* Inner photo container */}
