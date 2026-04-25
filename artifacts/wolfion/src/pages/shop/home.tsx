@@ -328,14 +328,6 @@ export default function ShopHome() {
       <section className="relative h-[42vh] min-h-[300px] sm:h-[55vh] sm:min-h-[400px] overflow-hidden">
         <img src={imgSocks} alt="Wolfion craftsmanship" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/40 to-transparent" />
-        <div
-          aria-hidden
-          className="absolute -bottom-[20%] right-[-10%] h-[60vh] w-[60vh] rounded-full opacity-30 blur-[120px] pointer-events-none"
-          style={{
-            background: "radial-gradient(circle, #1ABBC4 0%, transparent 70%)",
-            animation: "wf-blob1 18s ease-in-out infinite",
-          }}
-        />
         <div className="relative z-10 h-full container mx-auto px-5 flex items-center">
           <div className={`max-w-lg text-white ${FADE}`}>
             <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 mb-5 bg-white/[0.08] backdrop-blur-md border border-white/15 text-[10px] uppercase tracking-[0.3em] text-white/85">
