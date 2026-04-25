@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { ShopLayout } from "@/components/shop-layout";
+import { GlassCard } from "@/components/glass";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, ArrowRight } from "lucide-react";
 
@@ -20,8 +21,37 @@ export default function CheckoutSuccess() {
   return (
     <ShopLayout>
       <div className="container mx-auto px-5 py-24 max-w-lg text-center flex flex-col items-center">
-        <div className="h-20 w-20 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mb-8 animate-in zoom-in duration-500">
-          <CheckCircle2 className="h-10 w-10" />
+        {/* 3D glass success disc */}
+        <div className="relative mb-8 animate-in zoom-in duration-500">
+          <div
+            aria-hidden
+            className="absolute -inset-4 rounded-full blur-2xl opacity-50 pointer-events-none"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(251,113,133,0.6) 0%, rgba(245,158,11,0.5) 50%, rgba(147,51,234,0.6) 100%)",
+            }}
+          />
+          <div
+            className="relative h-24 w-24 rounded-full p-[2px]"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(251,113,133,0.8) 0%, rgba(245,158,11,0.6) 50%, rgba(147,51,234,0.8) 100%)",
+            }}
+          >
+            <div
+              className="h-full w-full rounded-full flex items-center justify-center text-emerald-600 dark:text-emerald-400 border border-white/40 dark:border-white/10"
+              style={{
+                background:
+                  "linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.1) 100%)",
+                backdropFilter: "blur(18px) saturate(170%)",
+                WebkitBackdropFilter: "blur(18px) saturate(170%)",
+                boxShadow:
+                  "inset 0 1px 0 rgba(255,255,255,0.55), 0 12px 32px -10px rgba(15,23,42,0.4)",
+              }}
+            >
+              <CheckCircle2 className="h-11 w-11" />
+            </div>
+          </div>
         </div>
 
         <h1 className="text-3xl font-light tracking-tight mb-3">Order confirmed</h1>
@@ -30,20 +60,22 @@ export default function CheckoutSuccess() {
           Thank you for your purchase. We've received your order and will notify you when it ships.
         </p>
 
-        <div className="bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 w-full p-6 rounded-2xl mb-6 flex justify-between items-center text-left">
-          <div>
-            <p className="text-[11px] uppercase tracking-widest text-neutral-500">Order number</p>
-            <p className="font-mono font-medium mt-1">#{orderNo}</p>
+        <GlassCard padding="p-6" rounded="rounded-2xl" className="w-full mb-6">
+          <div className="flex justify-between items-center text-left">
+            <div>
+              <p className="text-[11px] uppercase tracking-widest text-neutral-500">Order number</p>
+              <p className="font-mono font-medium mt-1">#{orderNo}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-[11px] uppercase tracking-widest text-neutral-500">Date</p>
+              <p className="font-medium mt-1">{new Date().toLocaleDateString()}</p>
+            </div>
           </div>
-          <div className="text-right">
-            <p className="text-[11px] uppercase tracking-widest text-neutral-500">Date</p>
-            <p className="font-medium mt-1">{new Date().toLocaleDateString()}</p>
-          </div>
-        </div>
+        </GlassCard>
 
         {last && (
-          <div className="bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 w-full p-6 rounded-2xl mb-10 text-left">
-            <div className="flex justify-between items-center">
+          <GlassCard padding="p-6" rounded="rounded-2xl" className="w-full mb-10">
+            <div className="flex justify-between items-center text-left">
               <div>
                 <p className="text-[11px] uppercase tracking-widest text-neutral-500">Paid with</p>
                 <p className="font-medium mt-1">{last.method ?? "—"}</p>
@@ -53,7 +85,7 @@ export default function CheckoutSuccess() {
                 <p className="font-medium mt-1">Tk {(last.total ?? 0).toFixed(2)}</p>
               </div>
             </div>
-          </div>
+          </GlassCard>
         )}
 
         <Link href="/shop">

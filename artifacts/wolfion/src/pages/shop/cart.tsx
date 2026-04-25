@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { ShopLayout } from "@/components/shop-layout";
+import { GlassCard, GlassPhotoFrame } from "@/components/glass";
 import { useCart } from "@/hooks/use-cart";
 import { Button } from "@/components/ui/button";
 import { loadSavedPayments, type SavedPayment } from "@/lib/payment-methods";
@@ -154,7 +155,38 @@ export default function Cart() {
     return (
       <ShopLayout>
         <div className="container mx-auto px-5 py-32 text-center max-w-md">
-          <ShoppingBag className="mx-auto h-12 w-12 text-neutral-300 mb-6" />
+          {/* 3D glass empty-bag disc */}
+          <div className="relative inline-flex mb-6">
+            <div
+              aria-hidden
+              className="absolute -inset-4 rounded-full blur-2xl opacity-40 pointer-events-none"
+              style={{
+                background:
+                  "linear-gradient(135deg, rgba(251,113,133,0.55) 0%, rgba(245,158,11,0.45) 50%, rgba(147,51,234,0.55) 100%)",
+              }}
+            />
+            <div
+              className="relative h-20 w-20 rounded-full p-[2px]"
+              style={{
+                background:
+                  "linear-gradient(135deg, rgba(251,113,133,0.7) 0%, rgba(245,158,11,0.5) 50%, rgba(147,51,234,0.7) 100%)",
+              }}
+            >
+              <div
+                className="h-full w-full rounded-full flex items-center justify-center text-neutral-700 dark:text-neutral-200 border border-white/40 dark:border-white/10"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.10) 100%)",
+                  backdropFilter: "blur(16px) saturate(170%)",
+                  WebkitBackdropFilter: "blur(16px) saturate(170%)",
+                  boxShadow:
+                    "inset 0 1px 0 rgba(255,255,255,0.55), 0 10px 26px -10px rgba(15,23,42,0.4)",
+                }}
+              >
+                <ShoppingBag className="h-9 w-9" />
+              </div>
+            </div>
+          </div>
           <h1 className="text-3xl font-light tracking-tight mb-3">Your bag is empty</h1>
           <p className="text-sm text-neutral-500 mb-8">Discover the latest pieces from the Wolfion collection.</p>
           <Link href="/products">
@@ -185,9 +217,14 @@ export default function Cart() {
                 data-testid={`cart-item-${item.product.id}`}
               >
                 <Link href={`/product/${item.product.id}`} className="shrink-0">
-                  <div className="h-28 w-24 sm:h-32 sm:w-28 rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-900">
-                    <img src={item.product.image} alt={item.product.name} className="h-full w-full object-cover" />
-                  </div>
+                  <GlassPhotoFrame
+                    rounded="rounded-lg"
+                    haloOpacity={0.20}
+                    className="h-28 w-24 sm:h-32 sm:w-28"
+                    innerClassName="h-full w-full bg-neutral-100 dark:bg-neutral-900"
+                  >
+                    <img src={item.product.image} alt={item.product.name} className="absolute inset-0 h-full w-full object-cover" />
+                  </GlassPhotoFrame>
                 </Link>
 
                 <div className="flex-1 flex flex-col">
@@ -209,16 +246,26 @@ export default function Cart() {
                   </div>
 
                   <div className="mt-auto pt-4 flex items-center justify-between">
-                    <div className="inline-flex items-center border border-neutral-300 dark:border-neutral-700 rounded-full">
+                    <div
+                      className="inline-flex items-center border border-white/40 dark:border-white/10 rounded-full"
+                      style={{
+                        background:
+                          "linear-gradient(180deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.10) 100%)",
+                        backdropFilter: "blur(14px) saturate(170%)",
+                        WebkitBackdropFilter: "blur(14px) saturate(170%)",
+                        boxShadow:
+                          "inset 0 1px 0 rgba(255,255,255,0.5), 0 6px 16px -8px rgba(15,23,42,0.25)",
+                      }}
+                    >
                       <button
-                        className="h-9 w-9 flex items-center justify-center hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-l-full"
+                        className="h-9 w-9 flex items-center justify-center hover:bg-white/40 dark:hover:bg-white/10 rounded-l-full transition-colors"
                         onClick={() => updateQuantity(item.product.id, item.size, item.quantity - 1)}
                       >
                         <Minus className="h-3 w-3" />
                       </button>
                       <span className="w-8 text-center text-sm">{item.quantity}</span>
                       <button
-                        className="h-9 w-9 flex items-center justify-center hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-r-full"
+                        className="h-9 w-9 flex items-center justify-center hover:bg-white/40 dark:hover:bg-white/10 rounded-r-full transition-colors"
                         onClick={() => updateQuantity(item.product.id, item.size, item.quantity + 1)}
                       >
                         <Plus className="h-3 w-3" />
@@ -240,8 +287,9 @@ export default function Cart() {
             </div>
           </div>
 
-          {/* Summary */}
-          <aside className="lg:sticky lg:top-24 bg-neutral-50 dark:bg-neutral-900 rounded-2xl p-6 sm:p-8 border border-neutral-200 dark:border-neutral-800">
+          {/* Summary — glass card */}
+          <aside className="lg:sticky lg:top-24">
+            <GlassCard padding="p-6 sm:p-8" rounded="rounded-3xl" haloOpacity={0.30}>
             <h2 className="text-xs uppercase tracking-[0.3em] text-neutral-500 mb-6">Order Summary</h2>
 
             <div className="space-y-3 text-sm">
@@ -278,6 +326,7 @@ export default function Cart() {
             <p className="text-[11px] text-neutral-500 mt-4 text-center leading-relaxed">
               Secure checkout. Demo only — no real payment is processed.
             </p>
+            </GlassCard>
           </aside>
         </div>
       </div>

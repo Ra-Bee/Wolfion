@@ -17,7 +17,23 @@ export function ProductCard({ product, ratio = "tall" }: Props) {
       data-testid={`product-${product.id}`}
     >
       <div
-        className={`relative ${aspect} overflow-hidden rounded-2xl bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-900 dark:to-neutral-800 mb-3 shadow-sm transition-all duration-500 group-hover:shadow-2xl group-hover:-translate-y-1`}
+        className={`relative ${aspect} rounded-2xl mb-3 transition-all duration-500 group-hover:-translate-y-1 p-[1.5px]`}
+        style={{
+          background:
+            "linear-gradient(135deg, rgba(251,113,133,0.45) 0%, rgba(245,158,11,0.30) 50%, rgba(147,51,234,0.45) 100%)",
+        }}
+      >
+      {/* Glow halo on hover */}
+      <div
+        aria-hidden
+        className="absolute -inset-2 rounded-[1.5rem] blur-2xl opacity-0 group-hover:opacity-50 transition-opacity duration-500 pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(135deg, rgba(251,113,133,0.6) 0%, rgba(245,158,11,0.5) 50%, rgba(147,51,234,0.6) 100%)",
+        }}
+      />
+      <div
+        className="relative h-full w-full overflow-hidden rounded-[15px] bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-900 dark:to-neutral-800 shadow-sm group-hover:shadow-2xl transition-shadow duration-500"
       >
         <img
           src={product.image}
@@ -39,6 +55,7 @@ export function ProductCard({ product, ratio = "tall" }: Props) {
             Low stock
           </span>
         )}
+      </div>
       </div>
 
       <div className="flex justify-between items-start gap-3 px-1">

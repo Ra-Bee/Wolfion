@@ -1,4 +1,5 @@
 import { ShopLayout } from "@/components/shop-layout";
+import { GlassCard } from "@/components/glass";
 import { ArrowUpRight } from "lucide-react";
 import { CONTACT_LINKS as LINKS } from "@/lib/contact-info";
 
@@ -18,37 +19,59 @@ export default function ContactPage() {
           </p>
         </div>
 
-        {/* Clean icon rows */}
-        <div className="divide-y divide-neutral-200 dark:divide-neutral-800 border-y border-neutral-200 dark:border-neutral-800">
-          {LINKS.map((link, i) => {
-            const Icon = link.icon;
-            const external = !link.href.startsWith("mailto:");
-            return (
-              <a
-                key={link.label}
-                href={link.href}
-                target={external ? "_blank" : undefined}
-                rel={external ? "noopener noreferrer" : undefined}
-                className={`group flex items-center gap-4 sm:gap-6 py-5 sm:py-6 hover:pl-2 transition-all duration-300 ${FADE}`}
-                style={{ animationDelay: `${i * 80}ms` }}
-                data-testid={link.testid}
-              >
-                <div className="h-11 w-11 sm:h-12 sm:w-12 rounded-full bg-neutral-100 dark:bg-neutral-900 text-neutral-900 dark:text-neutral-50 flex items-center justify-center flex-shrink-0 group-hover:bg-neutral-900 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-neutral-900 transition-colors duration-300">
-                  <Icon className="h-5 w-5" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[10px] uppercase tracking-[0.35em] text-neutral-500 mb-0.5">
-                    {link.label}
-                  </p>
-                  <p className="text-base sm:text-lg font-medium tracking-tight truncate text-neutral-900 dark:text-neutral-50">
-                    {link.handle}
-                  </p>
-                </div>
-                <ArrowUpRight className="h-5 w-5 text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-50 group-hover:rotate-12 transition-all duration-300 flex-shrink-0" />
-              </a>
-            );
-          })}
-        </div>
+        {/* Glass card list */}
+        <GlassCard padding="p-3 sm:p-4" rounded="rounded-3xl">
+          <ul className="divide-y divide-white/30 dark:divide-white/10">
+            {LINKS.map((link, i) => {
+              const Icon = link.icon;
+              const external = !link.href.startsWith("mailto:");
+              return (
+                <li key={link.label}>
+                  <a
+                    href={link.href}
+                    target={external ? "_blank" : undefined}
+                    rel={external ? "noopener noreferrer" : undefined}
+                    className={`group relative flex items-center gap-4 sm:gap-6 px-3 sm:px-4 py-4 sm:py-5 rounded-2xl transition-all duration-300 hover:bg-white/30 dark:hover:bg-white/5 hover:pl-5 ${FADE}`}
+                    style={{ animationDelay: `${i * 80}ms` }}
+                    data-testid={link.testid}
+                  >
+                    {/* Glass icon disc */}
+                    <div
+                      className="relative h-12 w-12 sm:h-14 sm:w-14 rounded-full p-[1.5px] flex-shrink-0"
+                      style={{
+                        background:
+                          "linear-gradient(135deg, rgba(251,113,133,0.6) 0%, rgba(245,158,11,0.45) 50%, rgba(147,51,234,0.6) 100%)",
+                      }}
+                    >
+                      <div
+                        className="h-full w-full rounded-full flex items-center justify-center text-neutral-900 dark:text-neutral-50 border border-white/40 dark:border-white/10"
+                        style={{
+                          background:
+                            "linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.1) 100%)",
+                          backdropFilter: "blur(14px) saturate(170%)",
+                          WebkitBackdropFilter: "blur(14px) saturate(170%)",
+                          boxShadow:
+                            "inset 0 1px 0 rgba(255,255,255,0.55), 0 6px 16px -8px rgba(15,23,42,0.30)",
+                        }}
+                      >
+                        <Icon className="h-5 w-5" />
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[10px] uppercase tracking-[0.35em] text-neutral-500 mb-0.5">
+                        {link.label}
+                      </p>
+                      <p className="text-base sm:text-lg font-medium tracking-tight truncate text-neutral-900 dark:text-neutral-50">
+                        {link.handle}
+                      </p>
+                    </div>
+                    <ArrowUpRight className="h-5 w-5 text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-50 group-hover:rotate-12 transition-all duration-300 flex-shrink-0" />
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </GlassCard>
       </section>
     </ShopLayout>
   );

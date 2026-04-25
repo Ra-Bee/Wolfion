@@ -475,7 +475,24 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <main className="flex-1">{children}</main>
+      <main className="relative flex-1 isolate">
+        {/* Ambient atmosphere — sunset glow blobs */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+          <div
+            className="absolute -top-[8%] -left-[8%] h-[60vh] w-[60vh] rounded-full opacity-25 blur-[140px] dark:opacity-30"
+            style={{ background: "radial-gradient(circle, #FB7185 0%, transparent 70%)" }}
+          />
+          <div
+            className="absolute top-[35%] -right-[12%] h-[55vh] w-[55vh] rounded-full opacity-20 blur-[130px] dark:opacity-25"
+            style={{ background: "radial-gradient(circle, #F59E0B 0%, transparent 70%)" }}
+          />
+          <div
+            className="absolute bottom-[5%] left-[30%] h-[50vh] w-[50vh] rounded-full opacity-20 blur-[130px] dark:opacity-25"
+            style={{ background: "radial-gradient(circle, #9333EA 0%, transparent 70%)" }}
+          />
+        </div>
+        {children}
+      </main>
 
       <footer className="relative mt-20 overflow-hidden bg-gradient-to-b from-neutral-50 to-white dark:from-neutral-950 dark:to-black">
         {/* Ambient glow blobs */}

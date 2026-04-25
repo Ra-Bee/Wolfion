@@ -52,10 +52,21 @@ export default function Products() {
       ? categories.find((c) => c.id === activeCategory)?.tagline ?? ""
       : "Crafted essentials, every piece engineered for comfort.");
 
+  const isAll = !activeCategory && !collection;
+
+  const chipBaseStyle = {
+    background:
+      "linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.10) 100%)",
+    backdropFilter: "blur(14px) saturate(170%)",
+    WebkitBackdropFilter: "blur(14px) saturate(170%)",
+    boxShadow:
+      "inset 0 1px 0 rgba(255,255,255,0.5), 0 6px 16px -8px rgba(15,23,42,0.25)",
+  } as const;
+
   return (
     <ShopLayout>
       {/* Hero band */}
-      <section className="relative bg-gradient-to-b from-neutral-50 to-white dark:from-neutral-900 dark:to-neutral-950 border-b border-neutral-200/70 dark:border-neutral-800/70">
+      <section className="relative border-b border-white/30 dark:border-white/10">
         <div className="container mx-auto px-5 pt-14 pb-10">
           <p className="text-[11px] uppercase tracking-[0.3em] text-neutral-500 mb-3">{eyebrow}</p>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight">{title}</h1>
@@ -66,34 +77,39 @@ export default function Products() {
       </section>
 
       <section className="container mx-auto px-5 pt-8 pb-20">
-        {/* Category chips */}
+        {/* Glass filter chips */}
         <div className="flex flex-wrap gap-2 mb-10 pb-5">
           <Link href="/products">
             <button
-              className={`px-4 h-9 rounded-full text-xs uppercase tracking-widest transition-all active:scale-95 ${
-                !activeCategory && !collection
-                  ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-md"
-                  : "bg-white/70 dark:bg-neutral-900/60 backdrop-blur border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+              className={`relative px-4 h-9 rounded-full text-xs uppercase tracking-widest transition-all active:scale-95 border ${
+                isAll
+                  ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 border-neutral-900 dark:border-white shadow-md"
+                  : "text-neutral-800 dark:text-neutral-100 border-white/40 dark:border-white/10 hover:bg-white/40 dark:hover:bg-white/10"
               }`}
+              style={isAll ? undefined : chipBaseStyle}
               data-testid="filter-all"
             >
               All
             </button>
           </Link>
-          {categories.map((c) => (
-            <Link key={c.id} href={`/products?category=${c.id}`}>
-              <button
-                className={`px-4 h-9 rounded-full text-xs uppercase tracking-widest transition-all active:scale-95 ${
-                  activeCategory === c.id
-                    ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-md"
-                    : "bg-white/70 dark:bg-neutral-900/60 backdrop-blur border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800"
-                }`}
-                data-testid={`filter-${c.id}`}
-              >
-                {c.label}
-              </button>
-            </Link>
-          ))}
+          {categories.map((c) => {
+            const active = activeCategory === c.id;
+            return (
+              <Link key={c.id} href={`/products?category=${c.id}`}>
+                <button
+                  className={`relative px-4 h-9 rounded-full text-xs uppercase tracking-widest transition-all active:scale-95 border ${
+                    active
+                      ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 border-neutral-900 dark:border-white shadow-md"
+                      : "text-neutral-800 dark:text-neutral-100 border-white/40 dark:border-white/10 hover:bg-white/40 dark:hover:bg-white/10"
+                  }`}
+                  style={active ? undefined : chipBaseStyle}
+                  data-testid={`filter-${c.id}`}
+                >
+                  {c.label}
+                </button>
+              </Link>
+            );
+          })}
         </div>
 
         {filtered.length === 0 ? (
