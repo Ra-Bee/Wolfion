@@ -16,8 +16,14 @@ import imgCatShort from "@assets/cat_short.jpg";
 import imgCatAnkle from "@assets/cat_ankle.jpg";
 import imgCatKids from "@assets/cat_kids.jpg";
 import imgCatOthers from "@assets/cat_others.jpg";
-import imgSportNoShow from "@assets/generated_images/product_sport_no_show.png";
-import imgKidsPinkCrew from "@assets/generated_images/product_kids_pink_crew.png";
+import imgEverydayCrewBlack from "@assets/generated_images/product_everyday_crew_black.png";
+import imgEverydayCrewWhite from "@assets/generated_images/product_everyday_crew_white.png";
+import imgPerformanceAnkleOrange from "@assets/generated_images/product_performance_ankle_orange.png";
+import imgMerinoLoungeGrey from "@assets/generated_images/product_merino_lounge_grey.png";
+import imgInvisibleLinerWhite from "@assets/generated_images/product_invisible_liner_white.png";
+import imgSportNoShowCharcoal from "@assets/generated_images/product_sport_noshow_charcoal.png";
+import imgKidsCrewBlue from "@assets/generated_images/product_kids_crew_blue.png";
+import imgKidsCrewPink from "@assets/generated_images/product_kids_crew_pink.png";
 import imgWoolHikerForest from "@assets/generated_images/product_wool_hiker_forest.png";
 
 export const categories: { id: ProductCategory; label: string; tagline: string; image: string }[] = [
@@ -37,7 +43,7 @@ export const products: Product[] = [
     sizes: ["S", "M", "L", "XL"],
     description: "Sharp, breathable, and perfectly tensioned. The only black crew sock you'll ever need.",
     inventory: 1540,
-    image: "https://images.unsplash.com/photo-1582966772680-860e372bb558?w=800&q=80",
+    image: imgEverydayCrewBlack,
   },
   {
     id: "p_2",
@@ -48,7 +54,7 @@ export const products: Product[] = [
     sizes: ["M", "L", "XL"],
     description: "Crisp white crew socks designed to stay up without cutting off circulation.",
     inventory: 820,
-    image: "https://images.unsplash.com/photo-1608222351212-18fe0ec7b13b?w=800&q=80",
+    image: imgEverydayCrewWhite,
   },
   {
     id: "p_3",
@@ -59,7 +65,7 @@ export const products: Product[] = [
     sizes: ["S", "M", "L"],
     description: "Low profile, high impact. Engineered for active days with reinforced heel and toe.",
     inventory: 430,
-    image: "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=800&q=80",
+    image: imgPerformanceAnkleOrange,
   },
   {
     id: "p_4",
@@ -70,7 +76,7 @@ export const products: Product[] = [
     sizes: ["M", "L"],
     description: "Luxurious merino wool blend for those slow Sunday mornings.",
     inventory: 115,
-    image: "https://images.unsplash.com/photo-1552874869-5c39ec9288dc?w=800&q=80",
+    image: imgMerinoLoungeGrey,
   },
   {
     id: "p_5",
@@ -81,7 +87,7 @@ export const products: Product[] = [
     sizes: ["S", "M", "L"],
     description: "Disappear under any sneaker. Silicone heel grip keeps them in place all day.",
     inventory: 720,
-    image: "https://images.unsplash.com/photo-1604881991720-f91add269bed?w=800&q=80",
+    image: imgInvisibleLinerWhite,
   },
   {
     id: "p_6",
@@ -92,7 +98,7 @@ export const products: Product[] = [
     sizes: ["M", "L"],
     description: "Cushioned sole, mesh top — built for runners and gym days.",
     inventory: 540,
-    image: imgSportNoShow,
+    image: imgSportNoShowCharcoal,
   },
   {
     id: "p_7",
@@ -103,7 +109,7 @@ export const products: Product[] = [
     sizes: ["XS", "S", "M"],
     description: "Soft cotton blend made for little adventurers. Reinforced toe for tough play.",
     inventory: 320,
-    image: "https://images.unsplash.com/photo-1503944583220-79d8926ad5e2?w=800&q=80",
+    image: imgKidsCrewBlue,
   },
   {
     id: "p_8",
@@ -114,7 +120,7 @@ export const products: Product[] = [
     sizes: ["XS", "S", "M"],
     description: "Bright, comfortable, and built to last through every adventure.",
     inventory: 280,
-    image: imgKidsPinkCrew,
+    image: imgKidsCrewPink,
   },
   {
     id: "p_9",

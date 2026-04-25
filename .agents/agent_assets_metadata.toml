@@ -46,7 +46,55 @@ title = "kids pink crew socks"
 id = "cU7aAudKXE4e8_RWJJw0h"
 uri = "file://attached_assets/generated_images/product_wool_hiker_forest.png"
 type = "image"
-title = "wool hiker forest socks"
+title = "wool hiker forest green"
+
+[[generated]]
+id = "J5KVimsyFexE2WM7OWNQp"
+uri = "file://attached_assets/generated_images/product_everyday_crew_black.png"
+type = "image"
+title = "everyday crew onyx black"
+
+[[generated]]
+id = "pLLlxB9zT7UnxaFVGtgKN"
+uri = "file://attached_assets/generated_images/product_everyday_crew_white.png"
+type = "image"
+title = "everyday crew arctic white"
+
+[[generated]]
+id = "v_ST4aCnMs_Xtu-DcdjU1"
+uri = "file://attached_assets/generated_images/product_performance_ankle_orange.png"
+type = "image"
+title = "performance ankle wolf orange"
+
+[[generated]]
+id = "UBFj1qqLTGMrL7AHEuv3M"
+uri = "file://attached_assets/generated_images/product_merino_lounge_grey.png"
+type = "image"
+title = "merino lounge heather grey"
+
+[[generated]]
+id = "q9KdkdXnH-mXQ42BFdND7"
+uri = "file://attached_assets/generated_images/product_invisible_liner_white.png"
+type = "image"
+title = "invisible liner pure white"
+
+[[generated]]
+id = "NfPRCW_reieXNbBFBUes2"
+uri = "file://attached_assets/generated_images/product_sport_noshow_charcoal.png"
+type = "image"
+title = "sport noshow charcoal"
+
+[[generated]]
+id = "aSotXN8m8r4tVO3vzJZji"
+uri = "file://attached_assets/generated_images/product_kids_crew_blue.png"
+type = "image"
+title = "kids crew cloud blue"
+
+[[generated]]
+id = "db45ymGCR5siwbHcWVML9"
+uri = "file://attached_assets/generated_images/product_kids_crew_pink.png"
+type = "image"
+title = "kids crew sunset pink"
 
 [[outputs]]
 id = "Z8dcSbzTuOcZ42cy_qinK"
