@@ -318,38 +318,88 @@ export default function ShopHome() {
         </div>
       </section>
 
-      {/* 5 — EDITORIAL CRAFT BANNER */}
-      <section className="relative h-[42vh] min-h-[300px] sm:h-[55vh] sm:min-h-[400px] overflow-hidden">
-        <img src={imgSocks} alt="Wolfion craftsmanship" className="absolute inset-0 h-full w-full object-cover" />
-        {/* subtle left-side gradient only, photo stays clean */}
-        <div className="absolute inset-y-0 left-0 w-2/3 bg-gradient-to-r from-black/45 to-transparent pointer-events-none" />
-        <div className="relative z-10 h-full container mx-auto px-5 flex items-center">
-          <div className={`max-w-md ${FADE}`} style={{ textShadow: "0 2px 16px rgba(0,0,0,0.6)" }}>
-            <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 mb-4 bg-white/[0.12] backdrop-blur-md border border-white/25 text-[10px] uppercase tracking-[0.3em] text-white">
-              <Sparkles className="h-3 w-3 text-amber-300" />
-              The Craft
-            </div>
-            <h2
-              className="text-4xl sm:text-6xl font-light leading-[1.05] tracking-tight text-white"
-              style={{ filter: "drop-shadow(0 4px 18px rgba(0,0,0,0.5))" }}
+      {/* 5 — EDITORIAL CRAFT BANNER · 3D Glass framed photo */}
+      <section className="relative container mx-auto px-4 sm:px-5 py-8 sm:py-12 overflow-visible">
+        <div className={`relative max-w-5xl mx-auto ${FADE}`} style={{ perspective: "1400px" }}>
+          {/* Glow halo behind the photo */}
+          <div
+            aria-hidden
+            className="absolute -inset-3 sm:-inset-5 rounded-[34px] blur-2xl opacity-50 pointer-events-none"
+            style={{
+              background:
+                "linear-gradient(135deg, #1ABBC4 0%, #6E3CFB 50%, #D4AF37 100%)",
+            }}
+          />
+          {/* Gradient ring */}
+          <div
+            className="relative rounded-[28px] p-[1.5px] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.55)]"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(26,187,196,0.45) 35%, rgba(110,60,251,0.4) 65%, rgba(212,175,55,0.55) 100%)",
+              transformStyle: "preserve-3d",
+            }}
+          >
+            <div
+              className="relative rounded-[26px] overflow-hidden h-[42vh] min-h-[320px] sm:h-[55vh] sm:min-h-[420px]"
             >
-              Every stitch
-              <br />
-              <span
-                className="font-serif italic"
+              <img
+                src={imgSocks}
+                alt="Wolfion craftsmanship"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+              {/* Bottom darkening gradient for text */}
+              <div className="absolute inset-y-0 left-0 w-2/3 bg-gradient-to-r from-black/55 via-black/25 to-transparent pointer-events-none" />
+              {/* Top glossy highlight (glass sheen) */}
+              <div
+                aria-hidden
+                className="absolute inset-x-0 top-0 h-1/3 pointer-events-none rounded-t-[26px]"
                 style={{
-                  background: "linear-gradient(135deg, #B8E8EC 0%, #D4AF37 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
+                  background:
+                    "linear-gradient(180deg, rgba(255,255,255,0.22) 0%, transparent 100%)",
                 }}
-              >
-                considered.
-              </span>
-            </h2>
-            <p className="mt-4 text-sm sm:text-base text-white/95 leading-relaxed font-light max-w-sm">
-              Spun from Pima cotton and Italian merino. Tensioned by hand. Finished without compromise.
-            </p>
+              />
+              {/* Diagonal sheen */}
+              <div
+                aria-hidden
+                className="absolute inset-0 pointer-events-none rounded-[26px]"
+                style={{
+                  background:
+                    "linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.08) 50%, transparent 65%)",
+                }}
+              />
+
+              {/* Text content overlay */}
+              <div className="relative z-10 h-full flex items-center px-5 sm:px-10">
+                <div style={{ textShadow: "0 2px 16px rgba(0,0,0,0.6)" }}>
+                  <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 mb-4 bg-white/[0.12] backdrop-blur-md border border-white/25 text-[10px] uppercase tracking-[0.3em] text-white">
+                    <Sparkles className="h-3 w-3 text-amber-300" />
+                    The Craft
+                  </div>
+                  <h2
+                    className="text-4xl sm:text-6xl font-light leading-[1.05] tracking-tight text-white"
+                    style={{ filter: "drop-shadow(0 4px 18px rgba(0,0,0,0.5))" }}
+                  >
+                    Every stitch
+                    <br />
+                    <span
+                      className="font-serif italic"
+                      style={{
+                        background:
+                          "linear-gradient(135deg, #B8E8EC 0%, #D4AF37 100%)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        backgroundClip: "text",
+                      }}
+                    >
+                      considered.
+                    </span>
+                  </h2>
+                  <p className="mt-4 text-sm sm:text-base text-white/95 leading-relaxed font-light max-w-sm">
+                    Spun from Pima cotton and Italian merino. Tensioned by hand. Finished without compromise.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
