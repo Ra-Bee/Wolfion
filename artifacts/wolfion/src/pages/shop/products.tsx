@@ -22,11 +22,21 @@ export default function Products() {
   const params = new URLSearchParams(search);
   const activeCategory = (params.get("category") as ProductCategory | null) ?? null;
   const collection = params.get("collection");
+  const queryTerm = (params.get("q") ?? "").trim().toLowerCase();
 
-  const filtered = useMemo(
-    () => (activeCategory ? products.filter((p) => p.category === activeCategory) : products),
-    [activeCategory],
-  );
+  const filtered = useMemo(() => {
+    let list = activeCategory ? products.filter((p) => p.category === activeCategory) : products;
+    if (queryTerm) {
+      list = list.filter(
+        (p) =>
+          p.name.toLowerCase().includes(queryTerm) ||
+          p.color.toLowerCase().includes(queryTerm) ||
+          p.description.toLowerCase().includes(queryTerm) ||
+          p.category.toLowerCase().includes(queryTerm),
+      );
+    }
+    return list;
+  }, [activeCategory, queryTerm]);
 
   const collectionMeta = collection ? COLLECTION_META[collection] : null;
 

@@ -1,10 +1,13 @@
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useUser, useClerk } from "@clerk/react";
 import { useCart } from "@/hooks/use-cart";
 import { useRole } from "@/hooks/use-role";
-import { ShoppingBag, Menu, User, LogOut, Search, ShieldCheck, ChevronDown, Home as HomeIcon, Store, Mail, Info, Settings } from "lucide-react";
+import { ShoppingBag, Menu, User, LogOut, Search, ShieldCheck, ChevronDown, Home as HomeIcon, Store, Mail, Info, Settings, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose, SheetFooter } from "@/components/ui/sheet";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { products, categories } from "@/lib/data";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -46,6 +49,57 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
   const { setRole, isAdmin } = useRole();
   const { totalItems } = useCart();
   const [location, setLocation] = useLocation();
+
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const searchResults = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return [];
+    return products
+      .filter(
+        (p) =>
+          p.name.toLowerCase().includes(q) ||
+          p.color.toLowerCase().includes(q) ||
+          p.description.toLowerCase().includes(q) ||
+          p.category.toLowerCase().includes(q),
+      )
+      .slice(0, 8);
+  }, [searchQuery]);
+
+  const matchingCategories = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return [];
+    return categories.filter((c) => c.label.toLowerCase().includes(q) || c.tagline.toLowerCase().includes(q));
+  }, [searchQuery]);
+
+  useEffect(() => {
+    if (searchOpen) {
+      // Small delay so the dialog mounts before focusing
+      setTimeout(() => searchInputRef.current?.focus(), 80);
+    } else {
+      setSearchQuery("");
+    }
+  }, [searchOpen]);
+
+  // Cmd/Ctrl + K to open search
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const goToSearch = (q?: string) => {
+    const term = (q ?? searchQuery).trim();
+    if (term) setLocation(`/products?q=${encodeURIComponent(term)}`);
+    setSearchOpen(false);
+  };
 
   const handleSignOut = () => {
     setRole(null);
@@ -278,7 +332,14 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
               </Button>
             )}
 
-            <Button variant="ghost" size="icon" aria-label="Search" data-testid="btn-search" className="active:scale-95 transition-transform">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Search"
+              data-testid="btn-search"
+              onClick={() => setSearchOpen(true)}
+              className="active:scale-95 transition-transform"
+            >
               <Search className="h-5 w-5" />
             </Button>
 
@@ -496,6 +557,139 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
           © {new Date().getFullYear()} Wolfion. All rights reserved.
         </div>
       </footer>
+
+      {/* Search Dialog */}
+      <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
+        <DialogContent
+          className="sm:max-w-2xl p-0 gap-0 overflow-hidden top-[12%] translate-y-0 sm:top-[15%]"
+        >
+          <DialogTitle className="sr-only">Search</DialogTitle>
+
+          {/* Input */}
+          <div className="flex items-center gap-3 px-5 h-16 border-b border-neutral-200 dark:border-neutral-800">
+            <Search className="h-5 w-5 text-neutral-400 shrink-0" />
+            <input
+              ref={searchInputRef}
+              type="text"
+              placeholder="Search products, colors, categories…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") goToSearch(); }}
+              className="flex-1 bg-transparent border-0 outline-none text-base placeholder:text-neutral-400 text-neutral-900 dark:text-neutral-50"
+              data-testid="search-input"
+              autoComplete="off"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 shrink-0"
+                aria-label="Clear"
+                data-testid="search-clear"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+            <kbd className="hidden sm:inline-flex h-6 px-1.5 items-center text-[10px] font-mono text-neutral-500 bg-neutral-100 dark:bg-neutral-800 rounded border border-neutral-200 dark:border-neutral-700">
+              ESC
+            </kbd>
+          </div>
+
+          {/* Body */}
+          <div className="max-h-[60vh] overflow-y-auto">
+            {!searchQuery.trim() ? (
+              <div className="p-5">
+                <p className="text-[11px] uppercase tracking-[0.25em] text-neutral-500 mb-3">Browse by category</p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {categories.map((c) => (
+                    <Link
+                      key={c.id}
+                      href={`/products?category=${c.id}`}
+                      onClick={() => setSearchOpen(false)}
+                      className="rounded-xl border border-neutral-200 dark:border-neutral-800 p-3 hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors"
+                      data-testid={`search-cat-${c.id}`}
+                    >
+                      <span className="block text-sm font-medium">{c.label}</span>
+                      <span className="block text-xs text-neutral-500 mt-0.5 truncate">{c.tagline}</span>
+                    </Link>
+                  ))}
+                </div>
+
+                <p className="text-[11px] uppercase tracking-[0.25em] text-neutral-500 mt-6 mb-3">Try searching for</p>
+                <div className="flex flex-wrap gap-2">
+                  {["Crew", "Ankle", "Black", "White", "Kids", "Merino"].map((t) => (
+                    <button
+                      key={t}
+                      onClick={() => setSearchQuery(t)}
+                      className="px-3 h-8 rounded-full text-xs border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="p-3">
+                {matchingCategories.length > 0 && (
+                  <div className="mb-2">
+                    <p className="text-[10px] uppercase tracking-[0.25em] text-neutral-500 px-3 py-2">Categories</p>
+                    {matchingCategories.map((c) => (
+                      <Link
+                        key={c.id}
+                        href={`/products?category=${c.id}`}
+                        onClick={() => setSearchOpen(false)}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-colors"
+                      >
+                        <span className="h-9 w-9 rounded-md bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center">
+                          <Store className="h-4 w-4 text-neutral-500" />
+                        </span>
+                        <span className="flex-1">
+                          <span className="block text-sm font-medium">{c.label}</span>
+                          <span className="block text-xs text-neutral-500">{c.tagline}</span>
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+
+                {searchResults.length > 0 ? (
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.25em] text-neutral-500 px-3 py-2">Products</p>
+                    {searchResults.map((p) => (
+                      <Link
+                        key={p.id}
+                        href={`/product/${p.id}`}
+                        onClick={() => setSearchOpen(false)}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-colors"
+                        data-testid={`search-result-${p.id}`}
+                      >
+                        <span className="h-12 w-12 rounded-md overflow-hidden bg-neutral-100 dark:bg-neutral-800 shrink-0">
+                          <img src={p.image} alt={p.name} className="h-full w-full object-cover" />
+                        </span>
+                        <span className="flex-1 min-w-0">
+                          <span className="block text-sm font-medium truncate">{p.name}</span>
+                          <span className="block text-xs text-neutral-500 truncate">{p.color}</span>
+                        </span>
+                        <span className="text-sm font-medium shrink-0">Tk {p.price.toFixed(2)}</span>
+                      </Link>
+                    ))}
+                    <button
+                      onClick={() => goToSearch()}
+                      className="w-full mt-2 px-3 py-2.5 rounded-lg text-sm text-center text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-colors"
+                    >
+                      See all results for "{searchQuery}"
+                    </button>
+                  </div>
+                ) : matchingCategories.length === 0 ? (
+                  <div className="px-5 py-12 text-center">
+                    <p className="text-sm text-neutral-500">No matches for "{searchQuery}"</p>
+                    <p className="text-xs text-neutral-400 mt-1">Try a different keyword or browse the shop.</p>
+                  </div>
+                ) : null}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
