@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Minus, Plus, X, ArrowRight, ShoppingBag, Check, CreditCard, Banknote, Smartphone, QrCode, Wallet, Globe } from "lucide-react";
+import { Minus, Plus, X, ArrowRight, ShoppingBag, Check, Banknote } from "lucide-react";
 
 type PaymentMethod =
   | "bkash"
@@ -26,24 +26,50 @@ type PaymentMethod =
   | "unionpay"
   | "cod";
 
-const PAYMENT_OPTIONS: {
+type PayOption = {
   id: PaymentMethod;
   label: string;
   hint: string;
   badge: string;
-  badgeColor: string;
-  icon: typeof Smartphone;
-}[] = [
-  { id: "bkash", label: "bKash", hint: "Mobile wallet · instant", badge: "bKash", badgeColor: "bg-pink-600", icon: Smartphone },
-  { id: "nagad", label: "Nagad", hint: "Mobile wallet · instant", badge: "Nagad", badgeColor: "bg-orange-600", icon: Smartphone },
-  { id: "rocket", label: "Rocket", hint: "DBBL mobile banking", badge: "Rocket", badgeColor: "bg-purple-700", icon: Smartphone },
-  { id: "card", label: "Credit / Debit Card", hint: "Visa, Mastercard, Amex", badge: "Card", badgeColor: "bg-neutral-900 dark:bg-neutral-100 dark:text-neutral-900", icon: CreditCard },
-  { id: "paypal", label: "PayPal", hint: "Sign in with your PayPal account", badge: "PayPal", badgeColor: "bg-[#003087]", icon: Wallet },
-  { id: "alipay", label: "Alipay", hint: "Scan to pay · 支付宝", badge: "Alipay", badgeColor: "bg-[#1677FF]", icon: QrCode },
-  { id: "wechat", label: "WeChat Pay", hint: "Scan to pay · 微信支付", badge: "WeChat", badgeColor: "bg-[#07C160]", icon: QrCode },
-  { id: "unionpay", label: "UnionPay", hint: "China UnionPay · 银联", badge: "UnionPay", badgeColor: "bg-[#E21836]", icon: Globe },
-  { id: "cod", label: "Cash on Delivery", hint: "Pay when you receive", badge: "COD", badgeColor: "bg-emerald-700", icon: Banknote },
+  bg: string;
+  // Either an SVG logo URL or a custom renderer
+  logoUrl?: string;
+  logoColor?: string; // hex without #
+  wordmark?: { text: string; font?: string; italic?: boolean };
+};
+
+const PAYMENT_OPTIONS: PayOption[] = [
+  { id: "bkash", label: "bKash", hint: "Mobile wallet · instant", badge: "bKash", bg: "bg-[#E2136E]", wordmark: { text: "bKash", italic: true } },
+  { id: "nagad", label: "Nagad", hint: "Mobile wallet · instant", badge: "Nagad", bg: "bg-[#EC1C24]", wordmark: { text: "Nagad" } },
+  { id: "rocket", label: "Rocket", hint: "DBBL mobile banking", badge: "Rocket", bg: "bg-[#8C3494]", wordmark: { text: "Rocket" } },
+  { id: "card", label: "Credit / Debit Card", hint: "Visa, Mastercard, Amex", badge: "Card", bg: "bg-neutral-900", logoUrl: "https://cdn.simpleicons.org/visa/ffffff" },
+  { id: "paypal", label: "PayPal", hint: "Sign in with your PayPal account", badge: "PayPal", bg: "bg-[#003087]", logoUrl: "https://cdn.simpleicons.org/paypal/ffffff" },
+  { id: "alipay", label: "Alipay", hint: "Scan to pay · 支付宝", badge: "Alipay", bg: "bg-[#1677FF]", logoUrl: "https://cdn.simpleicons.org/alipay/ffffff" },
+  { id: "wechat", label: "WeChat Pay", hint: "Scan to pay · 微信支付", badge: "WeChat", bg: "bg-[#07C160]", logoUrl: "https://cdn.simpleicons.org/wechat/ffffff" },
+  { id: "unionpay", label: "UnionPay", hint: "China UnionPay · 银联", badge: "UnionPay", bg: "bg-gradient-to-br from-[#E21836] via-[#003E7F] to-[#005F2C]", wordmark: { text: "银联" } },
+  { id: "cod", label: "Cash on Delivery", hint: "Pay when you receive", badge: "COD", bg: "bg-emerald-700", wordmark: { text: "COD" } },
 ];
+
+function PayLogo({ opt, size = "md" }: { opt: PayOption; size?: "sm" | "md" }) {
+  const dim = size === "md" ? "h-10 w-10" : "h-6 w-6";
+  const textSize = size === "md" ? "text-[11px]" : "text-[8px]";
+  return (
+    <span className={`${dim} shrink-0 rounded-lg flex items-center justify-center text-white overflow-hidden ${opt.bg}`}>
+      {opt.logoUrl ? (
+        <img src={opt.logoUrl} alt={opt.label} className={size === "md" ? "h-5 w-5 object-contain" : "h-3.5 w-3.5 object-contain"} loading="lazy" />
+      ) : opt.id === "cod" ? (
+        <Banknote className={size === "md" ? "h-5 w-5" : "h-3.5 w-3.5"} />
+      ) : (
+        <span
+          className={`${textSize} font-bold tracking-tight leading-none ${opt.wordmark?.italic ? "italic" : ""}`}
+          style={{ fontFamily: "ui-sans-serif, system-ui" }}
+        >
+          {opt.wordmark?.text ?? opt.badge}
+        </span>
+      )}
+    </span>
+  );
+}
 
 export default function Cart() {
   const { items, updateQuantity, removeItem, clearCart, totalPrice, totalItems } = useCart();
@@ -221,13 +247,10 @@ export default function Cart() {
             </Button>
 
             {/* Payment chips preview */}
-            <div className="mt-5 flex flex-wrap gap-1.5 justify-center">
+            <div className="mt-5 flex flex-wrap gap-2 justify-center items-center">
               {PAYMENT_OPTIONS.map((p) => (
-                <span
-                  key={p.id}
-                  className={`text-[9px] uppercase tracking-widest px-2 py-1 rounded-full text-white ${p.badgeColor}`}
-                >
-                  {p.badge}
+                <span key={p.id} title={p.label} aria-label={p.label}>
+                  <PayLogo opt={p} size="sm" />
                 </span>
               ))}
             </div>
@@ -252,7 +275,6 @@ export default function Cart() {
           {/* Method picker */}
           <div className="space-y-2 mt-2">
             {PAYMENT_OPTIONS.map((opt) => {
-              const Icon = opt.icon;
               const active = method === opt.id;
               return (
                 <button
@@ -266,9 +288,7 @@ export default function Cart() {
                   }`}
                   data-testid={`pay-method-${opt.id}`}
                 >
-                  <span className={`h-10 w-10 shrink-0 rounded-lg flex items-center justify-center text-white text-[10px] font-bold uppercase tracking-wider ${opt.badgeColor}`}>
-                    <Icon className="h-5 w-5" />
-                  </span>
+                  <PayLogo opt={opt} size="md" />
                   <span className="flex-1 min-w-0">
                     <span className="block text-sm font-medium">{opt.label}</span>
                     <span className="block text-xs text-neutral-500 mt-0.5">{opt.hint}</span>
