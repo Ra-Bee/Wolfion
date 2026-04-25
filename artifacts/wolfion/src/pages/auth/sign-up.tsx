@@ -9,10 +9,10 @@ export default function SignUpPage() {
       className="min-h-[100dvh] w-full bg-black text-white grid place-items-center"
       style={{ colorScheme: "dark" }}
     >
-      <main className="w-full max-w-[380px] mx-auto -translate-x-5 flex flex-col items-center justify-center px-4 py-6">
+      <main className="w-full max-w-[380px] mx-auto flex flex-col items-center justify-center px-4 py-6">
         <div className="w-full mx-auto flex flex-col items-center text-center animate-in fade-in slide-in-from-bottom-2 duration-700">
-          {/* Header block (logo + titles) — nudged right */}
-          <div className="flex flex-col items-center translate-x-4">
+          {/* Header block (logo + titles) */}
+          <div className="flex flex-col items-center">
             {/* Logo */}
             <div className="h-12 w-12 rounded-xl bg-white overflow-hidden ring-1 ring-white/20 shadow-sm">
               <img src={wolfionMark} alt="Wolfion" className="h-full w-full object-cover" />
