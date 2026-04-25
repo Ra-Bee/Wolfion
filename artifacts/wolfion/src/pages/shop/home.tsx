@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { Link } from "wouter";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { ShopLayout } from "@/components/shop-layout";
@@ -11,15 +12,59 @@ const FADE = "animate-in fade-in slide-in-from-bottom-4 duration-1000 fill-mode-
 
 export default function ShopHome() {
   const sockCats = categories;
+  const heroFrameRef = useRef<HTMLDivElement>(null);
+  const heroImgRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    const frame = heroFrameRef.current;
+    const img = heroImgRef.current;
+    if (!frame) return;
+    if (window.matchMedia("(hover: none), (pointer: coarse)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let raf = 0;
+    const onMove = (e: MouseEvent) => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const rect = frame.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width;
+        const y = (e.clientY - rect.top) / rect.height;
+        const rx = (y - 0.5) * -6;
+        const ry = (x - 0.5) * 6;
+        frame.style.setProperty("--rx", `${rx}deg`);
+        frame.style.setProperty("--ry", `${ry}deg`);
+        if (img) {
+          img.style.transform = `translate3d(${(x - 0.5) * -14}px, ${(y - 0.5) * -10}px, 0) scale(1.08)`;
+        }
+      });
+    };
+    const onLeave = () => {
+      cancelAnimationFrame(raf);
+      frame.style.setProperty("--rx", "0deg");
+      frame.style.setProperty("--ry", "0deg");
+      if (img) img.style.transform = "translate3d(0,0,0) scale(1.05)";
+    };
+    const parent = frame.parentElement;
+    parent?.addEventListener("mousemove", onMove);
+    parent?.addEventListener("mouseleave", onLeave);
+    return () => {
+      parent?.removeEventListener("mousemove", onMove);
+      parent?.removeEventListener("mouseleave", onLeave);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
 
   return (
     <ShopLayout>
       {/* 1 — HERO */}
-      <section className="relative w-full bg-white dark:bg-neutral-950 px-3 pt-3 pb-5 sm:px-5 sm:pt-5 sm:pb-8 overflow-hidden">
+      <section
+        className="relative w-full bg-white dark:bg-neutral-950 px-3 pt-3 pb-5 sm:px-5 sm:pt-5 sm:pb-8 overflow-hidden"
+        style={{ perspective: "1400px" }}
+      >
         {/* Soft warm halo — gentle amber glow behind the frame */}
         <div
           aria-hidden
-          className="absolute inset-2 sm:inset-4 rounded-[24px] sm:rounded-[32px] blur-2xl opacity-30 pointer-events-none"
+          className="absolute inset-2 sm:inset-4 rounded-[24px] sm:rounded-[32px] blur-2xl pointer-events-none hero-halo-pulse"
           style={{
             background:
               "linear-gradient(135deg, #FCD34D 0%, #FB923C 60%, #F472B6 100%)",
@@ -28,14 +73,33 @@ export default function ShopHome() {
 
         {/* 3D beveled frame — warm-tinted bevel (light top-left, deep bottom-right) */}
         <div
-          className="relative rounded-[24px] sm:rounded-[32px] p-[2px] sm:p-[3px]"
+          ref={heroFrameRef}
+          className="relative rounded-[24px] sm:rounded-[32px] p-[2px] sm:p-[3px] hero-frame-3d"
           style={{
             background:
               "linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(252,211,77,0.45) 35%, rgba(0,0,0,0.25) 70%, rgba(0,0,0,0.6) 100%)",
             boxShadow:
               "0 24px 60px -22px rgba(0,0,0,0.5), 0 6px 22px -10px rgba(245,158,11,0.25), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -1px 0 rgba(0,0,0,0.4)",
+            transformStyle: "preserve-3d",
+            transform:
+              "rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg))",
+            transition: "transform 280ms cubic-bezier(0.22, 1, 0.36, 1)",
+            willChange: "transform",
           }}
         >
+          {/* Animated sheen sweep across the bevel */}
+          <div
+            aria-hidden
+            className="absolute inset-0 rounded-[24px] sm:rounded-[32px] pointer-events-none overflow-hidden"
+          >
+            <div
+              className="absolute -inset-[100%] hero-sheen"
+              style={{
+                background:
+                  "linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.5) 50%, transparent 65%)",
+              }}
+            />
+          </div>
           {/* Inner photo container */}
           <div
             className="relative h-[72svh] min-h-[460px] sm:h-[86svh] sm:min-h-[580px] w-full overflow-hidden rounded-[21px] sm:rounded-[28px] bg-black text-white"
@@ -45,9 +109,11 @@ export default function ShopHome() {
             }}
           >
             <img
+              ref={heroImgRef}
               src={imgPortrait}
               alt="Wolfion campaign"
               className="absolute inset-0 h-full w-full object-cover object-[center_75%] scale-105 animate-in fade-in zoom-in-95 duration-[2000ms] fill-mode-both"
+              style={{ transition: "transform 380ms cubic-bezier(0.22, 1, 0.36, 1)", willChange: "transform" }}
             />
             {/* Soft bottom-only gradient so the glass card has contrast without covering the model */}
             <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/55 to-transparent pointer-events-none" />
@@ -474,6 +540,33 @@ export default function ShopHome() {
         @keyframes wf-blob3 {
           0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.25; }
           50% { transform: translate(-6%, 4%) scale(1.2); opacity: 0.35; }
+        }
+        @keyframes wf-hero-float {
+          0%, 100% { transform: translateY(0) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); }
+          50% { transform: translateY(-6px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); }
+        }
+        @keyframes wf-hero-sheen {
+          0% { transform: translateX(-60%) rotate(8deg); opacity: 0; }
+          15% { opacity: 1; }
+          85% { opacity: 1; }
+          100% { transform: translateX(60%) rotate(8deg); opacity: 0; }
+        }
+        @keyframes wf-hero-halo {
+          0%, 100% { opacity: 0.22; transform: scale(1); }
+          50% { opacity: 0.36; transform: scale(1.04); }
+        }
+        .hero-frame-3d {
+          animation: wf-hero-float 7s ease-in-out infinite;
+        }
+        .hero-sheen {
+          animation: wf-hero-sheen 6.5s ease-in-out infinite;
+          animation-delay: 1.2s;
+        }
+        .hero-halo-pulse {
+          animation: wf-hero-halo 5.5s ease-in-out infinite;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .hero-frame-3d, .hero-sheen, .hero-halo-pulse { animation: none !important; }
         }
       `}</style>
     </ShopLayout>
