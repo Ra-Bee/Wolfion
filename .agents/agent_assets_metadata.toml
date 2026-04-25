@@ -41,3 +41,9 @@ id = "2W3I8utQaYbuvNW0hcn-0"
 uri = "file://attached_assets/exports/wolfion-android-apk-builder.tar.gz"
 type = "unspecified"
 title = "wolfion-android-apk-builder.tar.gz (with new icon)"
+
+[[outputs]]
+id = "gT5jMDibDH60tl4eJ_-3D"
+uri = "file://attached_assets/exports/wolfion-android-icons.tar.gz"
+type = "unspecified"
+title = "Wolfion Android App Icons (drop-in update)"
