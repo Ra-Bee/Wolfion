@@ -13,9 +13,18 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Minus, Plus, X, ArrowRight, ShoppingBag, Check, CreditCard, Banknote, Smartphone } from "lucide-react";
+import { Minus, Plus, X, ArrowRight, ShoppingBag, Check, CreditCard, Banknote, Smartphone, QrCode, Wallet, Globe } from "lucide-react";
 
-type PaymentMethod = "bkash" | "nagad" | "rocket" | "card" | "cod";
+type PaymentMethod =
+  | "bkash"
+  | "nagad"
+  | "rocket"
+  | "card"
+  | "paypal"
+  | "alipay"
+  | "wechat"
+  | "unionpay"
+  | "cod";
 
 const PAYMENT_OPTIONS: {
   id: PaymentMethod;
@@ -29,6 +38,10 @@ const PAYMENT_OPTIONS: {
   { id: "nagad", label: "Nagad", hint: "Mobile wallet · instant", badge: "Nagad", badgeColor: "bg-orange-600", icon: Smartphone },
   { id: "rocket", label: "Rocket", hint: "DBBL mobile banking", badge: "Rocket", badgeColor: "bg-purple-700", icon: Smartphone },
   { id: "card", label: "Credit / Debit Card", hint: "Visa, Mastercard, Amex", badge: "Card", badgeColor: "bg-neutral-900 dark:bg-neutral-100 dark:text-neutral-900", icon: CreditCard },
+  { id: "paypal", label: "PayPal", hint: "Sign in with your PayPal account", badge: "PayPal", badgeColor: "bg-[#003087]", icon: Wallet },
+  { id: "alipay", label: "Alipay", hint: "Scan to pay · 支付宝", badge: "Alipay", badgeColor: "bg-[#1677FF]", icon: QrCode },
+  { id: "wechat", label: "WeChat Pay", hint: "Scan to pay · 微信支付", badge: "WeChat", badgeColor: "bg-[#07C160]", icon: QrCode },
+  { id: "unionpay", label: "UnionPay", hint: "China UnionPay · 银联", badge: "UnionPay", badgeColor: "bg-[#E21836]", icon: Globe },
   { id: "cod", label: "Cash on Delivery", hint: "Pay when you receive", badge: "COD", badgeColor: "bg-emerald-700", icon: Banknote },
 ];
 
@@ -44,6 +57,8 @@ export default function Cart() {
   const [cardCvc, setCardCvc] = useState("");
   const [codAddress, setCodAddress] = useState("");
   const [codPhone, setCodPhone] = useState("");
+  const [paypalEmail, setPaypalEmail] = useState("");
+  const [unionpayNumber, setUnionpayNumber] = useState("");
 
   const shipping = totalPrice >= 50 || totalPrice === 0 ? 0 : 5;
   const tax = totalPrice * 0.08;
@@ -52,6 +67,9 @@ export default function Cart() {
   const isWallet = method === "bkash" || method === "nagad" || method === "rocket";
   const isCard = method === "card";
   const isCod = method === "cod";
+  const isPaypal = method === "paypal";
+  const isQr = method === "alipay" || method === "wechat";
+  const isUnionpay = method === "unionpay";
 
   const canPay =
     (isWallet && /^01[3-9]\d{8}$/.test(walletNumber.replace(/\s/g, ""))) ||
@@ -59,7 +77,10 @@ export default function Cart() {
       cardNumber.replace(/\s/g, "").length >= 13 &&
       cardExpiry.length >= 4 &&
       cardCvc.length >= 3) ||
-    (isCod && codAddress.trim().length > 5 && codPhone.trim().length >= 11);
+    (isCod && codAddress.trim().length > 5 && codPhone.trim().length >= 11) ||
+    (isPaypal && /\S+@\S+\.\S+/.test(paypalEmail)) ||
+    (isUnionpay && unionpayNumber.replace(/\s/g, "").length >= 13) ||
+    isQr;
 
   const handleConfirmPayment = () => {
     setProcessing(true);
@@ -364,6 +385,65 @@ export default function Cart() {
                   />
                 </div>
                 <p className="text-[11px] text-neutral-500">Pay in cash when your order arrives at your door.</p>
+              </div>
+            )}
+
+            {isPaypal && (
+              <div>
+                <Label htmlFor="paypalEmail" className="text-xs uppercase tracking-widest text-neutral-500">PayPal Email</Label>
+                <Input
+                  id="paypalEmail"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={paypalEmail}
+                  onChange={(e) => setPaypalEmail(e.target.value)}
+                  className="mt-1.5 h-12 rounded-lg"
+                  data-testid="input-paypal-email"
+                />
+                <p className="text-[11px] text-neutral-500 mt-2">You'll be redirected to PayPal to authorize the payment.</p>
+              </div>
+            )}
+
+            {isQr && (
+              <div className="rounded-xl border border-neutral-200 dark:border-neutral-800 p-5 flex flex-col items-center text-center">
+                <div className="h-32 w-32 rounded-lg bg-white dark:bg-neutral-100 p-3 shadow-sm">
+                  <div
+                    className="h-full w-full"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(45deg, #000 25%, transparent 25%), linear-gradient(-45deg, #000 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #000 75%), linear-gradient(-45deg, transparent 75%, #000 75%)",
+                      backgroundSize: "12px 12px",
+                      backgroundPosition: "0 0, 0 6px, 6px -6px, -6px 0",
+                    }}
+                    aria-hidden
+                  />
+                </div>
+                <p className="text-sm font-medium mt-4">
+                  Open your {method === "alipay" ? "Alipay" : "WeChat"} app
+                </p>
+                <p className="text-[11px] text-neutral-500 mt-1.5 max-w-xs">
+                  Scan the QR code to confirm the Tk {grandTotal.toFixed(2)} payment, then tap Pay below.
+                </p>
+              </div>
+            )}
+
+            {isUnionpay && (
+              <div>
+                <Label htmlFor="unionpayNumber" className="text-xs uppercase tracking-widest text-neutral-500">UnionPay Card Number</Label>
+                <Input
+                  id="unionpayNumber"
+                  placeholder="6222 0000 0000 0000"
+                  inputMode="numeric"
+                  maxLength={23}
+                  value={unionpayNumber}
+                  onChange={(e) => {
+                    const v = e.target.value.replace(/\D/g, "").slice(0, 19);
+                    setUnionpayNumber(v.replace(/(.{4})/g, "$1 ").trim());
+                  }}
+                  className="mt-1.5 h-12 rounded-lg"
+                  data-testid="input-unionpay-number"
+                />
+                <p className="text-[11px] text-neutral-500 mt-2">A one-time SMS code will be sent to verify the payment.</p>
               </div>
             )}
           </div>
