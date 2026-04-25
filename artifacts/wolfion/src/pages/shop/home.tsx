@@ -67,30 +67,12 @@ export default function ShopHome() {
       </section>
 
       {/* 2 — BRAND STORY (glass card) */}
-      <section className="relative container mx-auto px-5 py-20 sm:py-24 overflow-hidden">
-        {/* Ambient glow */}
-        <div
-          aria-hidden
-          className="absolute top-[20%] left-[10%] h-[40vh] w-[40vh] rounded-full opacity-25 blur-[120px] pointer-events-none"
-          style={{
-            background: "radial-gradient(circle, #1ABBC4 0%, transparent 70%)",
-            animation: "wf-blob1 20s ease-in-out infinite",
-          }}
-        />
-        <div
-          aria-hidden
-          className="absolute top-[10%] right-[15%] h-[35vh] w-[35vh] rounded-full opacity-25 blur-[110px] pointer-events-none"
-          style={{
-            background: "radial-gradient(circle, #D4AF37 0%, transparent 70%)",
-            animation: "wf-blob3 24s ease-in-out infinite",
-          }}
-        />
-
-        <div className={`relative max-w-3xl mx-auto ${FADE}`}>
+      <section className="relative container mx-auto px-5 py-8 sm:py-10 overflow-hidden">
+        <div className={`relative max-w-2xl mx-auto ${FADE}`}>
           {/* Halo */}
           <div
             aria-hidden
-            className="absolute -inset-4 rounded-[40px] blur-2xl opacity-30 pointer-events-none"
+            className="absolute -inset-2 rounded-[26px] blur-xl opacity-25 pointer-events-none"
             style={{
               background:
                 "linear-gradient(135deg, #1ABBC4 0%, #6E3CFB 50%, #D4AF37 100%)",
@@ -98,14 +80,14 @@ export default function ShopHome() {
           />
           {/* Gradient border */}
           <div
-            className="relative rounded-[32px] p-[1.5px]"
+            className="relative rounded-[20px] p-[1px]"
             style={{
               background:
                 "linear-gradient(135deg, rgba(26,187,196,0.5) 0%, rgba(110,60,251,0.3) 50%, rgba(212,175,55,0.5) 100%)",
             }}
           >
             <div
-              className="rounded-[31px] px-6 sm:px-12 py-12 sm:py-16 text-center border border-white/40 dark:border-white/10"
+              className="relative rounded-[19px] px-5 sm:px-8 py-5 sm:py-6 text-center border border-white/40 dark:border-white/10"
               style={{
                 background:
                   "linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.6) 100%)",
@@ -113,21 +95,20 @@ export default function ShopHome() {
                 WebkitBackdropFilter: "blur(20px) saturate(140%)",
               }}
             >
-              <div className="dark:hidden absolute inset-0 -z-10 rounded-[31px] bg-white/70" />
+              <div className="dark:hidden absolute inset-0 -z-10 rounded-[19px] bg-white/70" />
               <div
-                className="hidden dark:block absolute inset-0 -z-10 rounded-[31px]"
+                className="hidden dark:block absolute inset-0 -z-10 rounded-[19px]"
                 style={{
                   background:
                     "linear-gradient(180deg, rgba(15,25,35,0.9) 0%, rgba(8,18,28,0.95) 100%)",
                 }}
               />
-              <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 mb-5 bg-neutral-900/5 dark:bg-white/[0.06] border border-neutral-200 dark:border-white/10 text-[10px] uppercase tracking-[0.3em] text-neutral-600 dark:text-white/70">
-                <Sparkles className="h-3 w-3 text-amber-500" />
+              <div className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 mb-2 bg-neutral-900/5 dark:bg-white/[0.06] border border-neutral-200 dark:border-white/10 text-[9px] uppercase tracking-[0.25em] text-neutral-600 dark:text-white/70">
+                <Sparkles className="h-2.5 w-2.5 text-amber-500" />
                 The Brand
               </div>
-              <p className="text-xl sm:text-3xl font-light leading-[1.4] tracking-tight text-neutral-900 dark:text-neutral-50">
-                Wolfion is not just a brand,
-                <br />
+              <p className="text-sm sm:text-base font-light leading-[1.5] tracking-tight text-neutral-900 dark:text-neutral-50">
+                Wolfion isn't just a brand —{" "}
                 <span
                   className="font-serif italic"
                   style={{
@@ -138,9 +119,9 @@ export default function ShopHome() {
                     backgroundClip: "text",
                   }}
                 >
-                  it's a personality, comfort, identity, and fashion
+                  it's personality, comfort, identity & fashion
                 </span>
-                <span className="text-neutral-500 dark:text-neutral-400"> — built from the ground up.</span>
+                <span className="text-neutral-500 dark:text-neutral-400">, built from the ground up.</span>
               </p>
             </div>
           </div>
