@@ -477,51 +477,140 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
 
       <main className="flex-1">{children}</main>
 
-      <footer className="border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 mt-20">
-        <div className="container mx-auto px-5 py-12 grid grid-cols-2 md:grid-cols-4 gap-8 text-sm">
+      <footer className="relative mt-20 overflow-hidden bg-gradient-to-b from-neutral-50 to-white dark:from-neutral-950 dark:to-black">
+        {/* Ambient glow blobs */}
+        <div
+          aria-hidden
+          className="absolute top-[-10%] left-[-5%] h-[45vh] w-[45vh] rounded-full opacity-20 blur-[120px] pointer-events-none"
+          style={{ background: "radial-gradient(circle, #1ABBC4 0%, transparent 70%)" }}
+        />
+        <div
+          aria-hidden
+          className="absolute top-[20%] right-[-10%] h-[40vh] w-[40vh] rounded-full opacity-20 blur-[110px] pointer-events-none"
+          style={{ background: "radial-gradient(circle, #6E3CFB 0%, transparent 70%)" }}
+        />
+        <div
+          aria-hidden
+          className="absolute bottom-[-10%] left-[40%] h-[40vh] w-[40vh] rounded-full opacity-15 blur-[110px] pointer-events-none"
+          style={{ background: "radial-gradient(circle, #D4AF37 0%, transparent 70%)" }}
+        />
+        {/* Top hairline */}
+        <div
+          aria-hidden
+          className="absolute inset-x-0 top-0 h-[1px] pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(90deg, transparent 0%, rgba(26,187,196,0.5) 30%, rgba(212,175,55,0.5) 70%, transparent 100%)",
+          }}
+        />
+
+        <div className="relative container mx-auto px-5 pt-14 pb-10 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 text-sm">
+          {/* Brand block */}
           <div className="col-span-2 md:col-span-1">
-            <div className="font-semibold tracking-[0.3em] mb-3">WOLFION</div>
-            <p className="text-neutral-500 text-xs leading-relaxed max-w-xs">
+            <div
+              className="font-semibold tracking-[0.3em] mb-3 text-2xl"
+              style={{
+                background:
+                  "linear-gradient(135deg, #0E8B92 0%, #6E3CFB 50%, #D4AF37 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              WOLFION
+            </div>
+            <p className="text-neutral-600 dark:text-neutral-400 text-xs leading-relaxed max-w-xs">
               Sharp design. Uncompromising comfort. Crafted for those who know details matter.
             </p>
           </div>
+
+          {/* Bapari Socks links */}
           <div>
-            <div className="text-xs uppercase tracking-widest text-neutral-500 mb-3">Bapari Socks</div>
+            <div className="text-[10px] uppercase tracking-[0.3em] text-[#0E8B92] dark:text-[#5BD4DC] mb-3 font-semibold">Bapari Socks</div>
             <ul className="space-y-2 text-neutral-700 dark:text-neutral-300">
               {VAPORYX_SUBCATS.map((s) => (
                 <li key={s.path}>
-                  <Link href={s.path} className="hover:underline">{s.label}</Link>
+                  <Link href={s.path} className="hover:text-[#0E8B92] dark:hover:text-[#5BD4DC] transition-colors">{s.label}</Link>
                 </li>
               ))}
             </ul>
           </div>
+
+          {/* Collection links */}
           <div>
-            <div className="text-xs uppercase tracking-widest text-neutral-500 mb-3">Collection</div>
+            <div className="text-[10px] uppercase tracking-[0.3em] text-[#6E3CFB] dark:text-[#9D7BFF] mb-3 font-semibold">Collection</div>
             <ul className="space-y-2 text-neutral-700 dark:text-neutral-300">
               {COLLECTION_SUBCATS.map((s) => (
                 <li key={s.path}>
-                  <Link href={s.path} className="hover:underline">{s.label}</Link>
+                  <Link href={s.path} className="hover:text-[#6E3CFB] dark:hover:text-[#9D7BFF] transition-colors">{s.label}</Link>
                 </li>
               ))}
             </ul>
           </div>
-          <div>
-            <div className="text-xs uppercase tracking-widest text-neutral-500 mb-3">Newsletter</div>
-            <p className="text-xs text-neutral-500 mb-2">Drops, releases, and stories.</p>
-            <div className="flex gap-2">
-              <input
-                type="email"
-                placeholder="Your email"
-                className="flex-1 h-9 px-3 text-sm rounded-md border border-neutral-300 dark:border-neutral-700 bg-transparent focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100"
+
+          {/* Newsletter — glass card */}
+          <div className="col-span-2 md:col-span-1">
+            <div className="text-[10px] uppercase tracking-[0.3em] text-[#B8941F] dark:text-[#D4AF37] mb-3 font-semibold">Newsletter</div>
+            <p className="text-xs text-neutral-600 dark:text-neutral-400 mb-3">Drops, releases, and stories.</p>
+            <div className="relative">
+              {/* Glow halo */}
+              <div
+                aria-hidden
+                className="absolute -inset-1 rounded-2xl blur-md opacity-40 pointer-events-none"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #1ABBC4 0%, #6E3CFB 50%, #D4AF37 100%)",
+                }}
               />
-              <Button size="sm" className="h-9 rounded-md bg-neutral-900 dark:bg-white dark:text-neutral-900 active:scale-95 transition-transform">→</Button>
+              {/* Gradient ring */}
+              <div
+                className="relative rounded-2xl p-[1px]"
+                style={{
+                  background:
+                    "linear-gradient(135deg, rgba(26,187,196,0.6) 0%, rgba(110,60,251,0.4) 50%, rgba(212,175,55,0.6) 100%)",
+                }}
+              >
+                <div
+                  className="rounded-[15px] p-1.5 flex gap-1.5 border border-white/40 dark:border-white/10"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.65) 100%)",
+                    backdropFilter: "blur(20px) saturate(170%)",
+                    WebkitBackdropFilter: "blur(20px) saturate(170%)",
+                  }}
+                >
+                  <div className="dark:hidden absolute inset-0 -z-10 rounded-[15px] bg-white/70" />
+                  <div
+                    className="hidden dark:block absolute inset-0 -z-10 rounded-[15px]"
+                    style={{
+                      background:
+                        "linear-gradient(180deg, rgba(15,25,35,0.9) 0%, rgba(8,18,28,0.95) 100%)",
+                    }}
+                  />
+                  <input
+                    type="email"
+                    placeholder="Your email"
+                    className="flex-1 h-9 px-3 text-sm bg-transparent text-neutral-900 dark:text-white placeholder:text-neutral-500 dark:placeholder:text-neutral-400 focus:outline-none"
+                  />
+                  <Button
+                    size="sm"
+                    className="h-9 px-4 rounded-[11px] text-white font-semibold border-0 active:scale-95 transition-transform shadow-[0_6px_20px_-6px_rgba(26,187,196,0.6)]"
+                    style={{
+                      background:
+                        "linear-gradient(135deg, #1ABBC4 0%, #6E3CFB 60%, #D4AF37 100%)",
+                    }}
+                  >
+                    →
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Social / Contact links */}
-        <div className="container mx-auto px-5 pb-8">
-          <div className="text-xs uppercase tracking-widest text-neutral-500 mb-3 text-center sm:text-left">Follow us</div>
+        {/* Social / Contact links — glass pills with gradient ring */}
+        <div className="relative container mx-auto px-5 pb-10">
+          <div className="text-[10px] uppercase tracking-[0.3em] text-neutral-600 dark:text-neutral-400 mb-4 text-center sm:text-left font-semibold">Follow us</div>
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
             {CONTACT_LINKS.map((link) => {
               const Icon = link.icon;
@@ -534,27 +623,114 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                   rel={external ? "noopener noreferrer" : undefined}
                   aria-label={link.label}
                   title={`${link.label} · ${link.handle}`}
-                  className="h-10 w-10 rounded-full border border-neutral-200 dark:border-neutral-800 flex items-center justify-center text-neutral-700 dark:text-neutral-300 hover:bg-neutral-900 hover:text-white dark:hover:bg-white dark:hover:text-neutral-900 transition-colors"
+                  className="group relative block"
                   data-testid={`footer-${link.testid}`}
                 >
-                  <Icon className="h-4 w-4" />
+                  {/* Glow halo on hover */}
+                  <div
+                    aria-hidden
+                    className="absolute -inset-1 rounded-full blur-md opacity-0 group-hover:opacity-70 transition-opacity duration-500 pointer-events-none"
+                    style={{
+                      background:
+                        "linear-gradient(135deg, #1ABBC4 0%, #6E3CFB 50%, #D4AF37 100%)",
+                    }}
+                  />
+                  {/* Gradient ring */}
+                  <div
+                    className="relative rounded-full p-[1px] transition-transform duration-500 group-hover:-translate-y-0.5"
+                    style={{
+                      background:
+                        "linear-gradient(135deg, rgba(26,187,196,0.5) 0%, rgba(110,60,251,0.4) 50%, rgba(212,175,55,0.5) 100%)",
+                    }}
+                  >
+                    <div
+                      className="h-10 w-10 rounded-full flex items-center justify-center text-neutral-800 dark:text-neutral-100 border border-white/40 dark:border-white/10"
+                      style={{
+                        background:
+                          "linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.6) 100%)",
+                        backdropFilter: "blur(14px) saturate(170%)",
+                        WebkitBackdropFilter: "blur(14px) saturate(170%)",
+                      }}
+                    >
+                      <div className="dark:hidden absolute inset-0 -z-10 rounded-full bg-white/70" />
+                      <div
+                        className="hidden dark:block absolute inset-0 -z-10 rounded-full"
+                        style={{
+                          background:
+                            "linear-gradient(180deg, rgba(15,25,35,0.9) 0%, rgba(8,18,28,0.95) 100%)",
+                        }}
+                      />
+                      <Icon className="h-4 w-4 relative" />
+                    </div>
+                  </div>
                 </a>
               );
             })}
           </div>
         </div>
-        <div className="border-t border-neutral-200 dark:border-neutral-800">
-          <div className="container mx-auto px-6 py-12 sm:py-14 max-w-3xl">
-            <p
-              className="text-center text-sm sm:text-base font-light leading-[1.7] tracking-wide text-neutral-600 dark:text-neutral-400"
-              data-testid="brand-statement"
+
+        {/* Brand statement — glass card */}
+        <div className="relative container mx-auto px-5 pb-10">
+          <div className="relative max-w-3xl mx-auto">
+            <div
+              aria-hidden
+              className="absolute -inset-2 rounded-[26px] blur-xl opacity-25 pointer-events-none"
+              style={{
+                background:
+                  "linear-gradient(135deg, #1ABBC4 0%, #6E3CFB 50%, #D4AF37 100%)",
+              }}
+            />
+            <div
+              className="relative rounded-[20px] p-[1px]"
+              style={{
+                background:
+                  "linear-gradient(135deg, rgba(26,187,196,0.4) 0%, rgba(110,60,251,0.3) 50%, rgba(212,175,55,0.4) 100%)",
+              }}
             >
-              Wolfion stands for <span className="text-neutral-900 dark:text-neutral-100">fair pay, respect, and responsibility</span> to the people who create our products, along with a commitment to <span className="font-serif italic text-neutral-900 dark:text-neutral-100">sustainability</span>—built into every product we create.
-            </p>
+              <div
+                className="relative rounded-[19px] px-6 py-7 sm:px-10 sm:py-9 border border-white/40 dark:border-white/10"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.6) 100%)",
+                  backdropFilter: "blur(20px) saturate(140%)",
+                  WebkitBackdropFilter: "blur(20px) saturate(140%)",
+                }}
+              >
+                <div className="dark:hidden absolute inset-0 -z-10 rounded-[19px] bg-white/70" />
+                <div
+                  className="hidden dark:block absolute inset-0 -z-10 rounded-[19px]"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, rgba(15,25,35,0.9) 0%, rgba(8,18,28,0.95) 100%)",
+                  }}
+                />
+                <p
+                  className="text-center text-sm sm:text-base font-light leading-[1.7] tracking-wide text-neutral-700 dark:text-neutral-300"
+                  data-testid="brand-statement"
+                >
+                  Wolfion stands for{" "}
+                  <span className="text-neutral-900 dark:text-neutral-100 font-medium">fair pay, respect, and responsibility</span>{" "}
+                  to the people who create our products, along with a commitment to{" "}
+                  <span className="font-serif italic text-[#0E8B92] dark:text-[#5BD4DC] font-medium">sustainability</span>—built into every product we create.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="border-t border-neutral-200 dark:border-neutral-800 py-5 text-center text-xs text-neutral-500">
-          © {new Date().getFullYear()} Wolfion. All rights reserved.
+
+        {/* Bottom hairline + copyright */}
+        <div className="relative">
+          <div
+            aria-hidden
+            className="absolute inset-x-0 top-0 h-[1px] pointer-events-none"
+            style={{
+              background:
+                "linear-gradient(90deg, transparent 0%, rgba(26,187,196,0.4) 30%, rgba(212,175,55,0.4) 70%, transparent 100%)",
+            }}
+          />
+          <div className="py-5 text-center text-xs text-neutral-600 dark:text-neutral-500">
+            © {new Date().getFullYear()} <span className="font-semibold tracking-[0.2em] text-neutral-800 dark:text-neutral-300">WOLFION</span>. All rights reserved.
+          </div>
         </div>
       </footer>
 
