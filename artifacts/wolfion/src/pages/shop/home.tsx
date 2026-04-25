@@ -19,49 +19,71 @@ export default function ShopHome() {
         <img
           src={imgPortrait}
           alt="Wolfion campaign"
-          className="absolute inset-0 h-full w-full object-cover object-[center_75%] opacity-80 scale-105 animate-in fade-in zoom-in-95 duration-[2000ms] fill-mode-both"
+          className="absolute inset-0 h-full w-full object-cover object-[center_75%] scale-105 animate-in fade-in zoom-in-95 duration-[2000ms] fill-mode-both"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-black/30" />
+        {/* Soft bottom-only gradient so the glass card has contrast without covering the model */}
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/55 to-transparent pointer-events-none" />
 
-        <div className="relative z-10 h-full container mx-auto px-5 flex flex-col justify-end pb-12 sm:pb-24">
-          <div className={`max-w-3xl ${FADE} delay-300`}>
-            <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 mb-5 bg-white/[0.08] backdrop-blur-md border border-white/15 text-[10px] uppercase tracking-[0.3em] text-white/85">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              Wolfion · 2026 Edition
-            </div>
-            <h1
-              className="text-6xl sm:text-8xl font-light leading-[0.92] tracking-tight"
+        <div className="relative z-10 h-full container mx-auto px-4 flex flex-col justify-end pb-6 sm:pb-12">
+          <div
+            className={`relative max-w-2xl ${FADE} delay-300`}
+          >
+            {/* iOS-style Liquid Glass card */}
+            <div
+              className="rounded-[28px] p-[1px]"
               style={{
                 background:
-                  "linear-gradient(135deg, #ffffff 0%, #B8E8EC 45%, #D4AF37 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
+                  "linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.3) 100%)",
               }}
             >
-              WOLFION
-            </h1>
-            <p className="mt-6 text-xl sm:text-3xl text-white/90 font-light tracking-wide leading-snug">
-              Let your fashion <span className="font-serif italic text-white">speak</span> before you do.
-            </p>
-            <p className="mt-3 text-sm sm:text-base text-white/65 font-light tracking-[0.15em] uppercase">
-              Built different. Own the rest.
-            </p>
-            <div className="mt-10">
-              <Link href="/products">
-                <button
-                  className="group relative bg-gradient-to-r from-white via-white to-[#F2E5C0] text-neutral-900 px-9 h-13 py-4 rounded-full text-sm font-medium tracking-[0.15em] uppercase active:scale-[0.98] transition-all inline-flex items-center shadow-[0_15px_40px_-10px_rgba(255,255,255,0.5)] hover:shadow-[0_20px_50px_-10px_rgba(212,175,55,0.6)]"
-                  data-testid="hero-shop-now"
+              <div
+                className="rounded-[27px] px-6 py-7 sm:px-9 sm:py-9 border border-white/15 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.6)]"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.06) 100%)",
+                  backdropFilter: "blur(24px) saturate(170%)",
+                  WebkitBackdropFilter: "blur(24px) saturate(170%)",
+                }}
+              >
+                <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 mb-4 bg-white/[0.10] backdrop-blur-md border border-white/20 text-[10px] uppercase tracking-[0.3em] text-white/90">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  Wolfion · 2026 Edition
+                </div>
+                <h1
+                  className="text-5xl sm:text-7xl font-light leading-[0.95] tracking-tight"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #ffffff 0%, #B8E8EC 45%, #D4AF37 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                  }}
                 >
-                  Shop Now <ArrowRight className="ml-2.5 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </button>
-              </Link>
+                  WOLFION
+                </h1>
+                <p className="mt-3 text-lg sm:text-2xl text-white/95 font-light tracking-wide leading-snug">
+                  Let your fashion <span className="font-serif italic text-white">speak</span> before you do.
+                </p>
+                <p className="mt-2 text-[11px] sm:text-xs text-white/70 font-light tracking-[0.18em] uppercase">
+                  Built different. Own the rest.
+                </p>
+                <div className="mt-5">
+                  <Link href="/products">
+                    <button
+                      className="group relative bg-gradient-to-r from-white via-white to-[#F2E5C0] text-neutral-900 px-7 h-11 rounded-full text-[13px] font-medium tracking-[0.15em] uppercase active:scale-[0.98] transition-all inline-flex items-center shadow-[0_15px_40px_-10px_rgba(255,255,255,0.5)] hover:shadow-[0_20px_50px_-10px_rgba(212,175,55,0.6)]"
+                      data-testid="hero-shop-now"
+                    >
+                      Shop Now <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </button>
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Scroll cue */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/60 text-[10px] uppercase tracking-[0.4em] animate-bounce">
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-white/60 text-[10px] uppercase tracking-[0.4em] animate-bounce">
           Scroll
         </div>
       </section>
@@ -195,7 +217,6 @@ export default function ShopHome() {
                       alt={c.label}
                       className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent" />
                     {/* Glossy sheen */}
                     <div
                       aria-hidden
@@ -205,9 +226,20 @@ export default function ShopHome() {
                           "linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.2) 50%, transparent 70%)",
                       }}
                     />
-                    <div className="absolute bottom-6 left-6 right-6 text-white">
-                      <h3 className="text-xl font-medium tracking-wide">{c.label}</h3>
-                      <p className="text-xs text-white/80 mt-1 font-light">{c.tagline}</p>
+                    {/* Liquid Glass label chip */}
+                    <div className="absolute bottom-2 left-2 right-2 sm:bottom-3 sm:left-3 sm:right-3">
+                      <div
+                        className="rounded-2xl px-3 py-2.5 border border-white/25 shadow-[0_8px_24px_-6px_rgba(0,0,0,0.4)]"
+                        style={{
+                          background:
+                            "linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 100%)",
+                          backdropFilter: "blur(20px) saturate(170%)",
+                          WebkitBackdropFilter: "blur(20px) saturate(170%)",
+                        }}
+                      >
+                        <h3 className="text-[13px] sm:text-sm font-semibold text-white tracking-wide leading-tight">{c.label}</h3>
+                        <p className="text-[10px] sm:text-[11px] text-white/85 mt-0.5 font-light leading-tight truncate">{c.tagline}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -281,7 +313,6 @@ export default function ShopHome() {
                       alt={col.label}
                       className={`absolute inset-0 h-full w-full object-cover ${col.pos} transition-transform duration-[1200ms] group-hover:scale-105`}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
                     <div
                       aria-hidden
                       className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
@@ -290,12 +321,23 @@ export default function ShopHome() {
                           "linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.18) 50%, transparent 70%)",
                       }}
                     />
-                    <div className="absolute bottom-7 left-7 right-7 text-white">
-                      <p className="text-[10px] uppercase tracking-[0.4em] text-white/80 mb-2">Collection</p>
-                      <h3 className="text-2xl sm:text-3xl font-light">{col.label}</h3>
-                      <span className="inline-flex items-center mt-3 text-sm font-medium">
-                        Shop now <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                      </span>
+                    {/* Liquid Glass label chip */}
+                    <div className="absolute bottom-2 left-2 right-2 sm:bottom-3 sm:left-3 sm:right-3">
+                      <div
+                        className="rounded-2xl px-3 py-2.5 border border-white/25 shadow-[0_8px_24px_-6px_rgba(0,0,0,0.4)]"
+                        style={{
+                          background:
+                            "linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 100%)",
+                          backdropFilter: "blur(20px) saturate(170%)",
+                          WebkitBackdropFilter: "blur(20px) saturate(170%)",
+                        }}
+                      >
+                        <p className="text-[9px] uppercase tracking-[0.35em] text-white/75 leading-none">Collection</p>
+                        <h3 className="text-[15px] sm:text-base font-semibold text-white tracking-wide leading-tight mt-1">{col.label}</h3>
+                        <span className="inline-flex items-center mt-1 text-[11px] text-white/85 font-light">
+                          Shop now <ArrowRight className="ml-1.5 h-3 w-3 transition-transform group-hover:translate-x-1" />
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -308,31 +350,51 @@ export default function ShopHome() {
       {/* 5 — EDITORIAL CRAFT BANNER */}
       <section className="relative h-[42vh] min-h-[300px] sm:h-[55vh] sm:min-h-[400px] overflow-hidden">
         <img src={imgSocks} alt="Wolfion craftsmanship" className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/40 to-transparent" />
-        <div className="relative z-10 h-full container mx-auto px-5 flex items-center">
-          <div className={`max-w-lg text-white ${FADE}`}>
-            <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 mb-5 bg-white/[0.08] backdrop-blur-md border border-white/15 text-[10px] uppercase tracking-[0.3em] text-white/85">
-              <Sparkles className="h-3 w-3 text-amber-300" />
-              The Craft
-            </div>
-            <h2 className="text-4xl sm:text-6xl font-light leading-[1.05] tracking-tight">
-              Every stitch
-              <br />
-              <span
-                className="font-serif italic"
+        {/* subtle left-side gradient only, photo stays clean */}
+        <div className="absolute inset-y-0 left-0 w-2/3 bg-gradient-to-r from-black/45 to-transparent pointer-events-none" />
+        <div className="relative z-10 h-full container mx-auto px-4 sm:px-5 flex items-center">
+          <div className={`max-w-md ${FADE}`}>
+            {/* iOS Liquid Glass card */}
+            <div
+              className="rounded-[24px] p-[1px]"
+              style={{
+                background:
+                  "linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.3) 100%)",
+              }}
+            >
+              <div
+                className="rounded-[23px] px-5 py-5 sm:px-7 sm:py-7 border border-white/15 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.5)]"
                 style={{
-                  background: "linear-gradient(135deg, #B8E8EC 0%, #D4AF37 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
+                  background:
+                    "linear-gradient(180deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.06) 100%)",
+                  backdropFilter: "blur(22px) saturate(170%)",
+                  WebkitBackdropFilter: "blur(22px) saturate(170%)",
                 }}
               >
-                considered.
-              </span>
-            </h2>
-            <p className="mt-6 text-base text-white/85 leading-relaxed font-light max-w-md">
-              Spun from Pima cotton and Italian merino. Tensioned by hand. Finished without compromise.
-            </p>
+                <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 mb-3 bg-white/[0.10] backdrop-blur-md border border-white/20 text-[10px] uppercase tracking-[0.3em] text-white/90">
+                  <Sparkles className="h-3 w-3 text-amber-300" />
+                  The Craft
+                </div>
+                <h2 className="text-3xl sm:text-5xl font-light leading-[1.05] tracking-tight text-white">
+                  Every stitch
+                  <br />
+                  <span
+                    className="font-serif italic"
+                    style={{
+                      background: "linear-gradient(135deg, #B8E8EC 0%, #D4AF37 100%)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                    }}
+                  >
+                    considered.
+                  </span>
+                </h2>
+                <p className="mt-3 text-[13px] sm:text-sm text-white/90 leading-relaxed font-light">
+                  Spun from Pima cotton and Italian merino. Tensioned by hand. Finished without compromise.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
