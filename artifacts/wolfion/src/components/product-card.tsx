@@ -7,18 +7,6 @@ type Props = {
   ratio?: "tall" | "square";
 };
 
-const BADGE_STYLES: Record<string, string> = {
-  new: "bg-emerald-600 text-white",
-  bestseller: "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900",
-  limited: "bg-amber-500 text-neutral-950",
-};
-
-const BADGE_LABEL: Record<string, string> = {
-  new: "New",
-  bestseller: "Bestseller",
-  limited: "Limited",
-};
-
 export function ProductCard({ product, ratio = "tall" }: Props) {
   const aspect = ratio === "tall" ? "aspect-[4/5]" : "aspect-square";
 
@@ -46,20 +34,10 @@ export function ProductCard({ product, ratio = "tall" }: Props) {
           <img src={imgLogoMark} alt="" aria-hidden className="h-6 w-6 object-contain opacity-90" />
         </div>
 
-        {product.badge ? (
-          <span
-            className={`absolute top-3 left-3 backdrop-blur-md text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-full shadow-sm ${
-              BADGE_STYLES[product.badge] ?? "bg-white/85 text-neutral-900"
-            }`}
-          >
-            {BADGE_LABEL[product.badge]}
+        {product.inventory < 200 && (
+          <span className="absolute top-3 left-3 bg-white/85 dark:bg-neutral-950/85 backdrop-blur-md text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-full shadow-sm">
+            Low stock
           </span>
-        ) : (
-          product.inventory < 100 && (
-            <span className="absolute top-3 left-3 bg-white/85 dark:bg-neutral-950/85 backdrop-blur-md text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-full shadow-sm">
-              Low stock
-            </span>
-          )
         )}
       </div>
 

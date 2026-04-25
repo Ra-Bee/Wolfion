@@ -1,8 +1,7 @@
 import { Link } from "wouter";
 import { ArrowRight } from "lucide-react";
 import { ShopLayout } from "@/components/shop-layout";
-import { ProductCard } from "@/components/product-card";
-import { products } from "@/lib/data";
+import { categories } from "@/lib/data";
 import imgPortrait from "@assets/Image_20260416035728_55_2_1776716993092.jpg";
 import imgSocks from "@assets/Image_20260416025624_54_2_1776717008197.jpg";
 import imgWomenswear from "@assets/wolfion_womenswear.png";
@@ -11,15 +10,7 @@ import imgKidswear from "@assets/wolfion_kidswear.png";
 const FADE = "animate-in fade-in slide-in-from-bottom-4 duration-1000 fill-mode-both";
 
 export default function ShopHome() {
-  // Featured socks (the centerpiece)
-  const featuredSocks = products
-    .filter((p) => p.category === "socks")
-    .slice(0, 6);
-
-  // Apparel pieces (smaller side section)
-  const apparelPieces = products
-    .filter((p) => p.category !== "socks")
-    .slice(0, 4);
+  const sockCats = categories.filter((c) => c.id !== "others").slice(0, 3);
 
   return (
     <ShopLayout>
@@ -43,21 +34,13 @@ export default function ShopHome() {
             <p className="mt-3 text-sm sm:text-base text-white/65 font-light tracking-[0.15em] uppercase">
               Built different. Own the rest.
             </p>
-            <div className="mt-10 flex flex-wrap gap-3">
+            <div className="mt-10">
               <Link href="/products">
                 <button
                   className="bg-white text-neutral-900 px-9 h-13 py-4 rounded-full text-sm font-medium tracking-[0.15em] uppercase hover:bg-neutral-100 active:scale-[0.98] transition-all inline-flex items-center shadow-2xl"
                   data-testid="hero-shop-now"
                 >
                   Shop Now <ArrowRight className="ml-2.5 h-4 w-4" />
-                </button>
-              </Link>
-              <Link href="/products?category=socks">
-                <button
-                  className="bg-transparent text-white border border-white/40 px-7 h-13 py-4 rounded-full text-sm font-medium tracking-[0.15em] uppercase hover:bg-white/10 active:scale-[0.98] transition-all inline-flex items-center"
-                  data-testid="hero-socks"
-                >
-                  Bapari Socks
                 </button>
               </Link>
             </div>
@@ -70,7 +53,7 @@ export default function ShopHome() {
         </div>
       </section>
 
-      {/* 2 — BRAND STORY */}
+      {/* 2 — BRAND STORY (compact) */}
       <section className="container mx-auto px-5 py-16 sm:py-20">
         <div className={`max-w-3xl mx-auto text-center ${FADE}`}>
           <p className="text-[11px] uppercase tracking-[0.5em] text-neutral-500 mb-5">The brand</p>
@@ -83,92 +66,49 @@ export default function ShopHome() {
         </div>
       </section>
 
-      {/* 3 — BAPARI SOCKS · The centerpiece */}
-      {featuredSocks.length > 0 && (
-        <section className="container mx-auto px-5 pb-20 sm:pb-24">
-          <div className={`flex items-end justify-between mb-8 sm:mb-10 ${FADE}`}>
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.5em] text-neutral-500 mb-3">Bapari Socks</p>
-              <h2 className="text-4xl sm:text-5xl font-light tracking-tight">Engineered Comfort</h2>
-              <p className="mt-3 text-sm text-neutral-500 max-w-md font-light">
-                Every pair carries the Wolfion mark. Combed cotton, reinforced heel & toe, built to last.
-              </p>
-            </div>
-            <Link href="/products?category=socks" className="hidden sm:inline-flex items-center text-sm font-medium hover:underline">
-              View all <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
+      {/* 3 — BAPARI SOCKS · Engineered Comfort */}
+      <section className="container mx-auto px-5 pb-20 sm:pb-24">
+        <div className={`flex items-end justify-between mb-10 ${FADE}`}>
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.5em] text-neutral-500 mb-3">Bapari Socks</p>
+            <h2 className="text-4xl sm:text-5xl font-light tracking-tight">Engineered Comfort</h2>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-x-6 sm:gap-y-10">
-            {featuredSocks.map((p, i) => (
-              <div
-                key={p.id}
-                className={FADE}
-                style={{ animationDelay: `${i * 80}ms` }}
-              >
-                <ProductCard product={p} />
+          <Link href="/products" className="hidden sm:inline-flex items-center text-sm font-medium hover:underline">
+            View all <ArrowRight className="ml-2 h-4 w-4" />
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-7">
+          {sockCats.map((c, i) => (
+            <Link
+              key={c.id}
+              href={`/products?category=${c.id}`}
+              className={`group block ${FADE}`}
+              style={{ animationDelay: `${i * 120}ms` }}
+              data-testid={`home-sock-${c.id}`}
+            >
+              <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-neutral-100 dark:bg-neutral-900 shadow-lg transition-all duration-700 group-hover:shadow-2xl group-hover:-translate-y-1.5">
+                <img
+                  src={c.image}
+                  alt={c.label}
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+                <div className="absolute bottom-6 left-6 right-6 text-white">
+                  <h3 className="text-xl font-medium tracking-wide">{c.label}</h3>
+                  <p className="text-xs text-white/80 mt-1 font-light">{c.tagline}</p>
+                </div>
               </div>
-            ))}
-          </div>
-          <div className="mt-10 text-center sm:hidden">
-            <Link href="/products?category=socks" className="inline-flex items-center text-sm font-medium underline underline-offset-4">
-              View all socks <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
-          </div>
-        </section>
-      )}
-
-      {/* 4 — EDITORIAL CRAFT BANNER */}
-      <section className="relative h-[42vh] min-h-[300px] sm:h-[55vh] sm:min-h-[400px] overflow-hidden">
-        <img src={imgSocks} alt="Wolfion craftsmanship" className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 to-transparent" />
-        <div className="relative z-10 h-full container mx-auto px-5 flex items-center">
-          <div className={`max-w-lg text-white ${FADE}`}>
-            <p className="text-[11px] uppercase tracking-[0.5em] text-white/70 mb-5">The craft</p>
-            <h2 className="text-4xl sm:text-6xl font-light leading-[1.05] tracking-tight">
-              Every stitch<br /><span className="font-serif italic">considered.</span>
-            </h2>
-            <p className="mt-6 text-base text-white/85 leading-relaxed font-light max-w-md">
-              Spun from Pima cotton and Italian merino. Tensioned by hand. Finished without compromise.
-            </p>
-            <Link href="/about" className="inline-flex items-center mt-7 text-sm font-medium border-b border-white/60 pb-1 hover:border-white">
-              Our story <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </div>
+          ))}
         </div>
       </section>
 
-      {/* 5 — APPAREL & ACCESSORIES (smaller side section) */}
-      {apparelPieces.length > 0 && (
-        <section className="container mx-auto px-5 pt-20 sm:pt-24 pb-20 sm:pb-24">
-          <div className={`flex items-end justify-between mb-8 sm:mb-10 ${FADE}`}>
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.5em] text-neutral-500 mb-3">Beyond socks</p>
-              <h2 className="text-4xl sm:text-5xl font-light tracking-tight">Wear the Wolf</h2>
-              <p className="mt-3 text-sm text-neutral-500 max-w-md font-light">
-                Tees, hoodies and accessories — all carrying the Wolfion mark.
-              </p>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-x-6 sm:gap-y-10">
-            {apparelPieces.map((p, i) => (
-              <div
-                key={p.id}
-                className={FADE}
-                style={{ animationDelay: `${i * 80}ms` }}
-              >
-                <ProductCard product={p} />
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* 6 — COLLECTIONS */}
+      {/* 4 — COLLECTION · Everyday Essentials */}
       <section className="container mx-auto px-5 pb-24 sm:pb-28">
-        <div className={`flex items-end justify-between mb-8 sm:mb-10 ${FADE}`}>
+        <div className={`flex items-end justify-between mb-10 ${FADE}`}>
           <div>
-            <p className="text-[11px] uppercase tracking-[0.5em] text-neutral-500 mb-3">Collections</p>
-            <h2 className="text-4xl sm:text-5xl font-light tracking-tight">For everyone</h2>
+            <p className="text-[11px] uppercase tracking-[0.5em] text-neutral-500 mb-3">Collection</p>
+            <h2 className="text-4xl sm:text-5xl font-light tracking-tight">Everyday Essentials</h2>
           </div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
@@ -199,6 +139,23 @@ export default function ShopHome() {
               </div>
             </Link>
           ))}
+        </div>
+      </section>
+
+      {/* 5 — EDITORIAL CRAFT BANNER */}
+      <section className="relative h-[42vh] min-h-[300px] sm:h-[55vh] sm:min-h-[400px] overflow-hidden">
+        <img src={imgSocks} alt="Wolfion craftsmanship" className="absolute inset-0 h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 to-transparent" />
+        <div className="relative z-10 h-full container mx-auto px-5 flex items-center">
+          <div className={`max-w-lg text-white ${FADE}`}>
+            <p className="text-[11px] uppercase tracking-[0.5em] text-white/70 mb-5">The craft</p>
+            <h2 className="text-4xl sm:text-6xl font-light leading-[1.05] tracking-tight">
+              Every stitch<br /><span className="font-serif italic">considered.</span>
+            </h2>
+            <p className="mt-6 text-base text-white/85 leading-relaxed font-light max-w-md">
+              Spun from Pima cotton and Italian merino. Tensioned by hand. Finished without compromise.
+            </p>
+          </div>
         </div>
       </section>
     </ShopLayout>
