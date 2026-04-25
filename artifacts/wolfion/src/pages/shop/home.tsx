@@ -15,7 +15,13 @@ export default function ShopHome() {
   return (
     <ShopLayout>
       {/* 1 — HERO */}
-      <section className="relative h-[75svh] min-h-[480px] sm:h-[90svh] sm:min-h-[600px] w-full overflow-hidden bg-black text-white">
+      <section
+        className="relative h-[75svh] min-h-[480px] sm:h-[90svh] sm:min-h-[600px] w-full overflow-hidden bg-black text-white"
+        style={{
+          boxShadow:
+            "inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(0,0,0,0.55), inset 0 0 80px rgba(0,0,0,0.35)",
+        }}
+      >
         <img
           src={imgPortrait}
           alt="Wolfion campaign"
@@ -23,6 +29,52 @@ export default function ShopHome() {
         />
         {/* Soft bottom-only gradient so the glass card has contrast without covering the model */}
         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/55 to-transparent pointer-events-none" />
+
+        {/* Subtle 3D frame — top sunset hairline */}
+        <div
+          aria-hidden
+          className="absolute inset-x-0 top-0 h-[2px] pointer-events-none z-20"
+          style={{
+            background:
+              "linear-gradient(90deg, transparent 0%, rgba(251,113,133,0.55) 25%, rgba(245,158,11,0.65) 50%, rgba(147,51,234,0.55) 75%, transparent 100%)",
+            boxShadow: "0 1px 6px rgba(245,158,11,0.35)",
+          }}
+        />
+        {/* Subtle 3D frame — bottom sunset hairline */}
+        <div
+          aria-hidden
+          className="absolute inset-x-0 bottom-0 h-[2px] pointer-events-none z-20"
+          style={{
+            background:
+              "linear-gradient(90deg, transparent 0%, rgba(147,51,234,0.55) 25%, rgba(190,24,93,0.65) 50%, rgba(251,113,133,0.55) 75%, transparent 100%)",
+            boxShadow: "0 -1px 6px rgba(190,24,93,0.35)",
+          }}
+        />
+        {/* Inner glass bevel — top highlight + bottom shadow */}
+        <div
+          aria-hidden
+          className="absolute inset-x-0 top-0 h-12 pointer-events-none z-10"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(255,255,255,0.10) 0%, transparent 100%)",
+          }}
+        />
+        <div
+          aria-hidden
+          className="absolute inset-y-0 left-0 w-[1px] pointer-events-none z-20"
+          style={{
+            background:
+              "linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.18) 50%, transparent 100%)",
+          }}
+        />
+        <div
+          aria-hidden
+          className="absolute inset-y-0 right-0 w-[1px] pointer-events-none z-20"
+          style={{
+            background:
+              "linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.18) 50%, transparent 100%)",
+          }}
+        />
 
         <div className="relative z-10 h-full container mx-auto px-5 flex flex-col justify-end pb-8 sm:pb-14">
           <div className={`max-w-2xl ${FADE} delay-300`} style={{ textShadow: "0 2px 16px rgba(0,0,0,0.55)" }}>
