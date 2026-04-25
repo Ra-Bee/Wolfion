@@ -20,9 +20,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="preload" as="image" href="/splash.jpg" fetchpriority="high" />
     <style>
-      html, body { margin: 0; padding: 0; background: #0c4f55; }
+      html, body { margin: 0; padding: 0; background: #ffffff; }
       #wolfion-splash {
         position: fixed;
         inset: 0;
@@ -63,14 +62,17 @@
         #wolfion-splash { transition: none; }
       }
     </style>
-  </head>
-  <body>
-    <div id="wolfion-splash" aria-hidden="true">
-      <div class="ws-dots" aria-label="Loading"><span></span><span></span><span></span></div>
-    </div>
-    <div id="root"></div>
     <script>
+      // Only show the marble splash inside the native Android/iOS app.
+      // The browser/web version loads straight into the app.
       (function () {
+        var isNative = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+        if (!isNative) return;
+        var splash = document.createElement("div");
+        splash.id = "wolfion-splash";
+        splash.setAttribute("aria-hidden", "true");
+        splash.innerHTML = '<div class="ws-dots" aria-label="Loading"><span></span><span></span><span></span></div>';
+        document.documentElement.appendChild(splash);
         var MIN_VISIBLE_MS = 600;
         var shownAt = Date.now();
         function hide() {
@@ -84,10 +86,12 @@
           }, wait);
         }
         window.__wolfionHideSplash = hide;
-        // Safety net: if React never signals, hide after 8s anyway.
         setTimeout(hide, 8000);
       })();
     </script>
+  </head>
+  <body>
+    <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script>
       if ("serviceWorker" in navigator) {
