@@ -201,7 +201,7 @@ export function AuthShell({ eyebrow, title, subtitle, children }: Props) {
 
           {/* Footer hint */}
           <p className="relative mt-4 text-center text-[10px] uppercase tracking-[0.3em] text-white/35">
-            Wolfion · Crafted in Bangladesh
+            Wolfion · Certified in Australia & Bangladesh
           </p>
         </div>
       </main>
