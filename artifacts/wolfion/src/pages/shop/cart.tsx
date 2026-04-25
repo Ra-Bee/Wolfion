@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Minus, Plus, X, ArrowRight, ShoppingBag, Check, Banknote } from "lucide-react";
+import bkashLogo from "@assets/unnamed_1777146200639.png";
 
 type PaymentMethod =
   | "bkash"
@@ -39,7 +40,7 @@ type PayOption = {
 };
 
 const PAYMENT_OPTIONS: PayOption[] = [
-  { id: "bkash", label: "bKash", hint: "Mobile wallet · instant", badge: "bKash", bg: "bg-[#E2136E]", wordmark: { text: "bKash", italic: true } },
+  { id: "bkash", label: "bKash", hint: "Mobile wallet · instant", badge: "bKash", bg: "bg-[#E2136E]", logoUrl: bkashLogo },
   { id: "nagad", label: "Nagad", hint: "Mobile wallet · instant", badge: "Nagad", bg: "bg-[#EC1C24]", wordmark: { text: "Nagad" } },
   { id: "rocket", label: "Rocket", hint: "DBBL mobile banking", badge: "Rocket", bg: "bg-[#8C3494]", wordmark: { text: "Rocket" } },
   { id: "card", label: "Credit / Debit Card", hint: "Visa, Mastercard, Amex", badge: "Card", bg: "bg-neutral-900", logoUrl: "https://cdn.simpleicons.org/visa/ffffff" },
