@@ -23,24 +23,6 @@ export default function ShopHome() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-black/30" />
 
-        {/* Ambient glow blobs */}
-        <div
-          aria-hidden
-          className="absolute -top-[10%] -left-[10%] h-[55vh] w-[55vh] rounded-full opacity-40 blur-[100px] pointer-events-none"
-          style={{
-            background: "radial-gradient(circle, #1ABBC4 0%, transparent 70%)",
-            animation: "wf-blob1 18s ease-in-out infinite",
-          }}
-        />
-        <div
-          aria-hidden
-          className="absolute -bottom-[15%] right-[-10%] h-[50vh] w-[50vh] rounded-full opacity-35 blur-[100px] pointer-events-none"
-          style={{
-            background: "radial-gradient(circle, #D4AF37 0%, transparent 70%)",
-            animation: "wf-blob2 22s ease-in-out infinite",
-          }}
-        />
-
         <div className="relative z-10 h-full container mx-auto px-5 flex flex-col justify-end pb-12 sm:pb-24">
           <div className={`max-w-3xl ${FADE} delay-300`}>
             <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 mb-5 bg-white/[0.08] backdrop-blur-md border border-white/15 text-[10px] uppercase tracking-[0.3em] text-white/85">
