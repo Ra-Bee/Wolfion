@@ -24,60 +24,40 @@ export default function ShopHome() {
         {/* Soft bottom-only gradient so the glass card has contrast without covering the model */}
         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/55 to-transparent pointer-events-none" />
 
-        <div className="relative z-10 h-full container mx-auto px-4 flex flex-col justify-end pb-6 sm:pb-12">
-          <div
-            className={`relative max-w-2xl ${FADE} delay-300`}
-          >
-            {/* iOS-style Liquid Glass card */}
-            <div
-              className="rounded-[28px] p-[1px]"
+        <div className="relative z-10 h-full container mx-auto px-5 flex flex-col justify-end pb-8 sm:pb-14">
+          <div className={`max-w-2xl ${FADE} delay-300`} style={{ textShadow: "0 2px 16px rgba(0,0,0,0.55)" }}>
+            <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 mb-4 bg-white/[0.12] backdrop-blur-md border border-white/25 text-[10px] uppercase tracking-[0.3em] text-white">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              Wolfion · 2026 Edition
+            </div>
+            <h1
+              className="text-6xl sm:text-8xl font-light leading-[0.92] tracking-tight"
               style={{
                 background:
-                  "linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.3) 100%)",
+                  "linear-gradient(135deg, #ffffff 0%, #B8E8EC 45%, #D4AF37 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                filter: "drop-shadow(0 4px 18px rgba(0,0,0,0.45))",
               }}
             >
-              <div
-                className="rounded-[27px] px-6 py-7 sm:px-9 sm:py-9 border border-white/15 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.6)]"
-                style={{
-                  background:
-                    "linear-gradient(180deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.06) 100%)",
-                  backdropFilter: "blur(24px) saturate(170%)",
-                  WebkitBackdropFilter: "blur(24px) saturate(170%)",
-                }}
-              >
-                <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 mb-4 bg-white/[0.10] backdrop-blur-md border border-white/20 text-[10px] uppercase tracking-[0.3em] text-white/90">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  Wolfion · 2026 Edition
-                </div>
-                <h1
-                  className="text-5xl sm:text-7xl font-light leading-[0.95] tracking-tight"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, #ffffff 0%, #B8E8EC 45%, #D4AF37 100%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                  }}
+              WOLFION
+            </h1>
+            <p className="mt-4 text-xl sm:text-3xl text-white font-light tracking-wide leading-snug">
+              Let your fashion <span className="font-serif italic">speak</span> before you do.
+            </p>
+            <p className="mt-2 text-[11px] sm:text-xs text-white/90 font-medium tracking-[0.18em] uppercase">
+              Built different. Own the rest.
+            </p>
+            <div className="mt-6">
+              <Link href="/products">
+                <button
+                  className="group relative bg-gradient-to-r from-white via-white to-[#F2E5C0] text-neutral-900 px-7 h-11 rounded-full text-[13px] font-medium tracking-[0.15em] uppercase active:scale-[0.98] transition-all inline-flex items-center shadow-[0_15px_40px_-10px_rgba(255,255,255,0.5)] hover:shadow-[0_20px_50px_-10px_rgba(212,175,55,0.6)]"
+                  data-testid="hero-shop-now"
                 >
-                  WOLFION
-                </h1>
-                <p className="mt-3 text-lg sm:text-2xl text-white/95 font-light tracking-wide leading-snug">
-                  Let your fashion <span className="font-serif italic text-white">speak</span> before you do.
-                </p>
-                <p className="mt-2 text-[11px] sm:text-xs text-white/90 font-medium tracking-[0.18em] uppercase drop-shadow-sm">
-                  Built different. Own the rest.
-                </p>
-                <div className="mt-5">
-                  <Link href="/products">
-                    <button
-                      className="group relative bg-gradient-to-r from-white via-white to-[#F2E5C0] text-neutral-900 px-7 h-11 rounded-full text-[13px] font-medium tracking-[0.15em] uppercase active:scale-[0.98] transition-all inline-flex items-center shadow-[0_15px_40px_-10px_rgba(255,255,255,0.5)] hover:shadow-[0_20px_50px_-10px_rgba(212,175,55,0.6)]"
-                      data-testid="hero-shop-now"
-                    >
-                      Shop Now <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </button>
-                  </Link>
-                </div>
-              </div>
+                  Shop Now <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </button>
+              </Link>
             </div>
           </div>
         </div>
