@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { ShopLayout } from "@/components/shop-layout";
 import { useCart } from "@/hooks/use-cart";
 import { Button } from "@/components/ui/button";
+import { loadSavedPayments, type SavedPayment } from "@/lib/payment-methods";
 import {
   Dialog,
   DialogContent,
@@ -88,6 +89,19 @@ export default function Cart() {
   const [codPhone, setCodPhone] = useState("");
   const [paypalEmail, setPaypalEmail] = useState("");
   const [unionpayNumber, setUnionpayNumber] = useState("");
+  const [saved, setSaved] = useState<SavedPayment[]>([]);
+  const [usingSavedId, setUsingSavedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!payOpen) return;
+    const next = loadSavedPayments();
+    setSaved(next);
+    const def = next.find((p) => p.isDefault) ?? next[0];
+    if (def) {
+      setUsingSavedId(def.id);
+      setMethod(def.kind as PaymentMethod);
+    }
+  }, [payOpen]);
 
   const shipping = totalPrice >= 50 || totalPrice === 0 ? 0 : 5;
   const tax = totalPrice * 0.08;
@@ -100,7 +114,10 @@ export default function Cart() {
   const isQr = method === "alipay" || method === "wechat";
   const isUnionpay = method === "unionpay";
 
+  const usingSaved = !!usingSavedId && saved.some((s) => s.id === usingSavedId && s.kind === method);
+
   const canPay =
+    usingSaved ||
     (isWallet && /^01[3-9]\d{8}$/.test(walletNumber.replace(/\s/g, ""))) ||
     (isCard &&
       cardNumber.replace(/\s/g, "").length >= 13 &&
@@ -275,6 +292,51 @@ export default function Cart() {
             </DialogDescription>
           </DialogHeader>
 
+          {/* Saved methods quick-pick */}
+          {saved.length > 0 && (
+            <div className="mt-3">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-neutral-500">Saved methods</p>
+                <Link href="/settings" onClick={() => setPayOpen(false)} className="text-[11px] text-neutral-500 hover:underline">
+                  Manage
+                </Link>
+              </div>
+              <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+                {saved.map((s) => {
+                  const opt = PAYMENT_OPTIONS.find((o) => o.id === s.kind);
+                  const selected = usingSavedId === s.id;
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => {
+                        setUsingSavedId(s.id);
+                        setMethod(s.kind as PaymentMethod);
+                      }}
+                      className={`shrink-0 flex items-center gap-2.5 px-3 py-2 rounded-xl border transition-all ${
+                        selected
+                          ? "border-neutral-900 dark:border-white bg-neutral-50 dark:bg-neutral-900 shadow-sm"
+                          : "border-neutral-200 dark:border-neutral-800 hover:border-neutral-400 dark:hover:border-neutral-600"
+                      }`}
+                      data-testid={`saved-${s.id}`}
+                    >
+                      {opt && <PayLogo opt={opt} size="sm" />}
+                      <span className="text-left">
+                        <span className="block text-[11px] font-medium leading-tight">{s.label}</span>
+                        <span className="block text-[10px] text-neutral-500 leading-tight">{s.detail}</span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="mt-3 mb-1 flex items-center gap-3">
+                <span className="h-px flex-1 bg-neutral-200 dark:bg-neutral-800" />
+                <span className="text-[10px] uppercase tracking-widest text-neutral-400">or pick another</span>
+                <span className="h-px flex-1 bg-neutral-200 dark:bg-neutral-800" />
+              </div>
+            </div>
+          )}
+
           {/* Method picker */}
           <div className="space-y-2 mt-2">
             {PAYMENT_OPTIONS.map((opt) => {
@@ -283,7 +345,7 @@ export default function Cart() {
                 <button
                   key={opt.id}
                   type="button"
-                  onClick={() => setMethod(opt.id)}
+                  onClick={() => { setMethod(opt.id); setUsingSavedId(null); }}
                   className={`w-full flex items-center gap-4 p-4 rounded-xl border text-left transition-all ${
                     active
                       ? "border-neutral-900 dark:border-white bg-neutral-50 dark:bg-neutral-900 shadow-sm"
@@ -308,9 +370,15 @@ export default function Cart() {
             })}
           </div>
 
-          {/* Method-specific form */}
+          {/* Method-specific form (hidden when using a saved method) */}
           <div className="mt-2 space-y-3">
-            {isWallet && (
+            {usingSaved && (
+              <div className="rounded-xl border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/30 p-4 text-sm text-emerald-800 dark:text-emerald-300 flex items-center gap-3">
+                <Check className="h-4 w-4 shrink-0" />
+                <span>Using your saved {PAYMENT_OPTIONS.find((o) => o.id === method)?.label}. A verification code will be sent to confirm.</span>
+              </div>
+            )}
+            {!usingSaved && isWallet && (
               <div>
                 <Label htmlFor="walletNumber" className="text-xs uppercase tracking-widest text-neutral-500">
                   {method === "bkash" ? "bKash" : method === "nagad" ? "Nagad" : "Rocket"} Number
@@ -329,7 +397,7 @@ export default function Cart() {
               </div>
             )}
 
-            {isCard && (
+            {!usingSaved && isCard && (
               <div className="space-y-3">
                 <div>
                   <Label htmlFor="cardNumber" className="text-xs uppercase tracking-widest text-neutral-500">Card Number</Label>
@@ -411,7 +479,7 @@ export default function Cart() {
               </div>
             )}
 
-            {isPaypal && (
+            {!usingSaved && isPaypal && (
               <div>
                 <Label htmlFor="paypalEmail" className="text-xs uppercase tracking-widest text-neutral-500">PayPal Email</Label>
                 <Input
@@ -450,7 +518,7 @@ export default function Cart() {
               </div>
             )}
 
-            {isUnionpay && (
+            {!usingSaved && isUnionpay && (
               <div>
                 <Label htmlFor="unionpayNumber" className="text-xs uppercase tracking-widest text-neutral-500">UnionPay Card Number</Label>
                 <Input

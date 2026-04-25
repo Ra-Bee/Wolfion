@@ -1,5 +1,6 @@
 import { UserProfile } from "@clerk/react";
 import { ShopLayout } from "@/components/shop-layout";
+import { SavedPayments } from "@/components/saved-payments";
 
 export default function SettingsPage() {
   return (
@@ -10,8 +11,12 @@ export default function SettingsPage() {
             Account Settings
           </h1>
           <p className="mt-2 text-sm text-neutral-500">
-            Manage your profile, password, and security preferences.
+            Manage your profile, payment methods, and security preferences.
           </p>
+        </div>
+
+        <div className="mb-8">
+          <SavedPayments />
         </div>
 
         <div className="rounded-2xl bg-white shadow-sm border border-neutral-200 overflow-hidden">
