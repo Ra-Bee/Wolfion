@@ -15,68 +15,72 @@ export default function ShopHome() {
   return (
     <ShopLayout>
       {/* 1 — HERO */}
-      <section
-        className="relative h-[75svh] min-h-[480px] sm:h-[90svh] sm:min-h-[600px] w-full overflow-hidden bg-black text-white"
-        style={{
-          boxShadow:
-            "inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(0,0,0,0.55), inset 0 0 80px rgba(0,0,0,0.35)",
-        }}
-      >
-        <img
-          src={imgPortrait}
-          alt="Wolfion campaign"
-          className="absolute inset-0 h-full w-full object-cover object-[center_75%] scale-105 animate-in fade-in zoom-in-95 duration-[2000ms] fill-mode-both"
-        />
-        {/* Soft bottom-only gradient so the glass card has contrast without covering the model */}
-        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/55 to-transparent pointer-events-none" />
-
-        {/* Subtle 3D frame — top sunset hairline */}
+      <section className="relative w-full bg-gradient-to-b from-neutral-950 via-black to-neutral-950 px-3 pt-3 pb-5 sm:px-5 sm:pt-5 sm:pb-8">
+        {/* Outer sunset halo — soft glow lifting the frame off the page */}
         <div
           aria-hidden
-          className="absolute inset-x-0 top-0 h-[2px] pointer-events-none z-20"
+          className="absolute inset-2 sm:inset-4 rounded-[24px] sm:rounded-[32px] blur-2xl opacity-60 pointer-events-none"
           style={{
             background:
-              "linear-gradient(90deg, transparent 0%, rgba(251,113,133,0.55) 25%, rgba(245,158,11,0.65) 50%, rgba(147,51,234,0.55) 75%, transparent 100%)",
-            boxShadow: "0 1px 6px rgba(245,158,11,0.35)",
-          }}
-        />
-        {/* Subtle 3D frame — bottom sunset hairline */}
-        <div
-          aria-hidden
-          className="absolute inset-x-0 bottom-0 h-[2px] pointer-events-none z-20"
-          style={{
-            background:
-              "linear-gradient(90deg, transparent 0%, rgba(147,51,234,0.55) 25%, rgba(190,24,93,0.65) 50%, rgba(251,113,133,0.55) 75%, transparent 100%)",
-            boxShadow: "0 -1px 6px rgba(190,24,93,0.35)",
-          }}
-        />
-        {/* Inner glass bevel — top highlight + bottom shadow */}
-        <div
-          aria-hidden
-          className="absolute inset-x-0 top-0 h-12 pointer-events-none z-10"
-          style={{
-            background:
-              "linear-gradient(180deg, rgba(255,255,255,0.10) 0%, transparent 100%)",
-          }}
-        />
-        <div
-          aria-hidden
-          className="absolute inset-y-0 left-0 w-[1px] pointer-events-none z-20"
-          style={{
-            background:
-              "linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.18) 50%, transparent 100%)",
-          }}
-        />
-        <div
-          aria-hidden
-          className="absolute inset-y-0 right-0 w-[1px] pointer-events-none z-20"
-          style={{
-            background:
-              "linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.18) 50%, transparent 100%)",
+              "linear-gradient(135deg, #FB7185 0%, #F59E0B 45%, #9333EA 100%)",
           }}
         />
 
-        <div className="relative z-10 h-full container mx-auto px-5 flex flex-col justify-end pb-8 sm:pb-14">
+        {/* 3D beveled frame — thicker gradient ring (light top-left, dark bottom-right) */}
+        <div
+          className="relative rounded-[24px] sm:rounded-[32px] p-[3px] sm:p-[4px]"
+          style={{
+            background:
+              "linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(252,211,77,0.7) 25%, rgba(251,113,133,0.55) 55%, rgba(147,51,234,0.5) 80%, rgba(0,0,0,0.75) 100%)",
+            boxShadow:
+              "0 30px 80px -18px rgba(0,0,0,0.75), 0 12px 36px -12px rgba(245,158,11,0.45), 0 0 0 1px rgba(255,255,255,0.05), inset 0 2px 0 rgba(255,255,255,0.55), inset 0 -2px 0 rgba(0,0,0,0.55)",
+          }}
+        >
+          {/* Inner photo container */}
+          <div
+            className="relative h-[72svh] min-h-[460px] sm:h-[86svh] sm:min-h-[580px] w-full overflow-hidden rounded-[21px] sm:rounded-[28px] bg-black text-white"
+            style={{
+              boxShadow:
+                "inset 0 2px 0 rgba(255,255,255,0.32), inset 0 -2px 14px rgba(0,0,0,0.6), inset 0 0 80px rgba(0,0,0,0.4)",
+            }}
+          >
+            <img
+              src={imgPortrait}
+              alt="Wolfion campaign"
+              className="absolute inset-0 h-full w-full object-cover object-[center_75%] scale-105 animate-in fade-in zoom-in-95 duration-[2000ms] fill-mode-both"
+            />
+            {/* Soft bottom-only gradient so the glass card has contrast without covering the model */}
+            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/55 to-transparent pointer-events-none" />
+
+            {/* Inner top sheen — strong glass highlight at the top edge */}
+            <div
+              aria-hidden
+              className="absolute inset-x-0 top-0 h-20 pointer-events-none z-10"
+              style={{
+                background:
+                  "linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.05) 40%, transparent 100%)",
+              }}
+            />
+
+            {/* Inner side highlights — subtle vertical glass edge */}
+            <div
+              aria-hidden
+              className="absolute inset-y-0 left-0 w-[2px] pointer-events-none z-20"
+              style={{
+                background:
+                  "linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.1) 50%, transparent 100%)",
+              }}
+            />
+            <div
+              aria-hidden
+              className="absolute inset-y-0 right-0 w-[2px] pointer-events-none z-20"
+              style={{
+                background:
+                  "linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.5) 100%)",
+              }}
+            />
+
+            <div className="relative z-30 h-full container mx-auto px-5 flex flex-col justify-end pb-8 sm:pb-14">
           <div className={`max-w-2xl ${FADE} delay-300`} style={{ textShadow: "0 2px 16px rgba(0,0,0,0.55)" }}>
             <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 mb-4 bg-white/[0.12] backdrop-blur-md border border-white/25 text-[10px] uppercase tracking-[0.3em] text-white">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -114,9 +118,11 @@ export default function ShopHome() {
           </div>
         </div>
 
-        {/* Scroll cue */}
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-white/60 text-[10px] uppercase tracking-[0.4em] animate-bounce">
-          Scroll
+            {/* Scroll cue */}
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-white/60 text-[10px] uppercase tracking-[0.4em] animate-bounce z-30">
+              Scroll
+            </div>
+          </div>
         </div>
       </section>
 
