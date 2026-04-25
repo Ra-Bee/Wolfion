@@ -224,7 +224,19 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
             <div className="h-8 w-8 rounded-md bg-black flex items-center justify-center overflow-hidden shadow-sm">
               <img src={imgLogoWhite} alt="Wolfion" className="h-full w-full object-contain p-0.5" />
             </div>
-            <span className="font-semibold tracking-[0.3em] text-sm sm:text-base whitespace-nowrap">WOLFION</span>
+            <span
+              className="font-bold tracking-[0.3em] text-sm sm:text-base whitespace-nowrap"
+              style={{
+                background:
+                  "linear-gradient(135deg, #BE185D 0%, #F59E0B 50%, #9333EA 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                filter: "drop-shadow(0 1px 0 rgba(0,0,0,0.08))",
+              }}
+            >
+              WOLFION
+            </span>
           </Link>
 
           {/* Desktop nav — minimal 4 items, no overlap */}
