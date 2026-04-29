@@ -336,22 +336,63 @@ export default function Cart() {
         </div>
       </div>
 
-      {/* Payment Dialog */}
+      {/* Payment Dialog — 3D glass */}
       <Dialog open={payOpen} onOpenChange={(o) => !processing && setPayOpen(o)}>
-        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent
+          className="sm:max-w-lg max-h-[90vh] overflow-y-auto !border-0 !p-0 !bg-transparent !shadow-none"
+        >
+          {/* Glow halo behind the panel */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -inset-3 rounded-[32px] blur-2xl opacity-50"
+            style={{
+              background:
+                "linear-gradient(135deg, #1ABBC4 0%, #6E3CFB 50%, #D4AF37 100%)",
+            }}
+          />
+          {/* Gradient border */}
+          <div
+            className="relative rounded-[24px] p-[1.5px]"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(26,187,196,0.35) 35%, rgba(212,175,55,0.35) 70%, rgba(255,255,255,0.15) 100%)",
+            }}
+          >
+            {/* Glass interior */}
+            <div
+              className="rounded-[23px] p-5 sm:p-6 border border-white/10 text-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)] [&_input]:!bg-white/[0.05] [&_input]:!border-white/15 [&_input]:!text-white [&_input]:placeholder:!text-white/35 [&_input]:!backdrop-blur-md [&_label]:!text-white/65"
+              style={{
+                background:
+                  "linear-gradient(180deg, rgba(10,18,28,0.94) 0%, rgba(4,17,26,0.97) 100%)",
+                backdropFilter: "blur(28px) saturate(140%)",
+                WebkitBackdropFilter: "blur(28px) saturate(140%)",
+                colorScheme: "dark",
+              }}
+            >
           <DialogHeader>
-            <DialogTitle className="text-2xl font-light tracking-tight">Choose payment</DialogTitle>
-            <DialogDescription className="text-neutral-500">
-              Total due: <span className="font-medium text-neutral-900 dark:text-neutral-50">Tk {grandTotal.toFixed(2)}</span>
+            <DialogTitle
+              className="text-2xl font-bold tracking-tight"
+              style={{
+                background:
+                  "linear-gradient(135deg, #ffffff 0%, #5EEAD4 55%, #E5D4A8 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              Choose payment
+            </DialogTitle>
+            <DialogDescription className="!text-white/70">
+              Total due: <span className="font-semibold text-white">Tk {grandTotal.toFixed(2)}</span>
             </DialogDescription>
           </DialogHeader>
 
           {/* Saved methods quick-pick */}
           {saved.length > 0 && (
-            <div className="mt-3">
+            <div className="mt-4">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-[11px] uppercase tracking-[0.2em] text-neutral-500">Saved methods</p>
-                <Link href="/settings" onClick={() => setPayOpen(false)} className="text-[11px] text-neutral-500 hover:underline">
+                <p className="text-[11px] uppercase tracking-[0.22em] text-white/55">Saved methods</p>
+                <Link href="/settings" onClick={() => setPayOpen(false)} className="text-[11px] text-[#5EEAD4] hover:text-white transition-colors">
                   Manage
                 </Link>
               </div>
@@ -367,32 +408,32 @@ export default function Cart() {
                         setUsingSavedId(s.id);
                         setMethod(s.kind as PaymentMethod);
                       }}
-                      className={`shrink-0 flex items-center gap-2.5 px-3 py-2 rounded-xl border transition-all ${
+                      className={`shrink-0 flex items-center gap-2.5 px-3 py-2 rounded-xl border transition-all backdrop-blur-md ${
                         selected
-                          ? "border-neutral-900 dark:border-white bg-neutral-50 dark:bg-neutral-900 shadow-sm"
-                          : "border-neutral-200 dark:border-neutral-800 hover:border-neutral-400 dark:hover:border-neutral-600"
+                          ? "border-[#5EEAD4]/60 bg-white/[0.08] shadow-[0_8px_24px_-8px_rgba(94,234,212,0.5)]"
+                          : "border-white/10 bg-white/[0.03] hover:border-white/25 hover:bg-white/[0.06]"
                       }`}
                       data-testid={`saved-${s.id}`}
                     >
                       {opt && <PayLogo opt={opt} size="sm" />}
                       <span className="text-left">
-                        <span className="block text-[11px] font-medium leading-tight">{s.label}</span>
-                        <span className="block text-[10px] text-neutral-500 leading-tight">{s.detail}</span>
+                        <span className="block text-[11px] font-medium leading-tight text-white">{s.label}</span>
+                        <span className="block text-[10px] text-white/55 leading-tight">{s.detail}</span>
                       </span>
                     </button>
                   );
                 })}
               </div>
               <div className="mt-3 mb-1 flex items-center gap-3">
-                <span className="h-px flex-1 bg-neutral-200 dark:bg-neutral-800" />
-                <span className="text-[10px] uppercase tracking-widest text-neutral-400">or pick another</span>
-                <span className="h-px flex-1 bg-neutral-200 dark:bg-neutral-800" />
+                <span className="h-px flex-1 bg-white/10" />
+                <span className="text-[10px] uppercase tracking-widest text-white/45">or pick another</span>
+                <span className="h-px flex-1 bg-white/10" />
               </div>
             </div>
           )}
 
-          {/* Method picker */}
-          <div className="space-y-2 mt-2">
+          {/* Method picker — 3D glass cards */}
+          <div className="space-y-2.5 mt-3">
             {PAYMENT_OPTIONS.map((opt) => {
               const active = method === opt.id;
               return (
@@ -400,25 +441,53 @@ export default function Cart() {
                   key={opt.id}
                   type="button"
                   onClick={() => { setMethod(opt.id); setUsingSavedId(null); }}
-                  className={`w-full flex items-center gap-4 p-4 rounded-xl border text-left transition-all ${
-                    active
-                      ? "border-neutral-900 dark:border-white bg-neutral-50 dark:bg-neutral-900 shadow-sm"
-                      : "border-neutral-200 dark:border-neutral-800 hover:border-neutral-400 dark:hover:border-neutral-600"
-                  }`}
+                  className="group relative w-full text-left active:scale-[0.99] transition-transform"
                   data-testid={`pay-method-${opt.id}`}
                 >
-                  <PayLogo opt={opt} size="md" />
-                  <span className="flex-1 min-w-0">
-                    <span className="block text-sm font-medium">{opt.label}</span>
-                    <span className="block text-xs text-neutral-500 mt-0.5">{opt.hint}</span>
-                  </span>
-                  <span
-                    className={`h-5 w-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                      active ? "border-neutral-900 dark:border-white bg-neutral-900 dark:bg-white" : "border-neutral-300 dark:border-neutral-700"
+                  {/* Hover/active glow */}
+                  <div
+                    aria-hidden
+                    className={`absolute -inset-0.5 rounded-[18px] blur-md transition-opacity duration-300 pointer-events-none ${
+                      active ? "opacity-80" : "opacity-0 group-hover:opacity-50"
                     }`}
+                    style={{
+                      background:
+                        "linear-gradient(135deg, #1ABBC4 0%, #6E3CFB 100%)",
+                    }}
+                  />
+                  {/* Gradient border */}
+                  <div
+                    className="relative rounded-[16px] p-[1.5px] transition-all"
+                    style={{
+                      background: active
+                        ? "linear-gradient(135deg, #1ABBC4 0%, #D4AF37 100%)"
+                        : "linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 100%)",
+                    }}
                   >
-                    {active && <Check className="h-3 w-3 text-white dark:text-neutral-900" />}
-                  </span>
+                    <div
+                      className="rounded-[15px] flex items-center gap-4 p-3.5 border border-white/10 backdrop-blur-md"
+                      style={{
+                        background: active
+                          ? "linear-gradient(180deg, rgba(26,187,196,0.14) 0%, rgba(110,60,251,0.10) 100%)"
+                          : "linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%)",
+                      }}
+                    >
+                      <PayLogo opt={opt} size="md" />
+                      <span className="flex-1 min-w-0">
+                        <span className="block text-sm font-semibold text-white">{opt.label}</span>
+                        <span className="block text-xs text-white/55 mt-0.5 truncate">{opt.hint}</span>
+                      </span>
+                      <span
+                        className={`h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
+                          active
+                            ? "border-[#5EEAD4] bg-gradient-to-br from-[#1ABBC4] to-[#D4AF37] shadow-[0_0_12px_rgba(94,234,212,0.6)]"
+                            : "border-white/25 bg-white/[0.04]"
+                        }`}
+                      >
+                        {active && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
+                      </span>
+                    </div>
+                  </div>
                 </button>
               );
             })}
@@ -427,7 +496,7 @@ export default function Cart() {
           {/* Method-specific form (hidden when using a saved method) */}
           <div className="mt-2 space-y-3">
             {usingSaved && (
-              <div className="rounded-xl border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/30 p-4 text-sm text-emerald-800 dark:text-emerald-300 flex items-center gap-3">
+              <div className="rounded-xl border border-emerald-400/30 bg-emerald-500/10 p-4 text-sm text-emerald-200 flex items-center gap-3 backdrop-blur-md">
                 <Check className="h-4 w-4 shrink-0" />
                 <span>Using your saved {PAYMENT_OPTIONS.find((o) => o.id === method)?.label}. A verification code will be sent to confirm.</span>
               </div>
@@ -593,17 +662,17 @@ export default function Cart() {
             )}
           </div>
 
-          <DialogFooter className="mt-4 gap-2 sm:gap-2">
+          <DialogFooter className="mt-5 gap-2 sm:gap-2">
             <Button
               variant="outline"
-              className="h-12 rounded-full"
+              className="h-12 rounded-full !bg-white/[0.04] !text-white !border-white/15 hover:!bg-white/10 hover:!border-white/30 backdrop-blur-md"
               onClick={() => setPayOpen(false)}
               disabled={processing}
             >
               Cancel
             </Button>
             <Button
-              className="h-12 rounded-full bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 text-sm uppercase tracking-widest font-medium px-6"
+              className="h-12 rounded-full !bg-gradient-to-r !from-[#1ABBC4] !via-[#16D4DD] !to-[#D4AF37] hover:!brightness-110 !text-black text-sm uppercase tracking-widest font-bold px-6 shadow-[0_10px_30px_-5px_rgba(26,187,196,0.5)] hover:shadow-[0_15px_40px_-5px_rgba(26,187,196,0.7)] transition-all"
               onClick={handleConfirmPayment}
               disabled={!canPay || processing}
               data-testid="confirm-payment"
@@ -611,6 +680,8 @@ export default function Cart() {
               {processing ? "Processing…" : `Pay Tk ${grandTotal.toFixed(2)}`}
             </Button>
           </DialogFooter>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </ShopLayout>
