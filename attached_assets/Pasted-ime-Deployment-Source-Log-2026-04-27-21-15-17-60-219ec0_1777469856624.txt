@@ -1,0 +1,176 @@
+ime
+Deployment
+Source
+Log
+2026-04-27 21:15:17.60
+219ec0d4
+User
+{"level":30,"time":1777295717607,"pid":18,"hostname":"localhost","req":{"id":13,"method":"POST","url":"/api/__clerk/v1/client/sessions/sess_3CeIcnhlDg4Q0KNJG8CeQw6LBZ3/tokens"},"res":{"statusCode":200},"responseTime":527,"msg":"request completed"}
+2026-04-28 13:28:33.82
+219ec0d4
+System
+starting up user application
+2026-04-28 13:28:33.82
+219ec0d4
+System
+starting artifact processes for monorepo deployment
+2026-04-28 13:28:33.82
+219ec0d4
+System
+registered static handler for artifact path=/ publicDir=artifacts/wolfion/dist/public
+2026-04-28 13:28:33.82
+219ec0d4
+System
+metasidecar: loaded enterprise status from environment is_enterprise=false
+2026-04-28 13:28:33.82
+219ec0d4
+System
+artifact mode enabled static=1 runnable=1
+2026-04-28 13:28:33.82
+219ec0d4
+System
+forwarding local port 0 to external port 80 (mapped as 1104)
+2026-04-28 13:28:33.82
+219ec0d4
+System
+waiting for runnable artifact ports ports=[8080]
+2026-04-28 13:28:33.82
+219ec0d4
+System
+baseline ports snapshot before artifact start ports=[1104]
+2026-04-28 13:28:33.82
+219ec0d4
+System
+starting artifact process artifact=artifacts/api-server args=[node --enable-source-maps artifacts/api-server/dist/index.mjs] port=8080
+2026-04-28 13:28:33.82
+219ec0d4
+System
+starting artifact processes count=1
+2026-04-28 13:28:33.84
+219ec0d4
+System
+artifact process started artifact=artifacts/api-server pid=20
+2026-04-28 13:28:34.83
+219ec0d4
+System
+artifact port detected detected=1 expected=1 port=8080
+2026-04-28 13:28:34.83
+219ec0d4
+System
+artifact processes running, waiting for signal or process exit
+2026-04-28 13:28:34.83
+219ec0d4
+System
+all artifact ports detected
+2026-04-28 13:28:34.83
+219ec0d4
+User
+{"level":30,"time":1777354114832,"pid":20,"hostname":"localhost","port":8080,"msg":"Server listening"}
+2026-04-28 13:28:35.40
+219ec0d4
+User
+{"level":30,"time":1777354115402,"pid":20,"hostname":"localhost","req":{"id":1,"method":"GET","url":"/api/healthz"},"res":{"statusCode":200},"responseTime":50,"msg":"request completed"}
+2026-04-28 15:33:53.77
+219ec0d4
+System
+sending SIGTERM to artifact process artifact=artifacts/api-server
+2026-04-28 15:33:53.77
+219ec0d4
+System
+received signal, shutting down artifact processes signal=terminated
+2026-04-28 15:33:53.78
+219ec0d4
+System
+all artifact processes stopped
+2026-04-28 15:33:53.78
+219ec0d4
+System
+artifact process exited with error error=signal: terminated artifact=artifacts/api-server
+2026-04-28 15:33:53.78
+219ec0d4
+System
+main done, exiting
+2026-04-28 15:38:22.13
+219ec0d4
+System
+metasidecar: loaded enterprise status from environment is_enterprise=false
+2026-04-28 15:38:22.13
+219ec0d4
+System
+artifact mode enabled runnable=1 static=1
+2026-04-28 15:38:22.13
+219ec0d4
+System
+starting artifact processes for monorepo deployment
+2026-04-28 15:38:22.13
+219ec0d4
+System
+starting up user application
+2026-04-28 15:38:22.13
+219ec0d4
+System
+waiting for runnable artifact ports ports=[8080]
+2026-04-28 15:38:22.13
+219ec0d4
+System
+forwarding local port 0 to external port 80 (mapped as 1104)
+2026-04-28 15:38:22.13
+219ec0d4
+System
+registered static handler for artifact path=/ publicDir=artifacts/wolfion/dist/public
+2026-04-28 15:38:22.14
+219ec0d4
+System
+baseline ports snapshot before artifact start ports=[1104]
+2026-04-28 15:38:22.14
+219ec0d4
+System
+starting artifact processes count=1
+2026-04-28 15:38:22.14
+219ec0d4
+System
+starting artifact process args=[node --enable-source-maps artifacts/api-server/dist/index.mjs] port=8080 artifact=artifacts/api-server
+2026-04-28 15:38:22.15
+219ec0d4
+System
+artifact process started artifact=artifacts/api-server pid=19
+2026-04-28 15:38:23.06
+219ec0d4
+System
+all artifact ports detected
+2026-04-28 15:38:23.06
+219ec0d4
+System
+artifact port detected port=8080 detected=1 expected=1
+2026-04-28 15:38:23.06
+219ec0d4
+System
+artifact processes running, waiting for signal or process exit
+2026-04-28 15:38:23.07
+219ec0d4
+User
+{"level":30,"time":1777361903069,"pid":19,"hostname":"localhost","port":8080,"msg":"Server listening"}
+2026-04-28 15:38:24.11
+219ec0d4
+User
+{"level":30,"time":1777361904116,"pid":19,"hostname":"localhost","req":{"id":1,"method":"GET","url":"/api/healthz"},"res":{"statusCode":200},"responseTime":51,"msg":"request completed"}
+2026-04-28 17:03:53.78
+219ec0d4
+System
+sending SIGTERM to artifact process artifact=artifacts/api-server
+2026-04-28 17:03:53.78
+219ec0d4
+System
+received signal, shutting down artifact processes signal=terminated
+2026-04-28 17:03:53.79
+219ec0d4
+System
+artifact process exited with error error=signal: terminated artifact=artifacts/api-server
+2026-04-28 17:03:53.79
+219ec0d4
+System
+all artifact processes stopped
+2026-04-28 17:03:53.79
+219ec0d4
+System
+main done, exiting
