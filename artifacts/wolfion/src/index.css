@@ -266,18 +266,41 @@
     background: hsl(var(--card) / 0.7);
   }
 
-  /* SMOOTHNESS — gentle GPU hints only. No layout-affecting rules. */
+  /* SMOOTHNESS — pure GPU hints. No layout, scroll, or visibility rules. */
 
-  /* Promote decorative blur halos to their own GPU layer (cheap to composite) */
+  /* Promote decorative blur halos to their own compositor layer */
   [aria-hidden="true"][class*="blur-"] {
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
   }
 
-  /* Tap response feels instant */
+  /* Promote backdrop-blur surfaces (header, glass cards) so they don't
+     re-render during scroll — biggest single win for phone smoothness */
+  [class*="backdrop-blur"] {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform;
+  }
+
+  /* Promote any fixed / sticky elements (header, cart bar) to GPU layer */
+  .fixed, .sticky,
+  [class*=" fixed"], [class*=" sticky"],
+  [class^="fixed"], [class^="sticky"] {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform;
+  }
+
+  /* Tap response feels instant on phones (removes 300ms double-tap delay
+     and the grey tap-flash overlay) */
   a, button, [role="button"] {
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
+  }
+
+  /* Native momentum scroll on iOS Safari */
+  body {
+    -webkit-overflow-scrolling: touch;
   }
 
 
