@@ -113,8 +113,14 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-[100dvh] flex flex-col bg-white text-neutral-900 dark:bg-neutral-950 dark:text-neutral-50 antialiased font-sans">
-      {/* Glassmorphic header — single horizontal row */}
-      <header className="sticky top-0 z-40 w-full bg-white/70 dark:bg-neutral-950/70 backdrop-blur-xl border-b border-neutral-200/60 dark:border-neutral-800/60 shadow-[0_1px_0_rgba(0,0,0,0.02)]">
+      {/* 3D Glass header — bevel highlight top + deep drop shadow */}
+      <header
+        className="sticky top-0 z-40 w-full bg-white/75 dark:bg-neutral-950/75 backdrop-blur-2xl border-b border-neutral-200/60 dark:border-neutral-800/60"
+        style={{
+          boxShadow:
+            "inset 0 1px 0 rgba(255,255,255,0.85), inset 0 -1px 0 rgba(0,0,0,0.06), 0 12px 28px -10px rgba(0,0,0,0.18), 0 4px 10px -4px rgba(0,0,0,0.08)",
+        }}
+      >
         <div className="container mx-auto px-4 sm:px-6 h-16 flex items-center gap-3 sm:gap-6">
           {/* Mobile menu trigger */}
           <div className="md:hidden flex-shrink-0">
@@ -124,9 +130,50 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[320px] p-0 flex flex-col bg-white dark:bg-neutral-950">
-                <SheetHeader className="px-6 pt-7 pb-5 text-left border-b border-neutral-200 dark:border-neutral-800">
-                  <SheetTitle className="tracking-[0.3em] text-base">WOLFION</SheetTitle>
+              <SheetContent
+                side="left"
+                className="w-[320px] p-0 flex flex-col bg-white/85 dark:bg-neutral-950/90 backdrop-blur-2xl border-r border-white/40 dark:border-white/10"
+                style={{
+                  boxShadow:
+                    "inset -1px 0 0 rgba(255,255,255,0.5), 12px 0 40px -8px rgba(0,0,0,0.35), 4px 0 12px -4px rgba(0,0,0,0.18)",
+                }}
+              >
+                {/* 3D gradient header band */}
+                <SheetHeader
+                  className="px-6 pt-7 pb-5 text-left relative overflow-hidden"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #FFF7ED 0%, #FFE4E6 45%, #FAE8FF 100%)",
+                    boxShadow:
+                      "inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.06), 0 6px 18px -10px rgba(190,24,93,0.25)",
+                  }}
+                >
+                  {/* Soft sunset halo */}
+                  <div
+                    aria-hidden
+                    className="absolute -top-10 -right-10 h-32 w-32 rounded-full blur-2xl opacity-40 pointer-events-none"
+                    style={{
+                      background:
+                        "radial-gradient(circle, #FB7185 0%, #F59E0B 60%, transparent 100%)",
+                    }}
+                  />
+                  <div className="relative flex items-center gap-3">
+                    <div
+                      className="h-9 w-9 rounded-lg bg-black flex items-center justify-center overflow-hidden"
+                      style={{
+                        boxShadow:
+                          "inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 16px -4px rgba(0,0,0,0.4)",
+                      }}
+                    >
+                      <img src={imgLogoWhite} alt="Wolfion" className="h-full w-full object-contain p-0.5" />
+                    </div>
+                    <SheetTitle
+                      className="tracking-[0.3em] text-base text-black dark:text-white font-bold"
+                      style={{ textShadow: "0 1px 0 rgba(255,255,255,0.7), 0 2px 4px rgba(0,0,0,0.15)" }}
+                    >
+                      WOLFION
+                    </SheetTitle>
+                  </div>
                 </SheetHeader>
                 <nav className="flex-1 px-2 py-4 overflow-y-auto">
                   {PRIMARY_NAV.map((n) => (
@@ -225,14 +272,10 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
               <img src={imgLogoWhite} alt="Wolfion" className="h-full w-full object-contain p-0.5" />
             </div>
             <span
-              className="font-bold tracking-[0.3em] text-sm sm:text-base whitespace-nowrap"
+              className="font-bold tracking-[0.3em] text-sm sm:text-base whitespace-nowrap text-black dark:text-white"
               style={{
-                background:
-                  "linear-gradient(135deg, #BE185D 0%, #F59E0B 50%, #9333EA 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-                filter: "drop-shadow(0 1px 0 rgba(0,0,0,0.08))",
+                textShadow:
+                  "0 1px 0 rgba(255,255,255,0.7), 0 2px 4px rgba(0,0,0,0.18)",
               }}
             >
               WOLFION
