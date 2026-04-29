@@ -7,7 +7,7 @@ export default function Home() {
     <div className="relative min-h-[100dvh] w-full overflow-hidden bg-black text-white">
       {/* Background image with slow drift */}
       <div
-        className="absolute inset-0 animate-[wolfion-drift_18s_ease-in-out_infinite_alternate] bg-cover bg-center"
+        className="absolute inset-0 animate-[wolfion-drift_18s_ease-in-out_infinite_alternate] bg-cover bg-center md:bg-bottom"
         style={{ backgroundImage: `url(${landingBg})` }}
       />
       {/* Dark overlay for text legibility */}
