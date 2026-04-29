@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useUser, useClerk } from "@clerk/react";
+import { clearAdminStorage } from "@/lib/wolfion-store";
 import { useCart } from "@/hooks/use-cart";
 import { useRole } from "@/hooks/use-role";
 import { ShoppingBag, Menu, User, LogOut, Search, ShieldCheck, ChevronDown, Home as HomeIcon, Store, Mail, Info, Settings, X } from "lucide-react";
@@ -102,6 +103,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
   };
 
   const handleSignOut = () => {
+    clearAdminStorage();
     setRole(null);
     signOut(() => setLocation("/"));
   };

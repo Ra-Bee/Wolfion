@@ -2,6 +2,7 @@ import { useLocation } from "wouter";
 import { useUser, useClerk } from "@clerk/react";
 import { useRole } from "@/hooks/use-role";
 import { useTheme } from "@/hooks/use-theme";
+import { clearAdminStorage } from "@/lib/wolfion-store";
 import {
   LogOut, Menu, ShieldCheck, Sun, Moon, FileText, Users as UsersIcon,
   Wrench, Factory, ShoppingCart, TrendingUp, Wallet, HandCoins, LayoutDashboard, ShoppingBag,
@@ -32,6 +33,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const [, setLocation] = useLocation();
 
   const handleSignOut = () => {
+    clearAdminStorage();
     setRole(null);
     signOut(() => setLocation("/"));
   };

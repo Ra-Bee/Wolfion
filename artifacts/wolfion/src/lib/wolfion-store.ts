@@ -132,6 +132,7 @@ export const STORAGE_KEYS = {
   investors: "wolfion_investors",
   debts: "wolfion_debts",
   debtPayments: "wolfion_debt_payments",
+  costInputs: "wolfion_cost_inputs",
 } as const;
 
 export const defaultProductTypes: ProductTypeOption[] = [
@@ -258,4 +259,11 @@ export function useStoredNumber(key: string, fallback: number) {
 export function inDateRange(date: string, start: string, end: string) {
   if (!date) return false;
   return date >= start && date <= end;
+}
+
+export function clearAdminStorage() {
+  try {
+    Object.values(STORAGE_KEYS).forEach((key) => localStorage.removeItem(key));
+    localStorage.removeItem("wolfion:savedPayments");
+  } catch { /* ignore */ }
 }
