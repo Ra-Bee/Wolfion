@@ -18,6 +18,7 @@ const CheckoutSuccess = lazy(() => import("@/pages/shop/checkout-success"));
 const AboutPage = lazy(() => import("@/pages/shop/about"));
 const ContactPage = lazy(() => import("@/pages/shop/contact"));
 const SettingsPage = lazy(() => import("@/pages/shop/settings"));
+const PrivacyPolicyPage = lazy(() => import("@/pages/shop/privacy"));
 const DevPreviewPage = lazy(() => import("@/pages/dev-preview"));
 
 const AdminDashboard = lazy(() => import("@/pages/admin/dashboard"));
@@ -162,6 +163,10 @@ function AppRouter() {
       <Route path="/sign-in/*?" component={SignInPage} />
       <Route path="/sign-up/*?" component={SignUpPage} />
       <Route path="/role-select" component={RoleSelectRoute} />
+
+      {/* Public legal pages — must be reachable without sign-in (Play Store requirement) */}
+      <Route path="/privacy" component={PrivacyPolicyPage} />
+      <Route path="/privacy-policy"><Redirect to="/privacy" /></Route>
 
       {/* ===== Customer App ===== */}
       <Route path="/shop"><ShopRouteWrapper><ShopHome /></ShopRouteWrapper></Route>

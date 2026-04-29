@@ -795,8 +795,27 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                 "linear-gradient(90deg, transparent 0%, rgba(180,140,150,0.4) 30%, rgba(140,120,160,0.4) 70%, transparent 100%)",
             }}
           />
-          <div className="py-5 text-center text-xs text-neutral-600 dark:text-neutral-500">
-            © {new Date().getFullYear()} <span className="font-semibold tracking-[0.2em] text-neutral-800 dark:text-neutral-300">WOLFION</span>. All rights reserved.
+          <div className="py-5 text-center text-xs text-neutral-600 dark:text-neutral-500 space-y-2">
+            <div className="flex items-center justify-center gap-4">
+              <Link
+                href="/privacy"
+                className="hover:text-neutral-900 dark:hover:text-neutral-200 transition-colors"
+                data-testid="footer-privacy"
+              >
+                Privacy Policy
+              </Link>
+              <span className="text-neutral-400 dark:text-neutral-700">·</span>
+              <Link
+                href="/contact"
+                className="hover:text-neutral-900 dark:hover:text-neutral-200 transition-colors"
+                data-testid="footer-contact-link"
+              >
+                Contact
+              </Link>
+            </div>
+            <div>
+              © {new Date().getFullYear()} <span className="font-semibold tracking-[0.2em] text-neutral-800 dark:text-neutral-300">WOLFION</span>. All rights reserved.
+            </div>
           </div>
         </div>
       </footer>
