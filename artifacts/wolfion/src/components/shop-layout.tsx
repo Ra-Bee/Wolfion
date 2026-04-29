@@ -138,67 +138,63 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                     "inset -1px 0 0 rgba(255,255,255,0.5), 12px 0 40px -8px rgba(0,0,0,0.35), 4px 0 12px -4px rgba(0,0,0,0.18)",
                 }}
               >
-                {/* 3D gradient header band */}
+                {/* Compact 3D gradient header band */}
                 <SheetHeader
-                  className="px-6 pt-7 pb-5 text-left relative overflow-hidden"
+                  className="px-4 py-3 text-left relative overflow-hidden"
                   style={{
                     background:
                       "linear-gradient(135deg, #FFF7ED 0%, #FFE4E6 45%, #FAE8FF 100%)",
                     boxShadow:
-                      "inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.06), 0 6px 18px -10px rgba(190,24,93,0.25)",
+                      "inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.06), 0 4px 12px -8px rgba(190,24,93,0.25)",
                   }}
                 >
                   {/* Soft sunset halo */}
                   <div
                     aria-hidden
-                    className="absolute -top-10 -right-10 h-32 w-32 rounded-full blur-2xl opacity-40 pointer-events-none"
+                    className="absolute -top-8 -right-8 h-20 w-20 rounded-full blur-2xl opacity-40 pointer-events-none"
                     style={{
                       background:
                         "radial-gradient(circle, #FB7185 0%, #F59E0B 60%, transparent 100%)",
                     }}
                   />
-                  <div className="relative flex items-center gap-3">
+                  <div className="relative flex items-center gap-2.5">
                     <div
-                      className="h-9 w-9 rounded-lg bg-black flex items-center justify-center overflow-hidden"
+                      className="h-7 w-7 rounded-md bg-black flex items-center justify-center overflow-hidden"
                       style={{
                         boxShadow:
-                          "inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 16px -4px rgba(0,0,0,0.4)",
+                          "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 10px -3px rgba(0,0,0,0.4)",
                       }}
                     >
                       <img src={imgLogoWhite} alt="Wolfion" className="h-full w-full object-contain p-0.5" />
                     </div>
                     <SheetTitle
-                      className="tracking-[0.3em] text-base text-black dark:text-white font-bold"
-                      style={{ textShadow: "0 1px 0 rgba(255,255,255,0.7), 0 2px 4px rgba(0,0,0,0.15)" }}
+                      className="tracking-[0.3em] text-sm text-black dark:text-white font-bold"
+                      style={{ textShadow: "0 1px 0 rgba(255,255,255,0.7), 0 1px 3px rgba(0,0,0,0.15)" }}
                     >
                       WOLFION
                     </SheetTitle>
                   </div>
                 </SheetHeader>
-                <nav className="flex-1 px-2 py-4 overflow-y-auto">
+                <nav className="flex-1 px-3 py-3 overflow-y-auto space-y-1.5">
                   {PRIMARY_NAV.map((n) => (
                     <SheetClose asChild key={n.path}>
                       <Link href={n.path}>
-                        <Button variant="ghost" className="w-full justify-start h-12 text-base font-light tracking-wide">
-                          {n.label}
-                        </Button>
+                        <button className="menu-3d-item w-full">{n.label}</button>
                       </Link>
                     </SheetClose>
                   ))}
 
-                  <Accordion type="multiple" className="w-full">
+                  <Accordion type="multiple" className="w-full space-y-1.5 pt-1">
                     <AccordionItem value="bapari" className="border-none">
-                      <AccordionTrigger className="px-4 h-12 text-base font-light tracking-wide hover:no-underline rounded-md">
+                      <AccordionTrigger className="menu-3d-item w-full hover:no-underline">
                         Bapari Socks
                       </AccordionTrigger>
-                      <AccordionContent className="pb-1">
-                        <div className="flex flex-col">
+                      <AccordionContent className="pb-1 pt-1.5">
+                        <div className="flex flex-col gap-1 pl-2">
                           {VAPORYX_SUBCATS.map((s) => (
                             <SheetClose asChild key={s.path}>
                               <Link href={s.path}>
-                                <Button variant="ghost" className="w-full justify-start h-11 pl-8 text-sm font-light text-neutral-600 dark:text-neutral-300">
-                                  {s.label}
-                                </Button>
+                                <button className="menu-3d-sub w-full">{s.label}</button>
                               </Link>
                             </SheetClose>
                           ))}
@@ -207,17 +203,15 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                     </AccordionItem>
 
                     <AccordionItem value="collection" className="border-none">
-                      <AccordionTrigger className="px-4 h-12 text-base font-light tracking-wide hover:no-underline rounded-md">
+                      <AccordionTrigger className="menu-3d-item w-full hover:no-underline">
                         Collection
                       </AccordionTrigger>
-                      <AccordionContent className="pb-1">
-                        <div className="flex flex-col">
+                      <AccordionContent className="pb-1 pt-1.5">
+                        <div className="flex flex-col gap-1 pl-2">
                           {COLLECTION_SUBCATS.map((s) => (
                             <SheetClose asChild key={s.path}>
                               <Link href={s.path}>
-                                <Button variant="ghost" className="w-full justify-start h-11 pl-8 text-sm font-light text-neutral-600 dark:text-neutral-300">
-                                  {s.label}
-                                </Button>
+                                <button className="menu-3d-sub w-full">{s.label}</button>
                               </Link>
                             </SheetClose>
                           ))}
@@ -226,31 +220,30 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                     </AccordionItem>
                   </Accordion>
 
-                  <div className="my-3 border-t border-neutral-200 dark:border-neutral-800" />
+                  <div className="my-2 h-px bg-gradient-to-r from-transparent via-neutral-300 to-transparent dark:via-neutral-700" />
                   <SheetClose asChild>
                     <Link href="/cart">
-                      <Button variant="ghost" className="w-full justify-start h-12 text-base font-light tracking-wide">
-                        <ShoppingBag className="mr-3 h-4 w-4" /> Cart ({totalItems})
-                      </Button>
+                      <button className="menu-3d-item w-full flex items-center">
+                        <ShoppingBag className="mr-2.5 h-4 w-4" /> Cart ({totalItems})
+                      </button>
                     </Link>
                   </SheetClose>
                   <SheetClose asChild>
                     <Link href="/settings">
-                      <Button variant="ghost" className="w-full justify-start h-12 text-base font-light tracking-wide" data-testid="menu-settings-mobile">
-                        <Settings className="mr-3 h-4 w-4" /> Settings
-                      </Button>
+                      <button className="menu-3d-item w-full flex items-center" data-testid="menu-settings-mobile">
+                        <Settings className="mr-2.5 h-4 w-4" /> Settings
+                      </button>
                     </Link>
                   </SheetClose>
                   {isAdmin && (
                     <SheetClose asChild>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start h-12 text-base font-light tracking-wide"
+                      <button
+                        className="menu-3d-item menu-3d-accent w-full flex items-center"
                         onClick={switchToAdmin}
                         data-testid="switch-to-admin-mobile"
                       >
-                        <ShieldCheck className="mr-3 h-4 w-4" /> Switch to Admin Mode
-                      </Button>
+                        <ShieldCheck className="mr-2.5 h-4 w-4" /> Switch to Admin Mode
+                      </button>
                     </SheetClose>
                   )}
                 </nav>
