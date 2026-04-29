@@ -28,7 +28,7 @@ export default function Home() {
         }
       `}</style>
 
-      <main className="relative z-10 min-h-[100dvh] flex flex-col items-center justify-center px-6 py-12">
+      <main className="relative z-10 min-h-[100dvh] flex flex-col items-center justify-end px-6 pb-16 pt-[55vh]">
         <div className="w-full max-w-xl mx-auto flex flex-col items-center text-center">
           {/* Wordmark */}
           <h1
