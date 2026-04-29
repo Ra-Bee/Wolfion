@@ -28,14 +28,14 @@ export default function CheckoutSuccess() {
             className="absolute -inset-4 rounded-full blur-2xl opacity-50 pointer-events-none"
             style={{
               background:
-                "linear-gradient(135deg, rgba(251,113,133,0.6) 0%, rgba(245,158,11,0.5) 50%, rgba(147,51,234,0.6) 100%)",
+                "linear-gradient(135deg, rgba(180,140,150,0.6) 0%, rgba(190,160,110,0.5) 50%, rgba(140,120,160,0.6) 100%)",
             }}
           />
           <div
             className="relative h-24 w-24 rounded-full p-[2px]"
             style={{
               background:
-                "linear-gradient(135deg, rgba(251,113,133,0.8) 0%, rgba(245,158,11,0.6) 50%, rgba(147,51,234,0.8) 100%)",
+                "linear-gradient(135deg, rgba(180,140,150,0.8) 0%, rgba(190,160,110,0.6) 50%, rgba(140,120,160,0.8) 100%)",
             }}
           >
             <div

@@ -72,7 +72,7 @@ export default function ShopHome() {
           className="absolute inset-2 sm:inset-4 rounded-[24px] sm:rounded-[32px] blur-2xl pointer-events-none hero-halo-pulse"
           style={{
             background:
-              "linear-gradient(135deg, #FCD34D 0%, #FB923C 60%, #F472B6 100%)",
+              "linear-gradient(135deg, #E5D4A8 0%, #FB923C 60%, #F472B6 100%)",
           }}
         />
 
@@ -84,7 +84,7 @@ export default function ShopHome() {
             background:
               "linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(252,211,77,0.45) 35%, rgba(0,0,0,0.25) 70%, rgba(0,0,0,0.6) 100%)",
             boxShadow:
-              "0 24px 60px -22px rgba(0,0,0,0.5), 0 6px 22px -10px rgba(245,158,11,0.25), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -1px 0 rgba(0,0,0,0.4)",
+              "0 24px 60px -22px rgba(0,0,0,0.5), 0 6px 22px -10px rgba(190,160,110,0.25), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -1px 0 rgba(0,0,0,0.4)",
             transformStyle: "preserve-3d",
             transform:
               "rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg))",
@@ -460,7 +460,7 @@ export default function ShopHome() {
               className="font-serif italic"
               style={{
                 background:
-                  "linear-gradient(135deg, #BE185D 0%, #F59E0B 50%, #9333EA 100%)",
+                  "linear-gradient(135deg, #9C5872 0%, #C9A66B 50%, #9B85A8 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
@@ -523,7 +523,7 @@ export default function ShopHome() {
             className="absolute -inset-3 sm:-inset-5 rounded-[34px] blur-2xl opacity-40 pointer-events-none"
             style={{
               background:
-                "linear-gradient(135deg, #064E3B 0%, #B45309 60%, #FCD34D 100%)",
+                "linear-gradient(135deg, #064E3B 0%, #B45309 60%, #E5D4A8 100%)",
             }}
           />
           {/* Copper-tinted bevel ring */}

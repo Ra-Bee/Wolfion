@@ -40,7 +40,7 @@ export default function ContactPage() {
                       className="relative h-12 w-12 sm:h-14 sm:w-14 rounded-full p-[1.5px] flex-shrink-0"
                       style={{
                         background:
-                          "linear-gradient(135deg, rgba(251,113,133,0.6) 0%, rgba(245,158,11,0.45) 50%, rgba(147,51,234,0.6) 100%)",
+                          "linear-gradient(135deg, rgba(180,140,150,0.6) 0%, rgba(190,160,110,0.45) 50%, rgba(140,120,160,0.6) 100%)",
                       }}
                     >
                       <div

@@ -159,7 +159,7 @@ export function AuthShell({ eyebrow, title, subtitle, children }: Props) {
                     className="mt-5 text-[24px] font-bold tracking-[0.32em]"
                     style={{
                       background:
-                        "linear-gradient(135deg, #ffffff 0%, #5EEAD4 50%, #FCD34D 100%)",
+                        "linear-gradient(135deg, #ffffff 0%, #5EEAD4 50%, #E5D4A8 100%)",
                       WebkitBackgroundClip: "text",
                       WebkitTextFillColor: "transparent",
                       backgroundClip: "text",

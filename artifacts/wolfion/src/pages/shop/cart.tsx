@@ -162,14 +162,14 @@ export default function Cart() {
               className="absolute -inset-4 rounded-full blur-2xl opacity-40 pointer-events-none"
               style={{
                 background:
-                  "linear-gradient(135deg, rgba(251,113,133,0.55) 0%, rgba(245,158,11,0.45) 50%, rgba(147,51,234,0.55) 100%)",
+                  "linear-gradient(135deg, rgba(180,140,150,0.55) 0%, rgba(190,160,110,0.45) 50%, rgba(140,120,160,0.55) 100%)",
               }}
             />
             <div
               className="relative h-20 w-20 rounded-full p-[2px]"
               style={{
                 background:
-                  "linear-gradient(135deg, rgba(251,113,133,0.7) 0%, rgba(245,158,11,0.5) 50%, rgba(147,51,234,0.7) 100%)",
+                  "linear-gradient(135deg, rgba(180,140,150,0.7) 0%, rgba(190,160,110,0.5) 50%, rgba(140,120,160,0.7) 100%)",
               }}
             >
               <div

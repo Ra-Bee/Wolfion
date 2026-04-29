@@ -20,7 +20,7 @@ export function ProductCard({ product, ratio = "tall" }: Props) {
         className={`relative ${aspect} rounded-2xl mb-3 transition-all duration-500 group-hover:-translate-y-1 p-[1.5px]`}
         style={{
           background:
-            "linear-gradient(135deg, rgba(251,113,133,0.45) 0%, rgba(245,158,11,0.30) 50%, rgba(147,51,234,0.45) 100%)",
+            "linear-gradient(135deg, rgba(180,140,150,0.45) 0%, rgba(190,160,110,0.30) 50%, rgba(140,120,160,0.45) 100%)",
         }}
       >
       {/* Glow halo on hover */}
@@ -29,7 +29,7 @@ export function ProductCard({ product, ratio = "tall" }: Props) {
         className="absolute -inset-2 rounded-[1.5rem] blur-2xl opacity-0 group-hover:opacity-50 transition-opacity duration-500 pointer-events-none"
         style={{
           background:
-            "linear-gradient(135deg, rgba(251,113,133,0.6) 0%, rgba(245,158,11,0.5) 50%, rgba(147,51,234,0.6) 100%)",
+            "linear-gradient(135deg, rgba(180,140,150,0.6) 0%, rgba(190,160,110,0.5) 50%, rgba(140,120,160,0.6) 100%)",
         }}
       />
       <div

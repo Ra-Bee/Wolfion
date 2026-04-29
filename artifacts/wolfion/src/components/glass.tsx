@@ -2,25 +2,25 @@ import type { CSSProperties, ReactNode, HTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
 const RING_GRADIENT =
-  "linear-gradient(135deg, rgba(251,113,133,0.55) 0%, rgba(245,158,11,0.40) 50%, rgba(147,51,234,0.55) 100%)";
+  "linear-gradient(135deg, rgba(180,140,150,0.55) 0%, rgba(190,160,110,0.40) 50%, rgba(140,120,160,0.55) 100%)";
 
 const HAIRLINE_GRADIENT =
-  "linear-gradient(90deg, transparent 0%, rgba(251,113,133,0.5) 30%, rgba(147,51,234,0.5) 70%, transparent 100%)";
+  "linear-gradient(90deg, transparent 0%, rgba(180,140,150,0.5) 30%, rgba(140,120,160,0.5) 70%, transparent 100%)";
 
 export function GlassAtmosphere({ className }: { className?: string }) {
   return (
     <div aria-hidden className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}>
       <div
         className="absolute -top-[15%] -left-[10%] h-[55vh] w-[55vh] rounded-full opacity-25 blur-[120px]"
-        style={{ background: "radial-gradient(circle, #FB7185 0%, transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, #D9899B 0%, transparent 70%)" }}
       />
       <div
         className="absolute top-[30%] -right-[10%] h-[50vh] w-[50vh] rounded-full opacity-20 blur-[110px]"
-        style={{ background: "radial-gradient(circle, #F59E0B 0%, transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, #C9A66B 0%, transparent 70%)" }}
       />
       <div
         className="absolute -bottom-[10%] left-[35%] h-[45vh] w-[45vh] rounded-full opacity-20 blur-[110px]"
-        style={{ background: "radial-gradient(circle, #9333EA 0%, transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, #9B85A8 0%, transparent 70%)" }}
       />
     </div>
   );
