@@ -364,8 +364,8 @@ export default function Cart() {
               style={{
                 background:
                   "linear-gradient(180deg, rgba(10,18,28,0.94) 0%, rgba(4,17,26,0.97) 100%)",
-                backdropFilter: "blur(28px) saturate(140%)",
-                WebkitBackdropFilter: "blur(28px) saturate(140%)",
+                backdropFilter: "blur(12px) saturate(120%)",
+                WebkitBackdropFilter: "blur(12px) saturate(120%)",
                 colorScheme: "dark",
               }}
             >

@@ -222,8 +222,8 @@ export default function ShopHome() {
               style={{
                 background:
                   "linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.6) 100%)",
-                backdropFilter: "blur(20px) saturate(140%)",
-                WebkitBackdropFilter: "blur(20px) saturate(140%)",
+                backdropFilter: "blur(12px) saturate(120%)",
+                WebkitBackdropFilter: "blur(12px) saturate(120%)",
               }}
             >
               <div className="dark:hidden absolute inset-0 -z-10 rounded-[19px] bg-white/70" />
@@ -333,8 +333,8 @@ export default function ShopHome() {
                         style={{
                           background:
                             "linear-gradient(180deg, rgba(8,18,28,0.62) 0%, rgba(8,18,28,0.45) 100%)",
-                          backdropFilter: "blur(20px) saturate(170%)",
-                          WebkitBackdropFilter: "blur(20px) saturate(170%)",
+                          backdropFilter: "blur(12px) saturate(120%)",
+                          WebkitBackdropFilter: "blur(12px) saturate(120%)",
                         }}
                       >
                         <h3 className="text-[13px] sm:text-sm font-semibold text-white tracking-wide leading-tight drop-shadow-sm">{c.label}</h3>
@@ -428,8 +428,8 @@ export default function ShopHome() {
                         style={{
                           background:
                             "linear-gradient(180deg, rgba(8,18,28,0.62) 0%, rgba(8,18,28,0.45) 100%)",
-                          backdropFilter: "blur(20px) saturate(170%)",
-                          WebkitBackdropFilter: "blur(20px) saturate(170%)",
+                          backdropFilter: "blur(12px) saturate(120%)",
+                          WebkitBackdropFilter: "blur(12px) saturate(120%)",
                         }}
                       >
                         <p className="text-[9px] uppercase tracking-[0.35em] text-white/85 leading-none">Collection</p>

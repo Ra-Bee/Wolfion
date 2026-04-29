@@ -103,8 +103,8 @@ export default function RoleSelect() {
               style={{
                 background:
                   "linear-gradient(180deg, rgba(10,18,28,0.85) 0%, rgba(4,17,26,0.92) 100%)",
-                backdropFilter: "blur(28px) saturate(140%)",
-                WebkitBackdropFilter: "blur(28px) saturate(140%)",
+                backdropFilter: "blur(12px) saturate(120%)",
+                WebkitBackdropFilter: "blur(12px) saturate(120%)",
               }}
             >
               <div className="flex flex-col items-center" style={{ transform: "translateZ(40px)" }}>
@@ -270,8 +270,8 @@ function ModeCard({ gradient, icon, title, subtitle, onClick, testId }: ModeCard
           style={{
             background:
               "linear-gradient(180deg, rgba(10,18,28,0.85) 0%, rgba(4,17,26,0.92) 100%)",
-            backdropFilter: "blur(20px) saturate(140%)",
-            WebkitBackdropFilter: "blur(20px) saturate(140%)",
+            backdropFilter: "blur(12px) saturate(120%)",
+            WebkitBackdropFilter: "blur(12px) saturate(120%)",
           }}
         >
           {/* Icon tile */}

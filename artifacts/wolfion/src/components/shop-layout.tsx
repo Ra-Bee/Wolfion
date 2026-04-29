@@ -117,7 +117,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
     <div className="min-h-[100dvh] flex flex-col bg-white text-neutral-900 dark:bg-neutral-950 dark:text-neutral-50 antialiased font-sans">
       {/* 3D Glass header — bevel highlight top + deep drop shadow */}
       <header
-        className="sticky top-0 z-40 w-full bg-white/75 dark:bg-neutral-950/75 backdrop-blur-2xl border-b border-neutral-200/60 dark:border-neutral-800/60"
+        className="sticky top-0 z-40 w-full bg-white/90 dark:bg-neutral-950/90 md:bg-white/80 md:dark:bg-neutral-950/80 md:backdrop-blur-md border-b border-neutral-200/60 dark:border-neutral-800/60 [transform:translateZ(0)] [will-change:transform]"
         style={{
           boxShadow:
             "inset 0 1px 0 rgba(255,255,255,0.85), inset 0 -1px 0 rgba(0,0,0,0.06), 0 12px 28px -10px rgba(0,0,0,0.18), 0 4px 10px -4px rgba(0,0,0,0.08)",
@@ -134,7 +134,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
               </SheetTrigger>
               <SheetContent
                 side="left"
-                className="w-[320px] p-0 flex flex-col bg-white/85 dark:bg-neutral-950/90 backdrop-blur-2xl border-r border-white/40 dark:border-white/10"
+                className="w-[320px] p-0 flex flex-col bg-white/95 dark:bg-neutral-950/95 md:backdrop-blur-md border-r border-white/40 dark:border-white/10"
                 style={{
                   boxShadow:
                     "inset -1px 0 0 rgba(255,255,255,0.5), 12px 0 40px -8px rgba(0,0,0,0.35), 4px 0 12px -4px rgba(0,0,0,0.18)",
@@ -311,7 +311,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
               <DropdownMenuContent
                 align="start"
                 sideOffset={14}
-                className="w-56 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl border border-neutral-200/70 dark:border-neutral-800/70 shadow-2xl rounded-xl p-2"
+                className="w-56 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md border border-neutral-200/70 dark:border-neutral-800/70 shadow-2xl rounded-xl p-2"
               >
                 <DropdownMenuLabel className="text-[10px] uppercase tracking-[0.25em] text-neutral-500 font-medium">
                   Socks
@@ -345,7 +345,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
               <DropdownMenuContent
                 align="start"
                 sideOffset={14}
-                className="w-56 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl border border-neutral-200/70 dark:border-neutral-800/70 shadow-2xl rounded-xl p-2"
+                className="w-56 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md border border-neutral-200/70 dark:border-neutral-800/70 shadow-2xl rounded-xl p-2"
               >
                 <DropdownMenuLabel className="text-[10px] uppercase tracking-[0.25em] text-neutral-500 font-medium">
                   Apparel
@@ -642,8 +642,8 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                   style={{
                     background:
                       "linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.65) 100%)",
-                    backdropFilter: "blur(20px) saturate(170%)",
-                    WebkitBackdropFilter: "blur(20px) saturate(170%)",
+                    backdropFilter: "blur(12px) saturate(120%)",
+                    WebkitBackdropFilter: "blur(12px) saturate(120%)",
                   }}
                 >
                   <div className="dark:hidden absolute inset-0 -z-10 rounded-[15px] bg-white/70" />
@@ -759,8 +759,8 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                 style={{
                   background:
                     "linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.6) 100%)",
-                  backdropFilter: "blur(20px) saturate(140%)",
-                  WebkitBackdropFilter: "blur(20px) saturate(140%)",
+                  backdropFilter: "blur(12px) saturate(120%)",
+                  WebkitBackdropFilter: "blur(12px) saturate(120%)",
                 }}
               >
                 <div className="dark:hidden absolute inset-0 -z-10 rounded-[19px] bg-white/70" />
