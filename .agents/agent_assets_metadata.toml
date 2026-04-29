@@ -131,3 +131,9 @@ id = "VmaeeeAnNYf8WZktE2wAn"
 uri = "file://artifacts/wolfion/BUILD_AAB.md"
 type = "text"
 title = "BUILD_AAB.md — instructions"
+
+[[outputs]]
+id = "bzW1-6MBWWLSmw7zRmznY"
+uri = "file://exports/wolfion-source.zip"
+type = "unspecified"
+title = "Wolfion — full source code"
