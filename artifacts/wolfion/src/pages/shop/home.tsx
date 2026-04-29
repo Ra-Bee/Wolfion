@@ -474,7 +474,7 @@ export default function ShopHome() {
           </p>
         </div>
 
-        <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 ${FADE}`}>
+        <div className={`grid grid-cols-2 gap-3 sm:gap-5 ${FADE}`}>
           {[
             { src: imgBoxBlack, label: "Onyx Black", accent: "from-neutral-900 to-amber-600" },
             { src: imgBoxNavy, label: "Midnight Navy", accent: "from-blue-900 to-slate-400" },
@@ -483,7 +483,7 @@ export default function ShopHome() {
           ].map((box) => (
             <div
               key={box.label}
-              className="group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-white dark:bg-neutral-900 ring-1 ring-black/5 dark:ring-white/10 shadow-[0_18px_50px_-20px_rgba(0,0,0,0.35)] hover:shadow-[0_30px_70px_-20px_rgba(0,0,0,0.45)] transition-all duration-500 hover:-translate-y-1"
+              className="group relative rounded-xl sm:rounded-2xl overflow-hidden bg-white dark:bg-neutral-900 ring-1 ring-black/5 dark:ring-white/10 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.3)] hover:shadow-[0_20px_45px_-15px_rgba(0,0,0,0.4)] transition-all duration-500 hover:-translate-y-0.5"
             >
               <div className="relative aspect-square overflow-hidden">
                 <img
@@ -500,12 +500,12 @@ export default function ShopHome() {
                   }}
                 />
               </div>
-              <div className="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4 border-t border-black/5 dark:border-white/10">
-                <span className="text-sm sm:text-base font-medium tracking-wide text-neutral-900 dark:text-white">
+              <div className="flex items-center justify-between gap-2 px-2.5 sm:px-4 py-2 sm:py-3 border-t border-black/5 dark:border-white/10">
+                <span className="text-[11px] sm:text-sm font-medium tracking-wide text-neutral-900 dark:text-white truncate">
                   {box.label}
                 </span>
                 <span
-                  className={`h-3 w-8 rounded-full bg-gradient-to-r ${box.accent} ring-1 ring-black/10`}
+                  className={`h-2 w-5 sm:h-3 sm:w-8 rounded-full bg-gradient-to-r ${box.accent} ring-1 ring-black/10 flex-shrink-0`}
                   aria-hidden
                 />
               </div>
