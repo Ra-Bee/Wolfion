@@ -221,9 +221,9 @@ export default function Cart() {
                     rounded="rounded-lg"
                     haloOpacity={0.20}
                     className="h-28 w-24 sm:h-32 sm:w-28"
-                    innerClassName="h-full w-full bg-neutral-100 dark:bg-neutral-900"
+                    innerClassName="h-full w-full bg-white dark:bg-neutral-900"
                   >
-                    <img src={item.product.image} alt={item.product.name} className="absolute inset-0 h-full w-full object-cover" />
+                    <img src={item.product.image} alt={item.product.name} className="absolute inset-0 h-full w-full object-contain p-2" />
                   </GlassPhotoFrame>
                 </Link>
 

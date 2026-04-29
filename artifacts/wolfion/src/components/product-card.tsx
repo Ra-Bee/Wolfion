@@ -33,12 +33,12 @@ export function ProductCard({ product, ratio = "tall" }: Props) {
         }}
       />
       <div
-        className="relative h-full w-full overflow-hidden rounded-[15px] bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-900 dark:to-neutral-800 shadow-sm group-hover:shadow-2xl transition-shadow duration-500"
+        className="relative h-full w-full overflow-hidden rounded-[15px] bg-white dark:bg-neutral-900 shadow-sm group-hover:shadow-2xl transition-shadow duration-500"
       >
         <img
           src={product.image}
           alt={product.name}
-          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+          className="absolute inset-0 h-full w-full object-contain p-3 sm:p-4 transition-transform duration-700 ease-out group-hover:scale-105"
           loading="lazy"
         />
 

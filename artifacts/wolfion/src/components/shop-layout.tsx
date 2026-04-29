@@ -867,8 +867,8 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                         className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-colors"
                         data-testid={`search-result-${p.id}`}
                       >
-                        <span className="h-12 w-12 rounded-md overflow-hidden bg-neutral-100 dark:bg-neutral-800 shrink-0">
-                          <img src={p.image} alt={p.name} className="h-full w-full object-cover" />
+                        <span className="h-12 w-12 rounded-md overflow-hidden bg-white dark:bg-neutral-800 shrink-0 flex items-center justify-center">
+                          <img src={p.image} alt={p.name} className="h-full w-full object-contain p-1" />
                         </span>
                         <span className="flex-1 min-w-0">
                           <span className="block text-sm font-medium truncate">{p.name}</span>
