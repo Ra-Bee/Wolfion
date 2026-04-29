@@ -483,7 +483,7 @@ export default function ShopHome() {
           ].map((box) => (
             <div
               key={box.label}
-              className="group relative rounded-xl sm:rounded-2xl overflow-hidden bg-white dark:bg-neutral-900 ring-1 ring-black/5 dark:ring-white/10 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.3)] hover:shadow-[0_20px_45px_-15px_rgba(0,0,0,0.4)] transition-all duration-500 hover:-translate-y-0.5"
+              className="group relative rounded-xl sm:rounded-2xl overflow-hidden bg-white dark:bg-neutral-900 ring-1 ring-black/5 dark:ring-white/10 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.3)] hover:shadow-[0_20px_45px_-15px_rgba(0,0,0,0.4)] transition-all duration-[900ms] ease-[cubic-bezier(.22,.61,.36,1)] hover:-translate-y-0.5"
             >
               <div className="relative aspect-square overflow-hidden">
                 <img
