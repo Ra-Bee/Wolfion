@@ -149,6 +149,8 @@ function AppRouter() {
   const RoleSelectRoute = () => {
     if (!isLoaded) return null;
     if (!isSignedIn) return <Redirect to="/sign-in" />;
+    // Only admin emails get to choose a mode. Everyone else goes straight to the shop.
+    if (!isAdmin) return <Redirect to="/shop" />;
     return <RoleSelect />;
   };
 
