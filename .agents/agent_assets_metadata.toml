@@ -119,3 +119,15 @@ id = "ghImTnH11H7u7_fv8dcta"
 uri = "file://downloads/wolfion-apk-source.tar.gz"
 type = "unspecified"
 title = "Wolfion — updated Android source bundle"
+
+[[outputs]]
+id = "kh2i4Nkq1AUy6AJOdX9o_"
+uri = "file://downloads/wolfion-android-aab-source.tar.gz"
+type = "unspecified"
+title = "Wolfion Android source (Play Store .aab build)"
+
+[[outputs]]
+id = "VmaeeeAnNYf8WZktE2wAn"
+uri = "file://artifacts/wolfion/BUILD_AAB.md"
+type = "text"
+title = "BUILD_AAB.md — instructions"
