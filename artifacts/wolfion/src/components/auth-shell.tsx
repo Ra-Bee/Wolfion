@@ -84,10 +84,9 @@ export function AuthShell({ eyebrow, title, subtitle, children }: Props) {
       </div>
 
       <main
-        className="relative min-h-[100dvh] grid place-items-center px-4 py-8"
-        style={{ perspective: "1400px" }}
+        className="relative min-h-[100dvh] grid place-items-center px-4 sm:px-5 py-6 sm:py-8 overflow-x-hidden md:[perspective:1400px]"
       >
-        <div className="relative w-full max-w-[400px] mx-auto">
+        <div className="relative w-full max-w-[min(380px,calc(100vw-2rem))] sm:max-w-[400px] mx-auto">
           {/* Glow halo */}
           <div
             aria-hidden
@@ -120,7 +119,7 @@ export function AuthShell({ eyebrow, title, subtitle, children }: Props) {
             >
               {/* Glass card */}
               <div
-                className="rounded-[27px] p-6 sm:p-8 border border-white/10 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)]"
+                className="rounded-[27px] p-5 sm:p-8 border border-white/10 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)] overflow-hidden"
                 style={{
                   background:
                     "linear-gradient(180deg, rgba(10,18,28,0.85) 0%, rgba(4,17,26,0.92) 100%)",
@@ -131,7 +130,6 @@ export function AuthShell({ eyebrow, title, subtitle, children }: Props) {
                 {/* Brand mark with glow */}
                 <div
                   className="flex flex-col items-center text-center"
-                  style={{ transform: "translateZ(40px)" }}
                 >
                   <div className="relative h-[72px] w-[72px]">
                     <div
@@ -184,7 +182,7 @@ export function AuthShell({ eyebrow, title, subtitle, children }: Props) {
                 </div>
 
                 {/* Auth form slot */}
-                <div className="mt-5" style={{ transform: "translateZ(20px)" }}>
+                <div className="mt-5 w-full min-w-0">
                   {children}
                 </div>
               </div>
@@ -243,9 +241,9 @@ export const clerkAppearance = {
     fontFamily: "inherit",
   },
   elements: {
-    rootBox: "w-full",
-    cardBox: "!shadow-none !border-0 !bg-transparent",
-    card: "!bg-transparent !text-white !shadow-none !border-0 !p-0",
+    rootBox: "!w-full !min-w-0 !max-w-full",
+    cardBox: "!shadow-none !border-0 !bg-transparent !w-full !min-w-0 !max-w-full",
+    card: "!bg-transparent !text-white !shadow-none !border-0 !p-0 !w-full !min-w-0 !max-w-full",
     logoBox: "!hidden",
     logoImage: "!hidden",
     header: "!hidden",
