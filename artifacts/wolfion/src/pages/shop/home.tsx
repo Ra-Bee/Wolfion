@@ -7,6 +7,11 @@ import imgPortrait from "@assets/Image_20260416035728_55_2_1776716993092.jpg";
 import imgSocks from "@assets/Image_20260416025624_54_2_1776717008197.jpg";
 import imgWomenswear from "@assets/wolfion_womenswear.png";
 import imgKidswear from "@assets/wolfion_kidswear.png";
+import imgBoxBlack from "@assets/Image_20260429195426_80_2_1777463848826.jpg";
+import imgBoxNavy from "@assets/Image_20260429195427_81_2_1777463848828.jpg";
+import imgBoxGreen from "@assets/Image_20260429195428_82_2_1777463848828.jpg";
+import imgBoxWhite from "@assets/Image_20260429195430_83_2_1777463848828.jpg";
+import imgExperienceSource from "@assets/Image_20260429195502_86_2_1777463848828.jpg";
 
 const FADE = "animate-in fade-in slide-in-from-bottom-4 duration-1000 fill-mode-both";
 
@@ -439,6 +444,113 @@ export default function ShopHome() {
               </div>
             </Link>
           ))}
+        </div>
+      </section>
+
+      {/* 4.5 — THE WOLFION BOX · Premium packaging in 4 colorways */}
+      <section className="relative container mx-auto px-4 sm:px-5 pb-16 sm:pb-20">
+        <div className={`text-center mb-6 sm:mb-10 ${FADE}`}>
+          <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 mb-3 bg-gradient-to-r from-amber-100/60 to-pink-100/60 dark:from-amber-900/30 dark:to-pink-900/30 border border-amber-200/60 dark:border-amber-800/40 text-[10px] uppercase tracking-[0.3em] text-amber-700 dark:text-amber-300">
+            <Sparkles className="h-3 w-3" />
+            The Wolfion Box
+          </div>
+          <h2 className="text-3xl sm:text-5xl font-light tracking-tight text-neutral-900 dark:text-white">
+            Premium packaging,{" "}
+            <span
+              className="font-serif italic"
+              style={{
+                background:
+                  "linear-gradient(135deg, #BE185D 0%, #F59E0B 50%, #9333EA 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              four signatures.
+            </span>
+          </h2>
+          <p className="mt-3 text-sm sm:text-base text-neutral-600 dark:text-neutral-400 max-w-xl mx-auto font-light">
+            Designed in Australia, manufactured in Dhaka. Each pair arrives in a magnetic-close box with foil-stamped monogram.
+          </p>
+        </div>
+
+        <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 ${FADE}`}>
+          {[
+            { src: imgBoxBlack, label: "Onyx Black", accent: "from-neutral-900 to-amber-600" },
+            { src: imgBoxNavy, label: "Midnight Navy", accent: "from-blue-900 to-slate-400" },
+            { src: imgBoxGreen, label: "Forest Green", accent: "from-emerald-900 to-amber-700" },
+            { src: imgBoxWhite, label: "Pearl White", accent: "from-neutral-100 to-amber-500" },
+          ].map((box) => (
+            <div
+              key={box.label}
+              className="group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-white dark:bg-neutral-900 ring-1 ring-black/5 dark:ring-white/10 shadow-[0_18px_50px_-20px_rgba(0,0,0,0.35)] hover:shadow-[0_30px_70px_-20px_rgba(0,0,0,0.45)] transition-all duration-500 hover:-translate-y-1"
+            >
+              <div className="relative aspect-square overflow-hidden">
+                <img
+                  src={box.src}
+                  alt={`Wolfion packaging — ${box.label}`}
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-105"
+                />
+                <div
+                  aria-hidden
+                  className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+                  style={{
+                    background:
+                      "linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.18) 50%, transparent 65%)",
+                  }}
+                />
+              </div>
+              <div className="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4 border-t border-black/5 dark:border-white/10">
+                <span className="text-sm sm:text-base font-medium tracking-wide text-neutral-900 dark:text-white">
+                  {box.label}
+                </span>
+                <span
+                  className={`h-3 w-8 rounded-full bg-gradient-to-r ${box.accent} ring-1 ring-black/10`}
+                  aria-hidden
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 4.6 — EXPERIENCE THE SOURCE · Branded heritage card */}
+      <section className="relative container mx-auto px-4 sm:px-5 pb-16 sm:pb-20">
+        <div className={`relative max-w-5xl mx-auto ${FADE}`}>
+          {/* Soft emerald + copper halo */}
+          <div
+            aria-hidden
+            className="absolute -inset-3 sm:-inset-5 rounded-[34px] blur-2xl opacity-40 pointer-events-none"
+            style={{
+              background:
+                "linear-gradient(135deg, #064E3B 0%, #B45309 60%, #FCD34D 100%)",
+            }}
+          />
+          {/* Copper-tinted bevel ring */}
+          <div
+            className="relative rounded-[26px] sm:rounded-[32px] p-[2px] sm:p-[3px] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.5)]"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(252,211,77,0.55) 0%, rgba(180,83,9,0.45) 50%, rgba(0,0,0,0.55) 100%)",
+            }}
+          >
+            <div className="relative rounded-[22px] sm:rounded-[28px] overflow-hidden bg-emerald-950">
+              <img
+                src={imgExperienceSource}
+                alt="Wolfion Bapari Socks — Experience the Source"
+                className="block w-full h-auto"
+              />
+              {/* Subtle top sheen for the glass feel */}
+              <div
+                aria-hidden
+                className="absolute inset-x-0 top-0 h-1/3 pointer-events-none"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(255,255,255,0.10) 0%, transparent 100%)",
+                }}
+              />
+            </div>
+          </div>
         </div>
       </section>
 
