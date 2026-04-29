@@ -113,3 +113,9 @@ id = "gT5jMDibDH60tl4eJ_-3D"
 uri = "file://attached_assets/exports/wolfion-android-icons.tar.gz"
 type = "unspecified"
 title = "Wolfion Android App Icons (drop-in update)"
+
+[[outputs]]
+id = "ghImTnH11H7u7_fv8dcta"
+uri = "file://downloads/wolfion-apk-source.tar.gz"
+type = "unspecified"
+title = "Wolfion — Android source bundle (build APK in Android Studio)"
