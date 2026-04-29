@@ -266,27 +266,12 @@
     background: hsl(var(--card) / 0.7);
   }
 
-  /* SMOOTHNESS — promote heavy elements onto their own GPU layer so the
-     browser can composite them without re-painting the page on every frame.
-     This keeps every visual effect intact (halos, blur, hover, animations)
-     and just makes them run at 60fps. */
+  /* SMOOTHNESS — gentle GPU hints only. No layout-affecting rules. */
 
-  /* Decorative halos / backdrop-blur surfaces → isolated compositor layers */
-  [aria-hidden="true"][class*="blur-"],
-  [class*="backdrop-blur"],
-  [style*="backdrop-filter"],
-  [style*="backdropFilter"] {
+  /* Promote decorative blur halos to their own GPU layer (cheap to composite) */
+  [aria-hidden="true"][class*="blur-"] {
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    contain: paint;
-  }
-
-  /* Native-feel touch scrolling */
-  html, body {
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-y: contain;
   }
 
   /* Tap response feels instant */
@@ -295,24 +280,6 @@
     touch-action: manipulation;
   }
 
-  /* Off-screen sections skip painting until scrolled into view */
-  main > section,
-  main > article {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 800px;
-  }
-
-  /* Sticky header gets its own layer so scroll doesn't repaint it */
-  header.sticky,
-  [class*="sticky"][class*="top-0"] {
-    transform: translateZ(0);
-    will-change: transform;
-  }
-
-  /* Images decode async by default */
-  img {
-    content-visibility: auto;
-  }
 
   /* Respect reduced-motion preference */
   @media (prefers-reduced-motion: reduce) {
