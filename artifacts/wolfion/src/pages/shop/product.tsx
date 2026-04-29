@@ -63,7 +63,7 @@ export default function ProductDetail() {
             className="aspect-[4/5]"
             innerClassName="h-full w-full bg-white dark:bg-neutral-900"
           >
-            <img src={product.image} alt={product.name} className="absolute inset-0 h-full w-full object-contain p-4 sm:p-6" />
+            <img src={product.image} alt={product.name} className="absolute inset-0 h-full w-full object-contain" />
           </GlassPhotoFrame>
 
           {/* Details */}
