@@ -190,7 +190,7 @@ export default function ProductDetail() {
                     className="aspect-[4/5] mb-3"
                     innerClassName="h-full w-full bg-white dark:bg-neutral-900"
                   >
-                    <img src={p.image} alt={p.name} className="absolute inset-0 h-full w-full object-contain p-3 transition-transform duration-700 group-hover:scale-105" />
+                    <img src={p.image} alt={p.name} loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-contain p-3 transition-transform duration-700 group-hover:scale-105" />
                   </GlassPhotoFrame>
                   <div className="flex justify-between items-start gap-3">
                     <div>

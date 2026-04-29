@@ -199,14 +199,13 @@
       radial-gradient(at 100% 100%, hsl(var(--primary) / 0.06) 0px, transparent 50%);
   }
 
-  /* Smooth interactive transitions */
+  /* Smooth interactive transitions — keep cheap properties only */
   button, a, [role="button"], input, select, textarea {
     transition:
-      transform 180ms cubic-bezier(.2,.8,.2,1),
-      box-shadow 180ms cubic-bezier(.2,.8,.2,1),
-      background-color 180ms cubic-bezier(.2,.8,.2,1),
-      color 180ms cubic-bezier(.2,.8,.2,1),
-      border-color 180ms cubic-bezier(.2,.8,.2,1);
+      transform 140ms cubic-bezier(.2,.8,.2,1),
+      opacity 140ms cubic-bezier(.2,.8,.2,1),
+      background-color 140ms cubic-bezier(.2,.8,.2,1),
+      color 140ms cubic-bezier(.2,.8,.2,1);
   }
   button:active, [role="button"]:active {
     transform: scale(0.97);
@@ -277,6 +276,44 @@
     [style*="backdropFilter"] {
       backdrop-filter: none !important;
       -webkit-backdrop-filter: none !important;
+    }
+
+    /* Decorative halo divs use filter:blur — also expensive. Hide them on phones */
+    [aria-hidden="true"][class*="blur-2xl"],
+    [aria-hidden="true"][class*="blur-xl"],
+    [aria-hidden="true"][class*="blur-lg"] {
+      display: none !important;
+    }
+
+    /* Suppress heavy entry animations on mobile — keep only fast fade */
+    main > * {
+      animation-duration: 160ms !important;
+    }
+    [class*="animate-in"] {
+      animation-duration: 200ms !important;
+    }
+
+    /* Disable all hover effects on touch devices — they cause repaints during scroll */
+    .group:hover [class*="group-hover:"],
+    *:hover {
+      transform: none !important;
+    }
+    [class*="group-hover:opacity"],
+    [class*="hover:scale"],
+    [class*="group-hover:scale"] {
+      transition: none !important;
+    }
+
+    /* Off-screen content shouldn't paint */
+    section, article, footer {
+      content-visibility: auto;
+      contain-intrinsic-size: auto 600px;
+    }
+
+    /* GPU-promote scrollable surfaces */
+    body, main, [class*="overflow-y"], [class*="overflow-auto"] {
+      -webkit-overflow-scrolling: touch;
+      transform: translateZ(0);
     }
   }
 
