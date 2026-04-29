@@ -124,7 +124,7 @@ title = "Wolfion — updated Android source bundle"
 id = "kh2i4Nkq1AUy6AJOdX9o_"
 uri = "file://downloads/wolfion-android-aab-source.tar.gz"
 type = "unspecified"
-title = "Wolfion Android source (Play Store .aab build)"
+title = "Wolfion Android source — open in Android Studio to generate the .aab"
 
 [[outputs]]
 id = "VmaeeeAnNYf8WZktE2wAn"
