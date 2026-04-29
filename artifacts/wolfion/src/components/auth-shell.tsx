@@ -123,8 +123,8 @@ export function AuthShell({ eyebrow, title, subtitle, children }: Props) {
                 style={{
                   background:
                     "linear-gradient(180deg, rgba(10,18,28,0.85) 0%, rgba(4,17,26,0.92) 100%)",
-                  backdropFilter: "blur(12px) saturate(120%)",
-                  WebkitBackdropFilter: "blur(12px) saturate(120%)",
+                  backdropFilter: "blur(28px) saturate(140%)",
+                  WebkitBackdropFilter: "blur(28px) saturate(140%)",
                 }}
               >
                 {/* Brand mark with glow */}

@@ -91,8 +91,8 @@ export function GlassCard({
           style={{
             background:
               "linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 100%)",
-            backdropFilter: "blur(12px) saturate(120%)",
-            WebkitBackdropFilter: "blur(12px) saturate(120%)",
+            backdropFilter: "blur(22px) saturate(170%)",
+            WebkitBackdropFilter: "blur(22px) saturate(170%)",
             boxShadow:
               "0 24px 60px -20px rgba(15,23,42,0.30), inset 0 1px 0 rgba(255,255,255,0.45)",
           }}
