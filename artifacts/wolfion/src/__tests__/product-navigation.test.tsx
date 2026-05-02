@@ -14,6 +14,36 @@ const stableUser = {
   emailAddresses: [{ emailAddress: "shopper@test.local" }],
 };
 
+// Hoist the hook return values to module scope so every render observes
+// REFERENTIALLY-STABLE objects. If we returned fresh objects from each hook
+// call, effects that depend on (e.g.) `useClerk().addListener` would re-run
+// every render — exactly the kind of subtle re-mount churn this test is meant
+// to guard against.
+const stableAddListener = () => () => {};
+const stableSignOut = () => Promise.resolve();
+const stableGetToken = async () => null;
+
+const stableUseUserResult = {
+  isLoaded: true,
+  isSignedIn: true,
+  user: stableUser,
+} as const;
+
+const stableUseClerkResult = {
+  addListener: stableAddListener,
+  signOut: stableSignOut,
+  session: null,
+  user: stableUser,
+} as const;
+
+const stableUseAuthResult = {
+  isLoaded: true,
+  isSignedIn: true,
+  userId: stableUser.id,
+  sessionId: "test_session_1",
+  getToken: stableGetToken,
+} as const;
+
 vi.mock("@clerk/react", () => {
   return {
     ClerkProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
@@ -22,24 +52,9 @@ vi.mock("@clerk/react", () => {
     SignedIn: ({ children }: { children: ReactNode }) => <>{children}</>,
     SignedOut: () => null,
     UserButton: () => <div data-testid="clerk-user-button" />,
-    useUser: () => ({
-      isLoaded: true,
-      isSignedIn: true,
-      user: stableUser,
-    }),
-    useClerk: () => ({
-      addListener: () => () => {},
-      signOut: vi.fn(),
-      session: null,
-      user: stableUser,
-    }),
-    useAuth: () => ({
-      isLoaded: true,
-      isSignedIn: true,
-      userId: stableUser.id,
-      sessionId: "test_session_1",
-      getToken: async () => null,
-    }),
+    useUser: () => stableUseUserResult,
+    useClerk: () => stableUseClerkResult,
+    useAuth: () => stableUseAuthResult,
   };
 });
 
