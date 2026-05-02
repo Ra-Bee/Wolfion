@@ -92,6 +92,8 @@ export function MediaAttachSheet({ visible, onClose, onPicked, onChooseKind, ena
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Close attach menu"
         onPress={onClose}
         style={{
           flex: 1,
@@ -100,6 +102,7 @@ export function MediaAttachSheet({ visible, onClose, onPicked, onChooseKind, ena
         }}
       >
         <Pressable
+          accessible={false}
           onPress={() => {}}
           style={{
             backgroundColor: c.cardSolid,
@@ -134,6 +137,8 @@ export function MediaAttachSheet({ visible, onClose, onPicked, onChooseKind, ena
             {opts.map((o) => (
               <Pressable
                 key={o.kind}
+                accessibilityRole="button"
+                accessibilityLabel={`Attach ${o.label}`}
                 onPress={() => choose(o.kind)}
                 style={({ pressed }) => ({
                   width: "33.333%",

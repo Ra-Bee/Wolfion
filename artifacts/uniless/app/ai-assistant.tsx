@@ -335,8 +335,10 @@ export function AIAssistantContent({ back = false }: { back?: boolean }) {
           }}
         >
           <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Attach media"
             onPress={() => setAttachOpen(true)}
-            style={{ padding: 10, marginRight: 4, marginBottom: back ? 8 : 96 + 8 }}
+            style={{ padding: 10, marginRight: 4, marginBottom: 6 }}
             hitSlop={6}
           >
             <Feather name="plus-circle" size={22} color={c.primary} />
@@ -344,7 +346,7 @@ export function AIAssistantContent({ back = false }: { back?: boolean }) {
           <View style={{ flex: 1 }}>
             <GlassInput placeholder="Ask anything…" value={text} onChangeText={setText} multiline />
           </View>
-          <View style={{ marginLeft: 8, marginBottom: back ? 12 : 96 + 12 }}>
+          <View style={{ marginLeft: 8, marginBottom: 8 }}>
             <GlassButton title={busy ? "…" : "Send"} small disabled={!text.trim() || busy} onPress={() => send(text)} />
           </View>
         </View>

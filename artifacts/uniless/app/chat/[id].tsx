@@ -1,8 +1,10 @@
 import { Feather } from "@expo/vector-icons";
+import * as FileSystem from "expo-file-system/legacy";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
+import * as Sharing from "expo-sharing";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { FlatList, KeyboardAvoidingView, Linking, Platform, Pressable, Text, View } from "react-native";
+import { Alert, FlatList, KeyboardAvoidingView, Linking, Platform, Pressable, Text, View } from "react-native";
 
 import { Avatar, Background, GlassButton, GlassInput, Header, TagChip } from "@/components/glass";
 import {
@@ -138,7 +140,37 @@ export default function ChatScreen() {
                   ) : null}
                   {att && att.kind !== "photo" ? (
                     <Pressable
-                      onPress={() => Linking.openURL(att.uri).catch(() => null)}
+                      accessibilityRole="button"
+                      accessibilityLabel={`Open ${attachmentLabel(att)}`}
+                      onPress={async () => {
+                        try {
+                          if (att.uri.startsWith("http")) {
+                            await Linking.openURL(att.uri);
+                            return;
+                          }
+                          if (await Sharing.isAvailableAsync()) {
+                            let openUri = att.uri;
+                            if (Platform.OS === "android" && att.uri.startsWith("file://")) {
+                              try {
+                                openUri = await FileSystem.getContentUriAsync(att.uri);
+                              } catch {
+                                /* fall through */
+                              }
+                            }
+                            await Sharing.shareAsync(openUri, {
+                              mimeType: att.mimeType,
+                              dialogTitle: attachmentLabel(att),
+                            });
+                          } else {
+                            await Linking.openURL(att.uri);
+                          }
+                        } catch (err) {
+                          Alert.alert(
+                            "Could not open",
+                            err instanceof Error ? err.message : "No app available to open this file.",
+                          );
+                        }
+                      }}
                       style={({ pressed }) => ({
                         flexDirection: "row",
                         alignItems: "center",
@@ -344,7 +376,16 @@ export default function ChatScreen() {
                 const ttl = ttlSeconds;
                 setText("");
                 setPendingAttachment(undefined);
-                await sendMessage(chat.id, t, { attachment: att, ttlSeconds: ttl });
+                try {
+                  await sendMessage(chat.id, t, { attachment: att, ttlSeconds: ttl });
+                } catch (err) {
+                  setText(t);
+                  setPendingAttachment(att);
+                  Alert.alert(
+                    "Send failed",
+                    err instanceof Error ? err.message : "Could not send your message.",
+                  );
+                }
               }}
             />
           </View>
