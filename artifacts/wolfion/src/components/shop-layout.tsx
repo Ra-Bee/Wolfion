@@ -4,10 +4,11 @@ import { useUser, useClerk } from "@clerk/react";
 import { clearAdminStorage } from "@/lib/wolfion-store";
 import { useCart } from "@/hooks/use-cart";
 import { useRole } from "@/hooks/use-role";
-import { ShoppingBag, Menu, User, LogOut, Search, ShieldCheck, ChevronDown, Home as HomeIcon, Store, Mail, Info, Settings, X } from "lucide-react";
+import { ShoppingBag, Menu, User, LogOut, Search, ShieldCheck, ChevronDown, Home as HomeIcon, Store, Mail, Info, Settings, X, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose, SheetFooter } from "@/components/ui/sheet";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { ProductFormDialog } from "@/components/admin/product-form-dialog";
 import { categories } from "@/lib/data";
 import { useListProducts } from "@workspace/api-client-react";
 import {
@@ -54,6 +55,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
 
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [addProductOpen, setAddProductOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Live catalog from the API. The query is shared with the products listing
@@ -956,6 +958,32 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Admin-only floating "Add product" button — visible on every shop page
+          for allowlisted admin emails. Server still enforces auth on POST. */}
+      {isAdmin && (
+        <>
+          <button
+            type="button"
+            onClick={() => setAddProductOpen(true)}
+            aria-label="Add new product"
+            data-testid="fab-add-product"
+            className="fixed z-50 bottom-5 right-5 sm:bottom-7 sm:right-7 inline-flex items-center gap-2 h-12 sm:h-14 px-5 sm:px-6 rounded-full bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-2xl hover:shadow-[0_20px_50px_-15px_rgba(0,0,0,0.6)] active:scale-95 transition-all text-xs uppercase tracking-[0.2em] font-medium"
+            style={{
+              boxShadow:
+                "0 18px 40px -12px rgba(0,0,0,0.55), 0 6px 14px -6px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.18)",
+            }}
+          >
+            <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
+            <span className="hidden sm:inline">Add product</span>
+          </button>
+          <ProductFormDialog
+            open={addProductOpen}
+            onOpenChange={setAddProductOpen}
+            editingProduct={null}
+          />
+        </>
+      )}
     </div>
   );
 }
