@@ -188,7 +188,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
 
                   <Accordion type="multiple" className="w-full space-y-5">
                     <AccordionItem value="bapari" className="border-none">
-                      <AccordionTrigger className="menu-3d-item w-full hover:no-underline">
+                      <AccordionTrigger className="menu-3d-item w-full !py-0 hover:no-underline">
                         Bapari Socks
                       </AccordionTrigger>
                       <AccordionContent className="pb-1 pt-3">
@@ -205,7 +205,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                     </AccordionItem>
 
                     <AccordionItem value="collection" className="border-none">
-                      <AccordionTrigger className="menu-3d-item w-full hover:no-underline">
+                      <AccordionTrigger className="menu-3d-item w-full !py-0 hover:no-underline">
                         Collection
                       </AccordionTrigger>
                       <AccordionContent className="pb-1 pt-3">
