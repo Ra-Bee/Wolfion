@@ -11,9 +11,17 @@ import SignUpPage from "@/pages/auth/sign-up";
 import RoleSelect from "@/pages/role-select";
 
 import ShopHome from "@/pages/shop/home";
+// ProductDetail and Cart are EAGER imports on purpose: they are the two
+// most-visited screens in the shop funnel (every product tap → ProductDetail →
+// Cart). Lazy-loading them was producing a visible spinner flash on the first
+// tap of a product card on slow / cold-cache connections, which made the tap
+// feel like it didn't register (Task #15). Bundling them with the main entry
+// trades a tiny bit of initial download for an instant, no-flash navigation.
+// The remaining secondary shop routes (about/contact/settings/etc.) stay
+// lazy — they're rarely visited and don't sit on the critical path.
+import ProductDetail from "@/pages/shop/product";
+import Cart from "@/pages/shop/cart";
 const Products = lazy(() => import("@/pages/shop/products"));
-const ProductDetail = lazy(() => import("@/pages/shop/product"));
-const Cart = lazy(() => import("@/pages/shop/cart"));
 const CheckoutSuccess = lazy(() => import("@/pages/shop/checkout-success"));
 const AboutPage = lazy(() => import("@/pages/shop/about"));
 const ContactPage = lazy(() => import("@/pages/shop/contact"));
