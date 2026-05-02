@@ -371,7 +371,18 @@ export async function customFetch<T = unknown>(
   // and retry the request with `cache: "reload"` to bypass the HTTP cache
   // and force a fresh 200.
   if (response.status === 304 && method === "GET") {
-    response = await fetch(input, { ...init, method, headers, cache: "reload" });
+    // Try `no-store` first (most aggressive: bypass HTTP cache both ways
+    // AND don't store the response). If that still produces a 304 — which
+    // can happen in some Android WebView / TWA setups that ignore the
+    // cache hint — fall back to a cache-busting query param so the URL
+    // itself is unique and cannot match any cached entry.
+    response = await fetch(input, { ...init, method, headers, cache: "no-store" });
+    if (response.status === 304) {
+      const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
+      const sep = url.includes("?") ? "&" : "?";
+      const bust = `${url}${sep}_cb=${Date.now()}`;
+      response = await fetch(bust, { ...init, method, headers, cache: "no-store" });
+    }
   }
 
   if (!response.ok) {
