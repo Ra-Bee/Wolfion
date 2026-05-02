@@ -1,15 +1,20 @@
 import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import * as ImagePicker from "expo-image-picker";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { FlatList, KeyboardAvoidingView, Platform, Pressable, Text, View } from "react-native";
+import { FlatList, KeyboardAvoidingView, Linking, Platform, Pressable, Text, View } from "react-native";
 
 import { Avatar, Background, GlassButton, GlassInput, Header, TagChip } from "@/components/glass";
+import {
+  MediaAttachSheet,
+  attachmentIcon,
+  attachmentLabel,
+} from "@/components/MediaAttachSheet";
 import { useAppData } from "@/contexts/AppDataContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useColors } from "@/hooks/useColors";
 import { fmtTime } from "@/lib/format";
+import type { MessageAttachment } from "@/lib/types";
 
 const TTL_OPTIONS: { label: string; seconds: number }[] = [
   { label: "off", seconds: 0 },
@@ -24,7 +29,8 @@ export default function ChatScreen() {
   const { user, allUsers } = useAuth();
   const { chats, messages, sendMessage, toggleSaveMessage, markChatRead } = useAppData();
   const [text, setText] = useState("");
-  const [pendingImage, setPendingImage] = useState<string | undefined>(undefined);
+  const [pendingAttachment, setPendingAttachment] = useState<MessageAttachment | undefined>(undefined);
+  const [sheetOpen, setSheetOpen] = useState(false);
   const [ttlSeconds, setTtlSeconds] = useState<number>(0);
   const listRef = useRef<FlatList>(null);
 
@@ -39,7 +45,6 @@ export default function ChatScreen() {
     [messages, id],
   );
 
-  // mark messages from other authors as read when chat opens / new arrives
   useEffect(() => {
     if (!chat || !user) return;
     void markChatRead(chat.id);
@@ -48,18 +53,6 @@ export default function ChatScreen() {
   useEffect(() => {
     setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 120);
   }, [chatMessages.length]);
-
-  const pickImage = async () => {
-    const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!perm.granted) return;
-    const res = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      quality: 0.8,
-    });
-    if (!res.canceled && res.assets[0]) {
-      setPendingImage(res.assets[0].uri);
-    }
-  };
 
   if (!chat) {
     return (
@@ -107,6 +100,7 @@ export default function ChatScreen() {
             const otherReaders = (item.readBy ?? []).filter((u: string) => u !== user?.id);
             const seenByOther = isMe && !chat.isGroup && otherReaders.length > 0;
             const ttlLeft = item.expiresAt && !item.saved ? item.expiresAt - Date.now() : 0;
+            const att = item.attachment;
             return (
               <Pressable
                 onLongPress={() => isMe && toggleSaveMessage(item.id)}
@@ -134,6 +128,66 @@ export default function ChatScreen() {
                       style={{ width: 220, height: 220, borderRadius: 16, marginBottom: 4 }}
                       contentFit="cover"
                     />
+                  ) : null}
+                  {att && att.kind === "photo" ? (
+                    <Image
+                      source={{ uri: att.uri }}
+                      style={{ width: 220, height: 220, borderRadius: 16, marginBottom: 4 }}
+                      contentFit="cover"
+                    />
+                  ) : null}
+                  {att && att.kind !== "photo" ? (
+                    <Pressable
+                      onPress={() => Linking.openURL(att.uri).catch(() => null)}
+                      style={({ pressed }) => ({
+                        flexDirection: "row",
+                        alignItems: "center",
+                        padding: 10,
+                        borderRadius: 14,
+                        backgroundColor: isMe ? c.primary : c.cardSolid,
+                        marginBottom: 4,
+                        opacity: pressed ? 0.7 : 1,
+                      })}
+                    >
+                      <View
+                        style={{
+                          width: 36,
+                          height: 36,
+                          borderRadius: 18,
+                          backgroundColor: isMe ? "rgba(255,255,255,0.2)" : c.secondary,
+                          alignItems: "center",
+                          justifyContent: "center",
+                          marginRight: 10,
+                        }}
+                      >
+                        <Feather
+                          name={attachmentIcon(att.kind)}
+                          size={16}
+                          color={isMe ? c.primaryForeground : c.primary}
+                        />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text
+                          numberOfLines={1}
+                          style={{
+                            color: isMe ? c.primaryForeground : c.foreground,
+                            fontSize: 13,
+                            fontFamily: "Inter_700Bold",
+                          }}
+                        >
+                          {attachmentLabel(att)}
+                        </Text>
+                        <Text
+                          style={{
+                            color: isMe ? "rgba(255,255,255,0.85)" : c.mutedForeground,
+                            fontSize: 11,
+                          }}
+                        >
+                          {att.kind.toUpperCase()}
+                          {att.size ? ` · ${(att.size / 1024).toFixed(0)} KB` : ""}
+                        </Text>
+                      </View>
+                    </Pressable>
                   ) : null}
                   {item.text ? (
                     <View
@@ -185,7 +239,7 @@ export default function ChatScreen() {
           }
         />
 
-        {pendingImage ? (
+        {pendingAttachment ? (
           <View
             style={{
               flexDirection: "row",
@@ -196,13 +250,36 @@ export default function ChatScreen() {
               backgroundColor: c.secondary,
             }}
           >
-            <Image
-              source={{ uri: pendingImage }}
-              style={{ width: 48, height: 48, borderRadius: 8, marginRight: 8 }}
-              contentFit="cover"
-            />
-            <Text style={{ flex: 1, color: c.foreground, fontSize: 13 }}>Photo attached</Text>
-            <Pressable onPress={() => setPendingImage(undefined)} hitSlop={8}>
+            {pendingAttachment.kind === "photo" ? (
+              <Image
+                source={{ uri: pendingAttachment.uri }}
+                style={{ width: 48, height: 48, borderRadius: 8, marginRight: 8 }}
+                contentFit="cover"
+              />
+            ) : (
+              <View
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 8,
+                  marginRight: 8,
+                  backgroundColor: c.primary,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Feather name={attachmentIcon(pendingAttachment.kind)} size={20} color={c.primaryForeground} />
+              </View>
+            )}
+            <View style={{ flex: 1 }}>
+              <Text numberOfLines={1} style={{ color: c.foreground, fontSize: 13, fontFamily: "Inter_700Bold" }}>
+                {attachmentLabel(pendingAttachment)}
+              </Text>
+              <Text style={{ color: c.mutedForeground, fontSize: 11 }}>
+                {pendingAttachment.kind.toUpperCase()} attached
+              </Text>
+            </View>
+            <Pressable onPress={() => setPendingAttachment(undefined)} hitSlop={8}>
               <Feather name="x" size={16} color={c.mutedForeground} />
             </Pressable>
           </View>
@@ -238,7 +315,7 @@ export default function ChatScreen() {
           }}
         >
           <Pressable
-            onPress={pickImage}
+            onPress={() => setSheetOpen(true)}
             style={{
               padding: 10,
               marginRight: 4,
@@ -246,7 +323,7 @@ export default function ChatScreen() {
             }}
             hitSlop={6}
           >
-            <Feather name="image" size={20} color={c.primary} />
+            <Feather name="plus-circle" size={22} color={c.primary} />
           </Pressable>
           <View style={{ flex: 1 }}>
             <GlassInput
@@ -260,19 +337,24 @@ export default function ChatScreen() {
             <GlassButton
               title="Send"
               small
-              disabled={!text.trim() && !pendingImage}
+              disabled={!text.trim() && !pendingAttachment}
               onPress={async () => {
                 const t = text;
-                const img = pendingImage;
+                const att = pendingAttachment;
                 const ttl = ttlSeconds;
                 setText("");
-                setPendingImage(undefined);
-                await sendMessage(chat.id, t, { imageUri: img, ttlSeconds: ttl });
+                setPendingAttachment(undefined);
+                await sendMessage(chat.id, t, { attachment: att, ttlSeconds: ttl });
               }}
             />
           </View>
         </View>
       </KeyboardAvoidingView>
+      <MediaAttachSheet
+        visible={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        onPicked={(att) => setPendingAttachment(att)}
+      />
     </Background>
   );
 }

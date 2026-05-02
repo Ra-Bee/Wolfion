@@ -1,9 +1,11 @@
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useRef, useState } from "react";
-import { ActivityIndicator, FlatList, KeyboardAvoidingView, Platform, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Alert, FlatList, KeyboardAvoidingView, Platform, Pressable, Text, View } from "react-native";
 
 import { Background, GlassButton, GlassCard, GlassInput, Header } from "@/components/glass";
+import { MediaAttachSheet } from "@/components/MediaAttachSheet";
+import type { MessageAttachmentKind } from "@/lib/types";
 import { useAppData } from "@/contexts/AppDataContext";
 import { useColors } from "@/hooks/useColors";
 import {
@@ -72,6 +74,20 @@ export function AIAssistantContent({ back = false }: { back?: boolean }) {
   const [text, setText] = useState("");
   const [added, setAdded] = useState<Record<string, boolean>>({});
   const [busy, setBusy] = useState(false);
+  const [attachOpen, setAttachOpen] = useState(false);
+
+  const handleAttach = (kind: MessageAttachmentKind) => {
+    if (kind === "pdf") {
+      router.push("/ai-summarize-pdf");
+    } else if (kind === "audio") {
+      router.push("/ai-transcribe");
+    } else {
+      Alert.alert(
+        "Coming soon",
+        `RabChat AI can't analyze ${kind === "photo" ? "photos" : kind === "video" ? "videos" : "this file type"} yet. You can share these in your chats with friends. PDFs and audio work great here today!`,
+      );
+    }
+  };
   const [messages, setMessages] = useState<Msg[]>([
     {
       id: genId("ai"),
@@ -318,6 +334,13 @@ export function AIAssistantContent({ back = false }: { back?: boolean }) {
             alignItems: "flex-end",
           }}
         >
+          <Pressable
+            onPress={() => setAttachOpen(true)}
+            style={{ padding: 10, marginRight: 4, marginBottom: back ? 8 : 96 + 8 }}
+            hitSlop={6}
+          >
+            <Feather name="plus-circle" size={22} color={c.primary} />
+          </Pressable>
           <View style={{ flex: 1 }}>
             <GlassInput placeholder="Ask anything…" value={text} onChangeText={setText} multiline />
           </View>
@@ -326,6 +349,12 @@ export function AIAssistantContent({ back = false }: { back?: boolean }) {
           </View>
         </View>
       </KeyboardAvoidingView>
+      <MediaAttachSheet
+        visible={attachOpen}
+        onClose={() => setAttachOpen(false)}
+        onChooseKind={handleAttach}
+        enabled={["photo", "video", "audio", "pdf", "file"]}
+      />
     </Background>
   );
 }

@@ -141,12 +141,23 @@ export interface Chat {
   lastMessageAt: number;
 }
 
+export type MessageAttachmentKind = "photo" | "video" | "audio" | "pdf" | "file";
+
+export interface MessageAttachment {
+  kind: MessageAttachmentKind;
+  uri: string;
+  name?: string;
+  mimeType?: string;
+  size?: number;
+}
+
 export interface ChatMessage {
   id: string;
   chatId: string;
   authorId: string;
   text: string;
   imageUri?: string;
+  attachment?: MessageAttachment;
   expiresAt?: number;
   saved?: boolean;
   readBy?: string[];

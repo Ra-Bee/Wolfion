@@ -19,6 +19,7 @@ import type {
   ClassEntry,
   Exam,
   FriendRequest,
+  MessageAttachment,
   Post,
   PostComment,
   SkillExchange,
@@ -68,7 +69,7 @@ interface Ctx {
   sendMessage: (
     chatId: string,
     text: string,
-    opts?: { imageUri?: string; ttlSeconds?: number },
+    opts?: { imageUri?: string; attachment?: MessageAttachment; ttlSeconds?: number },
   ) => Promise<void>;
   toggleSaveMessage: (id: string) => Promise<void>;
   markChatRead: (chatId: string) => Promise<void>;
@@ -507,7 +508,7 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
     async (chatId, text, opts) => {
       if (!user) return;
       const trimmed = text.trim();
-      if (!trimmed && !opts?.imageUri) return;
+      if (!trimmed && !opts?.imageUri && !opts?.attachment) return;
       const now = Date.now();
       const expiresAt =
         opts?.ttlSeconds && opts.ttlSeconds > 0 ? now + opts.ttlSeconds * 1000 : undefined;
@@ -517,6 +518,7 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
         authorId: user.id,
         text: trimmed,
         imageUri: opts?.imageUri,
+        attachment: opts?.attachment,
         expiresAt,
         readBy: [user.id],
         createdAt: now,
