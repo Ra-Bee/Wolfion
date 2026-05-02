@@ -162,6 +162,24 @@ uri = "file://attached_assets/generated_images/wolfion-kids-pink.png"
 type = "image"
 title = "wolfion kids pink star"
 
+[[generated]]
+id = "TcsyAhSLXmtqHr5xQ9oL9"
+uri = "file://attached_assets/generated_images/wolfion-cashmere-charcoal.png"
+type = "image"
+title = "wolfion cashmere charcoal"
+
+[[generated]]
+id = "7n4m-s_MOo5HwZ__zQVJ5"
+uri = "file://attached_assets/generated_images/wolfion-wool-cream.png"
+type = "image"
+title = "wolfion wool cream cable"
+
+[[generated]]
+id = "Y0JNHeiCoLpDvfSaaAdHm"
+uri = "file://attached_assets/generated_images/wolfion-silk-bordeaux.png"
+type = "image"
+title = "wolfion silk bordeaux"
+
 [[outputs]]
 id = "Z8dcSbzTuOcZ42cy_qinK"
 uri = "file://downloads/wolfion-android-apk-builder.tar.gz"
