@@ -3,7 +3,7 @@ const colors = {
     text: "#0b3559",
     tint: "#3aa9ff",
 
-    background: "#E6F7FF",
+    background: "#7AB8DC",
     foreground: "#0b3559",
 
     card: "rgba(255,255,255,0.55)",
@@ -28,16 +28,16 @@ const colors = {
     success: "#34c4a4",
     warning: "#f0b34a",
 
-    border: "rgba(155,200,235,0.45)",
-    input: "rgba(155,200,235,0.45)",
+    border: "rgba(11,53,89,0.18)",
+    input: "rgba(11,53,89,0.18)",
 
     glassTint: "rgba(255,255,255,0.55)",
     glassBorder: "rgba(255,255,255,0.7)",
-    overlay: "rgba(11,53,89,0.35)",
+    overlay: "rgba(11,53,89,0.45)",
 
-    gradientStart: "#E6F7FF",
-    gradientMid: "#CDEFFF",
-    gradientEnd: "#BDEBFF",
+    gradientStart: "#9CD0EC",
+    gradientMid: "#7AB8DC",
+    gradientEnd: "#5FA3CC",
 
     chartA: "#3aa9ff",
     chartB: "#9BF6FF",
