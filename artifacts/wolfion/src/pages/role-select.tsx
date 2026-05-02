@@ -76,10 +76,10 @@ export default function RoleSelect() {
       </div>
 
       <main
-        className="relative min-h-[100dvh] grid place-items-center px-4 py-10"
+        className="relative min-h-[100dvh] grid place-items-center px-3 sm:px-4 py-8 sm:py-10"
         style={{ perspective: "1400px" }}
       >
-        <div className="relative w-full max-w-[460px] mx-auto">
+        <div className="relative w-full max-w-[460px] mx-auto min-w-0">
           {/* Halo behind whole panel */}
           <div
             aria-hidden
@@ -99,7 +99,7 @@ export default function RoleSelect() {
             }}
           >
             <div
-              className="rounded-[27px] px-6 py-7 border border-white/10 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)] text-center"
+              className="rounded-[27px] px-4 sm:px-6 py-6 sm:py-7 border border-white/10 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)] text-center overflow-hidden"
               style={{
                 background:
                   "linear-gradient(180deg, rgba(10,18,28,0.85) 0%, rgba(4,17,26,0.92) 100%)",
@@ -124,7 +124,7 @@ export default function RoleSelect() {
                 </div>
 
                 <h1
-                  className="mt-4 text-[22px] font-bold tracking-[0.32em]"
+                  className="mt-4 text-[20px] sm:text-[22px] font-bold tracking-[0.22em] sm:tracking-[0.32em]"
                   style={{
                     background:
                       "linear-gradient(135deg, #ffffff 0%, #1ABBC4 55%, #D4AF37 100%)",
@@ -182,8 +182,8 @@ export default function RoleSelect() {
             </button>
           </div>
 
-          <p className="relative mt-4 text-center text-[10px] uppercase tracking-[0.3em] text-white/35">
-            Wolfion · Certified in Australia & Bangladesh
+          <p className="relative mt-4 text-center text-[9px] sm:text-[10px] uppercase tracking-[0.18em] sm:tracking-[0.3em] text-white/35 px-2">
+            Wolfion · Certified in Australia &amp; Bangladesh
           </p>
         </div>
       </main>
@@ -266,7 +266,7 @@ function ModeCard({ gradient, icon, title, subtitle, onClick, testId }: ModeCard
       {/* Gradient border */}
       <div className="relative rounded-[20px] p-[1.5px]" style={{ background: gradient }}>
         <div
-          className="rounded-[19px] flex items-center gap-4 p-4 sm:p-5 border border-white/10"
+          className="rounded-[19px] flex items-center gap-3 sm:gap-4 p-3.5 sm:p-5 border border-white/10 overflow-hidden"
           style={{
             background:
               "linear-gradient(180deg, rgba(10,18,28,0.85) 0%, rgba(4,17,26,0.92) 100%)",
@@ -276,15 +276,15 @@ function ModeCard({ gradient, icon, title, subtitle, onClick, testId }: ModeCard
         >
           {/* Icon tile */}
           <div
-            className="relative h-12 w-12 rounded-xl flex items-center justify-center text-white shrink-0 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.5)]"
+            className="relative h-11 w-11 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center text-white shrink-0 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.5)]"
             style={{ background: gradient }}
           >
             <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-transparent via-white/10 to-white/25 pointer-events-none" />
             {icon}
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-base text-white">{title}</h3>
-            <p className="text-[12px] text-white/60 mt-0.5 truncate">{subtitle}</p>
+            <h3 className="font-semibold text-[15px] sm:text-base text-white truncate">{title}</h3>
+            <p className="text-[11px] sm:text-[12px] text-white/60 mt-0.5 truncate">{subtitle}</p>
           </div>
           <ArrowRight className="h-5 w-5 text-white/40 shrink-0 transition-all group-hover:text-white group-hover:translate-x-0.5" />
         </div>
