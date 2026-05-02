@@ -527,27 +527,27 @@ export default function ShopHome() {
         </div>
       </section>
 
-      {/* 4.6 — EXPERIENCE THE SOURCE · Branded heritage card */}
+      {/* 4.6 — EXPERIENCE THE SOURCE · Branded heritage card (square corners) */}
       <section className="relative container mx-auto px-4 sm:px-5 pb-16 sm:pb-20">
-        <div className={`relative max-w-5xl mx-auto ${FADE}`}>
+        <div className={`relative max-w-6xl mx-auto ${FADE}`}>
           {/* Soft emerald + copper halo */}
           <div
             aria-hidden
-            className="absolute -inset-3 sm:-inset-5 rounded-[34px] blur-2xl opacity-40 pointer-events-none"
+            className="absolute -inset-3 sm:-inset-5 blur-2xl opacity-40 pointer-events-none"
             style={{
               background:
                 "linear-gradient(135deg, #064E3B 0%, #B45309 60%, #E5D4A8 100%)",
             }}
           />
-          {/* Copper-tinted bevel ring */}
+          {/* Copper-tinted bevel ring (sharp corners) */}
           <div
-            className="relative rounded-[26px] sm:rounded-[32px] p-[2px] sm:p-[3px] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.5)]"
+            className="relative p-[2px] sm:p-[3px] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.5)]"
             style={{
               background:
                 "linear-gradient(135deg, rgba(252,211,77,0.55) 0%, rgba(180,83,9,0.45) 50%, rgba(0,0,0,0.55) 100%)",
             }}
           >
-            <div className="relative rounded-[22px] sm:rounded-[28px] overflow-hidden bg-emerald-950">
+            <div className="relative overflow-hidden bg-emerald-950">
               <div aria-hidden className="absolute inset-0" style={{ backgroundColor: "#1f3329" }} />
               <img
                 src={imgExperienceSource}
