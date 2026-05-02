@@ -1,20 +1,24 @@
 import { Feather } from "@expo/vector-icons";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
-  Dimensions,
   type NativeScrollEvent,
   type NativeSyntheticEvent,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
+  useWindowDimensions,
   View,
 } from "react-native";
 
 import { useColors } from "@/hooks/useColors";
 
-const { width: WIN_W } = Dimensions.get("window");
+const IS_WEB = Platform.OS === "web";
+// On native, native-driver interpolated parallax is silky. On web it stutters
+// because RN Web can't drive transforms off the main JS thread reliably.
+const ENABLE_PARALLAX = !IS_WEB;
 
 export interface SideFlowItem {
   key: string;
@@ -30,25 +34,60 @@ interface SideFlowProps {
 
 export function SideFlow({ items, initialIndex = 1 }: SideFlowProps) {
   const c = useColors();
+  const { width: winW } = useWindowDimensions();
   const safeInitial = Math.min(Math.max(0, initialIndex), items.length - 1);
-  const scrollX = useRef(new Animated.Value(safeInitial * WIN_W)).current;
+  const scrollX = useRef(new Animated.Value(safeInitial * winW)).current;
   const [active, setActive] = useState(safeInitial);
+  // Track which slides have ever been visited so we can keep them mounted
+  // (preserves scroll position / form state) but never mount a slide the
+  // user hasn't navigated near.
+  const [visited, setVisited] = useState<Set<number>>(
+    () => new Set([safeInitial, safeInitial - 1, safeInitial + 1].filter((i) => i >= 0 && i < items.length)),
+  );
   const ref = useRef<ScrollView | null>(null);
 
+  // Keep scroll offset locked to the active slide if the viewport resizes
+  // (e.g. iframe resize on web, device rotation).
   useEffect(() => {
-    setTimeout(() => {
-      ref.current?.scrollTo({ x: safeInitial * WIN_W, animated: false });
+    const id = setTimeout(() => {
+      ref.current?.scrollTo({ x: active * winW, animated: false });
     }, 0);
-  }, [safeInitial]);
+    return () => clearTimeout(id);
+  }, [winW, active]);
+
+  const markVisited = (i: number) => {
+    setVisited((prev) => {
+      if (prev.has(i) && prev.has(i - 1) && prev.has(i + 1)) return prev;
+      const next = new Set(prev);
+      [i - 1, i, i + 1].forEach((k) => {
+        if (k >= 0 && k < items.length) next.add(k);
+      });
+      return next;
+    });
+  };
 
   const onMomentumEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    setActive(Math.round(e.nativeEvent.contentOffset.x / WIN_W));
+    const i = Math.round(e.nativeEvent.contentOffset.x / winW);
+    setActive(i);
+    markVisited(i);
   };
 
   const goTo = (i: number) => {
-    ref.current?.scrollTo({ x: i * WIN_W, animated: true });
+    ref.current?.scrollTo({ x: i * winW, animated: true });
     setActive(i);
+    markVisited(i);
   };
+
+  const onScroll = useMemo(
+    () =>
+      ENABLE_PARALLAX
+        ? Animated.event(
+            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+            { useNativeDriver: true },
+          )
+        : undefined,
+    [scrollX],
+  );
 
   return (
     <View style={{ flex: 1 }}>
@@ -59,43 +98,45 @@ export function SideFlow({ items, initialIndex = 1 }: SideFlowProps) {
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-          { useNativeDriver: true },
-        )}
+        onScroll={onScroll}
         onMomentumScrollEnd={onMomentumEnd}
         scrollEventThrottle={16}
         decelerationRate="fast"
         bounces={false}
         overScrollMode="never"
+        // Web hint to opt scroll containers into compositor-accelerated scrolling.
+        {...(IS_WEB ? { style: { willChange: "transform" } as object } : null)}
       >
         {items.map((item, i) => {
-          const inputRange = [(i - 1) * WIN_W, i * WIN_W, (i + 1) * WIN_W];
+          const isMounted = visited.has(i);
+          const content = isMounted ? item.render() : null;
+          if (!ENABLE_PARALLAX) {
+            return (
+              <View key={item.key} style={{ width: winW, flex: 1 }}>
+                {content}
+              </View>
+            );
+          }
+          const inputRange = [(i - 1) * winW, i * winW, (i + 1) * winW];
           const scale = scrollX.interpolate({
             inputRange,
-            outputRange: [0.92, 1, 0.92],
-            extrapolate: "clamp",
-          });
-          const opacity = scrollX.interpolate({
-            inputRange,
-            outputRange: [0.55, 1, 0.55],
+            outputRange: [0.94, 1, 0.94],
             extrapolate: "clamp",
           });
           const translateY = scrollX.interpolate({
             inputRange,
-            outputRange: [12, 0, 12],
+            outputRange: [10, 0, 10],
             extrapolate: "clamp",
           });
           return (
-            <View key={item.key} style={{ width: WIN_W, flex: 1 }}>
+            <View key={item.key} style={{ width: winW, flex: 1 }}>
               <Animated.View
                 style={{
                   flex: 1,
                   transform: [{ scale }, { translateY }],
-                  opacity,
                 }}
               >
-                {item.render()}
+                {content}
               </Animated.View>
             </View>
           );

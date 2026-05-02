@@ -1,0 +1,114 @@
+Design a premium, futuristic mobile app called “Rabchat”.
+
+CORE VISION:
+Rabchat is a high-end AI messaging and productivity app. It must feel powerful, bold, and clean — not cluttered or copied from other social apps.
+
+DESIGN STYLE:
+- Dark luxury UI with red, black, and white base
+- 3D glassmorphism icons and panels (liquid glass effect)
+- Strong contrast with soft glow accents
+- Floating UI elements with depth and smooth shadows
+- Inspired by Apple iOS + gaming UI + luxury fintech apps
+
+COLOR SYSTEM:
+- Primary Black: #0B0B0D (deep black background)
+- Secondary Black: #121216 (layered surfaces)
+- Accent Red: #FF2D2D (primary highlight color)
+- Soft Red Glow: #FF4D4D (for active elements)
+- White: #F5F5F5 (text and contrast)
+- Accent Purple: #7B61FF (secondary glow, subtle use)
+
+GRADIENTS:
+- Red → Purple gradient (for highlights and buttons)
+- Black → dark gray layered backgrounds
+- Use glow instead of flat color where possible
+
+GLASS EFFECT:
+- Translucent panels (10–20% opacity)
+- Strong blur background (frosted glass)
+- Light reflections on edges
+- Slight red/purple glow edges for active elements
+
+ICON STYLE (VERY IMPORTANT):
+- All icons must be 3D glass style
+- Rounded, slightly elevated
+- Soft inner glow
+- Subtle reflection
+- Icons feel like floating objects, not flat graphics
+
+NAVIGATION (UNIQUE):
+- No traditional top/bottom bars
+- Use side-based navigation OR minimal floating nav
+- Keep navigation clean and futuristic
+
+MAIN SECTIONS:
+1. AI Chat (core feature)
+2. Messages
+3. Dashboard (tasks, study, schedule)
+4. Feed (minimal)
+5. Profile
+
+AI CHAT DESIGN:
+- Chat bubbles: semi-transparent glass
+- User bubble: red tint
+- AI bubble: white/gray glass
+- Smooth fade + glow animation
+- Suggestion buttons:
+  - Summarize
+  - Explain
+  - Translate
+
+MESSAGING UI:
+- Similar structure to WhatsApp but redesigned
+- Dark background with glowing chat elements
+- Clean spacing, no clutter
+
+DASHBOARD:
+- Cards with glowing edges
+- Assignment tracker with progress bars
+- Calendar in glass panels
+- “Focus mode” section
+
+HOME / FEED:
+- Minimal content only
+- No addictive infinite scroll feeling
+- Clean cards with strong spacing
+
+PROFILE:
+- Large avatar with glow ring
+- Glass panels for:
+  - info
+  - links
+  - settings
+
+ANIMATIONS:
+- Smooth, fast, premium
+- Slight bounce on tap
+- Glow intensity changes on interaction
+- No heavy or slow transitions
+
+BACKGROUND:
+- Dark layered gradient (black + subtle red/purple glow)
+- Optional animated light waves (very subtle)
+
+USER EXPERIENCE:
+- Must feel fast and powerful
+- No clutter, no confusion
+- Everything within 2–3 taps
+- Focus on clarity + control
+
+AVOID:
+- Copying Instagram/Facebook layouts
+- Flat design
+- Too many colors
+- Over-animation
+- Cluttered UI
+
+GOAL:
+Create a bold, premium, futuristic app that feels like a next-generation AI communication tool — powerful, clean, and visually striking.
+
+OUTPUT:
+- Full mobile UI screens
+- Icon system (3D glass style)
+- Navigation flow
+- Interaction behavior
