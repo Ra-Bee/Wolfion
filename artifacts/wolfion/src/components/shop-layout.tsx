@@ -4,6 +4,7 @@ import { useUser, useClerk } from "@clerk/react";
 import { clearAdminStorage } from "@/lib/wolfion-store";
 import { useCart } from "@/hooks/use-cart";
 import { useRole } from "@/hooks/use-role";
+import { useStableDisclosure } from "@/hooks/use-stable-disclosure";
 import { ShoppingBag, Menu, User, LogOut, Search, ShieldCheck, ChevronDown, Home as HomeIcon, Store, Mail, Info, Settings, X, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose, SheetFooter } from "@/components/ui/sheet";
@@ -56,6 +57,8 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [addProductOpen, setAddProductOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useStableDisclosure();
+  const [accountMenuOpen, setAccountMenuOpen] = useStableDisclosure();
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Live catalog from the API. The query is shared with the products listing
@@ -133,9 +136,15 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
         <div className="container mx-auto px-4 sm:px-6 h-16 flex items-center gap-3 sm:gap-6">
           {/* Mobile menu trigger */}
           <div className="md:hidden flex-shrink-0">
-            <Sheet>
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Menu" data-testid="mobile-menu">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Menu"
+                  data-testid="mobile-menu"
+                  style={{ touchAction: "manipulation", WebkitTapHighlightColor: "transparent" }}
+                >
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
@@ -400,9 +409,16 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
             </Button>
 
             <div className="hidden md:block">
-              <Sheet>
+              <Sheet open={accountMenuOpen} onOpenChange={setAccountMenuOpen}>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" aria-label="Account & Menu" data-testid="btn-account" className="active:scale-95 transition-transform">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Account & Menu"
+                    data-testid="btn-account"
+                    className="active:scale-95 transition-transform"
+                    style={{ touchAction: "manipulation", WebkitTapHighlightColor: "transparent" }}
+                  >
                     <User className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>

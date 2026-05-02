@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, SheetClose } from "@/components/ui/sheet";
+import { useStableDisclosure } from "@/hooks/use-stable-disclosure";
 import wolfionLogo from "@assets/Image_20260421042552_60_2_1776716788241.jpg";
 
 type AdminNavItem = { path: string; label: string; icon: React.ComponentType<{ className?: string }> };
@@ -33,6 +34,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const { setRole } = useRole();
   const { theme, toggleTheme } = useTheme();
   const [, setLocation] = useLocation();
+  const [adminMenuOpen, setAdminMenuOpen] = useStableDisclosure();
 
   const handleSignOut = () => {
     clearAdminStorage();
@@ -82,9 +84,16 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
               {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
             </Button>
 
-            <Sheet>
+            <Sheet open={adminMenuOpen} onOpenChange={setAdminMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Open menu" className="h-9 w-9" data-testid="button-admin-menu">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Open menu"
+                  className="h-9 w-9"
+                  data-testid="button-admin-menu"
+                  style={{ touchAction: "manipulation", WebkitTapHighlightColor: "transparent" }}
+                >
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
