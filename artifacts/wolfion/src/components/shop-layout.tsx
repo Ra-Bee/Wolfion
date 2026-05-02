@@ -177,7 +177,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                     </SheetTitle>
                   </div>
                 </SheetHeader>
-                <nav className="flex-1 px-3 py-3 overflow-y-auto flex flex-col gap-5">
+                <nav className="flex-1 px-3 py-3 overflow-y-auto flex flex-col gap-4">
                   {PRIMARY_NAV.map((n) => (
                     <SheetClose asChild key={n.path}>
                       <Link href={n.path}>
@@ -186,13 +186,13 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                     </SheetClose>
                   ))}
 
-                  <Accordion type="multiple" className="w-full space-y-5">
+                  <Accordion type="multiple" className="w-full flex flex-col gap-4">
                     <AccordionItem value="bapari" className="border-none">
                       <AccordionTrigger className="menu-3d-item w-full !py-0 hover:no-underline">
                         Bapari Socks
                       </AccordionTrigger>
                       <AccordionContent className="pb-1 pt-3">
-                        <div className="flex flex-col gap-3 pl-2">
+                        <div className="flex flex-col gap-2 pl-2">
                           {VAPORYX_SUBCATS.map((s) => (
                             <SheetClose asChild key={s.path}>
                               <Link href={s.path}>
@@ -209,7 +209,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                         Collection
                       </AccordionTrigger>
                       <AccordionContent className="pb-1 pt-3">
-                        <div className="flex flex-col gap-3 pl-2">
+                        <div className="flex flex-col gap-2 pl-2">
                           {COLLECTION_SUBCATS.map((s) => (
                             <SheetClose asChild key={s.path}>
                               <Link href={s.path}>
