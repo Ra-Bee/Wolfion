@@ -1,0 +1,87 @@
+Create a modern, mobile-first social productivity app called “Uniless” designed specifically for university students.
+
+CORE IDEA:
+Uniless is not just social media — it is a student life platform that combines communication, productivity, and campus life management into one ecosystem. The app should feel like a “digital campus village” where students connect, organize, and grow.
+
+DESIGN STYLE:
+- High-end iOS-inspired UI with 3D glassmorphism (liquid glass effect)
+- Soft blur backgrounds, floating cards, layered depth, smooth shadows
+- Clean, minimal, futuristic interface
+- Smooth micro-interactions and animations (tap, swipe, transitions)
+- Dark and light mode support
+- Premium aesthetic like Apple-level design quality
+
+TARGET USERS:
+University students aged 18–30
+
+CORE FEATURES:
+
+1. SMART STUDENT PROFILE:
+- Name, university, degree, semester
+- Assignment tracker (e.g. tasks remaining)
+- Optional LinkedIn integration
+- Digital CV (user-controlled visibility: private/friends/public)
+- Privacy controls for all personal data
+
+2. SHORT-FORM POST SYSTEM:
+- Text-based posts with character limit (like Twitter/X)
+- Categories: study, questions, events, notes
+- Clean, distraction-free feed
+- No long-form clutter
+
+3. STORIES & MEDIA:
+- 24-hour disappearing stories (like Snapchat/Instagram)
+- Image/video sharing
+- Simple, elegant media viewer
+
+4. SMART ACADEMIC DASHBOARD (MAIN FEATURE):
+- Weekly class schedule (custom input)
+- Assignment deadlines and reminders
+- Exam tracking
+- Personal calendar integration
+- University calendar (holidays, semester dates)
+- Clean visual timeline view
+
+5. MESSAGING SYSTEM:
+- Real-time chat like WhatsApp
+- Send text, images, audio, and video
+- Disappearing messages by default (Snapchat style)
+- “Save message” option before disappearing
+- Read receipts and typing indicators
+- Group chats (class groups, project teams)
+
+6. SOCIAL SYSTEM:
+- Friend requests (like Facebook)
+- Private network based on university
+- User discovery within same campus
+
+7. ADDITIONAL FEATURES:
+- Study rooms (virtual focus sessions)
+- Skill exchange (students helping each other)
+- Notifications for deadlines and events
+- AI study assistant (basic: summarize notes, reminders)
+
+USER EXPERIENCE:
+- Extremely intuitive navigation
+- Bottom navigation bar with 4–5 main tabs (Home, Dashboard, Messages, Profile, Explore)
+- Fast, smooth, responsive performance
+- Minimal cognitive overload
+
+SECURITY & PRIVACY:
+- Strong privacy settings
+- User-controlled visibility
+- Secure messaging
+
+GOAL:
+Build a highly practical, visually premium app that replaces multiple tools (calendar, messaging, notes, social apps) into one unified student platform.
+
+BRANDING:
+Name: Uniless
+Concept: “A digital village for university life”
+
+OUTPUT REQUIRED:
+- Full mobile app UI design (multiple screens)
+- User flow
+- Feature layout
+- Navigation structure
+- Modern UI components consistent with glassmorphism design

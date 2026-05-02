@@ -177,7 +177,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                     </SheetTitle>
                   </div>
                 </SheetHeader>
-                <nav className="flex-1 px-3 py-3 overflow-y-auto space-y-1.5">
+                <nav className="flex-1 px-3 py-3 overflow-y-auto space-y-3">
                   {PRIMARY_NAV.map((n) => (
                     <SheetClose asChild key={n.path}>
                       <Link href={n.path}>
@@ -186,13 +186,13 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                     </SheetClose>
                   ))}
 
-                  <Accordion type="multiple" className="w-full space-y-1.5 pt-1">
+                  <Accordion type="multiple" className="w-full space-y-3 pt-1">
                     <AccordionItem value="bapari" className="border-none">
                       <AccordionTrigger className="menu-3d-item w-full hover:no-underline">
                         Bapari Socks
                       </AccordionTrigger>
-                      <AccordionContent className="pb-1 pt-1.5">
-                        <div className="flex flex-col gap-1 pl-2">
+                      <AccordionContent className="pb-1 pt-3">
+                        <div className="flex flex-col gap-2 pl-2">
                           {VAPORYX_SUBCATS.map((s) => (
                             <SheetClose asChild key={s.path}>
                               <Link href={s.path}>
@@ -208,8 +208,8 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                       <AccordionTrigger className="menu-3d-item w-full hover:no-underline">
                         Collection
                       </AccordionTrigger>
-                      <AccordionContent className="pb-1 pt-1.5">
-                        <div className="flex flex-col gap-1 pl-2">
+                      <AccordionContent className="pb-1 pt-3">
+                        <div className="flex flex-col gap-2 pl-2">
                           {COLLECTION_SUBCATS.map((s) => (
                             <SheetClose asChild key={s.path}>
                               <Link href={s.path}>
@@ -222,7 +222,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                     </AccordionItem>
                   </Accordion>
 
-                  <div className="my-2 h-px bg-gradient-to-r from-transparent via-neutral-300 to-transparent dark:via-neutral-700" />
+                  <div className="my-3 h-px bg-gradient-to-r from-transparent via-neutral-300 to-transparent dark:via-neutral-700" />
                   <SheetClose asChild>
                     <Link href="/cart">
                       <button className="menu-3d-item w-full flex items-center">
