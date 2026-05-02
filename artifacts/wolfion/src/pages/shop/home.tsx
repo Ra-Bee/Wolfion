@@ -4,14 +4,14 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { ShopLayout } from "@/components/shop-layout";
 import { categories } from "@/lib/data";
 import imgPortrait from "@assets/Image_20260416035728_55_2_1776716993092.jpg";
-import imgSocks from "@assets/Image_20260416025624_54_2_1776717008197.jpg";
-import imgWomenswear from "@assets/wolfion_womenswear.png";
-import imgKidswear from "@assets/wolfion_kidswear.png";
+import imgSocks from "@assets/optimized/wolfion_socks.jpg";
+import imgWomenswear from "@assets/optimized/wolfion_womenswear.jpg";
+import imgKidswear from "@assets/optimized/wolfion_kidswear.jpg";
 import imgBoxBlack from "@assets/Image_20260429195426_80_2_1777463848826.jpg";
 import imgBoxNavy from "@assets/Image_20260429195427_81_2_1777463848828.jpg";
 import imgBoxGreen from "@assets/Image_20260429195428_82_2_1777463848828.jpg";
 import imgBoxWhite from "@assets/Image_20260429195430_83_2_1777463848828.jpg";
-import imgExperienceSource from "@assets/Image_20260429195502_86_2_1777463848828.jpg";
+import imgExperienceSource from "@assets/optimized/wolfion_experience_source.jpg";
 
 const FADE = "animate-in fade-in slide-in-from-bottom-4 duration-1000 fill-mode-both";
 
