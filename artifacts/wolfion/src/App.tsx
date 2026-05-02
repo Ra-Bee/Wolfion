@@ -8,7 +8,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/home";
 import SignInPage from "@/pages/auth/sign-in";
 import SignUpPage from "@/pages/auth/sign-up";
-import RoleSelect from "@/pages/role-select";
 
 import ShopHome from "@/pages/shop/home";
 // ProductDetail and Cart are EAGER imports on purpose: they are the two
@@ -132,11 +131,9 @@ function ClerkQueryClientCacheInvalidator() {
 
 function HomeRedirect() {
   const { isLoaded, isSignedIn } = useUser();
-  const { role, isAdmin } = useRole();
+  const { role } = useRole();
   if (!isLoaded) return null;
   if (isSignedIn) {
-    if (!isAdmin) return <Redirect to="/shop" />;
-    if (!role) return <Redirect to="/role-select" />;
     return <Redirect to={role === "admin" ? "/admin-dashboard" : "/shop"} />;
   }
   return <Home />;
@@ -162,16 +159,6 @@ function AdminRouteWrapper({ children }: { children: ReactNode }) {
   return <Suspense fallback={<PageFallback />}>{children}</Suspense>;
 }
 
-function RoleSelectRoute() {
-  const { isLoaded, isSignedIn } = useUser();
-  const { isAdmin } = useRole();
-  if (!isLoaded) return null;
-  if (!isSignedIn) return <Redirect to="/sign-in" />;
-  // Only admin emails get to choose a mode. Everyone else goes straight to the shop.
-  if (!isAdmin) return <Redirect to="/shop" />;
-  return <RoleSelect />;
-}
-
 function LegacyProductRedirect({ params }: { params: { id: string } }) {
   return <Redirect to={`/product/${params.id}`} />;
 }
@@ -187,7 +174,7 @@ function AppRouter() {
       </Route>
       <Route path="/sign-in/*?" component={SignInPage} />
       <Route path="/sign-up/*?" component={SignUpPage} />
-      <Route path="/role-select" component={RoleSelectRoute} />
+      <Route path="/role-select"><Redirect to="/" /></Route>
 
       {/* Public legal pages — must be reachable without sign-in (Play Store requirement) */}
       <Route path="/privacy">
