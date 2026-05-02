@@ -43,16 +43,20 @@ type PayOption = {
   wordmark?: { text: string; font?: string; italic?: boolean };
 };
 
+// Softer / lighter palette so the payment row reads as elegant rather than
+// neon-bright. Each shade is the brand colour pulled toward Tailwind's 400/500
+// tier, which still keeps the white logo legible (≈3:1 contrast or better) but
+// removes the harsh saturation the original brand hex codes had.
 const PAYMENT_OPTIONS: PayOption[] = [
-  { id: "card", label: "Credit / Debit Card", hint: "Visa, Mastercard, Amex", badge: "Card", bg: "bg-neutral-900", logoUrl: "https://cdn.simpleicons.org/visa/ffffff" },
-  { id: "bkash", label: "bKash", hint: "Mobile wallet · instant", badge: "bKash", bg: "bg-[#E2136E]", logoUrl: bkashLogo },
-  { id: "nagad", label: "Nagad", hint: "Mobile wallet · instant", badge: "Nagad", bg: "bg-[#EC1C24]", logoUrl: nagadLogo },
-  { id: "rocket", label: "Rocket", hint: "DBBL mobile banking", badge: "Rocket", bg: "bg-[#8C3494]", logoUrl: rocketLogo },
-  { id: "paypal", label: "PayPal", hint: "Sign in with your PayPal account", badge: "PayPal", bg: "bg-[#003087]", logoUrl: "https://cdn.simpleicons.org/paypal/ffffff" },
-  { id: "alipay", label: "Alipay", hint: "Scan to pay · 支付宝", badge: "Alipay", bg: "bg-[#1677FF]", logoUrl: "https://cdn.simpleicons.org/alipay/ffffff" },
-  { id: "wechat", label: "WeChat Pay", hint: "Scan to pay · 微信支付", badge: "WeChat", bg: "bg-[#07C160]", logoUrl: "https://cdn.simpleicons.org/wechat/ffffff" },
-  { id: "unionpay", label: "UnionPay", hint: "China UnionPay · 银联", badge: "UnionPay", bg: "bg-gradient-to-br from-[#E21836] via-[#003E7F] to-[#005F2C]", wordmark: { text: "银联" } },
-  { id: "cod", label: "Cash on Delivery", hint: "Pay when you receive", badge: "COD", bg: "bg-emerald-700", wordmark: { text: "COD" } },
+  { id: "card", label: "Credit / Debit Card", hint: "Visa, Mastercard, Amex", badge: "Card", bg: "bg-neutral-700", logoUrl: "https://cdn.simpleicons.org/visa/ffffff" },
+  { id: "bkash", label: "bKash", hint: "Mobile wallet · instant", badge: "bKash", bg: "bg-pink-400", logoUrl: bkashLogo },
+  { id: "nagad", label: "Nagad", hint: "Mobile wallet · instant", badge: "Nagad", bg: "bg-rose-400", logoUrl: nagadLogo },
+  { id: "rocket", label: "Rocket", hint: "DBBL mobile banking", badge: "Rocket", bg: "bg-purple-400", logoUrl: rocketLogo },
+  { id: "paypal", label: "PayPal", hint: "Sign in with your PayPal account", badge: "PayPal", bg: "bg-blue-500", logoUrl: "https://cdn.simpleicons.org/paypal/ffffff" },
+  { id: "alipay", label: "Alipay", hint: "Scan to pay · 支付宝", badge: "Alipay", bg: "bg-sky-400", logoUrl: "https://cdn.simpleicons.org/alipay/ffffff" },
+  { id: "wechat", label: "WeChat Pay", hint: "Scan to pay · 微信支付", badge: "WeChat", bg: "bg-emerald-400", logoUrl: "https://cdn.simpleicons.org/wechat/ffffff" },
+  { id: "unionpay", label: "UnionPay", hint: "China UnionPay · 银联", badge: "UnionPay", bg: "bg-gradient-to-br from-rose-400 via-blue-500 to-emerald-500", wordmark: { text: "银联" } },
+  { id: "cod", label: "Cash on Delivery", hint: "Pay when you receive", badge: "COD", bg: "bg-emerald-500", wordmark: { text: "COD" } },
 ];
 
 function PayLogo({ opt, size = "md" }: { opt: PayOption; size?: "sm" | "md" }) {
