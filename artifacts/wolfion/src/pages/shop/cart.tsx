@@ -364,16 +364,18 @@ export default function Cart() {
           >
             {/* Glass interior */}
             <div
-              className="rounded-[23px] p-5 sm:p-6 border border-white/60 text-neutral-900 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.18)] [&_input]:!bg-white/70 [&_input]:!border-neutral-200 [&_input]:!text-neutral-900 [&_input]:placeholder:!text-neutral-400 [&_input]:!backdrop-blur-md [&_label]:!text-neutral-600"
+              className="rounded-[23px] p-5 sm:p-6 border border-white/80 text-neutral-900 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.18)] [&_input]:!bg-white/40 [&_input]:!border-white/60 [&_input]:!text-neutral-900 [&_input]:placeholder:!text-neutral-500 [&_input]:!backdrop-blur-md [&_label]:!text-neutral-700"
               style={{
-                // Frosted-white glass: light translucent surface with a heavy
-                // backdrop blur so whatever sits behind the modal becomes a
-                // soft pastel wash. Text inside the modal is dark so it reads
-                // crisply on the bright background.
+                // True frosted glass: very low opacity white wash so the page
+                // behind shows through, with a heavy backdrop blur + saturate
+                // so it reads as soft pastel rather than a hard backdrop. The
+                // brighter top-edge highlight (rgba 1.0,1.0,1.0,0.55 inset)
+                // gives the panel a subtle 3D bevel.
                 background:
-                  "linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(248,250,252,0.82) 100%)",
-                backdropFilter: "blur(24px) saturate(150%)",
-                WebkitBackdropFilter: "blur(24px) saturate(150%)",
+                  "linear-gradient(180deg, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0.32) 100%)",
+                backdropFilter: "blur(40px) saturate(180%)",
+                WebkitBackdropFilter: "blur(40px) saturate(180%)",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(15,23,42,0.04)",
                 colorScheme: "light",
               }}
             >
@@ -421,8 +423,8 @@ export default function Cart() {
                       }}
                       className={`shrink-0 flex items-center gap-2.5 px-3 py-2 rounded-xl border transition-all backdrop-blur-md ${
                         selected
-                          ? "border-teal-400/70 bg-teal-50 shadow-[0_8px_24px_-8px_rgba(20,184,166,0.4)]"
-                          : "border-neutral-200 bg-white/60 hover:border-neutral-300 hover:bg-white"
+                          ? "border-teal-400/70 bg-teal-50/70 shadow-[0_8px_24px_-8px_rgba(20,184,166,0.4)]"
+                          : "border-white/70 bg-white/30 hover:border-white/90 hover:bg-white/50"
                       }`}
                       data-testid={`saved-${s.id}`}
                     >
@@ -476,11 +478,11 @@ export default function Cart() {
                     }}
                   >
                     <div
-                      className="rounded-[15px] flex items-center gap-4 p-3.5 border border-neutral-200/70 backdrop-blur-md"
+                      className="rounded-[15px] flex items-center gap-4 p-3.5 border border-white/70 backdrop-blur-md"
                       style={{
                         background: active
-                          ? "linear-gradient(180deg, rgba(26,187,196,0.10) 0%, rgba(212,175,55,0.06) 100%)"
-                          : "linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(248,250,252,0.70) 100%)",
+                          ? "linear-gradient(180deg, rgba(26,187,196,0.14) 0%, rgba(212,175,55,0.08) 100%)"
+                          : "linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.25) 100%)",
                       }}
                     >
                       <PayLogo opt={opt} size="md" />
@@ -676,7 +678,7 @@ export default function Cart() {
           <DialogFooter className="mt-5 gap-2 sm:gap-2">
             <Button
               variant="outline"
-              className="h-12 rounded-full !bg-white/70 !text-neutral-700 !border-neutral-200 hover:!bg-white hover:!border-neutral-300 backdrop-blur-md"
+              className="h-12 rounded-full !bg-white/30 !text-neutral-800 !border-white/60 hover:!bg-white/50 hover:!border-white/80 backdrop-blur-md"
               onClick={() => setPayOpen(false)}
               disabled={processing}
             >
