@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useRoute, useLocation, Link } from "wouter";
 import { ShopLayout } from "@/components/shop-layout";
-import { GlassCard, GlassPhotoFrame } from "@/components/glass";
+import { GlassPhotoFrame } from "@/components/glass";
 import { PhotoViewer } from "@/components/photo-viewer";
 import { useCart } from "@/hooks/use-cart";
 import { useListProducts } from "@workspace/api-client-react";
@@ -221,22 +221,20 @@ export default function ProductDetail() {
               </Button>
             </div>
 
-            {/* Perks — glass card */}
+            {/* Perks — clean minimal row */}
             <div className="mt-10">
-              <GlassCard padding="p-5" rounded="rounded-2xl" haloOpacity={0.25}>
-                <div className="grid grid-cols-3 gap-4">
-                  {[
-                    { Icon: Truck, label: "Free shipping" },
-                    { Icon: RotateCcw, label: "Free returns" },
-                    { Icon: ShieldCheck, label: "2-year warranty" },
-                  ].map(({ Icon, label }) => (
-                    <div key={label} className="text-center">
-                      <Icon className="mx-auto h-5 w-5 text-neutral-700 dark:text-neutral-300 mb-2" />
-                      <p className="text-[11px] uppercase tracking-wider text-neutral-500">{label}</p>
-                    </div>
-                  ))}
-                </div>
-              </GlassCard>
+              <div className="grid grid-cols-3 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white/60 dark:bg-neutral-900/40 divide-x divide-neutral-200 dark:divide-neutral-800 overflow-hidden">
+                {[
+                  { Icon: Truck, label: "Free shipping" },
+                  { Icon: RotateCcw, label: "Free returns" },
+                  { Icon: ShieldCheck, label: "2-year warranty" },
+                ].map(({ Icon, label }) => (
+                  <div key={label} className="flex flex-col items-center justify-center text-center px-2 py-4">
+                    <Icon className="h-6 w-6 text-neutral-800 dark:text-neutral-200 mb-2" strokeWidth={1.75} />
+                    <p className="text-[12px] sm:text-sm text-neutral-700 dark:text-neutral-300 leading-tight">{label}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
