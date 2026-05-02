@@ -1,0 +1,27 @@
+kind = "mobile"
+previewPath = "/uniless/"
+title = "UniRab"
+version = "1.0.0"
+id = "artifacts/uniless"
+router = "expo-domain"
+
+[[integratedSkills]]
+name = "expo"
+version = "1.0.0"
+
+[[services]]
+ensurePreviewReachable = "/status"
+name = "expo"
+paths = [ "/uniless/" ]
+localPort = 21620
+
+[services.development]
+run = "pnpm --filter @workspace/uniless run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/uniless", "run", "build" ]
+run = [ "pnpm", "--filter", "@workspace/uniless", "run", "serve" ]
+
+[services.env]
+PORT = "21620"
+BASE_PATH = "/uniless/"
