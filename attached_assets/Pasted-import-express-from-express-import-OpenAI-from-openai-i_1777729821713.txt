@@ -1,0 +1,179 @@
+import express from "express";
+import OpenAI from "openai";
+import fetch from "node-fetch";
+
+const app = express();
+app.use(express.json({ limit: "25mb" }));
+
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+// -------------------- CORE AI --------------------
+async function askAI(messages) {
+  const res = await client.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [
+      {
+        role: "system",
+        content:
+          "You are UniRab AI, a university study assistant. Be clear, helpful, structured, and student-friendly. Use latest data if provided.",
+      },
+      ...messages,
+    ],
+  });
+
+  return res.choices[0].message.content;
+}
+
+// -------------------- LIVE SEARCH --------------------
+async function searchWeb(query) {
+  try {
+    const response = await fetch(
+      `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json`
+    );
+    const data = await response.json();
+    return data.AbstractText || "No clear live data found.";
+  } catch {
+    return "Live search unavailable.";
+  }
+}
+
+// -------------------- SMART ROUTING --------------------
+function needsLiveData(question) {
+  const keywords = ["latest", "today", "news", "current", "2025", "2026"];
+  return keywords.some((word) => question.toLowerCase().includes(word));
+}
+
+// -------------------- 1. CHAT (SMART) --------------------
+app.post("/ai/chat", async (req, res) => {
+  try {
+    const { message } = req.body;
+
+    let context = message;
+
+    if (needsLiveData(message)) {
+      const liveData = await searchWeb(message);
+      context = `Use this latest information:\n${liveData}\n\nQuestion: ${message}`;
+    }
+
+    const reply = await askAI([{ role: "user", content: context }]);
+    res.json({ reply });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// -------------------- 2. TEXT / ARTICLE SUMMARY --------------------
+app.post("/ai/summarize-text", async (req, res) => {
+  try {
+    const { text } = req.body;
+
+    const summary = await askAI([
+      {
+        role: "user",
+        content: `
+Summarize this content:
+- Main topic
+- Key points
+- Simple explanation
+- Include references if possible
+
+${text}
+        `,
+      },
+    ]);
+
+    res.json({ summary });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// -------------------- 3. ARTICLE FROM URL --------------------
+app.post("/ai/summarize-url", async (req, res) => {
+  try {
+    const { url } = req.body;
+
+    const page = await fetch(url);
+    const html = await page.text();
+
+    const text = html.replace(/<[^>]*>/g, " ").slice(0, 15000);
+
+    const summary = await askAI([
+      {
+        role: "user",
+        content: `Summarize this article and include key references:\n${text}`,
+      },
+    ]);
+
+    res.json({ summary });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// -------------------- 4. VIDEO SUMMARY --------------------
+app.post("/ai/summarize-video", async (req, res) => {
+  try {
+    const { transcript } = req.body;
+
+    const summary = await askAI([
+      {
+        role: "user",
+        content: `
+Summarize this lecture/video:
+- Topic
+- Key insights
+- Important points
+- Short summary
+
+${transcript}
+        `,
+      },
+    ]);
+
+    res.json({ summary });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// -------------------- 5. TRANSLATION --------------------
+app.post("/ai/translate", async (req, res) => {
+  try {
+    const { text, targetLanguage } = req.body;
+
+    const translation = await askAI([
+      {
+        role: "user",
+        content: `Translate this into ${targetLanguage} clearly:\n${text}`,
+      },
+    ]);
+
+    res.json({ translation });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// -------------------- 6. AUDIO → TEXT --------------------
+app.post("/ai/transcribe", async (req, res) => {
+  try {
+    const { audioUrl } = req.body;
+
+    const response = await client.audio.transcriptions.create({
+      model: "gpt-4o-mini-transcribe",
+      file: await fetch(audioUrl),
+    });
+
+    res.json({ text: response.text });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// -------------------- SERVER --------------------
+app.listen(3000, () => {
+  console.log("🔥 UniRab AI running on port 3000");
+});
