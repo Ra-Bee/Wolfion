@@ -6,7 +6,7 @@ import { PhotoViewer } from "@/components/photo-viewer";
 import { useCart } from "@/hooks/use-cart";
 import { useListProducts } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Check, Minus, Plus, Heart, Truck, RotateCcw, ShieldCheck, Play } from "lucide-react";
+import { ArrowLeft, Check, Minus, Plus, Heart, Truck, RotateCcw, Banknote, Play } from "lucide-react";
 
 export default function ProductDetail() {
   const [, params] = useRoute("/product/:id");
@@ -221,13 +221,21 @@ export default function ProductDetail() {
               </Button>
             </div>
 
-            {/* Perks — clean minimal row */}
+            {/* Perks — light glass row */}
             <div className="mt-10">
-              <div className="grid grid-cols-3 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white/60 dark:bg-neutral-900/40 divide-x divide-neutral-200 dark:divide-neutral-800 overflow-hidden">
+              <div
+                className="grid grid-cols-3 rounded-2xl border border-white/50 dark:border-white/10 divide-x divide-white/40 dark:divide-white/10 overflow-hidden shadow-[0_6px_20px_-10px_rgba(15,23,42,0.18)]"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.35) 100%)",
+                  backdropFilter: "blur(10px) saturate(140%)",
+                  WebkitBackdropFilter: "blur(10px) saturate(140%)",
+                }}
+              >
                 {[
                   { Icon: Truck, label: "Free shipping" },
                   { Icon: RotateCcw, label: "Free returns" },
-                  { Icon: ShieldCheck, label: "2-year warranty" },
+                  { Icon: Banknote, label: "Cash on delivery" },
                 ].map(({ Icon, label }) => (
                   <div key={label} className="flex flex-col items-center justify-center text-center px-2 py-4">
                     <Icon className="h-6 w-6 text-neutral-800 dark:text-neutral-200 mb-2" strokeWidth={1.75} />
