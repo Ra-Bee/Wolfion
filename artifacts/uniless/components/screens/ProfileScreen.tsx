@@ -197,7 +197,7 @@ export default function ProfileScreen() {
           <DiscoverRow icon="users" label="Find friends" onPress={() => router.push("/friends")} />
           <DiscoverRow icon="monitor" label="Study rooms" onPress={() => router.push("/study-rooms")} />
           <DiscoverRow icon="repeat" label="Skill exchange" onPress={() => router.push("/skill-exchange")} />
-          <DiscoverRow icon="zap" label="AI assistant" onPress={() => router.push("/ai-assistant")} />
+          <DiscoverRow icon="zap" label="RabChat AI" onPress={() => router.push("/ai-assistant")} />
         </GlassCard>
 
         <SectionHeader title="My posts" />

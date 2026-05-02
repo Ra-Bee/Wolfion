@@ -66,7 +66,7 @@ async function classifyAndAnswer(prompt: string): Promise<string> {
   return aiChatAsync(trimmed);
 }
 
-export default function AIAssistant() {
+export function AIAssistantContent({ back = false }: { back?: boolean }) {
   const c = useColors();
   const { addAssignment } = useAppData();
   const [text, setText] = useState("");
@@ -129,9 +129,9 @@ export default function AIAssistant() {
   return (
     <Background>
       <Header
-        title="AI study assistant"
+        title="RabChat AI"
         subtitle="Powered by GPT · summarize, translate, plan"
-        back
+        back={back}
         trailing={
           <View style={{ flexDirection: "row", gap: 6 }}>
             <Pressable
@@ -327,4 +327,8 @@ export default function AIAssistant() {
       </KeyboardAvoidingView>
     </Background>
   );
+}
+
+export default function AIAssistant() {
+  return <AIAssistantContent back />;
 }

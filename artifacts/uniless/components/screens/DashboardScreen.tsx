@@ -480,7 +480,7 @@ export default function DashboardScreen() {
 
         <View style={{ marginTop: 24 }}>
           <GlassButton
-            title="Open AI study assistant"
+            title="Open RabChat AI"
             full
             icon={<Feather name="zap" size={16} color="#fff" />}
             onPress={() => router.push("/ai-assistant")}
