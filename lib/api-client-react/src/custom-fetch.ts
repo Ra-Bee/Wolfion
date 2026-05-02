@@ -360,7 +360,19 @@ export async function customFetch<T = unknown>(
 
   const requestInfo = { method, url: resolveUrl(input) };
 
-  const response = await fetch(input, { ...init, method, headers });
+  let response = await fetch(input, { ...init, method, headers });
+
+  // Self-heal against bogus 304 responses. When a browser HTTP-cache holds an
+  // older copy of an /api/* endpoint, it sends `If-None-Match` automatically
+  // even though our JS layer never asked for revalidation. The server then
+  // replies 304 with no body. In SW / Android WebView contexts the empty 304
+  // is handed straight to JS instead of being substituted with the cached
+  // body, which used to make our hooks resolve to `null`. Detect that case
+  // and retry the request with `cache: "reload"` to bypass the HTTP cache
+  // and force a fresh 200.
+  if (response.status === 304 && method === "GET") {
+    response = await fetch(input, { ...init, method, headers, cache: "reload" });
+  }
 
   if (!response.ok) {
     const errorData = await parseErrorBody(response, method);
