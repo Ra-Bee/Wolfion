@@ -177,7 +177,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                     </SheetTitle>
                   </div>
                 </SheetHeader>
-                <nav className="flex-1 px-3 py-3 overflow-y-auto space-y-5">
+                <nav className="flex-1 px-3 py-3 overflow-y-auto flex flex-col gap-5">
                   {PRIMARY_NAV.map((n) => (
                     <SheetClose asChild key={n.path}>
                       <Link href={n.path}>
