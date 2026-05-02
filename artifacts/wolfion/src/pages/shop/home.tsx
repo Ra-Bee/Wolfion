@@ -113,10 +113,14 @@ export default function ShopHome() {
                 "inset 0 2px 0 rgba(255,255,255,0.32), inset 0 -2px 14px rgba(0,0,0,0.6), inset 0 0 80px rgba(0,0,0,0.4)",
             }}
           >
+            <div aria-hidden className="absolute inset-0" style={{ backgroundColor: "#2d2521" }} />
             <img
               ref={heroImgRef}
               src={imgPortrait}
               alt="Wolfion campaign"
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
               className="absolute inset-0 h-full w-full object-cover object-[center_75%] scale-105 animate-in fade-in zoom-in-95 duration-[2000ms] fill-mode-both"
               style={{ transition: "transform 380ms cubic-bezier(0.22, 1, 0.36, 1)", willChange: "transform" }}
             />
@@ -312,9 +316,12 @@ export default function ShopHome() {
                   }}
                 >
                   <div className="relative aspect-[4/5] overflow-hidden rounded-[23px] bg-neutral-100 dark:bg-neutral-900 shadow-lg group-hover:shadow-2xl transition-shadow duration-700">
+                    <div aria-hidden className="absolute inset-0 bg-[#e8ddd2] dark:bg-[#2d2521]" />
                     <img
                       src={c.image}
                       alt={c.label}
+                      loading="lazy"
+                      decoding="async"
                       className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-110"
                     />
                     {/* Glossy sheen */}
@@ -408,9 +415,12 @@ export default function ShopHome() {
                   }}
                 >
                   <div className="relative aspect-[3/4] rounded-[23px] overflow-hidden shadow-lg group-hover:shadow-2xl transition-shadow duration-700">
+                    <div aria-hidden className="absolute inset-0 bg-[#e8ddd2] dark:bg-[#2d2521]" />
                     <img
                       src={col.img}
                       alt={col.label}
+                      loading="lazy"
+                      decoding="async"
                       className={`absolute inset-0 h-full w-full object-cover ${col.pos} transition-transform duration-[1200ms] group-hover:scale-105`}
                     />
                     <div
@@ -486,9 +496,12 @@ export default function ShopHome() {
               className="group relative rounded-xl sm:rounded-2xl overflow-hidden bg-white dark:bg-neutral-900 ring-1 ring-black/5 dark:ring-white/10 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.3)] hover:shadow-[0_20px_45px_-15px_rgba(0,0,0,0.4)] transition-all duration-500 hover:-translate-y-0.5"
             >
               <div className="relative aspect-square overflow-hidden">
+                <div aria-hidden className="absolute inset-0 bg-[#e8ddd2] dark:bg-[#2d2521]" />
                 <img
                   src={box.src}
                   alt={`Wolfion packaging — ${box.label}`}
+                  loading="lazy"
+                  decoding="async"
                   className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-105"
                 />
                 <div
@@ -535,10 +548,13 @@ export default function ShopHome() {
             }}
           >
             <div className="relative rounded-[22px] sm:rounded-[28px] overflow-hidden bg-emerald-950">
+              <div aria-hidden className="absolute inset-0" style={{ backgroundColor: "#1f3329" }} />
               <img
                 src={imgExperienceSource}
                 alt="Wolfion Bapari Socks — Experience the Source"
-                className="block w-full h-auto"
+                loading="lazy"
+                decoding="async"
+                className="relative block w-full h-auto"
               />
               {/* Subtle top sheen for the glass feel */}
               <div
@@ -578,9 +594,12 @@ export default function ShopHome() {
             <div
               className="relative rounded-[26px] overflow-hidden h-[42vh] min-h-[320px] sm:h-[55vh] sm:min-h-[420px]"
             >
+              <div aria-hidden className="absolute inset-0 bg-[#e8ddd2] dark:bg-[#2d2521]" />
               <img
                 src={imgSocks}
                 alt="Wolfion craftsmanship"
+                loading="lazy"
+                decoding="async"
                 className="absolute inset-0 h-full w-full object-cover"
               />
               {/* Bottom darkening gradient for text */}
