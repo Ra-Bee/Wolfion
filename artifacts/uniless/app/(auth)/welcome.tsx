@@ -29,7 +29,7 @@ export default function Welcome() {
             <Text style={{ color: "#fff", fontFamily: "Inter_700Bold", fontSize: 36 }}>U</Text>
           </LinearGradient>
           <Text style={{ color: c.foreground, fontFamily: "Inter_700Bold", fontSize: 38, marginTop: 18 }}>
-            UniRab
+            RabChat
           </Text>
           <Text
             style={{

@@ -30,7 +30,7 @@ export function pickColor(seed: string): string {
 export const SEED_USERS: UnilessUser[] = [
   {
     id: "u_maya",
-    email: "maya@unirab.app",
+    email: "maya@rabchat.app",
     passwordHash: "demo",
     displayName: "Maya Patel",
     username: "mayap",
@@ -47,7 +47,7 @@ export const SEED_USERS: UnilessUser[] = [
   },
   {
     id: "u_jordan",
-    email: "jordan@unirab.app",
+    email: "jordan@rabchat.app",
     passwordHash: "demo",
     displayName: "Jordan Lee",
     username: "jordanl",
@@ -64,7 +64,7 @@ export const SEED_USERS: UnilessUser[] = [
   },
   {
     id: "u_sara",
-    email: "sara@unirab.app",
+    email: "sara@rabchat.app",
     passwordHash: "demo",
     displayName: "Sara Kim",
     username: "sarak",
@@ -81,7 +81,7 @@ export const SEED_USERS: UnilessUser[] = [
   },
   {
     id: "u_diego",
-    email: "diego@unirab.app",
+    email: "diego@rabchat.app",
     passwordHash: "demo",
     displayName: "Diego Alvarez",
     username: "diegoa",

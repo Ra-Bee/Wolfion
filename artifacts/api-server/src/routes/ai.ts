@@ -1,11 +1,14 @@
 import { promises as dns } from "node:dns";
 import net from "node:net";
 import { Router, type IRouter } from "express";
+import { PDFParse } from "pdf-parse";
 import { openai } from "@workspace/integrations-openai-ai-server";
 import { ensureCompatibleFormat, speechToText } from "@workspace/integrations-openai-ai-server/audio";
 import {
   AiChatBody,
   AiChatResponse,
+  AiSummarizePdfBody,
+  AiSummarizePdfResponse,
   AiSummarizeTextBody,
   AiSummarizeTextResponse,
   AiSummarizeUrlBody,
@@ -243,7 +246,7 @@ async function safeFetchPage(initialUrl: string, deadlineSignal: AbortSignal): P
     const upstream = await fetch(parsed.toString(), {
       signal: deadlineSignal,
       redirect: "manual",
-      headers: { "User-Agent": "UniRabBot/1.0 (+https://replit.com)" },
+      headers: { "User-Agent": "RabChatBot/1.0 (+https://replit.com)" },
     });
 
     if (upstream.status >= 300 && upstream.status < 400) {
@@ -399,6 +402,97 @@ router.post("/ai/transcribe", async (req, res): Promise<void> => {
   } catch (err) {
     req.log.error({ err }, "ai/transcribe failed");
     res.status(500).json({ error: "Could not transcribe that audio right now." });
+  }
+});
+
+const MAX_PDF_BYTES = 15 * 1024 * 1024;
+const MAX_PDF_BASE64_CHARS = Math.ceil(MAX_PDF_BYTES / 3) * 4 + 4;
+const MAX_PDF_TEXT_CHARS = 60000;
+
+router.post("/ai/summarize-pdf", async (req, res): Promise<void> => {
+  const parsed = AiSummarizePdfBody.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.message });
+    return;
+  }
+  const { pdfBase64, filename } = parsed.data;
+
+  if (pdfBase64.length > MAX_PDF_BASE64_CHARS) {
+    res.status(400).json({ error: "PDF is too large (max 15 MB)." });
+    return;
+  }
+  if (pdfBase64.length % 4 !== 0 || !BASE64_RE.test(pdfBase64)) {
+    res.status(400).json({ error: "Invalid base64 PDF payload." });
+    return;
+  }
+
+  const buffer = Buffer.from(pdfBase64, "base64");
+  if (buffer.length === 0) {
+    res.status(400).json({ error: "PDF payload is empty." });
+    return;
+  }
+  if (buffer.length > MAX_PDF_BYTES) {
+    res.status(400).json({ error: "PDF is too large (max 15 MB)." });
+    return;
+  }
+  // PDF magic bytes: %PDF-
+  if (buffer[0] !== 0x25 || buffer[1] !== 0x50 || buffer[2] !== 0x44 || buffer[3] !== 0x46) {
+    res.status(400).json({ error: "File does not look like a PDF." });
+    return;
+  }
+
+  let extractedText = "";
+  let pageCount = 0;
+  try {
+    const data = new Uint8Array(buffer);
+    const parser = new PDFParse({ data });
+    const result = await parser.getText();
+    extractedText = (result.text ?? "").replace(/\s+/g, " ").trim();
+    pageCount = result.total ?? result.pages?.length ?? 0;
+  } catch (err) {
+    req.log.warn({ err }, "ai/summarize-pdf parse failed");
+    res.status(400).json({ error: "Could not read text from that PDF (it may be scanned or encrypted)." });
+    return;
+  }
+
+  if (extractedText.length < 80) {
+    res.status(400).json({
+      error:
+        "PDF had no readable text (it may be a scanned image). Try a text-based PDF or transcribe it first.",
+    });
+    return;
+  }
+
+  const characterCount = extractedText.length;
+  const truncated = extractedText.slice(0, MAX_PDF_TEXT_CHARS);
+  const truncatedNote =
+    characterCount > MAX_PDF_TEXT_CHARS
+      ? `\n\n(Note: PDF was truncated from ${characterCount} to ${MAX_PDF_TEXT_CHARS} characters for summarization.)`
+      : "";
+  const fileLine = filename ? `\nDocument: ${filename}` : "";
+
+  const prompt = `Summarize this PDF document (${pageCount} page${pageCount === 1 ? "" : "s"}).${fileLine}
+- Main topic
+- Key bullet points
+- A simple plain-language explanation
+- Mention sections, references, or sources you can identify
+${truncatedNote}
+
+CONTENT:
+${truncated}`;
+
+  try {
+    const summary = await askAssistant(prompt);
+    res.json(
+      AiSummarizePdfResponse.parse({
+        summary,
+        pageCount,
+        characterCount,
+      }),
+    );
+  } catch (err) {
+    req.log.error({ err }, "ai/summarize-pdf summarization failed");
+    res.status(500).json({ error: "Could not summarize that PDF right now." });
   }
 });
 

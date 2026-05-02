@@ -97,6 +97,35 @@ export const AiTranscribeResponse = zod.object({
 });
 
 /**
+ * Extracts text from a base64-encoded PDF and returns a structured summary.
+ * @summary Summarize a PDF document
+ */
+
+export const aiSummarizePdfBodyFilenameMax = 256;
+
+export const AiSummarizePdfBody = zod.object({
+  pdfBase64: zod
+    .string()
+    .min(1)
+    .describe("Base64-encoded PDF bytes (no data URL prefix)."),
+  filename: zod
+    .string()
+    .max(aiSummarizePdfBodyFilenameMax)
+    .optional()
+    .describe("Optional original filename for context."),
+});
+
+export const aiSummarizePdfResponsePageCountMin = 0;
+
+export const aiSummarizePdfResponseCharacterCountMin = 0;
+
+export const AiSummarizePdfResponse = zod.object({
+  summary: zod.string(),
+  pageCount: zod.number().min(aiSummarizePdfResponsePageCountMin),
+  characterCount: zod.number().min(aiSummarizePdfResponseCharacterCountMin),
+});
+
+/**
  * Translates text into the requested target language.
  * @summary Translate text into a target language
  */

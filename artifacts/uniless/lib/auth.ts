@@ -1,5 +1,5 @@
 // Tiny demo password hashing — NOT real cryptography.
-// UniRab runs entirely on-device with AsyncStorage; no server is contacted.
+// RabChat runs entirely on-device with AsyncStorage; no server is contacted.
 export function demoHashPassword(password: string): string {
   let h = 5381;
   for (let i = 0; i < password.length; i++) {

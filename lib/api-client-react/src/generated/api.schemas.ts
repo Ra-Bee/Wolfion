@@ -100,3 +100,24 @@ export interface AiTranscribeRequest {
 export interface AiTranscriptionResult {
   text: string;
 }
+
+export interface AiSummarizePdfRequest {
+  /**
+   * Base64-encoded PDF bytes (no data URL prefix).
+   * @minLength 1
+   */
+  pdfBase64: string;
+  /**
+   * Optional original filename for context.
+   * @maxLength 256
+   */
+  filename?: string;
+}
+
+export interface AiPdfSummaryResponse {
+  summary: string;
+  /** @minimum 0 */
+  pageCount: number;
+  /** @minimum 0 */
+  characterCount: number;
+}

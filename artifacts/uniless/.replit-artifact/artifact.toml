@@ -1,6 +1,6 @@
 kind = "mobile"
 previewPath = "/uniless/"
-title = "UniRab"
+title = "RabChat"
 version = "1.0.0"
 id = "artifacts/uniless"
 router = "expo-domain"

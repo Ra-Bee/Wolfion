@@ -7,7 +7,7 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 ## Artifacts
 
 - **Wolfion** (`artifacts/wolfion`) — React + Vite mobile-friendly web app for the Wolfion socks brand. Includes Clerk-powered login/sign-up, local role selection for Admin vs Customer, customer product browsing/cart/simple checkout, and an admin management dashboard with Production, Sales, Inventory, Yarn, and Cost & Profit sections.
-- **UniRab** (`artifacts/uniless`) — Expo (React Native) mobile-first social productivity app for university students. Fully on-device (AsyncStorage) — no server, no shared backend. Features: glassmorphism UI with light/dark/system themes, 5 tabs (Home feed with stories, academic Dashboard, Messages, Explore, Profile), posts with privacy controls, friend graph + requests, study rooms, skill exchange, and a local heuristic AI study assistant. Folder/slug stays `uniless` for stability; display title is "UniRab". Demo seed users (maya/jordan/sara/diego @unirab.app, password `demo`).
+- **RabChat** (`artifacts/uniless`) — Expo (React Native) mobile-first social productivity app for university students. Fully on-device (AsyncStorage) — no server, no shared backend. Features: glassmorphism UI with light/dark/system themes, 5 tabs (Home feed with stories, academic Dashboard, Messages, Explore, Profile), posts with privacy controls, friend graph + requests, study rooms, skill exchange, and a GPT-powered AI study assistant (chat, summarize text/url/video/PDF, translate, transcribe). Folder/slug stays `uniless` for stability; display title is "RabChat". Demo seed users (maya/jordan/sara/diego @rabchat.app, password `demo`).
 
 ## Stack
 

@@ -37,7 +37,7 @@ export default function Settings() {
           <ListRow
             leading={<Feather name="globe" size={18} color={user.privacy === "public" ? c.primary : c.mutedForeground} />}
             title="Public profile"
-            subtitle="Anyone on UniRab can see your profile."
+            subtitle="Anyone on RabChat can see your profile."
             trailing={user.privacy === "public" ? <Feather name="check" size={16} color={c.primary} /> : null}
             onPress={() => updateProfile({ privacy: "public" })}
           />
@@ -70,7 +70,7 @@ export default function Settings() {
 
         <SectionHeader title="About" />
         <GlassCard padding={14}>
-          <Text style={{ color: c.foreground, fontFamily: "Inter_700Bold", fontSize: 16 }}>UniRab</Text>
+          <Text style={{ color: c.foreground, fontFamily: "Inter_700Bold", fontSize: 16 }}>RabChat</Text>
           <Text style={{ color: c.mutedForeground, fontSize: 13, marginTop: 4, lineHeight: 19 }}>
             A social productivity app for university students. Posts, study rooms, an academic dashboard, and a built-in
             study assistant — all on your device.

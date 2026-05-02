@@ -181,6 +181,37 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AiError"
+  /ai/summarize-pdf:
+    post:
+      operationId: aiSummarizePdf
+      tags: [ai]
+      summary: Summarize a PDF document
+      description: Extracts text from a base64-encoded PDF and returns a structured summary.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AiSummarizePdfRequest"
+      responses:
+        "200":
+          description: Summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiPdfSummaryResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
   /ai/translate:
     post:
       operationId: aiTranslate
@@ -320,3 +351,31 @@ components:
           type: string
       required:
         - text
+    AiSummarizePdfRequest:
+      type: object
+      properties:
+        pdfBase64:
+          type: string
+          minLength: 1
+          description: Base64-encoded PDF bytes (no data URL prefix).
+        filename:
+          type: string
+          maxLength: 256
+          description: Optional original filename for context.
+      required:
+        - pdfBase64
+    AiPdfSummaryResponse:
+      type: object
+      properties:
+        summary:
+          type: string
+        pageCount:
+          type: integer
+          minimum: 0
+        characterCount:
+          type: integer
+          minimum: 0
+      required:
+        - summary
+        - pageCount
+        - characterCount

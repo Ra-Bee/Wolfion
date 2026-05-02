@@ -1,5 +1,5 @@
 /**
- * AI helpers for UniRab.
+ * AI helpers for RabChat.
  *
  * The conversational and summarization helpers call the backend `/ai/*`
  * endpoints (GPT-powered). If the network is unavailable or the request
@@ -285,6 +285,22 @@ export async function aiTranscribeAsync(audioBase64: string, format?: string): P
   if (!audioBase64) throw new Error("No audio provided.");
   const res = await apiPost<{ text: string }>("/api/ai/transcribe", { audioBase64, format });
   return res?.text?.trim() ?? "";
+}
+
+export interface PdfSummaryResult {
+  summary: string;
+  pageCount: number;
+  characterCount: number;
+}
+
+export async function aiSummarizePdfAsync(pdfBase64: string, filename?: string): Promise<PdfSummaryResult> {
+  if (!pdfBase64) throw new Error("No PDF provided.");
+  const res = await apiPost<PdfSummaryResult>("/api/ai/summarize-pdf", { pdfBase64, filename });
+  return {
+    summary: res?.summary?.trim() ?? "",
+    pageCount: res?.pageCount ?? 0,
+    characterCount: res?.characterCount ?? 0,
+  };
 }
 
 export async function aiTranslateAsync(text: string, targetLanguage: string): Promise<string> {

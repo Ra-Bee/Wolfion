@@ -20,6 +20,8 @@ import type {
   AiChatReply,
   AiChatRequest,
   AiError,
+  AiPdfSummaryResponse,
+  AiSummarizePdfRequest,
   AiSummarizeTextRequest,
   AiSummarizeUrlRequest,
   AiSummarizeVideoRequest,
@@ -549,6 +551,93 @@ export const useAiTranscribe = <
   TContext
 > => {
   return useMutation(getAiTranscribeMutationOptions(options));
+};
+
+/**
+ * Extracts text from a base64-encoded PDF and returns a structured summary.
+ * @summary Summarize a PDF document
+ */
+export const getAiSummarizePdfUrl = () => {
+  return `/api/ai/summarize-pdf`;
+};
+
+export const aiSummarizePdf = async (
+  aiSummarizePdfRequest: AiSummarizePdfRequest,
+  options?: RequestInit,
+): Promise<AiPdfSummaryResponse> => {
+  return customFetch<AiPdfSummaryResponse>(getAiSummarizePdfUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(aiSummarizePdfRequest),
+  });
+};
+
+export const getAiSummarizePdfMutationOptions = <
+  TError = ErrorType<AiError>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof aiSummarizePdf>>,
+    TError,
+    { data: BodyType<AiSummarizePdfRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof aiSummarizePdf>>,
+  TError,
+  { data: BodyType<AiSummarizePdfRequest> },
+  TContext
+> => {
+  const mutationKey = ["aiSummarizePdf"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof aiSummarizePdf>>,
+    { data: BodyType<AiSummarizePdfRequest> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return aiSummarizePdf(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AiSummarizePdfMutationResult = NonNullable<
+  Awaited<ReturnType<typeof aiSummarizePdf>>
+>;
+export type AiSummarizePdfMutationBody = BodyType<AiSummarizePdfRequest>;
+export type AiSummarizePdfMutationError = ErrorType<AiError>;
+
+/**
+ * @summary Summarize a PDF document
+ */
+export const useAiSummarizePdf = <
+  TError = ErrorType<AiError>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof aiSummarizePdf>>,
+    TError,
+    { data: BodyType<AiSummarizePdfRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof aiSummarizePdf>>,
+  TError,
+  { data: BodyType<AiSummarizePdfRequest> },
+  TContext
+> => {
+  return useMutation(getAiSummarizePdfMutationOptions(options));
 };
 
 /**
