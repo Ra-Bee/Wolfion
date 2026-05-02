@@ -12,6 +12,8 @@ tags:
     description: Health operations
   - name: ai
     description: AI-powered study assistant operations
+  - name: products
+    description: Wolfion shop product catalog operations
 paths:
   /healthz:
     get:
