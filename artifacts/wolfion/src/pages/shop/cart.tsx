@@ -658,7 +658,7 @@ export default function Cart() {
               Cancel
             </Button>
             <Button
-              className="h-12 rounded-full !bg-gradient-to-r !from-[#1ABBC4] !via-[#16D4DD] !to-[#D4AF37] hover:!brightness-110 !text-black text-sm uppercase tracking-widest font-bold px-6 shadow-[0_10px_30px_-5px_rgba(26,187,196,0.5)] hover:shadow-[0_15px_40px_-5px_rgba(26,187,196,0.7)] transition-all"
+              className="h-12 rounded-full !bg-gradient-to-b !from-neutral-900 !to-black hover:!from-black hover:!to-black !text-white text-sm uppercase tracking-[0.18em] font-semibold px-6 border border-white/10 shadow-[0_10px_30px_-8px_rgba(0,0,0,0.55),0_2px_8px_-2px_rgba(212,175,55,0.25)] hover:shadow-[0_14px_36px_-8px_rgba(0,0,0,0.65),0_4px_12px_-2px_rgba(212,175,55,0.35)] transition-all"
               onClick={handleConfirmPayment}
               disabled={!canPay || processing}
               data-testid="confirm-payment"
