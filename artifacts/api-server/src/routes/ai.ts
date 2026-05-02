@@ -1,9 +1,10 @@
 import { promises as dns } from "node:dns";
 import net from "node:net";
 import { Router, type IRouter } from "express";
+import { toFile } from "openai";
 import { PDFParse } from "pdf-parse";
-import { openai } from "@workspace/integrations-openai-ai-server";
-import { ensureCompatibleFormat, speechToText } from "@workspace/integrations-openai-ai-server/audio";
+import { ensureCompatibleFormat } from "@workspace/integrations-openai-ai-server/audio";
+import { openai } from "../lib/openai";
 import {
   AiChatBody,
   AiChatResponse,
@@ -26,7 +27,8 @@ const router: IRouter = Router();
 const SYSTEM_PROMPT =
   "You are a university study assistant. Be clear, concise, and structured. When summarizing, include key points and optional references if available.";
 
-const MODEL = "gpt-5-mini";
+const MODEL = "gpt-4o-mini";
+const TRANSCRIBE_MODEL = "gpt-4o-mini-transcribe";
 const MAX_TOKENS = 8192;
 
 async function askAssistant(userContent: string): Promise<string> {
@@ -41,6 +43,57 @@ async function askAssistant(userContent: string): Promise<string> {
   return response.choices[0]?.message?.content ?? "";
 }
 
+async function speechToText(
+  audioBuffer: Buffer,
+  format: "wav" | "mp3" | "webm" = "wav",
+): Promise<string> {
+  const file = await toFile(audioBuffer, `audio.${format}`);
+  const response = await openai.audio.transcriptions.create({
+    file,
+    model: TRANSCRIBE_MODEL,
+  });
+  return response.text;
+}
+
+interface OpenAIErrorShape {
+  status?: number;
+  code?: string;
+  error?: { code?: string };
+}
+
+function aiErrorMessage(err: unknown, fallback: string): { status: number; message: string } {
+  const e = err as OpenAIErrorShape;
+  const code = e?.code ?? e?.error?.code;
+  if (e?.status === 401 || code === "invalid_api_key") {
+    return {
+      status: 502,
+      message:
+        "OpenAI rejected the API key. Update OPENAI_API_KEY in Replit Secrets with a valid key.",
+    };
+  }
+  if (code === "insufficient_quota") {
+    return {
+      status: 502,
+      message:
+        "Your OpenAI account is out of quota. Add billing at platform.openai.com/account/billing and try again.",
+    };
+  }
+  if (e?.status === 429) {
+    return {
+      status: 429,
+      message: "OpenAI is rate-limiting requests. Please wait a moment and try again.",
+    };
+  }
+  if (e?.status === 404 || code === "model_not_found") {
+    return {
+      status: 502,
+      message:
+        "The configured AI model isn't available on this OpenAI account. Try a different model.",
+    };
+  }
+  return { status: 500, message: fallback };
+}
+
 router.post("/ai/chat", async (req, res): Promise<void> => {
   const parsed = AiChatBody.safeParse(req.body);
   if (!parsed.success) {
@@ -52,7 +105,8 @@ router.post("/ai/chat", async (req, res): Promise<void> => {
     res.json(AiChatResponse.parse({ reply }));
   } catch (err) {
     req.log.error({ err }, "ai/chat failed");
-    res.status(500).json({ error: "Assistant is unavailable right now." });
+    const { status, message } = aiErrorMessage(err, "Assistant is unavailable right now.");
+    res.status(status).json({ error: message });
   }
 });
 
@@ -75,7 +129,8 @@ ${parsed.data.text}`;
     res.json(AiSummarizeTextResponse.parse({ summary }));
   } catch (err) {
     req.log.error({ err }, "ai/summarize-text failed");
-    res.status(500).json({ error: "Could not summarize that text right now." });
+    const { status, message } = aiErrorMessage(err, "Could not summarize that text right now.");
+    res.status(status).json({ error: message });
   }
 });
 
@@ -329,7 +384,8 @@ ${text}`;
     res.json(AiSummarizeUrlResponse.parse({ summary }));
   } catch (err) {
     req.log.error({ err }, "ai/summarize-url summarization failed");
-    res.status(500).json({ error: "Could not summarize that article right now." });
+    const { status, message } = aiErrorMessage(err, "Could not summarize that article right now.");
+    res.status(status).json({ error: message });
   }
 });
 
@@ -352,7 +408,8 @@ ${parsed.data.transcript}`;
     res.json(AiSummarizeVideoResponse.parse({ summary }));
   } catch (err) {
     req.log.error({ err }, "ai/summarize-video failed");
-    res.status(500).json({ error: "Could not summarize that transcript right now." });
+    const { status, message } = aiErrorMessage(err, "Could not summarize that transcript right now.");
+    res.status(status).json({ error: message });
   }
 });
 
@@ -401,7 +458,8 @@ router.post("/ai/transcribe", async (req, res): Promise<void> => {
     res.json(AiTranscribeResponse.parse({ text }));
   } catch (err) {
     req.log.error({ err }, "ai/transcribe failed");
-    res.status(500).json({ error: "Could not transcribe that audio right now." });
+    const { status, message } = aiErrorMessage(err, "Could not transcribe that audio right now.");
+    res.status(status).json({ error: message });
   }
 });
 
@@ -492,7 +550,8 @@ ${truncated}`;
     );
   } catch (err) {
     req.log.error({ err }, "ai/summarize-pdf summarization failed");
-    res.status(500).json({ error: "Could not summarize that PDF right now." });
+    const { status, message } = aiErrorMessage(err, "Could not summarize that PDF right now.");
+    res.status(status).json({ error: message });
   }
 });
 
@@ -510,7 +569,8 @@ ${parsed.data.text}`;
     res.json(AiTranslateResponse.parse({ translation }));
   } catch (err) {
     req.log.error({ err }, "ai/translate failed");
-    res.status(500).json({ error: "Could not translate that right now." });
+    const { status, message } = aiErrorMessage(err, "Could not translate that right now.");
+    res.status(status).json({ error: message });
   }
 });
 
