@@ -186,7 +186,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                     </SheetClose>
                   ))}
 
-                  <Accordion type="multiple" className="w-full space-y-5 pt-1">
+                  <Accordion type="multiple" className="w-full space-y-5">
                     <AccordionItem value="bapari" className="border-none">
                       <AccordionTrigger className="menu-3d-item w-full hover:no-underline">
                         Bapari Socks
@@ -222,7 +222,6 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                     </AccordionItem>
                   </Accordion>
 
-                  <div className="my-5 h-px bg-gradient-to-r from-transparent via-neutral-300 to-transparent dark:via-neutral-700" />
                   <SheetClose asChild>
                     <Link href="/cart">
                       <button className="menu-3d-item w-full flex items-center">
