@@ -114,9 +114,9 @@ export function SideFlow({ items, initialIndex = 1 }: SideFlowProps) {
           style={[
             styles.dock,
             {
-              backgroundColor: c.cardSolid,
-              borderColor: c.glassBorder,
-              shadowColor: c.primary,
+              backgroundColor: "rgba(8,36,61,0.92)",
+              borderColor: "rgba(155,200,235,0.25)",
+              shadowColor: "#000",
             },
           ]}
         >
@@ -148,14 +148,14 @@ export function SideFlow({ items, initialIndex = 1 }: SideFlowProps) {
                   <Feather
                     name={item.icon}
                     size={isActive ? 18 : 16}
-                    color={isActive ? c.primaryForeground : c.mutedForeground}
+                    color={isActive ? c.primaryForeground : "rgba(230,247,255,0.75)"}
                   />
                 </View>
                 {isActive ? (
                   <Text
                     numberOfLines={1}
                     style={{
-                      color: c.primary,
+                      color: "#E6F7FF",
                       fontSize: 10,
                       fontFamily: "Inter_700Bold",
                       marginTop: 2,

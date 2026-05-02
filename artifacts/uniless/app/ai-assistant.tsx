@@ -182,7 +182,7 @@ export function AIAssistantContent({ back = false }: { back?: boolean }) {
           ref={listRef}
           data={messages}
           keyExtractor={(m) => m.id}
-          contentContainerStyle={{ padding: 16, paddingBottom: 12 }}
+          contentContainerStyle={{ padding: 16, paddingBottom: back ? 12 : 110 }}
           renderItem={({ item }) => (
             <View
               style={{
@@ -310,6 +310,7 @@ export function AIAssistantContent({ back = false }: { back?: boolean }) {
         <View
           style={{
             padding: 12,
+            paddingBottom: back ? 12 : 96,
             borderTopWidth: 1,
             borderTopColor: c.border,
             backgroundColor: c.cardSolid,
@@ -320,7 +321,7 @@ export function AIAssistantContent({ back = false }: { back?: boolean }) {
           <View style={{ flex: 1 }}>
             <GlassInput placeholder="Ask anything…" value={text} onChangeText={setText} multiline />
           </View>
-          <View style={{ marginLeft: 8, marginBottom: 12 }}>
+          <View style={{ marginLeft: 8, marginBottom: back ? 12 : 96 + 12 }}>
             <GlassButton title={busy ? "…" : "Send"} small disabled={!text.trim() || busy} onPress={() => send(text)} />
           </View>
         </View>
