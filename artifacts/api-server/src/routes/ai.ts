@@ -1,10 +1,10 @@
 import { promises as dns } from "node:dns";
 import net from "node:net";
 import { Router, type IRouter } from "express";
-import { toFile } from "openai";
+import { toFile } from "groq-sdk";
 import { PDFParse } from "pdf-parse";
 import { ensureCompatibleFormat } from "@workspace/integrations-openai-ai-server/audio";
-import { openai } from "../lib/openai";
+import { groq, GROQ_CHAT_MODEL, GROQ_TRANSCRIBE_MODEL } from "../lib/groq";
 import {
   AiChatBody,
   AiChatResponse,
@@ -27,14 +27,12 @@ const router: IRouter = Router();
 const SYSTEM_PROMPT =
   "You are a university study assistant. Be clear, concise, and structured. When summarizing, include key points and optional references if available.";
 
-const MODEL = "gpt-4o-mini";
-const TRANSCRIBE_MODEL = "gpt-4o-mini-transcribe";
 const MAX_TOKENS = 8192;
 
 async function askAssistant(userContent: string): Promise<string> {
-  const response = await openai.chat.completions.create({
-    model: MODEL,
-    max_completion_tokens: MAX_TOKENS,
+  const response = await groq.chat.completions.create({
+    model: GROQ_CHAT_MODEL,
+    max_tokens: MAX_TOKENS,
     messages: [
       { role: "system", content: SYSTEM_PROMPT },
       { role: "user", content: userContent },
@@ -48,47 +46,47 @@ async function speechToText(
   format: "wav" | "mp3" | "webm" = "wav",
 ): Promise<string> {
   const file = await toFile(audioBuffer, `audio.${format}`);
-  const response = await openai.audio.transcriptions.create({
+  const response = await groq.audio.transcriptions.create({
     file,
-    model: TRANSCRIBE_MODEL,
+    model: GROQ_TRANSCRIBE_MODEL,
   });
   return response.text;
 }
 
-interface OpenAIErrorShape {
+interface AiErrorShape {
   status?: number;
   code?: string;
-  error?: { code?: string };
+  error?: { code?: string; message?: string };
 }
 
 function aiErrorMessage(err: unknown, fallback: string): { status: number; message: string } {
-  const e = err as OpenAIErrorShape;
+  const e = err as AiErrorShape;
   const code = e?.code ?? e?.error?.code;
   if (e?.status === 401 || code === "invalid_api_key") {
     return {
       status: 502,
       message:
-        "OpenAI rejected the API key. Update OPENAI_API_KEY in Replit Secrets with a valid key.",
+        "Groq rejected the API key. Update GROQ_API_KEY in Replit Secrets with a valid key.",
     };
   }
   if (code === "insufficient_quota") {
     return {
       status: 502,
       message:
-        "Your OpenAI account is out of quota. Add billing at platform.openai.com/account/billing and try again.",
+        "Your Groq account is out of quota. Check billing at console.groq.com and try again.",
     };
   }
   if (e?.status === 429) {
     return {
       status: 429,
-      message: "OpenAI is rate-limiting requests. Please wait a moment and try again.",
+      message: "Groq is rate-limiting requests. Please wait a moment and try again.",
     };
   }
-  if (e?.status === 404 || code === "model_not_found") {
+  if (e?.status === 404 || code === "model_not_found" || code === "model_decommissioned") {
     return {
       status: 502,
       message:
-        "The configured AI model isn't available on this OpenAI account. Try a different model.",
+        "The configured AI model isn't available right now. The model may have been decommissioned.",
     };
   }
   return { status: 500, message: fallback };
