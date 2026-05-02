@@ -77,10 +77,10 @@ export default function Products() {
       {/* Hero band */}
       <section className="relative border-b border-white/30 dark:border-white/10">
         <div className="container mx-auto px-5 pt-14 pb-10">
-          <p className="text-[11px] uppercase tracking-[0.3em] text-neutral-500 mb-3">{eyebrow}</p>
+          <p className="text-[11px] uppercase tracking-[0.3em] text-neutral-500 dark:text-neutral-400 mb-3">{eyebrow}</p>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight">{title}</h1>
           {subtitle && (
-            <p className="mt-4 max-w-xl text-sm text-neutral-500 font-light leading-relaxed">{subtitle}</p>
+            <p className="mt-4 max-w-xl text-sm text-neutral-500 dark:text-neutral-400 font-light leading-relaxed">{subtitle}</p>
           )}
         </div>
       </section>
@@ -141,7 +141,7 @@ export default function Products() {
             <div className="h-8 w-8 rounded-full border-2 border-neutral-300 border-t-neutral-900 dark:border-neutral-700 dark:border-t-neutral-100 animate-spin" />
           </div>
         ) : isError ? (
-          <div className="py-20 text-center text-neutral-500">
+          <div className="py-20 text-center text-neutral-500 dark:text-neutral-400">
             <p>Could not load products.</p>
             <button
               type="button"
@@ -153,11 +153,11 @@ export default function Products() {
             </button>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="py-20 text-center text-neutral-500" data-testid="products-empty">
+          <div className="py-20 text-center text-neutral-500 dark:text-neutral-400" data-testid="products-empty">
             {!products || products.length === 0 ? (
               <>
                 <p className="text-base">No pieces in the catalog yet.</p>
-                <p className="text-xs mt-2 text-neutral-400">Check back soon — new drops land regularly.</p>
+                <p className="text-xs mt-2 text-neutral-400 dark:text-neutral-300">Check back soon — new drops land regularly.</p>
               </>
             ) : (
               <>

@@ -74,7 +74,7 @@ export function ProductCard({ product, ratio = "tall" }: Props) {
           <h3 className="text-sm font-medium truncate group-hover:underline underline-offset-4 decoration-neutral-400">
             {product.name}
           </h3>
-          <p className="text-xs text-neutral-500 mt-0.5 truncate">{product.color}</p>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5 truncate">{product.color}</p>
         </div>
         <span className="text-sm font-semibold whitespace-nowrap">Tk {product.price.toFixed(2)}</span>
       </div>

@@ -256,7 +256,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                   )}
                 </nav>
                 <SheetFooter className="border-t border-neutral-200 dark:border-neutral-800 p-4 flex-col gap-2 sm:flex-col">
-                  <div className="text-xs text-neutral-500 px-2 truncate">
+                  <div className="text-xs text-neutral-500 dark:text-neutral-400 px-2 truncate">
                     Signed in as {user?.emailAddresses[0]?.emailAddress}
                   </div>
                   <Button variant="outline" className="w-full justify-start" onClick={handleSignOut}>
@@ -319,7 +319,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                 sideOffset={14}
                 className="w-56 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl border border-neutral-200/70 dark:border-neutral-800/70 shadow-2xl rounded-xl p-2"
               >
-                <DropdownMenuLabel className="text-[10px] uppercase tracking-[0.25em] text-neutral-500 font-medium">
+                <DropdownMenuLabel className="text-[10px] uppercase tracking-[0.25em] text-neutral-500 dark:text-neutral-400 font-medium">
                   Socks
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-neutral-200/70 dark:bg-neutral-800/70" />
@@ -353,7 +353,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                 sideOffset={14}
                 className="w-56 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl border border-neutral-200/70 dark:border-neutral-800/70 shadow-2xl rounded-xl p-2"
               >
-                <DropdownMenuLabel className="text-[10px] uppercase tracking-[0.25em] text-neutral-500 font-medium">
+                <DropdownMenuLabel className="text-[10px] uppercase tracking-[0.25em] text-neutral-500 dark:text-neutral-400 font-medium">
                   Apparel
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-neutral-200/70 dark:bg-neutral-800/70" />
@@ -409,7 +409,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                 <SheetContent side="right" className="w-[340px] p-0 flex flex-col bg-white dark:bg-neutral-950">
                   <SheetHeader className="px-6 pt-7 pb-5 text-left border-b border-neutral-200 dark:border-neutral-800">
                     <SheetTitle className="text-base">{user?.fullName || "Account"}</SheetTitle>
-                    <p className="text-xs text-neutral-500 truncate">
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 truncate">
                       {user?.emailAddresses[0]?.emailAddress}
                     </p>
                   </SheetHeader>
@@ -835,7 +835,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
 
           {/* Input */}
           <div className="flex items-center gap-3 px-5 h-16 border-b border-neutral-200 dark:border-neutral-800">
-            <Search className="h-5 w-5 text-neutral-400 shrink-0" />
+            <Search className="h-5 w-5 text-neutral-400 dark:text-neutral-300 shrink-0" />
             <input
               ref={searchInputRef}
               type="text"
@@ -850,14 +850,14 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 shrink-0"
+                className="text-neutral-400 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-neutral-100 shrink-0"
                 aria-label="Clear"
                 data-testid="search-clear"
               >
                 <X className="h-4 w-4" />
               </button>
             )}
-            <kbd className="hidden sm:inline-flex h-6 px-1.5 items-center text-[10px] font-mono text-neutral-500 bg-neutral-100 dark:bg-neutral-800 rounded border border-neutral-200 dark:border-neutral-700">
+            <kbd className="hidden sm:inline-flex h-6 px-1.5 items-center text-[10px] font-mono text-neutral-500 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800 rounded border border-neutral-200 dark:border-neutral-700">
               ESC
             </kbd>
           </div>
@@ -866,7 +866,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
           <div className="max-h-[60vh] overflow-y-auto">
             {!searchQuery.trim() ? (
               <div className="p-5">
-                <p className="text-[11px] uppercase tracking-[0.25em] text-neutral-500 mb-3">Browse by category</p>
+                <p className="text-[11px] uppercase tracking-[0.25em] text-neutral-500 dark:text-neutral-400 mb-3">Browse by category</p>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {categories.map((c) => (
                     <Link
@@ -877,12 +877,12 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                       data-testid={`search-cat-${c.id}`}
                     >
                       <span className="block text-sm font-medium">{c.label}</span>
-                      <span className="block text-xs text-neutral-500 mt-0.5 truncate">{c.tagline}</span>
+                      <span className="block text-xs text-neutral-500 dark:text-neutral-400 mt-0.5 truncate">{c.tagline}</span>
                     </Link>
                   ))}
                 </div>
 
-                <p className="text-[11px] uppercase tracking-[0.25em] text-neutral-500 mt-6 mb-3">Try searching for</p>
+                <p className="text-[11px] uppercase tracking-[0.25em] text-neutral-500 dark:text-neutral-400 mt-6 mb-3">Try searching for</p>
                 <div className="flex flex-wrap gap-2">
                   {["Crew", "Ankle", "Black", "White", "Kids", "Merino"].map((t) => (
                     <button
@@ -899,7 +899,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
               <div className="p-3">
                 {matchingCategories.length > 0 && (
                   <div className="mb-2">
-                    <p className="text-[10px] uppercase tracking-[0.25em] text-neutral-500 px-3 py-2">Categories</p>
+                    <p className="text-[10px] uppercase tracking-[0.25em] text-neutral-500 dark:text-neutral-400 px-3 py-2">Categories</p>
                     {matchingCategories.map((c) => (
                       <Link
                         key={c.id}
@@ -908,11 +908,11 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                         className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-colors"
                       >
                         <span className="h-9 w-9 rounded-md bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center">
-                          <Store className="h-4 w-4 text-neutral-500" />
+                          <Store className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
                         </span>
                         <span className="flex-1">
                           <span className="block text-sm font-medium">{c.label}</span>
-                          <span className="block text-xs text-neutral-500">{c.tagline}</span>
+                          <span className="block text-xs text-neutral-500 dark:text-neutral-400">{c.tagline}</span>
                         </span>
                       </Link>
                     ))}
@@ -921,7 +921,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
 
                 {searchResults.length > 0 ? (
                   <div>
-                    <p className="text-[10px] uppercase tracking-[0.25em] text-neutral-500 px-3 py-2">Products</p>
+                    <p className="text-[10px] uppercase tracking-[0.25em] text-neutral-500 dark:text-neutral-400 px-3 py-2">Products</p>
                     {searchResults.map((p) => (
                       <Link
                         key={p.id}
@@ -935,7 +935,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                         </span>
                         <span className="flex-1 min-w-0">
                           <span className="block text-sm font-medium truncate">{p.name}</span>
-                          <span className="block text-xs text-neutral-500 truncate">{p.color}</span>
+                          <span className="block text-xs text-neutral-500 dark:text-neutral-400 truncate">{p.color}</span>
                         </span>
                         <span className="text-sm font-medium shrink-0">Tk {p.price.toFixed(2)}</span>
                       </Link>
@@ -949,8 +949,8 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                   </div>
                 ) : matchingCategories.length === 0 ? (
                   <div className="px-5 py-12 text-center">
-                    <p className="text-sm text-neutral-500">No matches for "{searchQuery}"</p>
-                    <p className="text-xs text-neutral-400 mt-1">Try a different keyword or browse the shop.</p>
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400">No matches for "{searchQuery}"</p>
+                    <p className="text-xs text-neutral-400 dark:text-neutral-300 mt-1">Try a different keyword or browse the shop.</p>
                   </div>
                 ) : null}
               </div>

@@ -266,7 +266,7 @@ export default function ShopHome() {
 
         <div className={`relative flex items-end justify-between mb-10 ${FADE}`}>
           <div>
-            <p className="text-[11px] uppercase tracking-[0.5em] text-neutral-500 mb-3">Bapari Socks</p>
+            <p className="text-[11px] uppercase tracking-[0.5em] text-neutral-500 dark:text-neutral-400 mb-3">Bapari Socks</p>
             <h2
               className="text-4xl sm:text-5xl font-light tracking-tight"
               style={{
@@ -368,7 +368,7 @@ export default function ShopHome() {
 
         <div className={`relative flex items-end justify-between mb-10 ${FADE}`}>
           <div>
-            <p className="text-[11px] uppercase tracking-[0.5em] text-neutral-500 mb-3">Collection</p>
+            <p className="text-[11px] uppercase tracking-[0.5em] text-neutral-500 dark:text-neutral-400 mb-3">Collection</p>
             <h2
               className="text-4xl sm:text-5xl font-light tracking-tight"
               style={{
