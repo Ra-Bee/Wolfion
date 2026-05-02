@@ -4,6 +4,26 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Snappier touch response on Android / iOS:
+ *  - `touch-action: manipulation` removes the 300ms double-tap-zoom delay
+ *    that makes every tap feel laggy in WebView / TWA contexts.
+ *  - `-webkit-tap-highlight-color: transparent` removes the grey flash on tap
+ *    so taps feel immediate rather than delayed.
+ *  - `text-size-adjust: 100%` stops Android from auto-resizing text on rotate.
+ * These three lines, applied globally, are the single biggest perceived
+ * smoothness improvement on Wolfion's Play Store build. */
+html {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+button, a, [role="button"], [role="link"] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
 @theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -212,10 +232,13 @@
     transform: scale(0.97);
   }
 
-  /* Premium card lift */
+  /* Premium card lift.
+   * NOTE: We intentionally avoid `backdrop-filter` here. Cards sit on solid
+   * surfaces, so the blur was invisible to users but forced the browser to
+   * recomposite every card on every scroll/transform — a major source of
+   * jank on Android TWAs. The shadow is enough to convey elevation. */
   [data-slot="card"] {
     border-radius: 1rem;
-    backdrop-filter: blur(8px);
     box-shadow:
       0 1px 2px hsl(var(--foreground) / 0.04),
       0 8px 24px -8px hsl(var(--foreground) / 0.08);
@@ -248,13 +271,21 @@
     box-shadow: none;
   }
 
-  /* Subtle entrance for main content */
+  /* Subtle entrance for main content. Kept short so navigations feel snappy
+   * on mid-range Android devices rather than slow / heavy. */
   main > * {
-    animation: fadeInUp 280ms cubic-bezier(.2,.8,.2,1) both;
+    animation: fadeInUp 160ms cubic-bezier(.2,.8,.2,1) both;
   }
   @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(8px); }
+    from { opacity: 0; transform: translateY(6px); }
     to   { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    main > * { animation: none; }
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+    }
   }
 
   /* Glass utility class for translucent surfaces */

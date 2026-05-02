@@ -412,7 +412,7 @@ export default function Cart() {
                         setUsingSavedId(s.id);
                         setMethod(s.kind as PaymentMethod);
                       }}
-                      className={`shrink-0 flex items-center gap-2.5 px-3 py-2 rounded-xl border transition-all backdrop-blur-md ${
+                      className={`shrink-0 flex items-center gap-2.5 px-3 py-2 rounded-xl border transition-colors duration-150 ${
                         selected
                           ? "border-[#5EEAD4]/60 bg-white/[0.08] shadow-[0_8px_24px_-8px_rgba(94,234,212,0.5)]"
                           : "border-white/10 bg-white/[0.03] hover:border-white/25 hover:bg-white/[0.06]"
