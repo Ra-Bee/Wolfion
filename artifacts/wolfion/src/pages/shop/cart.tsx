@@ -457,54 +457,30 @@ export default function Cart() {
                   className="group relative w-full text-left active:scale-[0.99] transition-transform"
                   data-testid={`pay-method-${opt.id}`}
                 >
-                  {/* Hover/active glow — single soft teal instead of the
-                      previous teal→purple rainbow that fought with the
-                      frosted-white aesthetic. */}
+                  {/* Minimal selection treatment: thin teal hairline border
+                      and a barely-there tint. No glow halo, no gradient
+                      border — keeps the modal calm and frosted. */}
                   <div
-                    aria-hidden
-                    className={`absolute -inset-0.5 rounded-[18px] blur-md transition-opacity duration-300 pointer-events-none ${
-                      active ? "opacity-60" : "opacity-0 group-hover:opacity-30"
+                    className={`relative rounded-[16px] flex items-center gap-4 p-3.5 backdrop-blur-md transition-colors ${
+                      active
+                        ? "border border-teal-500/60 bg-teal-50/40"
+                        : "border border-white/70 bg-white/30 hover:bg-white/45"
                     }`}
-                    style={{
-                      background:
-                        "linear-gradient(135deg, rgba(13,148,136,0.55) 0%, rgba(15,118,110,0.40) 100%)",
-                    }}
-                  />
-                  {/* Border — clean teal accent when active, hairline slate when idle */}
-                  <div
-                    className="relative rounded-[16px] p-[1.5px] transition-all"
-                    style={{
-                      background: active
-                        ? "linear-gradient(135deg, #14B8A6 0%, #0F766E 100%)"
-                        : "linear-gradient(135deg, rgba(15,23,42,0.10) 0%, rgba(15,23,42,0.04) 100%)",
-                    }}
                   >
-                    <div
-                      className="rounded-[15px] flex items-center gap-4 p-3.5 border border-white/70 backdrop-blur-md"
-                      style={{
-                        // Subtle uniform teal wash for active so the row reads
-                        // as "selected" without painting in two different
-                        // brand colours.
-                        background: active
-                          ? "linear-gradient(180deg, rgba(20,184,166,0.10) 0%, rgba(20,184,166,0.04) 100%)"
-                          : "linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.25) 100%)",
-                      }}
+                    <PayLogo opt={opt} size="md" />
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-sm font-semibold text-neutral-900">{opt.label}</span>
+                      <span className="block text-xs text-neutral-500 mt-0.5 truncate">{opt.hint}</span>
+                    </span>
+                    <span
+                      className={`h-5 w-5 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
+                        active
+                          ? "border-teal-500 bg-teal-500"
+                          : "border-neutral-300 bg-white/70"
+                      }`}
                     >
-                      <PayLogo opt={opt} size="md" />
-                      <span className="flex-1 min-w-0">
-                        <span className="block text-sm font-semibold text-neutral-900">{opt.label}</span>
-                        <span className="block text-xs text-neutral-500 mt-0.5 truncate">{opt.hint}</span>
-                      </span>
-                      <span
-                        className={`h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
-                          active
-                            ? "border-teal-600 bg-teal-600 shadow-[0_0_10px_rgba(20,184,166,0.45)]"
-                            : "border-neutral-300 bg-white"
-                        }`}
-                      >
-                        {active && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
-                      </span>
-                    </div>
+                      {active && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
+                    </span>
                   </div>
                 </button>
               );
