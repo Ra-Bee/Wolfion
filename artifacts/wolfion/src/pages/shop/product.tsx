@@ -103,7 +103,7 @@ export default function ProductDetail() {
             innerClassName="h-full w-full bg-neutral-100 dark:bg-neutral-900"
           >
             {product.image ? (
-              <img src={product.image} alt={product.name} className="absolute inset-0 h-full w-full object-contain" />
+              <img src={product.image} alt={product.name} className="absolute inset-0 h-full w-full object-cover" />
             ) : (
               <div className="absolute inset-0 flex items-center justify-center text-neutral-300 dark:text-neutral-700 text-xs uppercase tracking-widest">
                 No image
@@ -288,7 +288,7 @@ export default function ProductDetail() {
                     innerClassName="h-full w-full bg-neutral-100 dark:bg-neutral-900"
                   >
                     {p.image ? (
-                      <img src={p.image} alt={p.name} className="absolute inset-0 h-full w-full object-contain transition-transform duration-700 group-hover:scale-105" />
+                      <img src={p.image} alt={p.name} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     ) : (
                       <div className="absolute inset-0 flex items-center justify-center text-neutral-300 dark:text-neutral-700 text-xs uppercase tracking-widest">
                         No image

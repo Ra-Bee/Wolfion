@@ -39,7 +39,7 @@ export function ProductCard({ product, ratio = "tall" }: Props) {
           <img
             src={product.image}
             alt={product.name}
-            className="absolute inset-0 h-full w-full object-contain transition-transform duration-700 ease-out group-hover:scale-105"
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             loading="lazy"
           />
         ) : (

@@ -223,7 +223,7 @@ export default function Cart() {
                     className="h-28 w-24 sm:h-32 sm:w-28"
                     innerClassName="h-full w-full bg-white dark:bg-neutral-900"
                   >
-                    <img src={item.product.image} alt={item.product.name} className="absolute inset-0 h-full w-full object-contain" />
+                    <img src={item.product.image} alt={item.product.name} className="absolute inset-0 h-full w-full object-cover" />
                   </GlassPhotoFrame>
                 </Link>
 
