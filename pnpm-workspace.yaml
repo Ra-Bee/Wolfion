@@ -129,6 +129,6 @@ overrides:
   rollup>@rollup/rollup-win32-ia32-msvc: '-'
   rollup>@rollup/rollup-win32-x64-gnu: '-'
   rollup>@rollup/rollup-win32-x64-msvc: '-'
-  'xcode>uuid': ^9.0.1
-  '@expo/ngrok>uuid': ^9.0.1
+  'xcode>uuid': ^14.0.0
+  '@expo/ngrok>uuid': ^14.0.0
   yaml: ^2.8.3
