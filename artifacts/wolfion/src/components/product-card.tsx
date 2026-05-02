@@ -33,13 +33,18 @@ export function ProductCard({ product, ratio = "tall" }: Props) {
         }}
       />
       <div
-        className="relative h-full w-full overflow-hidden rounded-[15px] bg-white dark:bg-neutral-900 shadow-sm group-hover:shadow-2xl transition-shadow duration-500"
+        className="relative h-full w-full overflow-hidden rounded-[15px] bg-neutral-100 dark:bg-neutral-900 shadow-sm group-hover:shadow-2xl transition-shadow duration-500"
       >
         <img
           src={product.image}
           alt={product.name}
           className="absolute inset-0 h-full w-full object-contain transition-transform duration-700 ease-out group-hover:scale-105"
           loading="lazy"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none rounded-[15px]"
+          style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.04), inset 0 0 40px rgba(0,0,0,0.04)" }}
         />
 
         {/* Soft gradient sheen */}

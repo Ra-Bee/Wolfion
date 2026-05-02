@@ -61,9 +61,14 @@ export default function ProductDetail() {
             rounded="rounded-3xl"
             haloOpacity={0.40}
             className="aspect-[4/5]"
-            innerClassName="h-full w-full bg-white dark:bg-neutral-900"
+            innerClassName="h-full w-full bg-neutral-100 dark:bg-neutral-900"
           >
             <img src={product.image} alt={product.name} className="absolute inset-0 h-full w-full object-contain" />
+            <div
+              aria-hidden
+              className="absolute inset-0 pointer-events-none"
+              style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.04), inset 0 0 60px rgba(0,0,0,0.05)" }}
+            />
           </GlassPhotoFrame>
 
           {/* Details */}
@@ -188,9 +193,14 @@ export default function ProductDetail() {
                     rounded="rounded-xl"
                     haloOpacity={0.25}
                     className="aspect-[4/5] mb-3"
-                    innerClassName="h-full w-full bg-white dark:bg-neutral-900"
+                    innerClassName="h-full w-full bg-neutral-100 dark:bg-neutral-900"
                   >
                     <img src={p.image} alt={p.name} className="absolute inset-0 h-full w-full object-contain transition-transform duration-700 group-hover:scale-105" />
+                    <div
+                      aria-hidden
+                      className="absolute inset-0 pointer-events-none"
+                      style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.04), inset 0 0 40px rgba(0,0,0,0.04)" }}
+                    />
                   </GlassPhotoFrame>
                   <div className="flex justify-between items-start gap-3">
                     <div>
