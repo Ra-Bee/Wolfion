@@ -17,7 +17,7 @@ export function ProductCard({ product, ratio = "tall" }: Props) {
       data-testid={`product-${product.id}`}
     >
       <div
-        className={`relative ${aspect} rounded-2xl mb-3 transition-transform duration-300 ease-out group-hover:-translate-y-1 p-[1.5px] [transform:translateZ(0)] will-change-transform`}
+        className={`relative ${aspect} rounded-2xl mb-3 transition-all duration-500 group-hover:-translate-y-1 p-[1.5px]`}
         style={{
           background:
             "linear-gradient(135deg, rgba(180,140,150,0.45) 0%, rgba(190,160,110,0.30) 50%, rgba(140,120,160,0.45) 100%)",

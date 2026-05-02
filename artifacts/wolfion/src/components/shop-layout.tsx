@@ -124,7 +124,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
     <div className="min-h-[100dvh] flex flex-col bg-white text-neutral-900 dark:bg-neutral-950 dark:text-neutral-50 antialiased font-sans">
       {/* 3D Glass header — bevel highlight top + deep drop shadow */}
       <header
-        className="sticky top-0 z-40 w-full bg-white/95 dark:bg-neutral-950/95 backdrop-blur-md border-b border-neutral-200/60 dark:border-neutral-800/60 will-change-transform [transform:translateZ(0)]"
+        className="sticky top-0 z-40 w-full bg-white/75 dark:bg-neutral-950/75 backdrop-blur-2xl border-b border-neutral-200/60 dark:border-neutral-800/60"
         style={{
           boxShadow:
             "inset 0 1px 0 rgba(255,255,255,0.85), inset 0 -1px 0 rgba(0,0,0,0.06), 0 12px 28px -10px rgba(0,0,0,0.18), 0 4px 10px -4px rgba(0,0,0,0.08)",
