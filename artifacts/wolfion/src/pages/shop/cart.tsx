@@ -364,12 +364,15 @@ export default function Cart() {
           >
             {/* Glass interior */}
             <div
-              className="rounded-[23px] p-5 sm:p-6 border border-white/10 text-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)] [&_input]:!bg-white/[0.05] [&_input]:!border-white/15 [&_input]:!text-white [&_input]:placeholder:!text-white/35 [&_input]:!backdrop-blur-md [&_label]:!text-white/65"
+              className="rounded-[23px] p-5 sm:p-6 border border-white/10 text-white shadow-[0_20px_50px_-20px_rgba(0,0,0,0.4)] [&_input]:!bg-white/[0.05] [&_input]:!border-white/15 [&_input]:!text-white [&_input]:placeholder:!text-white/35 [&_input]:!backdrop-blur-md [&_label]:!text-white/65"
               style={{
+                // Softer slate gradient instead of near-black so the modal
+                // feels light & airy rather than heavy. White text still
+                // reads cleanly against slate-600 → slate-700.
                 background:
-                  "linear-gradient(180deg, rgba(10,18,28,0.94) 0%, rgba(4,17,26,0.97) 100%)",
-                backdropFilter: "blur(28px) saturate(140%)",
-                WebkitBackdropFilter: "blur(28px) saturate(140%)",
+                  "linear-gradient(180deg, rgba(71,85,105,0.92) 0%, rgba(51,65,85,0.95) 100%)",
+                backdropFilter: "blur(20px) saturate(130%)",
+                WebkitBackdropFilter: "blur(20px) saturate(130%)",
                 colorScheme: "dark",
               }}
             >
