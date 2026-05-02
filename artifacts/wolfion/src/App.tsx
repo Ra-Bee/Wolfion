@@ -1,4 +1,4 @@
-import { useEffect, useRef, lazy, Suspense } from "react";
+import { useEffect, useRef, lazy, Suspense, type ReactNode } from "react";
 import { ClerkProvider, useClerk, useUser } from '@clerk/react';
 import { Switch, Route, Redirect, useLocation, Router as WouterRouter } from 'wouter';
 import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
@@ -115,57 +115,77 @@ function ClerkQueryClientCacheInvalidator() {
   return null;
 }
 
-function AppRouter() {
+// NOTE: These wrappers MUST be defined at module scope (not inside AppRouter).
+// If they're inline, every Clerk re-render produces a new component reference,
+// which causes React to fully unmount + remount their children — including
+// lazy-loaded pages like ProductDetail. That manifests as taps "doing nothing"
+// (the Suspense fallback flashes and the click target unmounts mid-navigation).
+
+function HomeRedirect() {
   const { isLoaded, isSignedIn } = useUser();
   const { role, isAdmin } = useRole();
-
-  // Landing redirect based on role
-  const HomeRedirect = () => {
-    if (!isLoaded) return null;
-    if (isSignedIn) {
-      // Non-admins always go straight to /shop
-      if (!isAdmin) return <Redirect to="/shop" />;
-      // Admins must pick a mode first
-      if (!role) return <Redirect to="/role-select" />;
-      return <Redirect to={role === "admin" ? "/admin-dashboard" : "/shop"} />;
-    }
-    return <Home />;
-  };
-
-  // Customer routes — open to everyone signed in (admins can shop too)
-  const ShopRouteWrapper = ({ children }: { children: React.ReactNode }) => {
-    if (!isLoaded) return null;
-    if (!isSignedIn) return <Redirect to="/sign-in" />;
-    return <>{children}</>;
-  };
-
-  // Admin routes — strictly admin emails only
-  const AdminRouteWrapper = ({ children }: { children: React.ReactNode }) => {
-    if (!isLoaded) return null;
-    if (!isSignedIn) return <Redirect to="/sign-in" />;
+  if (!isLoaded) return null;
+  if (isSignedIn) {
     if (!isAdmin) return <Redirect to="/shop" />;
-    return <>{children}</>;
-  };
+    if (!role) return <Redirect to="/role-select" />;
+    return <Redirect to={role === "admin" ? "/admin-dashboard" : "/shop"} />;
+  }
+  return <Home />;
+}
 
-  const RoleSelectRoute = () => {
-    if (!isLoaded) return null;
-    if (!isSignedIn) return <Redirect to="/sign-in" />;
-    // Only admin emails get to choose a mode. Everyone else goes straight to the shop.
-    if (!isAdmin) return <Redirect to="/shop" />;
-    return <RoleSelect />;
-  };
+// Customer routes — open to everyone signed in (admins can shop too).
+// While Clerk is loading we show the page fallback instead of redirecting,
+// so a transient unloaded tick during navigation can't bounce the user to /sign-in.
+function ShopRouteWrapper({ children }: { children: ReactNode }) {
+  const { isLoaded, isSignedIn } = useUser();
+  if (!isLoaded) return <PageFallback />;
+  if (!isSignedIn) return <Redirect to="/sign-in" />;
+  return <Suspense fallback={<PageFallback />}>{children}</Suspense>;
+}
 
+// Admin routes — strictly admin emails only.
+function AdminRouteWrapper({ children }: { children: ReactNode }) {
+  const { isLoaded, isSignedIn } = useUser();
+  const { isAdmin } = useRole();
+  if (!isLoaded) return <PageFallback />;
+  if (!isSignedIn) return <Redirect to="/sign-in" />;
+  if (!isAdmin) return <Redirect to="/shop" />;
+  return <Suspense fallback={<PageFallback />}>{children}</Suspense>;
+}
+
+function RoleSelectRoute() {
+  const { isLoaded, isSignedIn } = useUser();
+  const { isAdmin } = useRole();
+  if (!isLoaded) return null;
+  if (!isSignedIn) return <Redirect to="/sign-in" />;
+  // Only admin emails get to choose a mode. Everyone else goes straight to the shop.
+  if (!isAdmin) return <Redirect to="/shop" />;
+  return <RoleSelect />;
+}
+
+function LegacyProductRedirect({ params }: { params: { id: string } }) {
+  return <Redirect to={`/product/${params.id}`} />;
+}
+
+function AppRouter() {
   return (
-    <Suspense fallback={<PageFallback />}>
     <Switch>
       <Route path="/" component={HomeRedirect} />
-      <Route path="/dev-preview" component={DevPreviewPage} />
+      <Route path="/dev-preview">
+        <Suspense fallback={<PageFallback />}>
+          <DevPreviewPage />
+        </Suspense>
+      </Route>
       <Route path="/sign-in/*?" component={SignInPage} />
       <Route path="/sign-up/*?" component={SignUpPage} />
       <Route path="/role-select" component={RoleSelectRoute} />
 
       {/* Public legal pages — must be reachable without sign-in (Play Store requirement) */}
-      <Route path="/privacy" component={PrivacyPolicyPage} />
+      <Route path="/privacy">
+        <Suspense fallback={<PageFallback />}>
+          <PrivacyPolicyPage />
+        </Suspense>
+      </Route>
       <Route path="/privacy-policy"><Redirect to="/privacy" /></Route>
 
       {/* ===== Customer App ===== */}
@@ -180,9 +200,7 @@ function AppRouter() {
 
       {/* Legacy customer paths → redirect to new shop */}
       <Route path="/app"><Redirect to="/shop" /></Route>
-      <Route path="/app/product/:id">
-        {(params) => <Redirect to={`/product/${params.id}`} />}
-      </Route>
+      <Route path="/app/product/:id" component={LegacyProductRedirect} />
       <Route path="/app/checkout-success"><Redirect to="/checkout-success" /></Route>
 
       {/* ===== Admin App ===== */}
@@ -199,7 +217,6 @@ function AppRouter() {
 
       <Route component={NotFound} />
     </Switch>
-    </Suspense>
   );
 }
 
