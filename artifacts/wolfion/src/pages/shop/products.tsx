@@ -2,7 +2,8 @@ import { useMemo } from "react";
 import { Link, useSearch } from "wouter";
 import { ShopLayout } from "@/components/shop-layout";
 import { ProductCard } from "@/components/product-card";
-import { products, categories, type ProductCategory } from "@/lib/data";
+import { categories, type ProductCategory } from "@/lib/data";
+import { useListProducts } from "@workspace/api-client-react";
 
 const COLLECTION_META: Record<string, { eyebrow: string; title: string; subtitle: string }> = {
   mens: {
@@ -24,7 +25,10 @@ export default function Products() {
   const collection = params.get("collection");
   const queryTerm = (params.get("q") ?? "").trim().toLowerCase();
 
+  const { data: products, isLoading, isError, refetch } = useListProducts();
+
   const filtered = useMemo(() => {
+    if (!products) return [];
     let list = activeCategory ? products.filter((p) => p.category === activeCategory) : products;
     if (queryTerm) {
       list = list.filter(
@@ -36,7 +40,7 @@ export default function Products() {
       );
     }
     return list;
-  }, [activeCategory, queryTerm]);
+  }, [products, activeCategory, queryTerm]);
 
   const collectionMeta = collection ? COLLECTION_META[collection] : null;
 
@@ -112,10 +116,35 @@ export default function Products() {
           })}
         </div>
 
-        {filtered.length === 0 ? (
+        {isLoading ? (
+          <div className="py-24 flex justify-center">
+            <div className="h-8 w-8 rounded-full border-2 border-neutral-300 border-t-neutral-900 dark:border-neutral-700 dark:border-t-neutral-100 animate-spin" />
+          </div>
+        ) : isError ? (
           <div className="py-20 text-center text-neutral-500">
-            <p>No pieces found in this category.</p>
-            <Link href="/products" className="underline text-sm mt-3 inline-block">View all</Link>
+            <p>Could not load products.</p>
+            <button
+              type="button"
+              onClick={() => refetch()}
+              className="underline text-sm mt-3 inline-block"
+              data-testid="products-retry"
+            >
+              Try again
+            </button>
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="py-20 text-center text-neutral-500" data-testid="products-empty">
+            {!products || products.length === 0 ? (
+              <>
+                <p className="text-base">No pieces in the catalog yet.</p>
+                <p className="text-xs mt-2 text-neutral-400">Check back soon — new drops land regularly.</p>
+              </>
+            ) : (
+              <>
+                <p>No pieces found in this category.</p>
+                <Link href="/products" className="underline text-sm mt-3 inline-block">View all</Link>
+              </>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-x-6 sm:gap-y-12">

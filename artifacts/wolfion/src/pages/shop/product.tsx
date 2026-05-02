@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRoute, useLocation, Link } from "wouter";
 import { ShopLayout } from "@/components/shop-layout";
 import { GlassCard, GlassPhotoFrame } from "@/components/glass";
 import { PhotoViewer } from "@/components/photo-viewer";
-import { products } from "@/lib/data";
 import { useCart } from "@/hooks/use-cart";
+import { useListProducts } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Check, Minus, Plus, Heart, Truck, RotateCcw, ShieldCheck } from "lucide-react";
 
@@ -13,11 +13,46 @@ export default function ProductDetail() {
   const [, setLocation] = useLocation();
   const { addItem } = useCart();
 
-  const product = products.find((p) => p.id === params?.id);
-  const [selectedSize, setSelectedSize] = useState<string>(product?.sizes[0] || "");
+  const { data: products, isLoading, isError, refetch } = useListProducts();
+
+  const product = useMemo(
+    () => products?.find((p) => p.id === params?.id),
+    [products, params?.id],
+  );
+
+  const [selectedSize, setSelectedSize] = useState<string>("");
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
   const [viewerOpen, setViewerOpen] = useState(false);
+
+  // Sync default size to the product's first size whenever the product
+  // resolves. Using state rather than memo lets the user change it.
+  if (product && !selectedSize && product.sizes.length > 0) {
+    setSelectedSize(product.sizes[0]!);
+  }
+
+  if (isLoading) {
+    return (
+      <ShopLayout>
+        <div className="container mx-auto px-5 py-32 flex justify-center">
+          <div className="h-8 w-8 rounded-full border-2 border-neutral-300 border-t-neutral-900 dark:border-neutral-700 dark:border-t-neutral-100 animate-spin" />
+        </div>
+      </ShopLayout>
+    );
+  }
+
+  if (isError) {
+    return (
+      <ShopLayout>
+        <div className="container mx-auto px-5 py-32 text-center">
+          <h2 className="text-2xl font-light">Could not load this product.</h2>
+          <Button variant="link" onClick={() => refetch()} className="mt-4">
+            Try again
+          </Button>
+        </div>
+      </ShopLayout>
+    );
+  }
 
   if (!product) {
     return (
@@ -39,7 +74,9 @@ export default function ProductDetail() {
     setTimeout(() => setAdded(false), 1800);
   };
 
-  const related = products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
+  const related = (products ?? [])
+    .filter((p) => p.category === product.category && p.id !== product.id)
+    .slice(0, 4);
 
   const glassQtyStyle = {
     background:
@@ -65,19 +102,27 @@ export default function ProductDetail() {
             className="aspect-[4/5]"
             innerClassName="h-full w-full bg-neutral-100 dark:bg-neutral-900"
           >
-            <img src={product.image} alt={product.name} className="absolute inset-0 h-full w-full object-contain" />
+            {product.image ? (
+              <img src={product.image} alt={product.name} className="absolute inset-0 h-full w-full object-contain" />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center text-neutral-300 dark:text-neutral-700 text-xs uppercase tracking-widest">
+                No image
+              </div>
+            )}
             <div
               aria-hidden
               className="absolute inset-0 pointer-events-none"
               style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.04), inset 0 0 60px rgba(0,0,0,0.05)" }}
             />
-            <button
-              type="button"
-              onClick={() => setViewerOpen(true)}
-              className="absolute inset-0 z-10 cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
-              aria-label={`Zoom in on ${product.name}`}
-              data-testid="open-photo-viewer"
-            />
+            {product.image && (
+              <button
+                type="button"
+                onClick={() => setViewerOpen(true)}
+                className="absolute inset-0 z-10 cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                aria-label={`Zoom in on ${product.name}`}
+                data-testid="open-photo-viewer"
+              />
+            )}
           </GlassPhotoFrame>
 
           {/* Details */}
@@ -97,24 +142,28 @@ export default function ProductDetail() {
                 <button className="text-xs uppercase tracking-widest text-neutral-500 hover:underline">Size guide</button>
               </div>
               <div className="flex flex-wrap gap-2">
-                {product.sizes.map((size) => {
-                  const active = selectedSize === size;
-                  return (
-                    <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      className={`h-11 min-w-12 px-4 rounded-full text-sm transition-all border ${
-                        active
-                          ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 border-neutral-900 dark:border-white"
-                          : "text-neutral-800 dark:text-neutral-100 border-white/40 dark:border-white/10 hover:border-neutral-900/30 dark:hover:border-white/30"
-                      }`}
-                      style={active ? undefined : glassQtyStyle}
-                      data-testid={`size-${size}`}
-                    >
-                      {size}
-                    </button>
-                  );
-                })}
+                {product.sizes.length === 0 ? (
+                  <span className="text-xs text-neutral-400">No sizes available.</span>
+                ) : (
+                  product.sizes.map((size) => {
+                    const active = selectedSize === size;
+                    return (
+                      <button
+                        key={size}
+                        onClick={() => setSelectedSize(size)}
+                        className={`h-11 min-w-12 px-4 rounded-full text-sm transition-all border ${
+                          active
+                            ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 border-neutral-900 dark:border-white"
+                            : "text-neutral-800 dark:text-neutral-100 border-white/40 dark:border-white/10 hover:border-neutral-900/30 dark:hover:border-white/30"
+                        }`}
+                        style={active ? undefined : glassQtyStyle}
+                        data-testid={`size-${size}`}
+                      >
+                        {size}
+                      </button>
+                    );
+                  })
+                )}
               </div>
             </div>
 
@@ -192,12 +241,14 @@ export default function ProductDetail() {
           </div>
         </div>
 
-        <PhotoViewer
-          src={product.image}
-          alt={product.name}
-          open={viewerOpen}
-          onClose={() => setViewerOpen(false)}
-        />
+        {product.image && (
+          <PhotoViewer
+            src={product.image}
+            alt={product.name}
+            open={viewerOpen}
+            onClose={() => setViewerOpen(false)}
+          />
+        )}
 
         {related.length > 0 && (
           <section className="mt-24">
@@ -211,7 +262,13 @@ export default function ProductDetail() {
                     className="aspect-[4/5] mb-3"
                     innerClassName="h-full w-full bg-neutral-100 dark:bg-neutral-900"
                   >
-                    <img src={p.image} alt={p.name} className="absolute inset-0 h-full w-full object-contain transition-transform duration-700 group-hover:scale-105" />
+                    {p.image ? (
+                      <img src={p.image} alt={p.name} className="absolute inset-0 h-full w-full object-contain transition-transform duration-700 group-hover:scale-105" />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center text-neutral-300 dark:text-neutral-700 text-xs uppercase tracking-widest">
+                        No image
+                      </div>
+                    )}
                     <div
                       aria-hidden
                       className="absolute inset-0 pointer-events-none"

@@ -21,3 +21,7 @@ export * from "./aiTranscriptionResult";
 export * from "./aiTranslateRequest";
 export * from "./aiTranslationResult";
 export * from "./healthStatus";
+export * from "./product";
+export * from "./productCategory";
+export * from "./productInput";
+export * from "./productInputCategory";

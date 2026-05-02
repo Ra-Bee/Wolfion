@@ -214,6 +214,160 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AiError"
+  /products:
+    get:
+      operationId: listProducts
+      tags: [products]
+      summary: List all products
+      description: Returns the full product catalog ordered by sortOrder then creation date. Public — no auth required.
+      responses:
+        "200":
+          description: Product list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
+    post:
+      operationId: createProduct
+      tags: [products]
+      summary: Create a new product (admin only)
+      description: Inserts a new product into the catalog. Requires an admin Clerk session.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductInput"
+      responses:
+        "201":
+          description: Created product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "400":
+          description: Invalid product payload
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
+        "401":
+          description: Not signed in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
+        "403":
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
+  /products/{id}:
+    patch:
+      operationId: updateProduct
+      tags: [products]
+      summary: Update an existing product (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductInput"
+      responses:
+        "200":
+          description: Updated product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "400":
+          description: Invalid product payload
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
+        "401":
+          description: Not signed in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
+        "403":
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
+        "404":
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
+    delete:
+      operationId: deleteProduct
+      tags: [products]
+      summary: Delete a product (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Product deleted
+        "401":
+          description: Not signed in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
+        "403":
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
+        "404":
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
   /ai/translate:
     post:
       operationId: aiTranslate
@@ -381,3 +535,93 @@ components:
         - summary
         - pageCount
         - characterCount
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+        color:
+          type: string
+        category:
+          type: string
+          enum: [short, ankle, kids, others]
+        sizes:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+        inventory:
+          type: integer
+          minimum: 0
+        image:
+          type: string
+        sortOrder:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - price
+        - color
+        - category
+        - sizes
+        - description
+        - inventory
+        - image
+        - sortOrder
+        - createdAt
+        - updatedAt
+    ProductInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        price:
+          type: number
+          minimum: 0
+        color:
+          type: string
+          minLength: 1
+          maxLength: 100
+        category:
+          type: string
+          enum: [short, ankle, kids, others]
+        sizes:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            maxLength: 20
+          maxItems: 30
+        description:
+          type: string
+          maxLength: 4000
+        inventory:
+          type: integer
+          minimum: 0
+        image:
+          type: string
+          maxLength: 8192
+        sortOrder:
+          type: integer
+      required:
+        - name
+        - price
+        - color
+        - category
+        - sizes
+        - description
+        - inventory
+        - image

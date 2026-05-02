@@ -8,7 +8,8 @@ import { ShoppingBag, Menu, User, LogOut, Search, ShieldCheck, ChevronDown, Home
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose, SheetFooter } from "@/components/ui/sheet";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { products, categories } from "@/lib/data";
+import { categories } from "@/lib/data";
+import { useListProducts } from "@workspace/api-client-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -55,10 +56,14 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
 
+  // Live catalog from the API. The query is shared with the products listing
+  // page via @tanstack/react-query, so opening search doesn't re-fetch.
+  const { data: catalog } = useListProducts();
+
   const searchResults = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    if (!q) return [];
-    return products
+    if (!q || !catalog) return [];
+    return catalog
       .filter(
         (p) =>
           p.name.toLowerCase().includes(q) ||
@@ -67,7 +72,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
           p.category.toLowerCase().includes(q),
       )
       .slice(0, 8);
-  }, [searchQuery]);
+  }, [searchQuery, catalog]);
 
   const matchingCategories = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();

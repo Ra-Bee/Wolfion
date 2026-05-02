@@ -6,6 +6,7 @@ import { clearAdminStorage } from "@/lib/wolfion-store";
 import {
   LogOut, Menu, ShieldCheck, Sun, Moon, FileText, Users as UsersIcon,
   Wrench, Factory, ShoppingCart, TrendingUp, Wallet, HandCoins, LayoutDashboard, ShoppingBag,
+  Package,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, SheetClose } from "@/components/ui/sheet";
@@ -15,6 +16,7 @@ type AdminNavItem = { path: string; label: string; icon: React.ComponentType<{ c
 
 const ADMIN_NAV: AdminNavItem[] = [
   { path: "/admin-dashboard", label: "Admin Dashboard", icon: LayoutDashboard },
+  { path: "/admin/products", label: "Manage Products", icon: Package },
   { path: "/admin/daily-production", label: "Daily Production Entry", icon: Factory },
   { path: "/admin/daily-sales", label: "Daily Sales Entry", icon: ShoppingCart },
   { path: "/admin/profit", label: "Profit Dashboard", icon: TrendingUp },

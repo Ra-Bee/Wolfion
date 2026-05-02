@@ -1,8 +1,23 @@
-import { Router, type IRouter } from "express";
+import { Router, type IRouter, type Request, type Response } from "express";
 import { asc, eq } from "drizzle-orm";
+import { z } from "zod";
 import { db, productsTable, type ProductRow } from "@workspace/db";
 import { CreateProductBody, UpdateProductBody } from "@workspace/api-zod";
 import { requireAdmin } from "../lib/admin";
+
+// The OpenAPI spec declares `inventory` and `sortOrder` as `integer`, but the
+// generated Zod schemas only call `z.number()` (the orval->zod codegen does not
+// emit `.int()` for `type: integer`). Without this override, decimals slip past
+// validation and crash the Postgres integer column at insert time, returning a
+// 500 instead of the contractually-correct 400. We tighten just those two
+// fields rather than regenerating or hand-editing the codegen output.
+const IntegerOverrides = z.object({
+  inventory: z.number().int().min(0),
+  sortOrder: z.number().int().optional(),
+});
+
+const CreateProductBodyStrict = CreateProductBody.merge(IntegerOverrides);
+const UpdateProductBodyStrict = UpdateProductBody.merge(IntegerOverrides);
 
 const router: IRouter = Router();
 
@@ -45,7 +60,7 @@ router.get("/products", async (req, res): Promise<void> => {
 
 // POST /products — admin only
 router.post("/products", requireAdmin, async (req, res): Promise<void> => {
-  const parsed = CreateProductBody.safeParse(req.body);
+  const parsed = CreateProductBodyStrict.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
     return;
@@ -68,9 +83,9 @@ router.post("/products", requireAdmin, async (req, res): Promise<void> => {
 });
 
 // PATCH /products/:id — admin only
-router.patch("/products/:id", requireAdmin, async (req, res): Promise<void> => {
+router.patch("/products/:id", requireAdmin, async (req: Request<{ id: string }>, res: Response): Promise<void> => {
   const id = req.params.id;
-  const parsed = UpdateProductBody.safeParse(req.body);
+  const parsed = UpdateProductBodyStrict.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
     return;
@@ -93,7 +108,7 @@ router.patch("/products/:id", requireAdmin, async (req, res): Promise<void> => {
 });
 
 // DELETE /products/:id — admin only
-router.delete("/products/:id", requireAdmin, async (req, res): Promise<void> => {
+router.delete("/products/:id", requireAdmin, async (req: Request<{ id: string }>, res: Response): Promise<void> => {
   const id = req.params.id;
   try {
     const result = await db

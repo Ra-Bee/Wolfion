@@ -38,6 +38,7 @@ const DailySalesPage = lazy(() => import("@/pages/admin/daily-sales"));
 const ProfitDashboardPage = lazy(() => import("@/pages/admin/profit"));
 const InvestmentsPage = lazy(() => import("@/pages/admin/investments"));
 const DebtsPage = lazy(() => import("@/pages/admin/debts"));
+const AdminProductsPage = lazy(() => import("@/pages/admin/products"));
 
 import NotFound from "@/pages/not-found";
 
@@ -222,6 +223,7 @@ function AppRouter() {
       <Route path="/admin/profit"><AdminRouteWrapper><ProfitDashboardPage /></AdminRouteWrapper></Route>
       <Route path="/admin/investments"><AdminRouteWrapper><InvestmentsPage /></AdminRouteWrapper></Route>
       <Route path="/admin/debts"><AdminRouteWrapper><DebtsPage /></AdminRouteWrapper></Route>
+      <Route path="/admin/products"><AdminRouteWrapper><AdminProductsPage /></AdminRouteWrapper></Route>
 
       <Route component={NotFound} />
     </Switch>

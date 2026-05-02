@@ -126,6 +126,123 @@ export const AiSummarizePdfResponse = zod.object({
 });
 
 /**
+ * Returns the full product catalog ordered by sortOrder then creation date. Public — no auth required.
+ * @summary List all products
+ */
+export const listProductsResponseInventoryMin = 0;
+
+export const ListProductsResponseItem = zod.object({
+  id: zod.string(),
+  name: zod.string(),
+  price: zod.number(),
+  color: zod.string(),
+  category: zod.enum(["short", "ankle", "kids", "others"]),
+  sizes: zod.array(zod.string()),
+  description: zod.string(),
+  inventory: zod.number().min(listProductsResponseInventoryMin),
+  image: zod.string(),
+  sortOrder: zod.number(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+export const ListProductsResponse = zod.array(ListProductsResponseItem);
+
+/**
+ * Inserts a new product into the catalog. Requires an admin Clerk session.
+ * @summary Create a new product (admin only)
+ */
+export const createProductBodyNameMax = 200;
+
+export const createProductBodyPriceMin = 0;
+
+export const createProductBodyColorMax = 100;
+
+export const createProductBodySizesItemMax = 20;
+
+export const createProductBodySizesMax = 30;
+
+export const createProductBodyDescriptionMax = 4000;
+
+export const createProductBodyInventoryMin = 0;
+
+export const createProductBodyImageMax = 8192;
+
+export const CreateProductBody = zod.object({
+  name: zod.string().min(1).max(createProductBodyNameMax),
+  price: zod.number().min(createProductBodyPriceMin),
+  color: zod.string().min(1).max(createProductBodyColorMax),
+  category: zod.enum(["short", "ankle", "kids", "others"]),
+  sizes: zod
+    .array(zod.string().min(1).max(createProductBodySizesItemMax))
+    .max(createProductBodySizesMax),
+  description: zod.string().max(createProductBodyDescriptionMax),
+  inventory: zod.number().min(createProductBodyInventoryMin),
+  image: zod.string().max(createProductBodyImageMax),
+  sortOrder: zod.number().optional(),
+});
+
+/**
+ * @summary Update an existing product (admin only)
+ */
+export const UpdateProductParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const updateProductBodyNameMax = 200;
+
+export const updateProductBodyPriceMin = 0;
+
+export const updateProductBodyColorMax = 100;
+
+export const updateProductBodySizesItemMax = 20;
+
+export const updateProductBodySizesMax = 30;
+
+export const updateProductBodyDescriptionMax = 4000;
+
+export const updateProductBodyInventoryMin = 0;
+
+export const updateProductBodyImageMax = 8192;
+
+export const UpdateProductBody = zod.object({
+  name: zod.string().min(1).max(updateProductBodyNameMax),
+  price: zod.number().min(updateProductBodyPriceMin),
+  color: zod.string().min(1).max(updateProductBodyColorMax),
+  category: zod.enum(["short", "ankle", "kids", "others"]),
+  sizes: zod
+    .array(zod.string().min(1).max(updateProductBodySizesItemMax))
+    .max(updateProductBodySizesMax),
+  description: zod.string().max(updateProductBodyDescriptionMax),
+  inventory: zod.number().min(updateProductBodyInventoryMin),
+  image: zod.string().max(updateProductBodyImageMax),
+  sortOrder: zod.number().optional(),
+});
+
+export const updateProductResponseInventoryMin = 0;
+
+export const UpdateProductResponse = zod.object({
+  id: zod.string(),
+  name: zod.string(),
+  price: zod.number(),
+  color: zod.string(),
+  category: zod.enum(["short", "ankle", "kids", "others"]),
+  sizes: zod.array(zod.string()),
+  description: zod.string(),
+  inventory: zod.number().min(updateProductResponseInventoryMin),
+  image: zod.string(),
+  sortOrder: zod.number(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Delete a product (admin only)
+ */
+export const DeleteProductParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+/**
  * Translates text into the requested target language.
  * @summary Translate text into a target language
  */

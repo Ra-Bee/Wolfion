@@ -35,12 +35,18 @@ export function ProductCard({ product, ratio = "tall" }: Props) {
       <div
         className="relative h-full w-full overflow-hidden rounded-[15px] bg-neutral-100 dark:bg-neutral-900 shadow-sm group-hover:shadow-2xl transition-shadow duration-500"
       >
-        <img
-          src={product.image}
-          alt={product.name}
-          className="absolute inset-0 h-full w-full object-contain transition-transform duration-700 ease-out group-hover:scale-105"
-          loading="lazy"
-        />
+        {product.image ? (
+          <img
+            src={product.image}
+            alt={product.name}
+            className="absolute inset-0 h-full w-full object-contain transition-transform duration-700 ease-out group-hover:scale-105"
+            loading="lazy"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center text-neutral-300 dark:text-neutral-700 text-xs uppercase tracking-widest">
+            No image
+          </div>
+        )}
         <div
           aria-hidden
           className="absolute inset-0 pointer-events-none rounded-[15px]"

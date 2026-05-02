@@ -121,3 +121,64 @@ export interface AiPdfSummaryResponse {
   /** @minimum 0 */
   characterCount: number;
 }
+
+export type ProductCategory =
+  (typeof ProductCategory)[keyof typeof ProductCategory];
+
+export const ProductCategory = {
+  short: "short",
+  ankle: "ankle",
+  kids: "kids",
+  others: "others",
+} as const;
+
+export interface Product {
+  id: string;
+  name: string;
+  price: number;
+  color: string;
+  category: ProductCategory;
+  sizes: string[];
+  description: string;
+  /** @minimum 0 */
+  inventory: number;
+  image: string;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type ProductInputCategory =
+  (typeof ProductInputCategory)[keyof typeof ProductInputCategory];
+
+export const ProductInputCategory = {
+  short: "short",
+  ankle: "ankle",
+  kids: "kids",
+  others: "others",
+} as const;
+
+export interface ProductInput {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  name: string;
+  /** @minimum 0 */
+  price: number;
+  /**
+   * @minLength 1
+   * @maxLength 100
+   */
+  color: string;
+  category: ProductInputCategory;
+  /** @maxItems 30 */
+  sizes: string[];
+  /** @maxLength 4000 */
+  description: string;
+  /** @minimum 0 */
+  inventory: number;
+  /** @maxLength 8192 */
+  image: string;
+  sortOrder?: number;
+}
