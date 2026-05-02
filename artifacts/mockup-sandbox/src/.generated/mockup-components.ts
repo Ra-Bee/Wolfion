@@ -3,8 +3,6 @@ type ModuleMap = Record<string, () => Promise<Record<string, unknown>>>;
 export const modules: ModuleMap = {
   "./components/mockups/rabchat-cumulus/AIAssistant.tsx": () => import("../components/mockups/rabchat-cumulus/AIAssistant.tsx"),
   "./components/mockups/rabchat-cumulus/Messages.tsx": () => import("../components/mockups/rabchat-cumulus/Messages.tsx"),
-  "./components/mockups/rabchat-noir/AIChat.tsx": () => import("../components/mockups/rabchat-noir/AIChat.tsx"),
-  "./components/mockups/rabchat-noir/Messages.tsx": () => import("../components/mockups/rabchat-noir/Messages.tsx"),
   "./components/mockups/rabchat-ember/AIChat.tsx": () => import("../components/mockups/rabchat-ember/AIChat.tsx"),
   "./components/mockups/rabchat-ember/Messages.tsx": () => import("../components/mockups/rabchat-ember/Messages.tsx"),
   "./components/mockups/rabchat-prismatic/AIAssistant.tsx": () => import("../components/mockups/rabchat-prismatic/AIAssistant.tsx"),
@@ -12,5 +10,7 @@ export const modules: ModuleMap = {
   "./components/mockups/rabchat-velvet/AIChat.tsx": () => import("../components/mockups/rabchat-velvet/AIChat.tsx"),
   "./components/mockups/rabchat-velvet/Messages.tsx": () => import("../components/mockups/rabchat-velvet/Messages.tsx"),
   "./components/mockups/rabchat-whisper/AIAssistant.tsx": () => import("../components/mockups/rabchat-whisper/AIAssistant.tsx"),
-  "./components/mockups/rabchat-whisper/Messages.tsx": () => import("../components/mockups/rabchat-whisper/Messages.tsx")
+  "./components/mockups/rabchat-whisper/Messages.tsx": () => import("../components/mockups/rabchat-whisper/Messages.tsx"),
+  "./components/mockups/rabchat-noir/AIChat.tsx": () => import("../components/mockups/rabchat-noir/AIChat.tsx"),
+  "./components/mockups/rabchat-noir/Messages.tsx": () => import("../components/mockups/rabchat-noir/Messages.tsx")
 };

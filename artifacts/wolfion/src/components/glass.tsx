@@ -177,6 +177,14 @@ export function GlassPhotoFrame({
   children: ReactNode;
 }) {
   const halo = haloRounded ?? deriveHaloRounded(rounded);
+  // The outer wrapper is the *only* element whose size is controlled by the
+  // caller (e.g. via `className="aspect-[4/5]"`). The halo, gradient ring,
+  // and content layer all fill that wrapper via absolute positioning so the
+  // inner `h-full / w-full` from `innerClassName` (and any absolutely
+  // positioned <img> inside `children`) actually has a non-zero box to fill.
+  // Earlier versions of this component allowed the ring + content layers to
+  // size themselves to their content, which collapsed product images to 0×0
+  // even though the API returned valid image URLs.
   return (
     <div className={cn("relative", className)}>
       <div
@@ -185,12 +193,12 @@ export function GlassPhotoFrame({
         style={{ background: RING_GRADIENT, opacity: haloOpacity }}
       />
       <div
-        className={cn("relative", rounded)}
+        className={cn("absolute inset-0", rounded)}
         style={{ background: RING_GRADIENT, padding: "2px" }}
       >
         <div
           className={cn(
-            "relative overflow-hidden",
+            "relative h-full w-full overflow-hidden",
             rounded,
             innerClassName,
           )}
