@@ -102,6 +102,42 @@ uri = "file://artifacts/uniless/assets/images/icon.png"
 type = "image"
 title = "generated_image"
 
+[[generated]]
+id = "e_v4mN5cfLEottILaClFA"
+uri = "file://attached_assets/generated_images/wolfion-classic-black.png"
+type = "image"
+title = "wolfion classic black socks"
+
+[[generated]]
+id = "Tky3X7coIVPA-OTZy_1bl"
+uri = "file://attached_assets/generated_images/wolfion-classic-white.png"
+type = "image"
+title = "wolfion classic white socks"
+
+[[generated]]
+id = "N6x2MzsjqPGEM3KhhPaUK"
+uri = "file://attached_assets/generated_images/wolfion-classic-grey.png"
+type = "image"
+title = "wolfion classic grey socks"
+
+[[generated]]
+id = "VjdCYtAKESJyso8-w9p0H"
+uri = "file://attached_assets/generated_images/wolfion-premium-onyx.png"
+type = "image"
+title = "wolfion premium onyx silk socks"
+
+[[generated]]
+id = "Ta_sOr-qtDYiF1lmpxXqk"
+uri = "file://attached_assets/generated_images/wolfion-premium-camel.png"
+type = "image"
+title = "wolfion premium camel merino socks"
+
+[[generated]]
+id = "BNSdu2T4AVi3dt5gH0nJ2"
+uri = "file://attached_assets/generated_images/wolfion-premium-navy.png"
+type = "image"
+title = "wolfion premium navy cashmere socks"
+
 [[outputs]]
 id = "Z8dcSbzTuOcZ42cy_qinK"
 uri = "file://downloads/wolfion-android-apk-builder.tar.gz"
