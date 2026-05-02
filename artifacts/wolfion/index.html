@@ -94,9 +94,25 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script>
+      // Service worker registration. We also force a one-time reload when a
+      // brand-new worker takes control of the page so users escape any
+      // previously cached (and now-fixed) stale API responses without having
+      // to manually hard-refresh.
       if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker.register("/sw.js").catch(() => undefined);
+        window.addEventListener("load", async () => {
+          try {
+            const reg = await navigator.serviceWorker.register("/sw.js");
+            // Ask the browser to re-check sw.js so a new version installs ASAP.
+            reg.update().catch(() => undefined);
+          } catch {
+            /* ignore — SW is a progressive enhancement */
+          }
+          let reloaded = false;
+          navigator.serviceWorker.addEventListener("controllerchange", () => {
+            if (reloaded) return;
+            reloaded = true;
+            window.location.reload();
+          });
         });
       }
     </script>
