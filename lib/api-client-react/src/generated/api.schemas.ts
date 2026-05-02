@@ -69,3 +69,34 @@ export interface AiTranslateRequest {
 export interface AiTranslationResult {
   translation: string;
 }
+
+/**
+ * Hint of the audio container format.
+ */
+export type AiTranscribeRequestFormat =
+  (typeof AiTranscribeRequestFormat)[keyof typeof AiTranscribeRequestFormat];
+
+export const AiTranscribeRequestFormat = {
+  wav: "wav",
+  mp3: "mp3",
+  m4a: "m4a",
+  webm: "webm",
+  ogg: "ogg",
+  aac: "aac",
+  flac: "flac",
+  mp4: "mp4",
+} as const;
+
+export interface AiTranscribeRequest {
+  /**
+   * Base64-encoded audio bytes (no data URL prefix).
+   * @minLength 1
+   */
+  audioBase64: string;
+  /** Hint of the audio container format. */
+  format?: AiTranscribeRequestFormat;
+}
+
+export interface AiTranscriptionResult {
+  text: string;
+}

@@ -24,6 +24,8 @@ import type {
   AiSummarizeUrlRequest,
   AiSummarizeVideoRequest,
   AiSummaryResponse,
+  AiTranscribeRequest,
+  AiTranscriptionResult,
   AiTranslateRequest,
   AiTranslationResult,
   HealthStatus,
@@ -460,6 +462,93 @@ export const useAiSummarizeVideo = <
   TContext
 > => {
   return useMutation(getAiSummarizeVideoMutationOptions(options));
+};
+
+/**
+ * Transcribes a base64-encoded audio recording to text using OpenAI's transcription model.
+ * @summary Transcribe audio to text
+ */
+export const getAiTranscribeUrl = () => {
+  return `/api/ai/transcribe`;
+};
+
+export const aiTranscribe = async (
+  aiTranscribeRequest: AiTranscribeRequest,
+  options?: RequestInit,
+): Promise<AiTranscriptionResult> => {
+  return customFetch<AiTranscriptionResult>(getAiTranscribeUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(aiTranscribeRequest),
+  });
+};
+
+export const getAiTranscribeMutationOptions = <
+  TError = ErrorType<AiError>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof aiTranscribe>>,
+    TError,
+    { data: BodyType<AiTranscribeRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof aiTranscribe>>,
+  TError,
+  { data: BodyType<AiTranscribeRequest> },
+  TContext
+> => {
+  const mutationKey = ["aiTranscribe"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof aiTranscribe>>,
+    { data: BodyType<AiTranscribeRequest> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return aiTranscribe(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AiTranscribeMutationResult = NonNullable<
+  Awaited<ReturnType<typeof aiTranscribe>>
+>;
+export type AiTranscribeMutationBody = BodyType<AiTranscribeRequest>;
+export type AiTranscribeMutationError = ErrorType<AiError>;
+
+/**
+ * @summary Transcribe audio to text
+ */
+export const useAiTranscribe = <
+  TError = ErrorType<AiError>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof aiTranscribe>>,
+    TError,
+    { data: BodyType<AiTranscribeRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof aiTranscribe>>,
+  TError,
+  { data: BodyType<AiTranscribeRequest> },
+  TContext
+> => {
+  return useMutation(getAiTranscribeMutationOptions(options));
 };
 
 /**

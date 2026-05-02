@@ -1,4 +1,5 @@
 import { Feather } from "@expo/vector-icons";
+import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 import { ActivityIndicator, FlatList, KeyboardAvoidingView, Platform, Pressable, Text, View } from "react-native";
 
@@ -127,7 +128,31 @@ export default function AIAssistant() {
 
   return (
     <Background>
-      <Header title="AI study assistant" subtitle="Powered by GPT · summarize, translate, plan" back />
+      <Header
+        title="AI study assistant"
+        subtitle="Powered by GPT · summarize, translate, plan"
+        back
+        trailing={
+          <Pressable
+            onPress={() => router.push("/ai-transcribe")}
+            hitSlop={10}
+            style={({ pressed }) => ({
+              flexDirection: "row",
+              alignItems: "center",
+              paddingHorizontal: 10,
+              paddingVertical: 6,
+              borderRadius: 12,
+              backgroundColor: c.secondary,
+              opacity: pressed ? 0.7 : 1,
+            })}
+          >
+            <Feather name="mic" size={14} color={c.secondaryForeground} />
+            <Text style={{ color: c.secondaryForeground, fontSize: 12, fontFamily: "Inter_700Bold", marginLeft: 4 }}>
+              Voice
+            </Text>
+          </Pressable>
+        }
+      />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}

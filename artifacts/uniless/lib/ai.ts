@@ -281,6 +281,12 @@ export async function aiSummarizeVideoAsync(transcript: string): Promise<string>
   return bullets.length ? head + bullets.map((b) => `• ${b}`).join("\n") : head + trimmed.slice(0, 400);
 }
 
+export async function aiTranscribeAsync(audioBase64: string, format?: string): Promise<string> {
+  if (!audioBase64) throw new Error("No audio provided.");
+  const res = await apiPost<{ text: string }>("/api/ai/transcribe", { audioBase64, format });
+  return res?.text?.trim() ?? "";
+}
+
 export async function aiTranslateAsync(text: string, targetLanguage: string): Promise<string> {
   const trimmed = text.trim();
   const lang = targetLanguage.trim();

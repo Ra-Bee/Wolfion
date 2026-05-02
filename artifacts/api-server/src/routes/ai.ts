@@ -2,6 +2,7 @@ import { promises as dns } from "node:dns";
 import net from "node:net";
 import { Router, type IRouter } from "express";
 import { openai } from "@workspace/integrations-openai-ai-server";
+import { ensureCompatibleFormat, speechToText } from "@workspace/integrations-openai-ai-server/audio";
 import {
   AiChatBody,
   AiChatResponse,
@@ -11,6 +12,8 @@ import {
   AiSummarizeUrlResponse,
   AiSummarizeVideoBody,
   AiSummarizeVideoResponse,
+  AiTranscribeBody,
+  AiTranscribeResponse,
   AiTranslateBody,
   AiTranslateResponse,
 } from "@workspace/api-zod";
@@ -347,6 +350,55 @@ ${parsed.data.transcript}`;
   } catch (err) {
     req.log.error({ err }, "ai/summarize-video failed");
     res.status(500).json({ error: "Could not summarize that transcript right now." });
+  }
+});
+
+const MAX_AUDIO_BYTES = 20 * 1024 * 1024;
+const MAX_AUDIO_BASE64_CHARS = Math.ceil(MAX_AUDIO_BYTES / 3) * 4 + 4;
+const BASE64_RE = /^[A-Za-z0-9+/]+={0,2}$/;
+
+type WhisperFormat = "wav" | "mp3" | "webm";
+function whisperHintFromFormat(fmt?: string): WhisperFormat | null {
+  if (fmt === "wav" || fmt === "mp3" || fmt === "webm") return fmt;
+  return null;
+}
+
+router.post("/ai/transcribe", async (req, res): Promise<void> => {
+  const parsed = AiTranscribeBody.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.message });
+    return;
+  }
+  const { audioBase64, format: formatHint } = parsed.data;
+
+  if (audioBase64.length > MAX_AUDIO_BASE64_CHARS) {
+    res.status(400).json({ error: "Audio is too large (max 20 MB)." });
+    return;
+  }
+  if (audioBase64.length % 4 !== 0 || !BASE64_RE.test(audioBase64)) {
+    res.status(400).json({ error: "Invalid base64 audio payload." });
+    return;
+  }
+
+  const buffer = Buffer.from(audioBase64, "base64");
+  if (buffer.length === 0) {
+    res.status(400).json({ error: "Audio payload is empty." });
+    return;
+  }
+  if (buffer.length > MAX_AUDIO_BYTES) {
+    res.status(400).json({ error: "Audio is too large (max 20 MB)." });
+    return;
+  }
+
+  try {
+    const { buffer: ready, format: detected } = await ensureCompatibleFormat(buffer);
+    const hint = whisperHintFromFormat(formatHint);
+    const useFormat: WhisperFormat = ready === buffer && hint ? hint : detected;
+    const text = await speechToText(ready, useFormat);
+    res.json(AiTranscribeResponse.parse({ text }));
+  } catch (err) {
+    req.log.error({ err }, "ai/transcribe failed");
+    res.status(500).json({ error: "Could not transcribe that audio right now." });
   }
 });
 

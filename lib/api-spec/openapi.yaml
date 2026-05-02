@@ -150,6 +150,37 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AiError"
+  /ai/transcribe:
+    post:
+      operationId: aiTranscribe
+      tags: [ai]
+      summary: Transcribe audio to text
+      description: Transcribes a base64-encoded audio recording to text using OpenAI's transcription model.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AiTranscribeRequest"
+      responses:
+        "200":
+          description: Transcribed text
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiTranscriptionResult"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
   /ai/translate:
     post:
       operationId: aiTranslate
@@ -269,3 +300,23 @@ components:
           type: string
       required:
         - translation
+    AiTranscribeRequest:
+      type: object
+      properties:
+        audioBase64:
+          type: string
+          minLength: 1
+          description: Base64-encoded audio bytes (no data URL prefix).
+        format:
+          type: string
+          enum: [wav, mp3, m4a, webm, ogg, aac, flac, mp4]
+          description: Hint of the audio container format.
+      required:
+        - audioBase64
+    AiTranscriptionResult:
+      type: object
+      properties:
+        text:
+          type: string
+      required:
+        - text

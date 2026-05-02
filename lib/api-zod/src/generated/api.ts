@@ -77,6 +77,26 @@ export const AiSummarizeVideoResponse = zod.object({
 });
 
 /**
+ * Transcribes a base64-encoded audio recording to text using OpenAI's transcription model.
+ * @summary Transcribe audio to text
+ */
+
+export const AiTranscribeBody = zod.object({
+  audioBase64: zod
+    .string()
+    .min(1)
+    .describe("Base64-encoded audio bytes (no data URL prefix)."),
+  format: zod
+    .enum(["wav", "mp3", "m4a", "webm", "ogg", "aac", "flac", "mp4"])
+    .optional()
+    .describe("Hint of the audio container format."),
+});
+
+export const AiTranscribeResponse = zod.object({
+  text: zod.string(),
+});
+
+/**
  * Translates text into the requested target language.
  * @summary Translate text into a target language
  */
