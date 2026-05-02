@@ -6,7 +6,7 @@ import { PhotoViewer } from "@/components/photo-viewer";
 import { useCart } from "@/hooks/use-cart";
 import { useListProducts } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Check, Minus, Plus, Heart, Truck, RotateCcw, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Check, Minus, Plus, Heart, Truck, RotateCcw, ShieldCheck, Play } from "lucide-react";
 
 export default function ProductDetail() {
   const [, params] = useRoute("/product/:id");
@@ -240,6 +240,31 @@ export default function ProductDetail() {
             </div>
           </div>
         </div>
+
+        {/* Optional product video — rendered AFTER the image+details grid so
+            mobile readers still see title/price/CTA right next to the image,
+            and desktop gets a full-width player below the fold. Admins can
+            attach a video URL on the create/edit form. */}
+        {product.video && (
+          <section className="mt-16 max-w-4xl mx-auto" data-testid="product-video-section">
+            <div className="flex items-center gap-2 mb-4">
+              <Play className="h-4 w-4 text-neutral-500" />
+              <span className="text-xs uppercase tracking-[0.3em] text-neutral-500">Product video</span>
+            </div>
+            <div className="rounded-2xl overflow-hidden bg-black border border-white/10 shadow-lg">
+              <video
+                src={product.video}
+                controls
+                playsInline
+                preload="metadata"
+                className="w-full h-auto max-h-[70vh] block"
+                data-testid="product-video"
+              >
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </section>
+        )}
 
         {product.image && (
           <PhotoViewer

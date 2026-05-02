@@ -2,27 +2,13 @@ import { useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   useListProducts,
-  useCreateProduct,
-  useUpdateProduct,
   useDeleteProduct,
   getListProductsQueryKey,
   type Product,
-  type ProductInput,
-  type ProductInputCategory,
 } from "@workspace/api-client-react";
 import { AdminLayout } from "@/components/admin-layout";
+import { ProductFormDialog } from "@/components/admin/product-form-dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,92 +19,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Package, Loader2 } from "lucide-react";
-
-const CATEGORY_OPTIONS: { value: ProductInputCategory; label: string }[] = [
-  { value: "short", label: "Short Socks" },
-  { value: "ankle", label: "Ankle Socks" },
-  { value: "kids", label: "Kids Socks" },
-  { value: "others", label: "Others" },
-];
-
-type FormState = {
-  name: string;
-  price: string;
-  color: string;
-  category: ProductInputCategory;
-  sizesText: string;
-  description: string;
-  inventory: string;
-  image: string;
-  sortOrder: string;
-};
-
-const EMPTY_FORM: FormState = {
-  name: "",
-  price: "",
-  color: "",
-  category: "ankle",
-  sizesText: "",
-  description: "",
-  inventory: "0",
-  image: "",
-  sortOrder: "0",
-};
-
-function productToForm(p: Product): FormState {
-  return {
-    name: p.name,
-    price: String(p.price),
-    color: p.color,
-    category: p.category as ProductInputCategory,
-    sizesText: p.sizes.join(", "),
-    description: p.description,
-    inventory: String(p.inventory),
-    image: p.image,
-    sortOrder: String(p.sortOrder),
-  };
-}
-
-function parseFormToInput(f: FormState): ProductInput | { error: string } {
-  const name = f.name.trim();
-  if (!name) return { error: "Name is required." };
-  const price = Number(f.price);
-  if (!Number.isFinite(price) || price < 0) return { error: "Price must be a non-negative number." };
-  const color = f.color.trim();
-  if (!color) return { error: "Color is required." };
-  const sizes = f.sizesText
-    .split(",")
-    .map((s) => s.trim())
-    .filter((s) => s.length > 0);
-  const inventory = Number(f.inventory);
-  if (!Number.isInteger(inventory) || inventory < 0) {
-    return { error: "Inventory must be a non-negative whole number." };
-  }
-  const sortOrder = Number(f.sortOrder);
-  if (!Number.isInteger(sortOrder)) {
-    return { error: "Sort order must be a whole number." };
-  }
-  return {
-    name,
-    price,
-    color,
-    category: f.category,
-    sizes,
-    description: f.description,
-    inventory,
-    image: f.image.trim(),
-    sortOrder,
-  };
-}
+import { Plus, Pencil, Trash2, Package, Loader2, Video as VideoIcon } from "lucide-react";
 
 export default function AdminProducts() {
   const { toast } = useToast();
@@ -126,41 +28,13 @@ export default function AdminProducts() {
   const { data: products, isLoading, isError, refetch } = useListProducts();
 
   const [formOpen, setFormOpen] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState<FormState>(EMPTY_FORM);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
-
-  const invalidate = () =>
-    queryClient.invalidateQueries({ queryKey: getListProductsQueryKey() });
-
-  const createMutation = useCreateProduct({
-    mutation: {
-      onSuccess: () => {
-        invalidate();
-        toast({ description: "Product created." });
-        setFormOpen(false);
-      },
-      onError: (err: Error) =>
-        toast({ variant: "destructive", title: "Could not create product", description: err.message }),
-    },
-  });
-
-  const updateMutation = useUpdateProduct({
-    mutation: {
-      onSuccess: () => {
-        invalidate();
-        toast({ description: "Product updated." });
-        setFormOpen(false);
-      },
-      onError: (err: Error) =>
-        toast({ variant: "destructive", title: "Could not update product", description: err.message }),
-    },
-  });
 
   const deleteMutation = useDeleteProduct({
     mutation: {
       onSuccess: () => {
-        invalidate();
+        queryClient.invalidateQueries({ queryKey: getListProductsQueryKey() });
         toast({ description: "Product deleted." });
         setDeletingProduct(null);
       },
@@ -168,8 +42,6 @@ export default function AdminProducts() {
         toast({ variant: "destructive", title: "Could not delete product", description: err.message }),
     },
   });
-
-  const isMutating = createMutation.isPending || updateMutation.isPending;
 
   const sortedProducts = useMemo(() => {
     if (!products) return [];
@@ -180,29 +52,13 @@ export default function AdminProducts() {
   }, [products]);
 
   const openCreate = () => {
-    setEditingId(null);
-    setForm(EMPTY_FORM);
+    setEditingProduct(null);
     setFormOpen(true);
   };
 
   const openEdit = (p: Product) => {
-    setEditingId(p.id);
-    setForm(productToForm(p));
+    setEditingProduct(p);
     setFormOpen(true);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const parsed = parseFormToInput(form);
-    if ("error" in parsed) {
-      toast({ variant: "destructive", title: "Invalid form", description: parsed.error });
-      return;
-    }
-    if (editingId) {
-      updateMutation.mutate({ id: editingId, data: parsed });
-    } else {
-      createMutation.mutate({ data: parsed });
-    }
   };
 
   return (
@@ -257,6 +113,7 @@ export default function AdminProducts() {
                     <th className="px-4 py-3 text-right font-medium">Price (Tk)</th>
                     <th className="px-4 py-3 text-right font-medium">Stock</th>
                     <th className="px-4 py-3 text-left font-medium">Sizes</th>
+                    <th className="px-4 py-3 text-center font-medium">Video</th>
                     <th className="px-4 py-3 text-right font-medium">Actions</th>
                   </tr>
                 </thead>
@@ -283,6 +140,13 @@ export default function AdminProducts() {
                       <td className="px-4 py-3 text-right">{p.inventory}</td>
                       <td className="px-4 py-3 text-muted-foreground text-xs">
                         {p.sizes.join(", ") || "—"}
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        {p.video ? (
+                          <VideoIcon className="h-4 w-4 inline-block text-primary" aria-label="Has video" />
+                        ) : (
+                          <span className="text-muted-foreground/50 text-xs">—</span>
+                        )}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-1">
@@ -316,151 +180,11 @@ export default function AdminProducts() {
         )}
       </div>
 
-      {/* Add / Edit dialog */}
-      <Dialog open={formOpen} onOpenChange={(o) => !isMutating && setFormOpen(o)}>
-        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{editingId ? "Edit product" : "Add product"}</DialogTitle>
-            <DialogDescription>
-              All customers will see these details immediately after saving.
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="name">Name</Label>
-                <Input
-                  id="name"
-                  value={form.name}
-                  onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                  required
-                  maxLength={200}
-                  data-testid="input-name"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="color">Color</Label>
-                <Input
-                  id="color"
-                  value={form.color}
-                  onChange={(e) => setForm((f) => ({ ...f, color: e.target.value }))}
-                  required
-                  maxLength={100}
-                  data-testid="input-color"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="price">Price (Tk)</Label>
-                <Input
-                  id="price"
-                  type="number"
-                  inputMode="decimal"
-                  step="0.01"
-                  min="0"
-                  value={form.price}
-                  onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
-                  required
-                  data-testid="input-price"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="inventory">Inventory</Label>
-                <Input
-                  id="inventory"
-                  type="number"
-                  inputMode="numeric"
-                  step="1"
-                  min="0"
-                  value={form.inventory}
-                  onChange={(e) => setForm((f) => ({ ...f, inventory: e.target.value }))}
-                  required
-                  data-testid="input-inventory"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="category">Category</Label>
-                <Select
-                  value={form.category}
-                  onValueChange={(v) => setForm((f) => ({ ...f, category: v as ProductInputCategory }))}
-                >
-                  <SelectTrigger id="category" data-testid="select-category">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CATEGORY_OPTIONS.map((c) => (
-                      <SelectItem key={c.value} value={c.value}>
-                        {c.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="sortOrder">Sort order</Label>
-                <Input
-                  id="sortOrder"
-                  type="number"
-                  inputMode="numeric"
-                  step="1"
-                  value={form.sortOrder}
-                  onChange={(e) => setForm((f) => ({ ...f, sortOrder: e.target.value }))}
-                  data-testid="input-sort-order"
-                />
-              </div>
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="sizes">Sizes</Label>
-              <Input
-                id="sizes"
-                placeholder="e.g. S, M, L, XL"
-                value={form.sizesText}
-                onChange={(e) => setForm((f) => ({ ...f, sizesText: e.target.value }))}
-                data-testid="input-sizes"
-              />
-              <p className="text-xs text-muted-foreground">Comma-separated list.</p>
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="image">Image URL</Label>
-              <Input
-                id="image"
-                type="url"
-                placeholder="https://…"
-                value={form.image}
-                onChange={(e) => setForm((f) => ({ ...f, image: e.target.value }))}
-                data-testid="input-image"
-              />
-              <p className="text-xs text-muted-foreground">
-                Paste a public image URL. Leave blank to show a placeholder.
-              </p>
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                rows={4}
-                value={form.description}
-                onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-                maxLength={4000}
-                data-testid="input-description"
-              />
-            </div>
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setFormOpen(false)}
-                disabled={isMutating}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isMutating} data-testid="btn-save-product">
-                {isMutating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {editingId ? "Save changes" : "Create product"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <ProductFormDialog
+        open={formOpen}
+        onOpenChange={setFormOpen}
+        editingProduct={editingProduct}
+      />
 
       {/* Delete confirmation */}
       <AlertDialog

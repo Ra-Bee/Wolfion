@@ -18,6 +18,8 @@ export interface Product {
   /** @minimum 0 */
   inventory: number;
   image: string;
+  /** Optional URL to a product video (mp4/webm or any browser-playable source). Empty string means no video. */
+  video: string;
   sortOrder: number;
   createdAt: Date;
   updatedAt: Date;

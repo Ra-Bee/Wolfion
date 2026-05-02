@@ -38,6 +38,7 @@ function serializeProduct(row: ProductRow) {
     description: row.description,
     inventory: row.inventory,
     image: row.image,
+    video: row.video,
     sortOrder: row.sortOrder,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),

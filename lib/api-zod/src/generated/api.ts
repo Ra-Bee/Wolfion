@@ -141,6 +141,11 @@ export const ListProductsResponseItem = zod.object({
   description: zod.string(),
   inventory: zod.number().min(listProductsResponseInventoryMin),
   image: zod.string(),
+  video: zod
+    .string()
+    .describe(
+      "Optional URL to a product video (mp4\/webm or any browser-playable source). Empty string means no video.",
+    ),
   sortOrder: zod.number(),
   createdAt: zod.coerce.date(),
   updatedAt: zod.coerce.date(),
@@ -167,6 +172,8 @@ export const createProductBodyInventoryMin = 0;
 
 export const createProductBodyImageMax = 8192;
 
+export const createProductBodyVideoMax = 8192;
+
 export const CreateProductBody = zod.object({
   name: zod.string().min(1).max(createProductBodyNameMax),
   price: zod.number().min(createProductBodyPriceMin),
@@ -178,6 +185,13 @@ export const CreateProductBody = zod.object({
   description: zod.string().max(createProductBodyDescriptionMax),
   inventory: zod.number().min(createProductBodyInventoryMin),
   image: zod.string().max(createProductBodyImageMax),
+  video: zod
+    .string()
+    .max(createProductBodyVideoMax)
+    .optional()
+    .describe(
+      "Optional URL to a product video. Pass an empty string for no video.",
+    ),
   sortOrder: zod.number().optional(),
 });
 
@@ -204,6 +218,8 @@ export const updateProductBodyInventoryMin = 0;
 
 export const updateProductBodyImageMax = 8192;
 
+export const updateProductBodyVideoMax = 8192;
+
 export const UpdateProductBody = zod.object({
   name: zod.string().min(1).max(updateProductBodyNameMax),
   price: zod.number().min(updateProductBodyPriceMin),
@@ -215,6 +231,13 @@ export const UpdateProductBody = zod.object({
   description: zod.string().max(updateProductBodyDescriptionMax),
   inventory: zod.number().min(updateProductBodyInventoryMin),
   image: zod.string().max(updateProductBodyImageMax),
+  video: zod
+    .string()
+    .max(updateProductBodyVideoMax)
+    .optional()
+    .describe(
+      "Optional URL to a product video. Pass an empty string for no video.",
+    ),
   sortOrder: zod.number().optional(),
 });
 
@@ -230,6 +253,11 @@ export const UpdateProductResponse = zod.object({
   description: zod.string(),
   inventory: zod.number().min(updateProductResponseInventoryMin),
   image: zod.string(),
+  video: zod
+    .string()
+    .describe(
+      "Optional URL to a product video (mp4\/webm or any browser-playable source). Empty string means no video.",
+    ),
   sortOrder: zod.number(),
   createdAt: zod.coerce.date(),
   updatedAt: zod.coerce.date(),

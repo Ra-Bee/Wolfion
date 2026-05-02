@@ -29,5 +29,10 @@ export interface ProductInput {
   inventory: number;
   /** @maxLength 8192 */
   image: string;
+  /**
+   * Optional URL to a product video. Pass an empty string for no video.
+   * @maxLength 8192
+   */
+  video?: string;
   sortOrder?: number;
 }

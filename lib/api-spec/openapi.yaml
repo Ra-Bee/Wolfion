@@ -560,6 +560,9 @@ components:
           minimum: 0
         image:
           type: string
+        video:
+          type: string
+          description: Optional URL to a product video (mp4/webm or any browser-playable source). Empty string means no video.
         sortOrder:
           type: integer
         createdAt:
@@ -578,6 +581,7 @@ components:
         - description
         - inventory
         - image
+        - video
         - sortOrder
         - createdAt
         - updatedAt
@@ -614,6 +618,10 @@ components:
         image:
           type: string
           maxLength: 8192
+        video:
+          type: string
+          maxLength: 8192
+          description: Optional URL to a product video. Pass an empty string for no video.
         sortOrder:
           type: integer
       required:

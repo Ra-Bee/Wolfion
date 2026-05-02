@@ -143,6 +143,8 @@ export interface Product {
   /** @minimum 0 */
   inventory: number;
   image: string;
+  /** Optional URL to a product video (mp4/webm or any browser-playable source). Empty string means no video. */
+  video: string;
   sortOrder: number;
   createdAt: string;
   updatedAt: string;
@@ -180,5 +182,10 @@ export interface ProductInput {
   inventory: number;
   /** @maxLength 8192 */
   image: string;
+  /**
+   * Optional URL to a product video. Pass an empty string for no video.
+   * @maxLength 8192
+   */
+  video?: string;
   sortOrder?: number;
 }

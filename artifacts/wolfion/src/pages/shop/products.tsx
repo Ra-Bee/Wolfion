@@ -1,9 +1,12 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Link, useSearch } from "wouter";
 import { ShopLayout } from "@/components/shop-layout";
 import { ProductCard } from "@/components/product-card";
+import { ProductFormDialog } from "@/components/admin/product-form-dialog";
 import { categories, type ProductCategory } from "@/lib/data";
 import { useListProducts } from "@workspace/api-client-react";
+import { useRole } from "@/hooks/use-role";
+import { Plus } from "lucide-react";
 
 const COLLECTION_META: Record<string, { eyebrow: string; title: string; subtitle: string }> = {
   mens: {
@@ -26,6 +29,8 @@ export default function Products() {
   const queryTerm = (params.get("q") ?? "").trim().toLowerCase();
 
   const { data: products, isLoading, isError, refetch } = useListProducts();
+  const { isAdmin } = useRole();
+  const [addOpen, setAddOpen] = useState(false);
 
   const filtered = useMemo(() => {
     if (!products) return [];
@@ -81,6 +86,21 @@ export default function Products() {
       </section>
 
       <section className="container mx-auto px-5 pt-8 pb-20">
+        {/* Admin-only quick action — visible only to allowlisted admin emails.
+            Server still enforces auth on the underlying create endpoint. */}
+        {isAdmin && (
+          <div className="mb-6 flex justify-end">
+            <button
+              type="button"
+              onClick={() => setAddOpen(true)}
+              className="inline-flex items-center gap-2 rounded-full px-4 h-10 text-xs uppercase tracking-[0.2em] font-medium bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-md hover:shadow-lg active:scale-95 transition-all"
+              data-testid="btn-add-product-shop"
+            >
+              <Plus className="h-4 w-4" /> Add new product
+            </button>
+          </div>
+        )}
+
         {/* Glass filter chips */}
         <div className="flex flex-wrap gap-2 mb-10 pb-5">
           <Link href="/products">
@@ -154,6 +174,10 @@ export default function Products() {
           </div>
         )}
       </section>
+
+      {isAdmin && (
+        <ProductFormDialog open={addOpen} onOpenChange={setAddOpen} editingProduct={null} />
+      )}
     </ShopLayout>
   );
 }
