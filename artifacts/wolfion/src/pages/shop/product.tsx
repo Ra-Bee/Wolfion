@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRoute, useLocation, Link } from "wouter";
 import { ShopLayout } from "@/components/shop-layout";
 import { GlassPhotoFrame } from "@/components/glass";
@@ -24,6 +24,21 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
   const [viewerOpen, setViewerOpen] = useState(false);
+
+  // When the product id in the URL changes (e.g. user tapped a card in
+  // "You may also like"), reset per-product UI state and scroll to the
+  // top so the new product is visible. Without this the page silently
+  // renders the new product while the user is still scrolled at the
+  // bottom on the old one — which feels like the click did nothing.
+  useEffect(() => {
+    setSelectedSize("");
+    setQuantity(1);
+    setAdded(false);
+    setViewerOpen(false);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }
+  }, [params?.id]);
 
   // Sync default size to the product's first size whenever the product
   // resolves. Using state rather than memo lets the user change it.
