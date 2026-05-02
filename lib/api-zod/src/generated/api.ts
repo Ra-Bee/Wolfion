@@ -14,3 +14,81 @@ import * as zod from "zod";
 export const HealthCheckResponse = zod.object({
   status: zod.string(),
 });
+
+/**
+ * Sends a single user message to the study assistant and returns the assistant's reply.
+ * @summary General study assistant chat
+ */
+export const aiChatBodyMessageMax = 8000;
+
+export const AiChatBody = zod.object({
+  message: zod.string().min(1).max(aiChatBodyMessageMax),
+});
+
+export const AiChatResponse = zod.object({
+  reply: zod.string(),
+});
+
+/**
+ * Returns a structured summary of the provided text with main topic, key points and a simple explanation.
+ * @summary Summarize raw text
+ */
+export const aiSummarizeTextBodyTextMax = 60000;
+
+export const AiSummarizeTextBody = zod.object({
+  text: zod.string().min(1).max(aiSummarizeTextBodyTextMax),
+});
+
+export const AiSummarizeTextResponse = zod.object({
+  summary: zod.string(),
+});
+
+/**
+ * Fetches the page at the given URL, extracts text content, and returns a structured summary.
+ * @summary Summarize an article from a URL
+ */
+export const aiSummarizeUrlBodyUrlMin = 8;
+export const aiSummarizeUrlBodyUrlMax = 2048;
+
+export const AiSummarizeUrlBody = zod.object({
+  url: zod
+    .string()
+    .url()
+    .min(aiSummarizeUrlBodyUrlMin)
+    .max(aiSummarizeUrlBodyUrlMax),
+});
+
+export const AiSummarizeUrlResponse = zod.object({
+  summary: zod.string(),
+});
+
+/**
+ * Returns a structured summary of a lecture or video transcript with main topic, key insights, important points, and a short summary.
+ * @summary Summarize a lecture or video transcript
+ */
+export const aiSummarizeVideoBodyTranscriptMax = 60000;
+
+export const AiSummarizeVideoBody = zod.object({
+  transcript: zod.string().min(1).max(aiSummarizeVideoBodyTranscriptMax),
+});
+
+export const AiSummarizeVideoResponse = zod.object({
+  summary: zod.string(),
+});
+
+/**
+ * Translates text into the requested target language.
+ * @summary Translate text into a target language
+ */
+export const aiTranslateBodyTextMax = 8000;
+
+export const aiTranslateBodyTargetLanguageMax = 64;
+
+export const AiTranslateBody = zod.object({
+  text: zod.string().min(1).max(aiTranslateBodyTextMax),
+  targetLanguage: zod.string().min(1).max(aiTranslateBodyTargetLanguageMax),
+});
+
+export const AiTranslateResponse = zod.object({
+  translation: zod.string(),
+});

@@ -1,8 +1,15 @@
 /**
- * Lightweight, on-device AI helpers.
+ * AI helpers for UniRab.
  *
- * No network calls — all features are heuristic so the app works fully offline.
+ * The conversational and summarization helpers call the backend `/ai/*`
+ * endpoints (GPT-powered). If the network is unavailable or the request
+ * fails, we fall back to lightweight on-device heuristics so the app
+ * always returns something useful.
+ *
+ * Reminder extraction stays fully on-device (regex-based) for instant UX.
  */
+
+import { apiPost } from "./api";
 
 const STOPWORDS = new Set([
   "the","a","an","and","or","but","of","to","in","on","at","for","with",
@@ -225,6 +232,64 @@ export function extractReminders(text: string): ExtractedReminder[] {
     }
     return null;
   }
+}
+
+export async function aiChatAsync(message: string): Promise<string> {
+  const trimmed = message.trim();
+  if (!trimmed) return aiAssistantReply(trimmed);
+  try {
+    const res = await apiPost<{ reply: string }>("/api/ai/chat", { message: trimmed });
+    if (res?.reply && res.reply.trim()) return res.reply.trim();
+    return "(offline mode) " + aiAssistantReply(trimmed);
+  } catch {
+    return "(offline mode) " + aiAssistantReply(trimmed);
+  }
+}
+
+export async function aiSummarizeTextAsync(text: string): Promise<string> {
+  const trimmed = text.trim();
+  if (!trimmed) return "";
+  try {
+    const res = await apiPost<{ summary: string }>("/api/ai/summarize-text", { text: trimmed });
+    if (res?.summary && res.summary.trim()) return res.summary.trim();
+  } catch {
+    // fall through to heuristic
+  }
+  const bullets = summarizeText(trimmed, 5);
+  const head = "(offline mode — quick local summary)\n\n";
+  return bullets.length ? head + bullets.map((b) => `• ${b}`).join("\n") : head + trimmed.slice(0, 400);
+}
+
+export async function aiSummarizeUrlAsync(url: string): Promise<string> {
+  const trimmed = url.trim();
+  if (!trimmed) return "Paste a URL and I'll try to summarize it.";
+  const res = await apiPost<{ summary: string }>("/api/ai/summarize-url", { url: trimmed });
+  return res?.summary?.trim() ?? "";
+}
+
+export async function aiSummarizeVideoAsync(transcript: string): Promise<string> {
+  const trimmed = transcript.trim();
+  if (!trimmed) return "Paste a transcript first.";
+  try {
+    const res = await apiPost<{ summary: string }>("/api/ai/summarize-video", { transcript: trimmed });
+    if (res?.summary && res.summary.trim()) return res.summary.trim();
+  } catch {
+    // fall through
+  }
+  const bullets = summarizeText(trimmed, 6);
+  const head = "(offline mode — quick local summary)\n\n";
+  return bullets.length ? head + bullets.map((b) => `• ${b}`).join("\n") : head + trimmed.slice(0, 400);
+}
+
+export async function aiTranslateAsync(text: string, targetLanguage: string): Promise<string> {
+  const trimmed = text.trim();
+  const lang = targetLanguage.trim();
+  if (!trimmed || !lang) return "Provide both text and a target language.";
+  const res = await apiPost<{ translation: string }>("/api/ai/translate", {
+    text: trimmed,
+    targetLanguage: lang,
+  });
+  return res?.translation?.trim() ?? "";
 }
 
 export function generatePostIdeas(profile: { interests: string[]; major: string }): string[] {

@@ -5,18 +5,32 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
+  MutationFunction,
   QueryFunction,
   QueryKey,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult,
 } from "@tanstack/react-query";
 
-import type { HealthStatus } from "./api.schemas";
+import type {
+  AiChatReply,
+  AiChatRequest,
+  AiError,
+  AiSummarizeTextRequest,
+  AiSummarizeUrlRequest,
+  AiSummarizeVideoRequest,
+  AiSummaryResponse,
+  AiTranslateRequest,
+  AiTranslationResult,
+  HealthStatus,
+} from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
-import type { ErrorType } from "../custom-fetch";
+import type { ErrorType, BodyType } from "../custom-fetch";
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
@@ -99,3 +113,438 @@ export function useHealthCheck<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * Sends a single user message to the study assistant and returns the assistant's reply.
+ * @summary General study assistant chat
+ */
+export const getAiChatUrl = () => {
+  return `/api/ai/chat`;
+};
+
+export const aiChat = async (
+  aiChatRequest: AiChatRequest,
+  options?: RequestInit,
+): Promise<AiChatReply> => {
+  return customFetch<AiChatReply>(getAiChatUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(aiChatRequest),
+  });
+};
+
+export const getAiChatMutationOptions = <
+  TError = ErrorType<AiError>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof aiChat>>,
+    TError,
+    { data: BodyType<AiChatRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof aiChat>>,
+  TError,
+  { data: BodyType<AiChatRequest> },
+  TContext
+> => {
+  const mutationKey = ["aiChat"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof aiChat>>,
+    { data: BodyType<AiChatRequest> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return aiChat(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AiChatMutationResult = NonNullable<
+  Awaited<ReturnType<typeof aiChat>>
+>;
+export type AiChatMutationBody = BodyType<AiChatRequest>;
+export type AiChatMutationError = ErrorType<AiError>;
+
+/**
+ * @summary General study assistant chat
+ */
+export const useAiChat = <
+  TError = ErrorType<AiError>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof aiChat>>,
+    TError,
+    { data: BodyType<AiChatRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof aiChat>>,
+  TError,
+  { data: BodyType<AiChatRequest> },
+  TContext
+> => {
+  return useMutation(getAiChatMutationOptions(options));
+};
+
+/**
+ * Returns a structured summary of the provided text with main topic, key points and a simple explanation.
+ * @summary Summarize raw text
+ */
+export const getAiSummarizeTextUrl = () => {
+  return `/api/ai/summarize-text`;
+};
+
+export const aiSummarizeText = async (
+  aiSummarizeTextRequest: AiSummarizeTextRequest,
+  options?: RequestInit,
+): Promise<AiSummaryResponse> => {
+  return customFetch<AiSummaryResponse>(getAiSummarizeTextUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(aiSummarizeTextRequest),
+  });
+};
+
+export const getAiSummarizeTextMutationOptions = <
+  TError = ErrorType<AiError>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof aiSummarizeText>>,
+    TError,
+    { data: BodyType<AiSummarizeTextRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof aiSummarizeText>>,
+  TError,
+  { data: BodyType<AiSummarizeTextRequest> },
+  TContext
+> => {
+  const mutationKey = ["aiSummarizeText"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof aiSummarizeText>>,
+    { data: BodyType<AiSummarizeTextRequest> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return aiSummarizeText(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AiSummarizeTextMutationResult = NonNullable<
+  Awaited<ReturnType<typeof aiSummarizeText>>
+>;
+export type AiSummarizeTextMutationBody = BodyType<AiSummarizeTextRequest>;
+export type AiSummarizeTextMutationError = ErrorType<AiError>;
+
+/**
+ * @summary Summarize raw text
+ */
+export const useAiSummarizeText = <
+  TError = ErrorType<AiError>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof aiSummarizeText>>,
+    TError,
+    { data: BodyType<AiSummarizeTextRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof aiSummarizeText>>,
+  TError,
+  { data: BodyType<AiSummarizeTextRequest> },
+  TContext
+> => {
+  return useMutation(getAiSummarizeTextMutationOptions(options));
+};
+
+/**
+ * Fetches the page at the given URL, extracts text content, and returns a structured summary.
+ * @summary Summarize an article from a URL
+ */
+export const getAiSummarizeUrlUrl = () => {
+  return `/api/ai/summarize-url`;
+};
+
+export const aiSummarizeUrl = async (
+  aiSummarizeUrlRequest: AiSummarizeUrlRequest,
+  options?: RequestInit,
+): Promise<AiSummaryResponse> => {
+  return customFetch<AiSummaryResponse>(getAiSummarizeUrlUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(aiSummarizeUrlRequest),
+  });
+};
+
+export const getAiSummarizeUrlMutationOptions = <
+  TError = ErrorType<AiError>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof aiSummarizeUrl>>,
+    TError,
+    { data: BodyType<AiSummarizeUrlRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof aiSummarizeUrl>>,
+  TError,
+  { data: BodyType<AiSummarizeUrlRequest> },
+  TContext
+> => {
+  const mutationKey = ["aiSummarizeUrl"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof aiSummarizeUrl>>,
+    { data: BodyType<AiSummarizeUrlRequest> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return aiSummarizeUrl(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AiSummarizeUrlMutationResult = NonNullable<
+  Awaited<ReturnType<typeof aiSummarizeUrl>>
+>;
+export type AiSummarizeUrlMutationBody = BodyType<AiSummarizeUrlRequest>;
+export type AiSummarizeUrlMutationError = ErrorType<AiError>;
+
+/**
+ * @summary Summarize an article from a URL
+ */
+export const useAiSummarizeUrl = <
+  TError = ErrorType<AiError>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof aiSummarizeUrl>>,
+    TError,
+    { data: BodyType<AiSummarizeUrlRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof aiSummarizeUrl>>,
+  TError,
+  { data: BodyType<AiSummarizeUrlRequest> },
+  TContext
+> => {
+  return useMutation(getAiSummarizeUrlMutationOptions(options));
+};
+
+/**
+ * Returns a structured summary of a lecture or video transcript with main topic, key insights, important points, and a short summary.
+ * @summary Summarize a lecture or video transcript
+ */
+export const getAiSummarizeVideoUrl = () => {
+  return `/api/ai/summarize-video`;
+};
+
+export const aiSummarizeVideo = async (
+  aiSummarizeVideoRequest: AiSummarizeVideoRequest,
+  options?: RequestInit,
+): Promise<AiSummaryResponse> => {
+  return customFetch<AiSummaryResponse>(getAiSummarizeVideoUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(aiSummarizeVideoRequest),
+  });
+};
+
+export const getAiSummarizeVideoMutationOptions = <
+  TError = ErrorType<AiError>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof aiSummarizeVideo>>,
+    TError,
+    { data: BodyType<AiSummarizeVideoRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof aiSummarizeVideo>>,
+  TError,
+  { data: BodyType<AiSummarizeVideoRequest> },
+  TContext
+> => {
+  const mutationKey = ["aiSummarizeVideo"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof aiSummarizeVideo>>,
+    { data: BodyType<AiSummarizeVideoRequest> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return aiSummarizeVideo(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AiSummarizeVideoMutationResult = NonNullable<
+  Awaited<ReturnType<typeof aiSummarizeVideo>>
+>;
+export type AiSummarizeVideoMutationBody = BodyType<AiSummarizeVideoRequest>;
+export type AiSummarizeVideoMutationError = ErrorType<AiError>;
+
+/**
+ * @summary Summarize a lecture or video transcript
+ */
+export const useAiSummarizeVideo = <
+  TError = ErrorType<AiError>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof aiSummarizeVideo>>,
+    TError,
+    { data: BodyType<AiSummarizeVideoRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof aiSummarizeVideo>>,
+  TError,
+  { data: BodyType<AiSummarizeVideoRequest> },
+  TContext
+> => {
+  return useMutation(getAiSummarizeVideoMutationOptions(options));
+};
+
+/**
+ * Translates text into the requested target language.
+ * @summary Translate text into a target language
+ */
+export const getAiTranslateUrl = () => {
+  return `/api/ai/translate`;
+};
+
+export const aiTranslate = async (
+  aiTranslateRequest: AiTranslateRequest,
+  options?: RequestInit,
+): Promise<AiTranslationResult> => {
+  return customFetch<AiTranslationResult>(getAiTranslateUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(aiTranslateRequest),
+  });
+};
+
+export const getAiTranslateMutationOptions = <
+  TError = ErrorType<AiError>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof aiTranslate>>,
+    TError,
+    { data: BodyType<AiTranslateRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof aiTranslate>>,
+  TError,
+  { data: BodyType<AiTranslateRequest> },
+  TContext
+> => {
+  const mutationKey = ["aiTranslate"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof aiTranslate>>,
+    { data: BodyType<AiTranslateRequest> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return aiTranslate(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AiTranslateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof aiTranslate>>
+>;
+export type AiTranslateMutationBody = BodyType<AiTranslateRequest>;
+export type AiTranslateMutationError = ErrorType<AiError>;
+
+/**
+ * @summary Translate text into a target language
+ */
+export const useAiTranslate = <
+  TError = ErrorType<AiError>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof aiTranslate>>,
+    TError,
+    { data: BodyType<AiTranslateRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof aiTranslate>>,
+  TError,
+  { data: BodyType<AiTranslateRequest> },
+  TContext
+> => {
+  return useMutation(getAiTranslateMutationOptions(options));
+};

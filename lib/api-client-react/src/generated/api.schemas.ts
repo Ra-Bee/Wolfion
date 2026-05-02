@@ -8,3 +8,64 @@
 export interface HealthStatus {
   status: string;
 }
+
+export interface AiError {
+  error: string;
+}
+
+export interface AiChatRequest {
+  /**
+   * @minLength 1
+   * @maxLength 8000
+   */
+  message: string;
+}
+
+export interface AiChatReply {
+  reply: string;
+}
+
+export interface AiSummarizeTextRequest {
+  /**
+   * @minLength 1
+   * @maxLength 60000
+   */
+  text: string;
+}
+
+export interface AiSummarizeUrlRequest {
+  /**
+   * @minLength 8
+   * @maxLength 2048
+   */
+  url: string;
+}
+
+export interface AiSummarizeVideoRequest {
+  /**
+   * @minLength 1
+   * @maxLength 60000
+   */
+  transcript: string;
+}
+
+export interface AiSummaryResponse {
+  summary: string;
+}
+
+export interface AiTranslateRequest {
+  /**
+   * @minLength 1
+   * @maxLength 8000
+   */
+  text: string;
+  /**
+   * @minLength 1
+   * @maxLength 64
+   */
+  targetLanguage: string;
+}
+
+export interface AiTranslationResult {
+  translation: string;
+}

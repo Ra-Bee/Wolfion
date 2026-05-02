@@ -6,4 +6,13 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from "./aiChatReply";
+export * from "./aiChatRequest";
+export * from "./aiError";
+export * from "./aiSummarizeTextRequest";
+export * from "./aiSummarizeUrlRequest";
+export * from "./aiSummarizeVideoRequest";
+export * from "./aiSummaryResponse";
+export * from "./aiTranslateRequest";
+export * from "./aiTranslationResult";
 export * from "./healthStatus";

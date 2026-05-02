@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: ai
+    description: AI-powered study assistant operations
 paths:
   /healthz:
     get:
@@ -24,6 +26,161 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /ai/chat:
+    post:
+      operationId: aiChat
+      tags: [ai]
+      summary: General study assistant chat
+      description: Sends a single user message to the study assistant and returns the assistant's reply.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AiChatRequest"
+      responses:
+        "200":
+          description: Assistant reply
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiChatReply"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
+  /ai/summarize-text:
+    post:
+      operationId: aiSummarizeText
+      tags: [ai]
+      summary: Summarize raw text
+      description: Returns a structured summary of the provided text with main topic, key points and a simple explanation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AiSummarizeTextRequest"
+      responses:
+        "200":
+          description: Summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiSummaryResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
+  /ai/summarize-url:
+    post:
+      operationId: aiSummarizeUrl
+      tags: [ai]
+      summary: Summarize an article from a URL
+      description: Fetches the page at the given URL, extracts text content, and returns a structured summary.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AiSummarizeUrlRequest"
+      responses:
+        "200":
+          description: Summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiSummaryResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
+  /ai/summarize-video:
+    post:
+      operationId: aiSummarizeVideo
+      tags: [ai]
+      summary: Summarize a lecture or video transcript
+      description: Returns a structured summary of a lecture or video transcript with main topic, key insights, important points, and a short summary.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AiSummarizeVideoRequest"
+      responses:
+        "200":
+          description: Summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiSummaryResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
+  /ai/translate:
+    post:
+      operationId: aiTranslate
+      tags: [ai]
+      summary: Translate text into a target language
+      description: Translates text into the requested target language.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AiTranslateRequest"
+      responses:
+        "200":
+          description: Translation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiTranslationResult"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiError"
 components:
   schemas:
     HealthStatus:
@@ -33,3 +190,82 @@ components:
           type: string
       required:
         - status
+    AiError:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+    AiChatRequest:
+      type: object
+      properties:
+        message:
+          type: string
+          minLength: 1
+          maxLength: 8000
+      required:
+        - message
+    AiChatReply:
+      type: object
+      properties:
+        reply:
+          type: string
+      required:
+        - reply
+    AiSummarizeTextRequest:
+      type: object
+      properties:
+        text:
+          type: string
+          minLength: 1
+          maxLength: 60000
+      required:
+        - text
+    AiSummarizeUrlRequest:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+          minLength: 8
+          maxLength: 2048
+      required:
+        - url
+    AiSummarizeVideoRequest:
+      type: object
+      properties:
+        transcript:
+          type: string
+          minLength: 1
+          maxLength: 60000
+      required:
+        - transcript
+    AiSummaryResponse:
+      type: object
+      properties:
+        summary:
+          type: string
+      required:
+        - summary
+    AiTranslateRequest:
+      type: object
+      properties:
+        text:
+          type: string
+          minLength: 1
+          maxLength: 8000
+        targetLanguage:
+          type: string
+          minLength: 1
+          maxLength: 64
+      required:
+        - text
+        - targetLanguage
+    AiTranslationResult:
+      type: object
+      properties:
+        translation:
+          type: string
+      required:
+        - translation
