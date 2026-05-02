@@ -380,19 +380,7 @@ export default function Cart() {
               }}
             >
           <DialogHeader>
-            <DialogTitle
-              className="text-2xl font-bold tracking-tight"
-              style={{
-                // Dark gradient for the white-glass theme: deep slate fading
-                // through teal into a warm gold accent. Reads cleanly on the
-                // light frosted background while keeping the brand colours.
-                background:
-                  "linear-gradient(135deg, #0F172A 0%, #0E9488 55%, #B8860B 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}
-            >
+            <DialogTitle className="text-2xl font-semibold tracking-tight text-teal-600">
               Choose payment
             </DialogTitle>
             <DialogDescription className="!text-neutral-600">
