@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useRoute, useLocation, Link } from "wouter";
 import { ShopLayout } from "@/components/shop-layout";
 import { GlassCard, GlassPhotoFrame } from "@/components/glass";
+import { PhotoViewer } from "@/components/photo-viewer";
 import { products } from "@/lib/data";
 import { useCart } from "@/hooks/use-cart";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ export default function ProductDetail() {
   const [selectedSize, setSelectedSize] = useState<string>(product?.sizes[0] || "");
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+  const [viewerOpen, setViewerOpen] = useState(false);
 
   if (!product) {
     return (
@@ -68,6 +70,13 @@ export default function ProductDetail() {
               aria-hidden
               className="absolute inset-0 pointer-events-none"
               style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.04), inset 0 0 60px rgba(0,0,0,0.05)" }}
+            />
+            <button
+              type="button"
+              onClick={() => setViewerOpen(true)}
+              className="absolute inset-0 z-10 cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+              aria-label={`Zoom in on ${product.name}`}
+              data-testid="open-photo-viewer"
             />
           </GlassPhotoFrame>
 
@@ -182,6 +191,13 @@ export default function ProductDetail() {
             </div>
           </div>
         </div>
+
+        <PhotoViewer
+          src={product.image}
+          alt={product.name}
+          open={viewerOpen}
+          onClose={() => setViewerOpen(false)}
+        />
 
         {related.length > 0 && (
           <section className="mt-24">
