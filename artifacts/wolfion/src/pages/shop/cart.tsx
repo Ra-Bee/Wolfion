@@ -457,31 +457,36 @@ export default function Cart() {
                   className="group relative w-full text-left active:scale-[0.99] transition-transform"
                   data-testid={`pay-method-${opt.id}`}
                 >
-                  {/* Hover/active glow */}
+                  {/* Hover/active glow — single soft teal instead of the
+                      previous teal→purple rainbow that fought with the
+                      frosted-white aesthetic. */}
                   <div
                     aria-hidden
                     className={`absolute -inset-0.5 rounded-[18px] blur-md transition-opacity duration-300 pointer-events-none ${
-                      active ? "opacity-80" : "opacity-0 group-hover:opacity-50"
+                      active ? "opacity-60" : "opacity-0 group-hover:opacity-30"
                     }`}
                     style={{
                       background:
-                        "linear-gradient(135deg, #1ABBC4 0%, #6E3CFB 100%)",
+                        "linear-gradient(135deg, rgba(13,148,136,0.55) 0%, rgba(15,118,110,0.40) 100%)",
                     }}
                   />
-                  {/* Gradient border */}
+                  {/* Border — clean teal accent when active, hairline slate when idle */}
                   <div
                     className="relative rounded-[16px] p-[1.5px] transition-all"
                     style={{
                       background: active
-                        ? "linear-gradient(135deg, #1ABBC4 0%, #D4AF37 100%)"
+                        ? "linear-gradient(135deg, #14B8A6 0%, #0F766E 100%)"
                         : "linear-gradient(135deg, rgba(15,23,42,0.10) 0%, rgba(15,23,42,0.04) 100%)",
                     }}
                   >
                     <div
                       className="rounded-[15px] flex items-center gap-4 p-3.5 border border-white/70 backdrop-blur-md"
                       style={{
+                        // Subtle uniform teal wash for active so the row reads
+                        // as "selected" without painting in two different
+                        // brand colours.
                         background: active
-                          ? "linear-gradient(180deg, rgba(26,187,196,0.14) 0%, rgba(212,175,55,0.08) 100%)"
+                          ? "linear-gradient(180deg, rgba(20,184,166,0.10) 0%, rgba(20,184,166,0.04) 100%)"
                           : "linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.25) 100%)",
                       }}
                     >
@@ -493,7 +498,7 @@ export default function Cart() {
                       <span
                         className={`h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
                           active
-                            ? "border-teal-500 bg-gradient-to-br from-[#1ABBC4] to-[#D4AF37] shadow-[0_0_12px_rgba(94,234,212,0.6)]"
+                            ? "border-teal-600 bg-teal-600 shadow-[0_0_10px_rgba(20,184,166,0.45)]"
                             : "border-neutral-300 bg-white"
                         }`}
                       >
