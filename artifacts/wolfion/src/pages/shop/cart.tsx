@@ -348,7 +348,7 @@ export default function Cart() {
           {/* Glow halo behind the panel */}
           <div
             aria-hidden
-            className="pointer-events-none absolute -inset-3 rounded-[32px] blur-2xl opacity-50"
+            className="pointer-events-none absolute -inset-3 rounded-[32px] blur-xl opacity-40"
             style={{
               background:
                 "linear-gradient(135deg, #1ABBC4 0%, #6E3CFB 50%, #D4AF37 100%)",
@@ -364,23 +364,27 @@ export default function Cart() {
           >
             {/* Glass interior */}
             <div
-              className="rounded-[23px] p-5 sm:p-6 border border-white/80 text-neutral-900 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.18)] [&_input]:!bg-white/40 [&_input]:!border-white/60 [&_input]:!text-neutral-900 [&_input]:placeholder:!text-neutral-500 [&_input]:!backdrop-blur-md [&_label]:!text-neutral-700"
+              className="rounded-[23px] p-5 sm:p-6 border border-white/80 text-neutral-900 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.18)] [&_input]:!bg-white/60 [&_input]:!border-white/60 [&_input]:!text-neutral-900 [&_input]:placeholder:!text-neutral-500 [&_label]:!text-neutral-700 will-change-transform"
               style={{
-                // True frosted glass: very low opacity white wash so the page
-                // behind shows through, with a heavy backdrop blur + saturate
-                // so it reads as soft pastel rather than a hard backdrop. The
-                // brighter top-edge highlight (rgba 1.0,1.0,1.0,0.55 inset)
-                // gives the panel a subtle 3D bevel.
+                // Frosted glass: bumped the white wash opacity so we can use a
+                // much lighter backdrop blur. On mobile, blur(40px) +
+                // saturate(180%) was extremely expensive to recomposite every
+                // frame during the zoom-in animation, producing visible
+                // flicker. blur(14px) preserves the frosted look while being
+                // ~5x cheaper for the GPU. Removed the per-input backdrop-blur
+                // override which was compounding three backdrop-filter layers.
                 background:
-                  "linear-gradient(180deg, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0.32) 100%)",
-                backdropFilter: "blur(40px) saturate(180%)",
-                WebkitBackdropFilter: "blur(40px) saturate(180%)",
+                  "linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.7) 100%)",
+                backdropFilter: "blur(14px) saturate(140%)",
+                WebkitBackdropFilter: "blur(14px) saturate(140%)",
                 boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(15,23,42,0.04)",
                 colorScheme: "light",
+                transform: "translateZ(0)",
+                WebkitBackfaceVisibility: "hidden",
               }}
             >
           <DialogHeader>
-            <DialogTitle className="text-2xl font-semibold tracking-tight text-teal-600">
+            <DialogTitle className="text-2xl font-semibold tracking-tight text-neutral-900">
               Choose payment
             </DialogTitle>
             <DialogDescription className="!text-neutral-600">
