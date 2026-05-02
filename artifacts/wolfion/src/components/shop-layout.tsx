@@ -150,10 +150,12 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
               </SheetTrigger>
               <SheetContent
                 side="left"
-                className="w-[320px] p-0 flex flex-col bg-white/85 dark:bg-neutral-950/90 backdrop-blur-2xl border-r border-white/40 dark:border-white/10"
+                className="w-[320px] p-0 flex flex-col bg-white dark:bg-neutral-950 border-r border-neutral-200 dark:border-white/10"
                 style={{
                   boxShadow:
-                    "inset -1px 0 0 rgba(255,255,255,0.5), 12px 0 40px -8px rgba(0,0,0,0.35), 4px 0 12px -4px rgba(0,0,0,0.18)",
+                    "12px 0 40px -8px rgba(0,0,0,0.35), 4px 0 12px -4px rgba(0,0,0,0.18)",
+                  transform: "translateZ(0)",
+                  WebkitBackfaceVisibility: "hidden",
                 }}
               >
                 {/* Compact 3D gradient header band */}
@@ -416,7 +418,6 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
                     size="icon"
                     aria-label="Account & Menu"
                     data-testid="btn-account"
-                    className="active:scale-95 transition-transform"
                     style={{ touchAction: "manipulation", WebkitTapHighlightColor: "transparent" }}
                   >
                     <User className="h-5 w-5" />
