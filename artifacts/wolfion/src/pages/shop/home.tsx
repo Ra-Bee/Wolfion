@@ -734,14 +734,13 @@ export default function ShopHome() {
             will-change: auto !important;
           }
         }
-        /* Dark mode: keep the original glass + warm halo exactly as
-           designed in light mode — same shape, same spread, same gold
-           bevel. We only dial the *color intensity* of the warm halo
-           down a touch so it doesn't glow too hot against the dark UI.
-           The bevel frame is left untouched. */
+        /* Dark mode: hide the warm halo that sits *inside* the bevel
+           border. We keep the broader warm wash on the section bg and
+           the gold-glass bevel frame itself, so the result reads like
+           an iPhone-style 3D glass tile (clean glass edge, no inner
+           color glow). Light mode keeps the original halo. */
         .dark .hero-halo-pulse {
-          opacity: 0.75 !important;
-          filter: saturate(0.8);
+          display: none !important;
         }
       `}</style>
     </ShopLayout>
