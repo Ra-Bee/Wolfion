@@ -126,7 +126,7 @@ const workAreaLabels: Record<WorkArea, string> = {
   machine_run: "Machine run",
   iron: "Ironing",
   packaging: "Packaging",
-  add_ons: "Add-ons",
+  add_ons: "Other",
 };
 const workAreaOrder: WorkArea[] = ["machine_run", "iron", "packaging", "add_ons"];
 
@@ -145,6 +145,7 @@ type WorkLog = {
   workerId: string;
   date: string;
   amount: number;
+  note?: string;
   createdAt: string;
 };
 
@@ -394,6 +395,7 @@ export default function Dashboard() {
   const [newWorkerWorkAt, setNewWorkerWorkAt] = useState<WorkArea>("machine_run");
   const [uniDate, setUniDate] = useState(getToday());
   const [uniDailyBill, setUniDailyBill] = useState("");
+  const [uniNote, setUniNote] = useState("");
   const [uniNextPaymentDate, setUniNextPaymentDate] = useState("");
   const [uniPayingNow, setUniPayingNow] = useState("");
   const [uniConfirm, setUniConfirm] = useState("");
@@ -998,12 +1000,14 @@ export default function Dashboard() {
       setWorkers((current) => [worker, ...current]);
     }
 
+    const noteTrim = uniNote.trim();
     if (Number.isFinite(dailyBill) && dailyBill > 0) {
       const log: WorkLog = {
         id: crypto.randomUUID(),
         workerId,
         date: uniDate,
         amount: dailyBill,
+        note: noteTrim || undefined,
         createdAt: new Date().toISOString(),
       };
       setWorkLogs((current) => [log, ...current]);
@@ -1023,6 +1027,7 @@ export default function Dashboard() {
     setUniConfirm(`Saved entry for ${name}.`);
     setNewWorkerName("");
     setUniDailyBill("");
+    setUniNote("");
     setUniPayingNow("");
     setUniNextPaymentDate("");
   }
@@ -2357,6 +2362,11 @@ export default function Dashboard() {
                 </div>
               </div>
 
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="uni-note">Comment <span className="text-muted-foreground font-normal">(optional)</span></label>
+                <Input id="uni-note" className="h-12 text-base" placeholder="Note for this entry" value={uniNote} onChange={(e) => setUniNote(e.target.value)} />
+              </div>
+
               {workerError && <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{workerError}</p>}
               {uniConfirm && <p className="rounded-lg bg-green-100 px-3 py-2 text-sm font-medium text-green-800">{uniConfirm}</p>}
               <Button type="submit" size="lg" className="h-14 w-full text-base font-semibold"><Plus className="h-5 w-5" /> Save entry</Button>
@@ -2385,6 +2395,28 @@ export default function Dashboard() {
                           <p className={`text-base font-bold ${remaining > 0 ? "text-orange-700" : "text-green-700"}`}>Tk {remaining.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                         </div>
                       </div>
+                      {(() => {
+                        const entries = workLogs
+                          .filter((l) => l.workerId === worker.id)
+                          .sort((a, b) => (b.date + b.createdAt).localeCompare(a.date + a.createdAt))
+                          .slice(0, 5);
+                        if (entries.length === 0) return null;
+                        return (
+                          <div className="mt-3 space-y-1.5">
+                            <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Recent entries</p>
+                            <ul className="space-y-1">
+                              {entries.map((l) => (
+                                <li key={l.id} className="flex items-start justify-between gap-2 rounded-md bg-muted/30 px-2 py-1.5 text-xs">
+                                  <div className="min-w-0 flex-1">
+                                    <p className="font-medium">{l.date} · Tk {l.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                                    {l.note ? <p className="text-muted-foreground break-words">{l.note}</p> : null}
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        );
+                      })()}
                     </div>
                   ))}
                 </div>
