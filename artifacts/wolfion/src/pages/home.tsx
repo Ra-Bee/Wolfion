@@ -57,7 +57,7 @@ export default function Home() {
             className="wolfion-rise mt-14"
             style={{ animationDelay: "550ms" }}
           >
-            <Link href="/sign-up">
+            <Link href="/sign-in">
               <button
                 className="group relative h-14 px-12 rounded-full bg-white text-black text-sm font-semibold tracking-[0.18em] uppercase shadow-[0_0_0_0_rgba(255,255,255,0.0)] hover:shadow-[0_0_40px_4px_rgba(255,255,255,0.18)] hover:scale-[1.04] active:scale-[0.97] transition-all duration-300 ease-out inline-flex items-center justify-center"
                 data-testid="landing-enter-store"
