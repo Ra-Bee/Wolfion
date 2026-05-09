@@ -2114,7 +2114,7 @@ export default function Dashboard() {
 
             <div className="space-y-3">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Add yarn purchase</h3>
-              <form onSubmit={handleAddYarnPurchase} className="grid grid-cols-3 gap-1.5 sm:gap-2.5 lg:gap-3">
+              <form onSubmit={handleAddYarnPurchase} className="grid grid-cols-[1fr_1fr_auto] gap-1.5 sm:gap-2.5 lg:gap-3 items-end">
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="yarn-purchase-date">Date</label>
                   <Input id="yarn-purchase-date" type="date" className="h-12 text-base" max={getToday()} value={yarnPurchaseDate} onChange={(e) => setYarnPurchaseDate(e.target.value)} required />
@@ -2123,11 +2123,9 @@ export default function Dashboard() {
                   <label className="text-sm font-medium" htmlFor="yarn-purchase-kg">Quantity (kg)</label>
                   <Input id="yarn-purchase-kg" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={yarnPurchaseKg} onChange={(e) => setYarnPurchaseKg(e.target.value)} required />
                 </div>
-                <div className="space-y-2 flex items-end">
-                  <Button type="submit" size="lg" className="h-12 w-full">
-                    <Plus className="h-4 w-4" /> Add purchase
-                  </Button>
-                </div>
+                <Button type="submit" size="sm" className="h-12 px-3 whitespace-nowrap">
+                  <Plus className="h-4 w-4" /> Add
+                </Button>
               </form>
               {yarnPurchases.length > 0 && (
                 <div className="rounded-2xl border divide-y max-h-64 overflow-y-auto">
@@ -2151,7 +2149,7 @@ export default function Dashboard() {
             <div className="space-y-3">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Yarn per dozen (kg)</h3>
               <p className="text-xs text-muted-foreground">Average yarn consumed to produce 1 dozen of each product.</p>
-              <div className="grid grid-cols-4 gap-1.5 sm:gap-2.5 lg:gap-3">
+              <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 lg:gap-3">
                 {allProductTypeIds.map((id) => (
                   <div key={id} className="space-y-2">
                     <label className="text-sm font-medium" htmlFor={`ypd-${id}`}>{productTypeLabels[id] || id}</label>
