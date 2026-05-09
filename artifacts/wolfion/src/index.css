@@ -126,45 +126,47 @@
   --elevate-1: rgba(255,255,255, .04);
   --elevate-2: rgba(255,255,255, .09);
 
-  /* Dark Theme */
-  --background: 222 47% 11%;
-  --foreground: 0 0% 98%;
-  
-  --card: 222 47% 11%;
-  --card-foreground: 0 0% 98%;
-  --card-border: 217.2 32.6% 17.5%;
-  
-  --popover: 222 47% 11%;
-  --popover-foreground: 0 0% 98%;
-  --popover-border: 217.2 32.6% 17.5%;
-  
-  --primary: 21 100% 50%;
-  --primary-foreground: 0 0% 100%;
-  
-  --secondary: 217.2 32.6% 17.5%;
-  --secondary-foreground: 0 0% 98%;
-  
-  --muted: 217.2 32.6% 17.5%;
-  --muted-foreground: 215 20.2% 65.1%;
-  
-  --accent: 217.2 32.6% 17.5%;
-  --accent-foreground: 0 0% 98%;
-  
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 0 0% 98%;
-  
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
-  --ring: 21 100% 50%;
+  /* Dark Theme — refined: deeper background, distinct elevated card,
+     softer borders. Tuned to match the polished customer dark mode
+     and applied uniformly to the admin pages. */
+  --background: 222 47% 6%;
+  --foreground: 210 20% 96%;
 
-  --sidebar: 222 47% 11%;
-  --sidebar-foreground: 0 0% 98%;
-  --sidebar-border: 217.2 32.6% 17.5%;
-  --sidebar-primary: 21 100% 50%;
+  --card: 222 33% 11%;
+  --card-foreground: 210 20% 96%;
+  --card-border: 217 20% 20%;
+
+  --popover: 222 33% 11%;
+  --popover-foreground: 210 20% 96%;
+  --popover-border: 217 20% 20%;
+
+  --primary: 21 100% 56%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 217 24% 16%;
+  --secondary-foreground: 210 20% 96%;
+
+  --muted: 217 24% 14%;
+  --muted-foreground: 215 16% 70%;
+
+  --accent: 217 24% 18%;
+  --accent-foreground: 210 20% 98%;
+
+  --destructive: 0 72% 50%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 217 20% 20%;
+  --input: 217 20% 22%;
+  --ring: 21 100% 56%;
+
+  --sidebar: 222 33% 11%;
+  --sidebar-foreground: 210 20% 96%;
+  --sidebar-border: 217 20% 20%;
+  --sidebar-primary: 21 100% 56%;
   --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 217.2 32.6% 17.5%;
-  --sidebar-accent-foreground: 0 0% 98%;
-  --sidebar-ring: 21 100% 50%;
+  --sidebar-accent: 217 24% 18%;
+  --sidebar-accent-foreground: 210 20% 98%;
+  --sidebar-ring: 21 100% 56%;
 
   --chart-1: 21 100% 50%;
   --chart-2: 215 20% 65%;
@@ -266,6 +268,17 @@
   }
   .dark .glass {
     background: hsl(var(--card) / 0.55);
+  }
+
+  /* Soften the heavy "border-2 border-primary/30" admin cards
+     in dark — orange rims look harsh on near-black; replace with
+     a subtle tinted hairline that matches customer page polish. */
+  .dark [class*="border-primary/3"] {
+    border-color: hsl(var(--primary) / 0.18) !important;
+    background-color: hsl(var(--card) / 0.85);
+  }
+  .dark [class*="bg-primary/5"] {
+    background-color: hsl(var(--primary) / 0.08) !important;
   }
 
   /* 3D side-menu items */

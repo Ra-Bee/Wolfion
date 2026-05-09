@@ -6,7 +6,7 @@ import { useCart } from "@/hooks/use-cart";
 import { useRole } from "@/hooks/use-role";
 import { useStableDisclosure } from "@/hooks/use-stable-disclosure";
 import { useTheme } from "@/hooks/use-theme";
-import { ShoppingBag, Menu, User, LogOut, Search, ShieldCheck, ChevronDown, Home as HomeIcon, Store, Mail, Info, Settings, X, Plus, Sun, Moon } from "lucide-react";
+import { ShoppingBag, Menu, User, LogOut, Search, ShieldCheck, ChevronDown, Home as HomeIcon, Store, Mail, Info, Settings, X, Plus, Sun, Moon, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose, SheetFooter } from "@/components/ui/sheet";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -60,7 +60,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
   const [addProductOpen, setAddProductOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useStableDisclosure();
   const [accountMenuOpen, setAccountMenuOpen] = useStableDisclosure();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, preference, toggleTheme } = useTheme();
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Live catalog from the API. The query is shared with the products listing
@@ -415,13 +415,20 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
             <Button
               variant="ghost"
               size="icon"
-              aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+              aria-label={`Theme: ${preference}. Click to change`}
+              title={`Theme: ${preference[0].toUpperCase() + preference.slice(1)} (tap to cycle Light → Dark → System)`}
               data-testid="btn-theme-toggle"
               onClick={toggleTheme}
               className="rounded-full h-9 w-9"
               style={{ touchAction: "manipulation", WebkitTapHighlightColor: "transparent" }}
             >
-              {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+              {preference === "light" ? (
+                <Sun className="h-5 w-5" />
+              ) : preference === "dark" ? (
+                <Moon className="h-5 w-5" />
+              ) : (
+                <Monitor className="h-5 w-5" />
+              )}
             </Button>
 
             <div className="hidden md:block">

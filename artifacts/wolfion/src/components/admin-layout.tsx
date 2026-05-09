@@ -4,7 +4,7 @@ import { useRole } from "@/hooks/use-role";
 import { useTheme } from "@/hooks/use-theme";
 import { clearAdminStorage } from "@/lib/wolfion-store";
 import {
-  LogOut, Menu, ShieldCheck, Sun, Moon, FileText, Users as UsersIcon,
+  LogOut, Menu, ShieldCheck, Sun, Moon, Monitor, FileText, Users as UsersIcon,
   Wrench, Factory, ShoppingCart, TrendingUp, HandCoins, LayoutDashboard, ShoppingBag,
   Package, Receipt, FolderArchive,
 } from "lucide-react";
@@ -33,7 +33,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const { user } = useUser();
   const { signOut } = useClerk();
   const { setRole } = useRole();
-  const { theme, toggleTheme } = useTheme();
+  const { preference, toggleTheme } = useTheme();
   const [, setLocation] = useLocation();
   const [adminMenuOpen, setAdminMenuOpen] = useStableDisclosure();
 
@@ -81,8 +81,21 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
               <span className="hidden sm:inline">Customer Mode</span>
               <span className="sm:hidden ml-1">Customer</span>
             </Button>
-            <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme" className="rounded-full h-9 w-9">
-              {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              aria-label={`Theme: ${preference}. Click to change`}
+              title={`Theme: ${preference[0].toUpperCase() + preference.slice(1)} (tap to cycle Light → Dark → System)`}
+              className="rounded-full h-9 w-9"
+            >
+              {preference === "light" ? (
+                <Sun className="h-5 w-5" />
+              ) : preference === "dark" ? (
+                <Moon className="h-5 w-5" />
+              ) : (
+                <Monitor className="h-5 w-5" />
+              )}
             </Button>
 
             <Sheet open={adminMenuOpen} onOpenChange={setAdminMenuOpen}>
