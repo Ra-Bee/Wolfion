@@ -6,7 +6,7 @@ import { clearAdminStorage } from "@/lib/wolfion-store";
 import {
   LogOut, Menu, ShieldCheck, Sun, Moon, FileText, Users as UsersIcon,
   Wrench, Factory, ShoppingCart, TrendingUp, HandCoins, LayoutDashboard, ShoppingBag,
-  Package, Receipt,
+  Package, Receipt, FolderArchive,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, SheetClose } from "@/components/ui/sheet";
@@ -26,6 +26,7 @@ const ADMIN_NAV: AdminNavItem[] = [
   { path: "/admin/yarn-calculation", label: "Yarn Calculation", icon: Wrench },
   { path: "/admin/debts", label: "Debt Management", icon: HandCoins },
   { path: "/admin/cost-history", label: "Cost History", icon: Receipt },
+  { path: "/admin/documents", label: "Documents", icon: FolderArchive },
 ];
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
