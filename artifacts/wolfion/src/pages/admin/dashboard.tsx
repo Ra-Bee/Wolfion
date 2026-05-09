@@ -121,13 +121,14 @@ type ElectricityEntry = {
   createdAt: string;
 };
 
-type WorkArea = "machine_run" | "iron" | "packaging";
+type WorkArea = "machine_run" | "iron" | "packaging" | "add_ons";
 const workAreaLabels: Record<WorkArea, string> = {
   machine_run: "Machine run",
-  iron: "Iron",
+  iron: "Ironing",
   packaging: "Packaging",
+  add_ons: "Add-ons",
 };
-const workAreaOrder: WorkArea[] = ["machine_run", "iron", "packaging"];
+const workAreaOrder: WorkArea[] = ["machine_run", "iron", "packaging", "add_ons"];
 
 type Worker = {
   id: string;
