@@ -722,27 +722,27 @@ export default function ShopHome() {
             will-change: auto !important;
           }
         }
-        /* Dark mode: tone down the warm amber/peach halo and the gold
-           bevel frame around the hero photo so the surrounding shine
-           doesn't overpower the dark UI. The photo itself stays untouched
-           — only the glass/halo around it is muted. */
+        /* Dark mode: keep the warm halo + gold-glass bevel, just lighter
+           so they don't overpower the dark UI. We dim the amber halo a
+           bit and soften the bevel's gold tint, but the glass effect is
+           still clearly there. */
         .dark .hero-halo-pulse {
-          opacity: 0.35 !important;
-          filter: saturate(0.55) hue-rotate(-8deg);
+          opacity: 0.6 !important;
+          filter: saturate(0.85);
         }
         .dark .hero-frame-3d {
           background: linear-gradient(
             135deg,
-            rgba(255, 255, 255, 0.45) 0%,
-            rgba(255, 255, 255, 0.12) 35%,
-            rgba(0, 0, 0, 0.45) 70%,
-            rgba(0, 0, 0, 0.7) 100%
+            rgba(255, 255, 255, 0.7) 0%,
+            rgba(252, 211, 77, 0.3) 35%,
+            rgba(0, 0, 0, 0.3) 70%,
+            rgba(0, 0, 0, 0.55) 100%
           ) !important;
           box-shadow:
-            0 24px 60px -22px rgba(0, 0, 0, 0.65),
-            0 6px 22px -10px rgba(0, 0, 0, 0.4),
-            inset 0 1px 0 rgba(255, 255, 255, 0.18),
-            inset 0 -1px 0 rgba(0, 0, 0, 0.55) !important;
+            0 24px 60px -22px rgba(0, 0, 0, 0.55),
+            0 6px 22px -10px rgba(190, 160, 110, 0.18),
+            inset 0 1px 0 rgba(255, 255, 255, 0.32),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.45) !important;
         }
       `}</style>
     </ShopLayout>
