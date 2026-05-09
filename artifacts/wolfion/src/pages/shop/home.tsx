@@ -19,6 +19,8 @@ export default function ShopHome() {
   const sockCats = categories;
   const heroFrameRef = useRef<HTMLDivElement>(null);
   const heroImgRef = useRef<HTMLImageElement>(null);
+  const craftFrameRef = useRef<HTMLDivElement>(null);
+  const craftImgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     const frame = heroFrameRef.current;
@@ -56,6 +58,76 @@ export default function ShopHome() {
       parent?.removeEventListener("mousemove", onMove);
       parent?.removeEventListener("mouseleave", onLeave);
       cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  // === Craft section: interactive 3D tilt on touch + mouse ===
+  // Uses Pointer Events so a finger drag tilts the frame on phones
+  // (the hero tilt is mouse-only). The frame's CSS animation reads
+  // --crx / --cry so the tilt composes with the gentle float.
+  useEffect(() => {
+    const frame = craftFrameRef.current;
+    const img = craftImgRef.current;
+    if (!frame) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const parent = frame.parentElement;
+    if (!parent) return;
+
+    let raf = 0;
+    let resetTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const apply = (clientX: number, clientY: number) => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const rect = frame.getBoundingClientRect();
+        const x = (clientX - rect.left) / rect.width;
+        const y = (clientY - rect.top) / rect.height;
+        const cx = Math.max(0, Math.min(1, x));
+        const cy = Math.max(0, Math.min(1, y));
+        const rx = (cy - 0.5) * -8;
+        const ry = (cx - 0.5) * 8;
+        frame.style.setProperty("--crx", `${rx}deg`);
+        frame.style.setProperty("--cry", `${ry}deg`);
+        if (img) {
+          img.style.transform = `translate3d(${(cx - 0.5) * -16}px, ${(cy - 0.5) * -12}px, 0) scale(1.06)`;
+        }
+      });
+    };
+
+    const reset = () => {
+      cancelAnimationFrame(raf);
+      frame.style.setProperty("--crx", "0deg");
+      frame.style.setProperty("--cry", "0deg");
+      if (img) img.style.transform = "translate3d(0,0,0) scale(1)";
+    };
+
+    const onPointerMove = (e: PointerEvent) => {
+      if (resetTimer) {
+        clearTimeout(resetTimer);
+        resetTimer = null;
+      }
+      apply(e.clientX, e.clientY);
+      // For touch, ease back to neutral shortly after the finger
+      // stops moving so the frame doesn't get "stuck" tilted.
+      if (e.pointerType === "touch") {
+        resetTimer = setTimeout(reset, 700);
+      }
+    };
+    const onPointerLeave = () => reset();
+    const onPointerCancel = () => reset();
+
+    parent.addEventListener("pointermove", onPointerMove, { passive: true });
+    parent.addEventListener("pointerleave", onPointerLeave);
+    parent.addEventListener("pointercancel", onPointerCancel);
+    parent.addEventListener("pointerup", onPointerLeave);
+    return () => {
+      parent.removeEventListener("pointermove", onPointerMove);
+      parent.removeEventListener("pointerleave", onPointerLeave);
+      parent.removeEventListener("pointercancel", onPointerCancel);
+      parent.removeEventListener("pointerup", onPointerLeave);
+      cancelAnimationFrame(raf);
+      if (resetTimer) clearTimeout(resetTimer);
     };
   }, []);
 
@@ -603,9 +675,11 @@ export default function ShopHome() {
               its highlight around the frame, like a glass rim catching
               light. */}
           <div
+            ref={craftFrameRef}
             className="relative rounded-[28px] p-[1.5px] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.55)] craft-frame-3d craft-border-spin"
             style={{
               transformStyle: "preserve-3d",
+              transition: "transform 380ms cubic-bezier(0.22, 1, 0.36, 1)",
             }}
           >
             <div
@@ -613,11 +687,16 @@ export default function ShopHome() {
             >
               <div aria-hidden className="absolute inset-0 bg-[#e8ddd2] dark:bg-[#2d2521]" />
               <img
+                ref={craftImgRef}
                 src={imgSocks}
                 alt="Wolfion craftsmanship"
                 loading="lazy"
                 decoding="async"
                 className="absolute inset-0 h-full w-full object-cover"
+                style={{
+                  transition: "transform 420ms cubic-bezier(0.22, 1, 0.36, 1)",
+                  willChange: "transform",
+                }}
               />
               {/* Bottom darkening gradient for text */}
               <div className="absolute inset-y-0 left-0 w-2/3 bg-gradient-to-r from-black/55 via-black/25 to-transparent pointer-events-none" />
@@ -767,8 +846,16 @@ export default function ShopHome() {
            Mirrors the hero's float/halo/sheen vocabulary so the whole
            page feels alive, but with a slower, more editorial cadence. */
         @keyframes wf-craft-float {
-          0%, 100% { transform: translateY(0); }
-          50%      { transform: translateY(-5px); }
+          0%, 100% {
+            transform: translateY(0)
+              rotateX(var(--crx, 0deg))
+              rotateY(var(--cry, 0deg));
+          }
+          50% {
+            transform: translateY(-5px)
+              rotateX(var(--crx, 0deg))
+              rotateY(var(--cry, 0deg));
+          }
         }
         @keyframes wf-craft-halo {
           0%, 100% { opacity: 0.42; transform: scale(1); }
@@ -885,21 +972,20 @@ export default function ShopHome() {
           }
         }
         @media (hover: none), (pointer: coarse) {
-          /* Match the hero policy: kill the constantly-running heavy
-             animations on phones (sheen sweep + halo pulse + float +
-             border spin) so scroll past this section stays buttery.
-             The one-shot text rises and the gentle text shimmer are
-             cheap, so they stay. The border still keeps its colors,
-             just no longer rotates. */
-          .craft-frame-3d,
+          /* Phones: kill the constantly-running heavy animations
+             (sheen sweep + halo pulse + border spin) so scroll past
+             this section stays buttery. The float keyframe is kept
+             because it's the carrier for the touch-tilt --crx/--cry
+             vars; without it the tilt wouldn't apply. The float is
+             cheap (translateY 5px) and only animates when this
+             section is on screen. */
           .craft-border-spin,
           .craft-halo-pulse,
           .craft-sheen {
             animation: none !important;
           }
           .craft-frame-3d {
-            transform: translateZ(0) !important;
-            will-change: auto !important;
+            will-change: transform;
           }
         }
       `}</style>
