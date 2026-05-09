@@ -127,13 +127,14 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-[100dvh] flex flex-col bg-white text-neutral-900 dark:bg-neutral-950 dark:text-neutral-50 antialiased font-sans">
-      {/* 3D Glass header — bevel highlight top + deep drop shadow */}
+      {/* 3D Glass header — bevel highlight top + deep drop shadow.
+          Light mode keeps the original frosted-white look. Dark mode
+          gets an iPhone-glass treatment: vertical translucent gradient
+          (lighter top -> deeper bottom), bright top sheen line, dark
+          bottom rim, stronger backdrop blur + saturation, and a
+          thin white edge instead of the muddy neutral-800 border. */}
       <header
-        className="sticky top-0 z-40 w-full bg-white/75 dark:bg-neutral-950/75 backdrop-blur-2xl border-b border-neutral-200/60 dark:border-neutral-800/60"
-        style={{
-          boxShadow:
-            "inset 0 1px 0 rgba(255,255,255,0.85), inset 0 -1px 0 rgba(0,0,0,0.06), 0 12px 28px -10px rgba(0,0,0,0.18), 0 4px 10px -4px rgba(0,0,0,0.08)",
-        }}
+        className="wf-shop-header sticky top-0 z-40 w-full bg-white/75 dark:bg-transparent backdrop-blur-2xl backdrop-saturate-150 border-b border-neutral-200/60 dark:border-white/10"
       >
         <div className="container mx-auto px-4 sm:px-6 h-16 flex items-center gap-3 sm:gap-6">
           {/* Mobile menu trigger */}
