@@ -722,27 +722,14 @@ export default function ShopHome() {
             will-change: auto !important;
           }
         }
-        /* Dark mode: keep the warm halo + gold-glass bevel, just lighter
-           so they don't overpower the dark UI. We dim the amber halo a
-           bit and soften the bevel's gold tint, but the glass effect is
-           still clearly there. */
+        /* Dark mode: keep the original glass + warm halo exactly as
+           designed in light mode — same shape, same spread, same gold
+           bevel. We only dial the *color intensity* of the warm halo
+           down a touch so it doesn't glow too hot against the dark UI.
+           The bevel frame is left untouched. */
         .dark .hero-halo-pulse {
-          opacity: 0.6 !important;
-          filter: saturate(0.85);
-        }
-        .dark .hero-frame-3d {
-          background: linear-gradient(
-            135deg,
-            rgba(255, 255, 255, 0.7) 0%,
-            rgba(252, 211, 77, 0.3) 35%,
-            rgba(0, 0, 0, 0.3) 70%,
-            rgba(0, 0, 0, 0.55) 100%
-          ) !important;
-          box-shadow:
-            0 24px 60px -22px rgba(0, 0, 0, 0.55),
-            0 6px 22px -10px rgba(190, 160, 110, 0.18),
-            inset 0 1px 0 rgba(255, 255, 255, 0.32),
-            inset 0 -1px 0 rgba(0, 0, 0, 0.45) !important;
+          opacity: 0.75 !important;
+          filter: saturate(0.8);
         }
       `}</style>
     </ShopLayout>
