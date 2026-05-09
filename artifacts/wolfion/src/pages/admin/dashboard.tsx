@@ -2339,7 +2339,7 @@ export default function Dashboard() {
                       <p className="text-[13px] sm:text-base font-semibold truncate">Tk {billAmount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                     </div>
                     <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
-                      <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Due</p>
+                      <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Total bill</p>
                       <p className="text-[13px] sm:text-base font-semibold truncate">Tk {dueAfter.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                     </div>
                   </div>
