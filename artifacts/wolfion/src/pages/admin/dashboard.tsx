@@ -1627,6 +1627,38 @@ export default function Dashboard() {
                 </div>
               </div>
 
+              {/* Live forward preview — recomputes the moment any input
+                  changes so admins see what this single entry will
+                  save. Forward-only: yarn kg × rate, plus packaging
+                  + iron + staff, divided by qty. No back-solving. */}
+              {(() => {
+                const qty = Number(dailyProductionDozen) || 0;
+                const yKg = Number(dailyYarnKg) || 0;
+                const yRate = Number(dailyYarnCostPerKg) || 0;
+                const pkg = Number(dailyPackagingCost) || 0;
+                const iron = Number(dailyIronCost) || 0;
+                const staff = Number(dailyStaffBill) || 0;
+                const yarnCost = yKg * yRate;
+                const total = yarnCost + pkg + iron + staff;
+                const perDz = qty > 0 ? total / qty : 0;
+                return (
+                  <div className="rounded-xl border bg-primary/5 p-3 grid grid-cols-3 gap-2 text-center">
+                    <div>
+                      <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Yarn cost</p>
+                      <p className="text-sm font-bold">Tk {yarnCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Total</p>
+                      <p className="text-sm font-bold">Tk {total.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Tk / dz</p>
+                      <p className="text-sm font-bold">Tk {perDz.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                    </div>
+                  </div>
+                );
+              })()}
+
               {dailyError && (
                 <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{dailyError}</p>
               )}
@@ -2406,6 +2438,30 @@ export default function Dashboard() {
                   <Input id="cm-amount" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base w-28" placeholder="0" value={costEntryAmount} onChange={(e) => setCostEntryAmount(e.target.value)} required />
                 </div>
               </div>
+
+              {/* Live forward preview — shows what this entry will
+                  add to the running total + the chosen category, so
+                  the user sees the impact before they save. */}
+              {(() => {
+                const amt = Number(costEntryAmount) || 0;
+                if (amt <= 0) return null;
+                const currentTotal = costEntries.reduce((s, e) => s + (e.amount || 0), 0);
+                const currentCat = costEntries
+                  .filter((e) => (e.category ?? "other") === costEntryCategory)
+                  .reduce((s, e) => s + (e.amount || 0), 0);
+                return (
+                  <div className="rounded-xl border bg-primary/5 p-3 grid grid-cols-2 gap-2 text-center">
+                    <div>
+                      <p className="text-[10px] uppercase tracking-wide text-muted-foreground">New {costCategoryLabels[costEntryCategory]} total</p>
+                      <p className="text-sm font-bold">Tk {(currentCat + amt).toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase tracking-wide text-muted-foreground">New grand total</p>
+                      <p className="text-sm font-bold">Tk {(currentTotal + amt).toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                    </div>
+                  </div>
+                );
+              })()}
 
               {costEntryError && (
                 <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{costEntryError}</p>
