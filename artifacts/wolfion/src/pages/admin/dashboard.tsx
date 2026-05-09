@@ -2125,7 +2125,7 @@ export default function Dashboard() {
 
         <Card className="border-2 border-primary/30 shadow-md">
           <CardHeader>
-            <CardTitle className="text-2xl">Investor</CardTitle>
+            <CardTitle className="text-2xl">Investment and Investor</CardTitle>
             <CardDescription>Track funds invested by each investor.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
