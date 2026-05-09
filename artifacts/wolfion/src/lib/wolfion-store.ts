@@ -133,7 +133,17 @@ export const STORAGE_KEYS = {
   debts: "wolfion_debts",
   debtPayments: "wolfion_debt_payments",
   costInputs: "wolfion_cost_inputs",
+  costHistory: "wolfion_cost_history",
 } as const;
+
+export type CostHistoryEntry = {
+  id: string;
+  date: string;
+  item: string;
+  amount: number;
+  note?: string;
+  createdAt: string;
+};
 
 export const defaultProductTypes: ProductTypeOption[] = [
   { id: "short-socks", label: "Short socks" },
