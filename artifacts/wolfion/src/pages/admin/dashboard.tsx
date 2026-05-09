@@ -1362,21 +1362,68 @@ export default function Dashboard() {
             {(() => {
               const dailyProfit = todaySalesValue - todayTotalCost;
               return (
-                <div className="rounded-2xl border-2 border-green-200 bg-green-50 p-4 sm:p-5">
-                  <div className="grid grid-cols-2 gap-3 sm:gap-4 divide-x divide-green-200/60">
-                    <div className="pr-2">
-                      <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground">{totalProfit >= 0 ? "Total profit" : "Total loss"}</p>
-                      <p className={`mt-1 sm:mt-2 text-xl sm:text-3xl font-bold leading-tight truncate ${totalProfit >= 0 ? "text-green-700" : "text-red-700"}`}>
-                        {totalProfit < 0 ? "−" : ""}Tk {Math.abs(totalProfit).toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                      </p>
-                      <p className="mt-1 text-[10px] sm:text-xs text-muted-foreground">{totalProfit >= 0 ? "Sales − cost" : "Cost exceeds sales"}</p>
-                    </div>
-                    <div className="pl-3 sm:pl-4">
-                      <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground">{dailyProfit >= 0 ? "Daily profit" : "Daily loss"}</p>
-                      <p className={`mt-1 sm:mt-2 text-xl sm:text-3xl font-bold leading-tight truncate ${dailyProfit >= 0 ? "text-green-700" : "text-red-700"}`}>
-                        {dailyProfit < 0 ? "−" : ""}Tk {Math.abs(dailyProfit).toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                      </p>
-                      <p className="mt-1 text-[10px] sm:text-xs text-muted-foreground">Today's sales − cost</p>
+                <div
+                  className="stat-glass relative rounded-3xl p-[1.5px] shadow-[0_20px_60px_-20px_rgba(0,0,0,0.45)]"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, rgba(34,197,94,0.55) 0%, rgba(255,255,255,0.35) 50%, rgba(212,175,55,0.45) 100%)",
+                  }}
+                >
+                  <div
+                    className="relative rounded-[22px] overflow-hidden p-4 sm:p-5 bg-white/80 dark:bg-neutral-900/70"
+                    style={{
+                      backdropFilter: "blur(18px) saturate(160%)",
+                      WebkitBackdropFilter: "blur(18px) saturate(160%)",
+                    }}
+                  >
+                    {/* Top glass sheen */}
+                    <div
+                      aria-hidden
+                      className="absolute inset-x-0 top-0 h-1/2 pointer-events-none"
+                      style={{
+                        background:
+                          "linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 100%)",
+                      }}
+                    />
+                    {/* Soft green halo behind numbers */}
+                    <div
+                      aria-hidden
+                      className="absolute -top-10 -right-10 h-40 w-40 rounded-full opacity-50 pointer-events-none blur-3xl"
+                      style={{
+                        background:
+                          "radial-gradient(circle, rgba(34,197,94,0.45) 0%, transparent 70%)",
+                      }}
+                    />
+                    <div className="relative grid grid-cols-2 gap-3 sm:gap-4">
+                      <div className="relative pr-2">
+                        <p className="text-[10px] sm:text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">{totalProfit >= 0 ? "Total profit" : "Total loss"}</p>
+                        <p
+                          className={`mt-1 sm:mt-2 text-xl sm:text-3xl font-bold leading-tight truncate ${totalProfit >= 0 ? "text-green-700 dark:text-green-300" : "text-red-700 dark:text-red-300"}`}
+                          style={{ textShadow: "0 1px 0 rgba(255,255,255,0.6)" }}
+                        >
+                          {totalProfit < 0 ? "−" : ""}Tk {Math.abs(totalProfit).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                        </p>
+                        <p className="mt-1 text-[10px] sm:text-xs text-muted-foreground">{totalProfit >= 0 ? "Sales − cost" : "Cost exceeds sales"}</p>
+                      </div>
+                      {/* Vertical hairline divider with gradient fade */}
+                      <div
+                        aria-hidden
+                        className="absolute left-1/2 top-2 bottom-2 w-px pointer-events-none"
+                        style={{
+                          background:
+                            "linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.12) 30%, rgba(0,0,0,0.12) 70%, transparent 100%)",
+                        }}
+                      />
+                      <div className="relative pl-3 sm:pl-4">
+                        <p className="text-[10px] sm:text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">{dailyProfit >= 0 ? "Daily profit" : "Daily loss"}</p>
+                        <p
+                          className={`mt-1 sm:mt-2 text-xl sm:text-3xl font-bold leading-tight truncate ${dailyProfit >= 0 ? "text-green-700 dark:text-green-300" : "text-red-700 dark:text-red-300"}`}
+                          style={{ textShadow: "0 1px 0 rgba(255,255,255,0.6)" }}
+                        >
+                          {dailyProfit < 0 ? "−" : ""}Tk {Math.abs(dailyProfit).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                        </p>
+                        <p className="mt-1 text-[10px] sm:text-xs text-muted-foreground">Today's sales − cost</p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1529,26 +1576,84 @@ export default function Dashboard() {
               </Button>
             </form>
 
-            <div className="rounded-2xl border-2 border-green-200 bg-green-50 p-4 sm:p-5">
-              <div className="grid grid-cols-2 gap-3 sm:gap-4 divide-x divide-green-200/60">
-                <div className="pr-2">
-                  <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground">Total daily production</p>
-                  <p className="mt-1 sm:mt-2 text-xl sm:text-3xl font-bold leading-tight truncate text-green-700">
-                    {todayProductionDozen.toLocaleString()} <span className="text-xs sm:text-sm font-medium text-muted-foreground">dz</span>
+            <div
+              className="stat-glass relative rounded-3xl p-[1.5px] shadow-[0_20px_60px_-20px_rgba(0,0,0,0.45)]"
+              style={{
+                background:
+                  "linear-gradient(135deg, rgba(34,197,94,0.55) 0%, rgba(255,255,255,0.35) 50%, rgba(212,175,55,0.45) 100%)",
+              }}
+            >
+              <div
+                className="relative rounded-[22px] overflow-hidden p-4 sm:p-5 bg-white/80 dark:bg-neutral-900/70"
+                style={{
+                  backdropFilter: "blur(18px) saturate(160%)",
+                  WebkitBackdropFilter: "blur(18px) saturate(160%)",
+                }}
+              >
+                <div
+                  aria-hidden
+                  className="absolute inset-x-0 top-0 h-1/2 pointer-events-none"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 100%)",
+                  }}
+                />
+                <div
+                  aria-hidden
+                  className="absolute -bottom-12 -left-10 h-44 w-44 rounded-full opacity-50 pointer-events-none blur-3xl"
+                  style={{
+                    background:
+                      "radial-gradient(circle, rgba(212,175,55,0.45) 0%, transparent 70%)",
+                  }}
+                />
+                <div className="relative grid grid-cols-2 gap-3 sm:gap-4">
+                  <div className="relative pr-2">
+                    <p className="text-[10px] sm:text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">Total daily production</p>
+                    <p
+                      className="mt-1 sm:mt-2 text-xl sm:text-3xl font-bold leading-tight truncate text-green-700 dark:text-green-300"
+                      style={{ textShadow: "0 1px 0 rgba(255,255,255,0.6)" }}
+                    >
+                      {todayProductionDozen.toLocaleString()} <span className="text-xs sm:text-sm font-medium text-muted-foreground">dz</span>
+                    </p>
+                  </div>
+                  <div
+                    aria-hidden
+                    className="absolute left-1/2 top-2 bottom-2 w-px pointer-events-none"
+                    style={{
+                      background:
+                        "linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.12) 30%, rgba(0,0,0,0.12) 70%, transparent 100%)",
+                    }}
+                  />
+                  <div className="relative pl-3 sm:pl-4">
+                    <p className="text-[10px] sm:text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">Total cost</p>
+                    <p
+                      className="mt-1 sm:mt-2 text-xl sm:text-3xl font-bold leading-tight truncate text-green-700 dark:text-green-300"
+                      style={{ textShadow: "0 1px 0 rgba(255,255,255,0.6)" }}
+                    >
+                      Tk {todayTotalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    </p>
+                  </div>
+                </div>
+                <div
+                  className="relative mt-3 sm:mt-4 pt-3 sm:pt-4"
+                  style={{
+                    borderTop:
+                      "1px solid transparent",
+                    backgroundImage:
+                      "linear-gradient(to right, transparent, rgba(0,0,0,0.12), transparent)",
+                    backgroundRepeat: "no-repeat",
+                    backgroundSize: "100% 1px",
+                    backgroundPosition: "top",
+                  }}
+                >
+                  <p className="text-[10px] sm:text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">Cost per dozen</p>
+                  <p
+                    className="mt-1 sm:mt-2 text-xl sm:text-3xl font-bold leading-tight truncate text-green-700 dark:text-green-300"
+                    style={{ textShadow: "0 1px 0 rgba(255,255,255,0.6)" }}
+                  >
+                    Tk {todayCostPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                   </p>
                 </div>
-                <div className="pl-3 sm:pl-4">
-                  <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground">Total cost</p>
-                  <p className="mt-1 sm:mt-2 text-xl sm:text-3xl font-bold leading-tight truncate text-green-700">
-                    Tk {todayTotalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                  </p>
-                </div>
-              </div>
-              <div className="mt-3 sm:mt-4 border-t border-green-200/60 pt-3 sm:pt-4">
-                <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wide text-muted-foreground">Cost per dozen</p>
-                <p className="mt-1 sm:mt-2 text-xl sm:text-3xl font-bold leading-tight truncate text-green-700">
-                  Tk {todayCostPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                </p>
               </div>
             </div>
 
@@ -1600,19 +1705,47 @@ export default function Dashboard() {
             <CardDescription>Record sales by date. Stock and revenue update automatically.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid grid-cols-3 gap-1.5">
-              <div className="rounded-lg border bg-primary/5 p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
-                <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Sales today</p>
-                <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">Tk {todaySalesValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
-              </div>
-              <div className="rounded-lg border bg-primary/5 p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
-                <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">Sold today</p>
-                <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">{todaySalesDozen.toLocaleString()} <span className="text-[10px] font-normal text-muted-foreground">dz</span></p>
-              </div>
-              <div className="rounded-lg border bg-primary/5 p-1.5 sm:p-2 min-h-[44px] flex flex-col justify-center box-border">
-                <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide text-muted-foreground truncate leading-tight">All-time</p>
-                <p className="text-[12px] sm:text-sm font-semibold truncate leading-tight">Tk {totalSalesValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
-              </div>
+            <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
+              {[
+                { label: "Sales today", value: `Tk ${todaySalesValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, suffix: null as string | null },
+                { label: "Sold today", value: todaySalesDozen.toLocaleString(), suffix: "dz" },
+                { label: "All-time",  value: `Tk ${totalSalesValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, suffix: null },
+              ].map((tile) => (
+                <div
+                  key={tile.label}
+                  className="stat-glass-sm relative rounded-xl p-[1px] shadow-[0_8px_24px_-10px_rgba(0,0,0,0.45)]"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, rgba(110,60,251,0.45) 0%, rgba(255,255,255,0.35) 50%, rgba(26,187,196,0.45) 100%)",
+                  }}
+                >
+                  <div
+                    className="relative rounded-[11px] overflow-hidden px-2 py-1.5 sm:px-2.5 sm:py-2 min-h-[48px] flex flex-col justify-center box-border bg-white/80 dark:bg-neutral-900/70"
+                    style={{
+                      backdropFilter: "blur(14px) saturate(160%)",
+                      WebkitBackdropFilter: "blur(14px) saturate(160%)",
+                    }}
+                  >
+                    <div
+                      aria-hidden
+                      className="absolute inset-x-0 top-0 h-1/2 pointer-events-none"
+                      style={{
+                        background:
+                          "linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 100%)",
+                      }}
+                    />
+                    <p className="relative text-[9px] sm:text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground truncate leading-tight">
+                      {tile.label}
+                    </p>
+                    <p className="relative text-[12px] sm:text-sm font-semibold truncate leading-tight mt-0.5">
+                      {tile.value}
+                      {tile.suffix && (
+                        <span className="text-[10px] font-normal text-muted-foreground"> {tile.suffix}</span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
 
             <form onSubmit={handleAddSale} className="space-y-5">
