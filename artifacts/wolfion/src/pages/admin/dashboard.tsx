@@ -2168,54 +2168,6 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <Separator />
-
-            {/* Yarn cost history — mirrors the "Past entries" list in
-                Daily Production but focuses on the per-day yarn-cost
-                slice (kg used, Tk/kg, total yarn cost) so admins can
-                review yarn spend trends without leaving this card. */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Cost history</h3>
-                <span className="text-xs text-muted-foreground">{sortedDailyEntries.length} records</span>
-              </div>
-              {sortedDailyEntries.length > 0 ? (
-                <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
-                  {sortedDailyEntries.slice(0, 30).map((entry) => {
-                    const yarnCost = (entry.yarnUsedKg || 0) * (entry.yarnCostPerKg || 0);
-                    return (
-                      <div key={entry.id} className="flex flex-col gap-1 rounded-xl border bg-card/60 p-3 sm:flex-row sm:items-center sm:justify-between">
-                        <div>
-                          <p className="text-sm font-semibold">{formatDateLabel(entry.date)}</p>
-                          <p className="text-[11px] text-muted-foreground">
-                            {entry.yarnUsedKg.toLocaleString(undefined, { maximumFractionDigits: 2 })} kg used
-                          </p>
-                        </div>
-                        <div className="grid grid-cols-3 gap-3 text-right sm:gap-6">
-                          <div>
-                            <p className="text-[10px] text-muted-foreground">Tk / kg</p>
-                            <p className="text-sm font-bold">Tk {entry.yarnCostPerKg.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                          </div>
-                          <div>
-                            <p className="text-[10px] text-muted-foreground">Yarn cost</p>
-                            <p className="text-sm font-bold">Tk {yarnCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                          </div>
-                          <div>
-                            <p className="text-[10px] text-muted-foreground">Total / dz</p>
-                            <p className="text-sm font-bold">Tk {entry.costPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="rounded-xl border border-dashed p-5 text-center">
-                  <p className="text-sm font-medium">No cost entries yet</p>
-                  <p className="text-xs text-muted-foreground mt-1">Add a daily production entry to start tracking yarn cost.</p>
-                </div>
-              )}
-            </div>
           </CardContent>
         </Card>
 
@@ -2347,6 +2299,59 @@ export default function Dashboard() {
                 </div>
               )}
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Cost History — promoted to its own first-class card so it
+            sits alongside the other top-level admin tasks instead of
+            being buried inside Yarn Calculation. Placed right before
+            Investment & Investor at the user's request. */}
+        <Card id="cost-history" className="border-2 border-primary/30 shadow-md scroll-mt-24">
+          <CardHeader>
+            <CardTitle className="text-2xl flex items-center gap-2"><Wrench className="h-6 w-6 text-primary" /> Cost History</CardTitle>
+            <CardDescription>Day-by-day yarn cost: kg used, rate, yarn cost, and total per-dozen cost.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Recent days</span>
+              <span className="text-xs text-muted-foreground">{sortedDailyEntries.length} records</span>
+            </div>
+            {sortedDailyEntries.length > 0 ? (
+              <div className="space-y-2 max-h-[28rem] overflow-y-auto pr-1">
+                {sortedDailyEntries.slice(0, 60).map((entry) => {
+                  const yarnCost = (entry.yarnUsedKg || 0) * (entry.yarnCostPerKg || 0);
+                  return (
+                    <div key={entry.id} className="flex flex-col gap-1 rounded-xl border bg-card/60 p-3 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <p className="text-sm font-semibold">{formatDateLabel(entry.date)}</p>
+                        <p className="text-[11px] text-muted-foreground">
+                          {entry.yarnUsedKg.toLocaleString(undefined, { maximumFractionDigits: 2 })} kg used
+                        </p>
+                      </div>
+                      <div className="grid grid-cols-3 gap-3 text-right sm:gap-6">
+                        <div>
+                          <p className="text-[10px] text-muted-foreground">Tk / kg</p>
+                          <p className="text-sm font-bold">Tk {entry.yarnCostPerKg.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-muted-foreground">Yarn cost</p>
+                          <p className="text-sm font-bold">Tk {yarnCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-muted-foreground">Total / dz</p>
+                          <p className="text-sm font-bold">Tk {entry.costPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="rounded-xl border border-dashed p-5 text-center">
+                <p className="text-sm font-medium">No cost entries yet</p>
+                <p className="text-xs text-muted-foreground mt-1">Add a daily production entry to start tracking yarn cost.</p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
