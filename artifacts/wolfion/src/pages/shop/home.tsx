@@ -598,12 +598,12 @@ export default function ShopHome() {
                 "linear-gradient(135deg, #1ABBC4 0%, #6E3CFB 50%, #D4AF37 100%)",
             }}
           />
-          {/* Gradient ring */}
+          {/* Gradient ring — animated conic border that slowly rotates
+              its highlight around the frame, like a glass rim catching
+              light. */}
           <div
-            className="relative rounded-[28px] p-[1.5px] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.55)] craft-frame-3d"
+            className="relative rounded-[28px] p-[1.5px] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.55)] craft-frame-3d craft-border-spin"
             style={{
-              background:
-                "linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(26,187,196,0.45) 35%, rgba(110,60,251,0.4) 65%, rgba(212,175,55,0.55) 100%)",
               transformStyle: "preserve-3d",
             }}
           >
@@ -795,6 +795,53 @@ export default function ShopHome() {
           animation: wf-craft-float 9s ease-in-out infinite;
           will-change: transform;
         }
+        /* Animated conic gradient border. We register --craft-angle as
+           a CSS @property so it can be transitioned/animated; the
+           background uses it to rotate the highlight stops around the
+           frame. Falls back gracefully on browsers without @property. */
+        @property --craft-angle {
+          syntax: "<angle>";
+          inherits: false;
+          initial-value: 0deg;
+        }
+        @keyframes wf-craft-border-spin {
+          to { --craft-angle: 360deg; }
+        }
+        .craft-border-spin {
+          --craft-angle: 0deg;
+          background:
+            conic-gradient(
+              from var(--craft-angle),
+              rgba(255, 255, 255, 0.85) 0deg,
+              rgba(26, 187, 196, 0.55) 70deg,
+              rgba(110, 60, 251, 0.5) 150deg,
+              rgba(212, 175, 55, 0.7) 230deg,
+              rgba(255, 255, 255, 0.85) 320deg,
+              rgba(255, 255, 255, 0.85) 360deg
+            );
+          animation:
+            wf-craft-float 9s ease-in-out infinite,
+            wf-craft-border-spin 8s linear infinite;
+        }
+        /* Fallback for browsers without @property support: animate the
+           background-position of a long linear gradient so the border
+           still shimmers, even if it doesn't truly orbit. */
+        @supports not (background: conic-gradient(from 0deg, red, blue)) {
+          .craft-border-spin {
+            background: linear-gradient(
+              115deg,
+              rgba(255, 255, 255, 0.85) 0%,
+              rgba(26, 187, 196, 0.55) 25%,
+              rgba(110, 60, 251, 0.5) 50%,
+              rgba(212, 175, 55, 0.7) 75%,
+              rgba(255, 255, 255, 0.85) 100%
+            );
+            background-size: 300% 100%;
+            animation:
+              wf-craft-float 9s ease-in-out infinite,
+              wf-craft-shimmer 6s linear infinite;
+          }
+        }
         .craft-halo-pulse {
           animation: wf-craft-halo 6.5s ease-in-out infinite;
         }
@@ -818,6 +865,7 @@ export default function ShopHome() {
         }
         @media (prefers-reduced-motion: reduce) {
           .craft-frame-3d,
+          .craft-border-spin,
           .craft-halo-pulse,
           .craft-sheen,
           .craft-rise,
@@ -831,10 +879,13 @@ export default function ShopHome() {
         }
         @media (hover: none), (pointer: coarse) {
           /* Match the hero policy: kill the constantly-running heavy
-             animations on phones (sheen sweep + halo pulse + float) so
-             scroll past this section stays buttery. The one-shot text
-             rises and the gentle text shimmer are cheap, so they stay. */
+             animations on phones (sheen sweep + halo pulse + float +
+             border spin) so scroll past this section stays buttery.
+             The one-shot text rises and the gentle text shimmer are
+             cheap, so they stay. The border still keeps its colors,
+             just no longer rotates. */
           .craft-frame-3d,
+          .craft-border-spin,
           .craft-halo-pulse,
           .craft-sheen {
             animation: none !important;
