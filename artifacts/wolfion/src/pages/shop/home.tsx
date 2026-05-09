@@ -589,13 +589,14 @@ export default function ShopHome() {
       {/* 5 — EDITORIAL CRAFT BANNER · 3D Glass framed photo */}
       <section className="relative container mx-auto px-4 sm:px-5 py-8 sm:py-12 overflow-visible">
         <div className={`relative max-w-5xl mx-auto ${FADE}`} style={{ perspective: "1400px" }}>
-          {/* Glow halo behind the photo */}
+          {/* Soft neutral glow halo behind the photo (no colored tint —
+              same neutral feel as the iPhone-style hero glass). */}
           <div
             aria-hidden
-            className="absolute -inset-3 sm:-inset-5 rounded-[34px] blur-2xl opacity-50 pointer-events-none craft-halo-pulse"
+            className="absolute -inset-3 sm:-inset-5 rounded-[34px] blur-2xl opacity-40 pointer-events-none craft-halo-pulse"
             style={{
               background:
-                "linear-gradient(135deg, #1ABBC4 0%, #6E3CFB 50%, #D4AF37 100%)",
+                "radial-gradient(60% 60% at 50% 50%, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 70%)",
             }}
           />
           {/* Gradient ring — animated conic border that slowly rotates
@@ -807,34 +808,40 @@ export default function ShopHome() {
         @keyframes wf-craft-border-spin {
           to { --craft-angle: 360deg; }
         }
+        /* Neutral 3D-glass bevel, same iPhone-glass vocabulary as the
+           hero. The conic-gradient stops are pure white -> black so the
+           rim has no color tint; only the *highlight position* orbits
+           the frame, like light catching a glass edge. */
         .craft-border-spin {
           --craft-angle: 0deg;
           background:
             conic-gradient(
               from var(--craft-angle),
-              rgba(255, 255, 255, 0.85) 0deg,
-              rgba(26, 187, 196, 0.55) 70deg,
-              rgba(110, 60, 251, 0.5) 150deg,
-              rgba(212, 175, 55, 0.7) 230deg,
-              rgba(255, 255, 255, 0.85) 320deg,
-              rgba(255, 255, 255, 0.85) 360deg
+              rgba(255, 255, 255, 0.9) 0deg,
+              rgba(255, 255, 255, 0.25) 80deg,
+              rgba(0, 0, 0, 0.55) 180deg,
+              rgba(255, 255, 255, 0.25) 280deg,
+              rgba(255, 255, 255, 0.9) 360deg
             );
+          box-shadow:
+            0 24px 60px -22px rgba(0, 0, 0, 0.55),
+            inset 0 1px 0 rgba(255, 255, 255, 0.45),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.45);
           animation:
             wf-craft-float 9s ease-in-out infinite,
             wf-craft-border-spin 8s linear infinite;
         }
         /* Fallback for browsers without @property support: animate the
-           background-position of a long linear gradient so the border
+           background-position of a long neutral gradient so the border
            still shimmers, even if it doesn't truly orbit. */
         @supports not (background: conic-gradient(from 0deg, red, blue)) {
           .craft-border-spin {
             background: linear-gradient(
               115deg,
-              rgba(255, 255, 255, 0.85) 0%,
-              rgba(26, 187, 196, 0.55) 25%,
-              rgba(110, 60, 251, 0.5) 50%,
-              rgba(212, 175, 55, 0.7) 75%,
-              rgba(255, 255, 255, 0.85) 100%
+              rgba(255, 255, 255, 0.9) 0%,
+              rgba(255, 255, 255, 0.25) 35%,
+              rgba(0, 0, 0, 0.55) 65%,
+              rgba(255, 255, 255, 0.9) 100%
             );
             background-size: 300% 100%;
             animation:
