@@ -121,7 +121,7 @@ export default function ShopHome() {
               loading="eager"
               decoding="async"
               fetchPriority="high"
-              className="absolute inset-0 h-full w-full object-cover object-[center_75%] scale-105 animate-in fade-in zoom-in-95 duration-[2000ms] fill-mode-both"
+              className="hero-photo absolute inset-0 h-full w-full object-cover object-[center_75%] scale-105 animate-in fade-in zoom-in-95 duration-[2000ms] fill-mode-both"
               style={{
                 transition: "transform 380ms cubic-bezier(0.22, 1, 0.36, 1)",
                 // translateZ(0) promotes the image to its own GPU layer so
@@ -136,6 +136,10 @@ export default function ShopHome() {
             />
             {/* Soft bottom-only gradient so the glass card has contrast without covering the model */}
             <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/55 to-transparent pointer-events-none" />
+            {/* Dark-mode tone-down — only paints in dark mode. Knocks the
+                hero photo's brightness/saturation down so it stops feeling
+                blown-out next to the rest of the dark UI. */}
+            <div className="hidden dark:block absolute inset-0 bg-black/30 pointer-events-none mix-blend-multiply" />
 
             {/* Inner top sheen — strong glass highlight at the top edge */}
             <div
@@ -727,6 +731,11 @@ export default function ShopHome() {
             transform: translateZ(0) !important;
             will-change: auto !important;
           }
+        }
+        /* Dim + desaturate the hero photo in dark mode so it stops
+           feeling jarringly bright against the surrounding black UI. */
+        .dark .hero-photo {
+          filter: brightness(0.78) saturate(0.88) contrast(1.02);
         }
       `}</style>
     </ShopLayout>
