@@ -1008,6 +1008,38 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
           editingProduct={null}
         />
       )}
+
+      <style>{`
+        /* Light mode header — frosted white with soft inner highlight
+           and a gentle drop shadow. Same look as before. */
+        .wf-shop-header {
+          box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.85),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.06),
+            0 12px 28px -10px rgba(0, 0, 0, 0.18),
+            0 4px 10px -4px rgba(0, 0, 0, 0.08);
+        }
+        /* Dark mode header — iPhone-glass 3D treatment.
+           Layered translucent gradient (lighter at the top, deeper
+           toward the bottom) so the page beneath shows through with
+           a polished glass feel; bright top sheen + dark bottom rim
+           bevel; and a deep drop shadow for separation from the page.
+           No solid neutral-950 fill — that was the muddy look the
+           user asked us to fix. */
+        .dark .wf-shop-header {
+          background-image: linear-gradient(
+            to bottom,
+            rgba(64, 64, 70, 0.55) 0%,
+            rgba(28, 28, 32, 0.55) 55%,
+            rgba(10, 10, 12, 0.65) 100%
+          );
+          box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.22),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.55),
+            0 14px 34px -12px rgba(0, 0, 0, 0.55),
+            0 4px 12px -6px rgba(0, 0, 0, 0.45);
+        }
+      `}</style>
     </div>
   );
 }
