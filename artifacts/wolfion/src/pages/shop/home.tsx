@@ -139,7 +139,7 @@ export default function ShopHome() {
             {/* Dark-mode tone-down — only paints in dark mode. Knocks the
                 hero photo's brightness/saturation down so it stops feeling
                 blown-out next to the rest of the dark UI. */}
-            <div className="hidden dark:block absolute inset-0 bg-black/30 pointer-events-none mix-blend-multiply" />
+            <div className="hidden dark:block absolute inset-0 bg-black/55 pointer-events-none" />
 
             {/* Inner top sheen — strong glass highlight at the top edge */}
             <div
@@ -735,7 +735,7 @@ export default function ShopHome() {
         /* Dim + desaturate the hero photo in dark mode so it stops
            feeling jarringly bright against the surrounding black UI. */
         .dark .hero-photo {
-          filter: brightness(0.78) saturate(0.88) contrast(1.02);
+          filter: brightness(0.55) saturate(0.65) contrast(1.02);
         }
       `}</style>
     </ShopLayout>
