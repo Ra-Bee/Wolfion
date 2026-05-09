@@ -56,10 +56,18 @@ export function ProductCard({ product, ratio = "tall" }: Props) {
         {/* Soft gradient sheen */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-        {/* Wolfion logo watermark */}
-        <div className="absolute top-3 right-3 h-9 w-9 rounded-lg bg-white/70 dark:bg-neutral-950/60 backdrop-blur-md flex items-center justify-center shadow-sm ring-1 ring-white/40 dark:ring-neutral-700/40">
-          <img src={imgLogoMark} alt="" aria-hidden className="h-6 w-6 object-contain opacity-90" />
-        </div>
+        {/* Wolfion logo watermark — transparent, readable on any image */}
+        <img
+          src={imgLogoMark}
+          alt=""
+          aria-hidden
+          className="absolute top-3 right-3 h-10 w-10 object-contain pointer-events-none select-none"
+          style={{
+            filter:
+              "brightness(0) invert(1) drop-shadow(0 1px 2px rgba(0,0,0,0.85)) drop-shadow(0 0 6px rgba(0,0,0,0.55))",
+            opacity: 0.95,
+          }}
+        />
 
         {product.inventory < 200 && (
           <span className="absolute top-3 left-3 bg-white/85 dark:bg-neutral-950/85 backdrop-blur-md text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-full shadow-sm">
