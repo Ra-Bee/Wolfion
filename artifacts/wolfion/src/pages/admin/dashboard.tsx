@@ -1366,11 +1366,11 @@ export default function Dashboard() {
                   className="stat-glass relative rounded-3xl p-[1px] shadow-[0_14px_40px_-22px_rgba(0,0,0,0.35)]"
                   style={{
                     background:
-                      "linear-gradient(135deg, rgba(74,222,128,0.4) 0%, rgba(190,235,210,0.15) 50%, rgba(74,222,128,0.32) 100%)",
+                      "linear-gradient(135deg, rgba(74,222,128,0.22) 0%, rgba(255,255,255,0.1) 50%, rgba(74,222,128,0.18) 100%)",
                   }}
                 >
                   <div
-                    className="relative rounded-[22px] overflow-hidden p-4 sm:p-5 bg-emerald-50/35 dark:bg-emerald-950/30"
+                    className="relative rounded-[22px] overflow-hidden p-4 sm:p-5 bg-emerald-50/15 dark:bg-emerald-950/15"
                     style={{
                       backdropFilter: "blur(28px) saturate(120%)",
                       WebkitBackdropFilter: "blur(28px) saturate(120%)",
@@ -1391,7 +1391,7 @@ export default function Dashboard() {
                       className="absolute -top-12 -right-12 h-40 w-40 rounded-full opacity-40 pointer-events-none blur-3xl"
                       style={{
                         background:
-                          "radial-gradient(circle, rgba(34,197,94,0.18) 0%, transparent 70%)",
+                          "radial-gradient(circle, rgba(34,197,94,0.08) 0%, transparent 70%)",
                       }}
                     />
                     <div className="relative grid grid-cols-2 gap-3 sm:gap-4">
@@ -1580,11 +1580,11 @@ export default function Dashboard() {
               className="stat-glass relative rounded-3xl p-[1px] shadow-[0_14px_40px_-22px_rgba(0,0,0,0.35)]"
               style={{
                 background:
-                  "linear-gradient(135deg, rgba(74,222,128,0.4) 0%, rgba(190,235,210,0.15) 50%, rgba(74,222,128,0.32) 100%)",
+                  "linear-gradient(135deg, rgba(74,222,128,0.22) 0%, rgba(255,255,255,0.1) 50%, rgba(74,222,128,0.18) 100%)",
               }}
             >
               <div
-                className="relative rounded-[22px] overflow-hidden p-4 sm:p-5 bg-emerald-50/35 dark:bg-emerald-950/30"
+                className="relative rounded-[22px] overflow-hidden p-4 sm:p-5 bg-emerald-50/15 dark:bg-emerald-950/15"
                 style={{
                   backdropFilter: "blur(28px) saturate(120%)",
                   WebkitBackdropFilter: "blur(28px) saturate(120%)",
@@ -1604,7 +1604,7 @@ export default function Dashboard() {
                   className="absolute -bottom-14 -left-12 h-44 w-44 rounded-full opacity-40 pointer-events-none blur-3xl"
                   style={{
                     background:
-                      "radial-gradient(circle, rgba(34,197,94,0.18) 0%, transparent 70%)",
+                      "radial-gradient(circle, rgba(34,197,94,0.08) 0%, transparent 70%)",
                   }}
                 />
                 <div className="relative grid grid-cols-2 gap-3 sm:gap-4">
@@ -1717,11 +1717,11 @@ export default function Dashboard() {
                   className="stat-glass-sm relative rounded-xl p-[1px] shadow-[0_6px_18px_-12px_rgba(0,0,0,0.35)]"
                   style={{
                     background:
-                      "linear-gradient(135deg, rgba(74,222,128,0.36) 0%, rgba(190,235,210,0.15) 50%, rgba(74,222,128,0.3) 100%)",
+                      "linear-gradient(135deg, rgba(74,222,128,0.2) 0%, rgba(255,255,255,0.1) 50%, rgba(74,222,128,0.16) 100%)",
                   }}
                 >
                   <div
-                    className="relative rounded-[11px] overflow-hidden px-2 py-1.5 sm:px-2.5 sm:py-2 min-h-[48px] flex flex-col justify-center box-border bg-emerald-50/35 dark:bg-emerald-950/30"
+                    className="relative rounded-[11px] overflow-hidden px-2 py-1.5 sm:px-2.5 sm:py-2 min-h-[48px] flex flex-col justify-center box-border bg-emerald-50/15 dark:bg-emerald-950/15"
                     style={{
                       backdropFilter: "blur(22px) saturate(120%)",
                       WebkitBackdropFilter: "blur(22px) saturate(120%)",
@@ -2061,11 +2061,11 @@ export default function Dashboard() {
                   { key: "future",    label: "Future need", value: `${futureYarnNeed.toLocaleString(undefined, { maximumFractionDigits: 1 })} kg`, hint: "For current stock", tone: "amber" },
                 ];
                 const ringByTone: Record<"green" | "amber", string> = {
-                  green: "linear-gradient(135deg, rgba(74,222,128,0.4) 0%, rgba(190,235,210,0.15) 50%, rgba(74,222,128,0.32) 100%)",
+                  green: "linear-gradient(135deg, rgba(74,222,128,0.22) 0%, rgba(255,255,255,0.1) 50%, rgba(74,222,128,0.18) 100%)",
                   amber: "linear-gradient(135deg, rgba(253,224,180,0.7) 0%, rgba(255,255,255,0.2) 50%, rgba(253,224,180,0.6) 100%)",
                 };
                 const haloByTone: Record<"green" | "amber", string> = {
-                  green: "radial-gradient(circle, rgba(34,197,94,0.18) 0%, transparent 70%)",
+                  green: "radial-gradient(circle, rgba(34,197,94,0.08) 0%, transparent 70%)",
                   amber: "radial-gradient(circle, rgba(245,158,11,0.22) 0%, transparent 70%)",
                 };
                 return tiles.map((tile) => (
@@ -2075,7 +2075,7 @@ export default function Dashboard() {
                     style={{ background: ringByTone[tile.tone] }}
                   >
                     <div
-                      className="relative rounded-[15px] overflow-hidden p-4 bg-emerald-50/35 dark:bg-emerald-950/30 h-full"
+                      className="relative rounded-[15px] overflow-hidden p-4 bg-emerald-50/15 dark:bg-emerald-950/15 h-full"
                       style={{
                         backdropFilter: "blur(22px) saturate(120%)",
                         WebkitBackdropFilter: "blur(22px) saturate(120%)",
