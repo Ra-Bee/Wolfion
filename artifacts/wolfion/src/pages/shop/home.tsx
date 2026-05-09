@@ -62,20 +62,22 @@ export default function ShopHome() {
   }, []);
 
   // === Craft section: interactive 3D tilt on touch + mouse ===
-  // Uses Pointer Events so a finger drag tilts the frame on phones
-  // (the hero tilt is mouse-only). The frame's CSS animation reads
-  // --crx / --cry so the tilt composes with the gentle float.
+  // The previous version listened on the parent with passive
+  // pointermove, but on phones a finger drag is treated as a page
+  // scroll, so pointermove never fired and the tilt never applied.
+  // Fix: listen directly on the frame, set touch-action:none on it
+  // (configured inline in JSX), capture the pointer on pointerdown,
+  // and track pointermove while captured. This way a drag inside
+  // the photo tilts it; a drag anywhere else still scrolls the page.
   useEffect(() => {
     const frame = craftFrameRef.current;
     const img = craftImgRef.current;
     if (!frame) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const parent = frame.parentElement;
-    if (!parent) return;
-
     let raf = 0;
     let resetTimer: ReturnType<typeof setTimeout> | null = null;
+    let active = false;
 
     const apply = (clientX: number, clientY: number) => {
       cancelAnimationFrame(raf);
@@ -85,12 +87,12 @@ export default function ShopHome() {
         const y = (clientY - rect.top) / rect.height;
         const cx = Math.max(0, Math.min(1, x));
         const cy = Math.max(0, Math.min(1, y));
-        const rx = (cy - 0.5) * -8;
-        const ry = (cx - 0.5) * 8;
+        const rx = (cy - 0.5) * -10;
+        const ry = (cx - 0.5) * 10;
         frame.style.setProperty("--crx", `${rx}deg`);
         frame.style.setProperty("--cry", `${ry}deg`);
         if (img) {
-          img.style.transform = `translate3d(${(cx - 0.5) * -16}px, ${(cy - 0.5) * -12}px, 0) scale(1.06)`;
+          img.style.transform = `translate3d(${(cx - 0.5) * -18}px, ${(cy - 0.5) * -14}px, 0) scale(1.06)`;
         }
       });
     };
@@ -102,30 +104,54 @@ export default function ShopHome() {
       if (img) img.style.transform = "translate3d(0,0,0) scale(1)";
     };
 
-    const onPointerMove = (e: PointerEvent) => {
+    const onPointerDown = (e: PointerEvent) => {
+      active = true;
       if (resetTimer) {
         clearTimeout(resetTimer);
         resetTimer = null;
       }
-      apply(e.clientX, e.clientY);
-      // For touch, ease back to neutral shortly after the finger
-      // stops moving so the frame doesn't get "stuck" tilted.
-      if (e.pointerType === "touch") {
-        resetTimer = setTimeout(reset, 700);
+      try {
+        frame.setPointerCapture(e.pointerId);
+      } catch {
+        /* ignore — capture not supported */
       }
+      apply(e.clientX, e.clientY);
     };
-    const onPointerLeave = () => reset();
-    const onPointerCancel = () => reset();
+    const onPointerMove = (e: PointerEvent) => {
+      // Mouse: tilt on hover (no button required).
+      // Touch / pen: only tilt while finger is down.
+      if (e.pointerType !== "mouse" && !active) return;
+      apply(e.clientX, e.clientY);
+    };
+    const onPointerUp = (e: PointerEvent) => {
+      active = false;
+      try {
+        frame.releasePointerCapture(e.pointerId);
+      } catch {
+        /* ignore */
+      }
+      // Small ease-back delay so the tilt doesn't snap back instantly.
+      resetTimer = setTimeout(reset, 220);
+    };
+    const onPointerLeave = (e: PointerEvent) => {
+      if (e.pointerType === "mouse") reset();
+    };
+    const onPointerCancel = () => {
+      active = false;
+      reset();
+    };
 
-    parent.addEventListener("pointermove", onPointerMove, { passive: true });
-    parent.addEventListener("pointerleave", onPointerLeave);
-    parent.addEventListener("pointercancel", onPointerCancel);
-    parent.addEventListener("pointerup", onPointerLeave);
+    frame.addEventListener("pointerdown", onPointerDown);
+    frame.addEventListener("pointermove", onPointerMove);
+    frame.addEventListener("pointerup", onPointerUp);
+    frame.addEventListener("pointerleave", onPointerLeave);
+    frame.addEventListener("pointercancel", onPointerCancel);
     return () => {
-      parent.removeEventListener("pointermove", onPointerMove);
-      parent.removeEventListener("pointerleave", onPointerLeave);
-      parent.removeEventListener("pointercancel", onPointerCancel);
-      parent.removeEventListener("pointerup", onPointerLeave);
+      frame.removeEventListener("pointerdown", onPointerDown);
+      frame.removeEventListener("pointermove", onPointerMove);
+      frame.removeEventListener("pointerup", onPointerUp);
+      frame.removeEventListener("pointerleave", onPointerLeave);
+      frame.removeEventListener("pointercancel", onPointerCancel);
       cancelAnimationFrame(raf);
       if (resetTimer) clearTimeout(resetTimer);
     };
@@ -676,10 +702,15 @@ export default function ShopHome() {
               light. */}
           <div
             ref={craftFrameRef}
-            className="relative rounded-[28px] p-[1.5px] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.55)] craft-frame-3d craft-border-spin"
+            className="relative rounded-[28px] p-[1.5px] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.55)] craft-frame-3d craft-border-spin select-none"
             style={{
               transformStyle: "preserve-3d",
               transition: "transform 380ms cubic-bezier(0.22, 1, 0.36, 1)",
+              // touchAction:none lets the browser deliver pointermove
+              // events for finger drags inside this frame instead of
+              // hijacking them for page scroll. The rest of the page
+              // still scrolls normally.
+              touchAction: "none",
             }}
           >
             <div
