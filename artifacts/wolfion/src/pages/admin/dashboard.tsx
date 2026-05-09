@@ -121,11 +121,20 @@ type ElectricityEntry = {
   createdAt: string;
 };
 
+type WorkArea = "machine_run" | "iron" | "packaging";
+const workAreaLabels: Record<WorkArea, string> = {
+  machine_run: "Machine run",
+  iron: "Iron",
+  packaging: "Packaging",
+};
+const workAreaOrder: WorkArea[] = ["machine_run", "iron", "packaging"];
+
 type Worker = {
   id: string;
   name: string;
   payType: "daily" | "per_unit";
   rate: number;
+  workAt?: WorkArea;
   nextPaymentDate?: string;
   createdAt: string;
 };
@@ -381,10 +390,9 @@ export default function Dashboard() {
     }
   });
   const [newWorkerName, setNewWorkerName] = useState("");
-  const [newWorkerPayType, setNewWorkerPayType] = useState<"daily" | "per_unit">("daily");
-  const [newWorkerRate, setNewWorkerRate] = useState("");
+  const [newWorkerWorkAt, setNewWorkerWorkAt] = useState<WorkArea>("machine_run");
   const [uniDate, setUniDate] = useState(getToday());
-  const [uniBillUnits, setUniBillUnits] = useState("");
+  const [uniDailyBill, setUniDailyBill] = useState("");
   const [uniNextPaymentDate, setUniNextPaymentDate] = useState("");
   const [uniPayingNow, setUniPayingNow] = useState("");
   const [uniConfirm, setUniConfirm] = useState("");
@@ -953,15 +961,14 @@ export default function Dashboard() {
     setWorkerError("");
     setUniConfirm("");
     const name = newWorkerName.trim();
-    const rate = Number(newWorkerRate);
-    const billUnits = Number(uniBillUnits);
+    const dailyBill = Number(uniDailyBill);
     const payingNow = Number(uniPayingNow);
-    if (!uniDate || !name || !Number.isFinite(rate) || rate <= 0) {
-      setWorkerError("Enter date, name, and a valid wage.");
+    if (!uniDate || !name) {
+      setWorkerError("Enter date and worker name.");
       return;
     }
-    if (uniBillUnits !== "" && (!Number.isFinite(billUnits) || billUnits < 0)) {
-      setWorkerError("Bill units must be 0 or more.");
+    if (uniDailyBill !== "" && (!Number.isFinite(dailyBill) || dailyBill < 0)) {
+      setWorkerError("Daily bill must be 0 or more.");
       return;
     }
     if (uniPayingNow !== "" && (!Number.isFinite(payingNow) || payingNow < 0)) {
@@ -973,26 +980,29 @@ export default function Dashboard() {
     let workerId: string;
     if (existing) {
       workerId = existing.id;
-      setWorkers((current) => current.map((w) => w.id === existing.id ? { ...w, payType: newWorkerPayType, rate, nextPaymentDate: uniNextPaymentDate || w.nextPaymentDate } : w));
+      setWorkers((current) => current.map((w) => w.id === existing.id ? { ...w, workAt: newWorkerWorkAt, nextPaymentDate: uniNextPaymentDate || w.nextPaymentDate } : w));
     } else {
       workerId = crypto.randomUUID();
       const worker: Worker = {
         id: workerId,
         name,
-        payType: newWorkerPayType,
-        rate,
+        // Daily-bill workers: rate is 1 so totalEarned = sum of WorkLog
+        // amounts (which are stored as Tk amounts, not unit counts).
+        payType: "daily",
+        rate: 1,
+        workAt: newWorkerWorkAt,
         nextPaymentDate: uniNextPaymentDate || undefined,
         createdAt: new Date().toISOString(),
       };
       setWorkers((current) => [worker, ...current]);
     }
 
-    if (Number.isFinite(billUnits) && billUnits > 0) {
+    if (Number.isFinite(dailyBill) && dailyBill > 0) {
       const log: WorkLog = {
         id: crypto.randomUUID(),
         workerId,
         date: uniDate,
-        amount: billUnits,
+        amount: dailyBill,
         createdAt: new Date().toISOString(),
       };
       setWorkLogs((current) => [log, ...current]);
@@ -1011,8 +1021,7 @@ export default function Dashboard() {
 
     setUniConfirm(`Saved entry for ${name}.`);
     setNewWorkerName("");
-    setNewWorkerRate("");
-    setUniBillUnits("");
+    setUniDailyBill("");
     setUniPayingNow("");
     setUniNextPaymentDate("");
   }
@@ -2303,30 +2312,24 @@ export default function Dashboard() {
 
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="worker-paytype">Pay for</label>
-                  <Select value={newWorkerPayType} onValueChange={(v) => setNewWorkerPayType(v as "daily" | "per_unit")}>
-                    <SelectTrigger id="worker-paytype" className="h-12 text-base"><SelectValue /></SelectTrigger>
+                  <label className="text-sm font-medium" htmlFor="worker-workat">Work at</label>
+                  <Select value={newWorkerWorkAt} onValueChange={(v) => setNewWorkerWorkAt(v as WorkArea)}>
+                    <SelectTrigger id="worker-workat" className="h-12 text-base"><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="daily">Daily wage</SelectItem>
-                      <SelectItem value="per_unit">Per unit</SelectItem>
+                      {workAreaOrder.map((a) => (
+                        <SelectItem key={a} value={a}>{workAreaLabels[a]}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="worker-rate">{newWorkerPayType === "daily" ? "Wage / day" : "Rate / unit"}</label>
-                  <Input id="worker-rate" type="number" min="0.01" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={newWorkerRate} onChange={(e) => setNewWorkerRate(e.target.value)} required />
+                  <label className="text-sm font-medium" htmlFor="uni-bill">Daily bill (Tk)</label>
+                  <Input id="uni-bill" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={uniDailyBill} onChange={(e) => setUniDailyBill(e.target.value)} />
                 </div>
               </div>
 
-              <Separator />
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="uni-bill">Bill ({newWorkerPayType === "daily" ? "days worked" : "units done"})</label>
-                <Input id="uni-bill" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={uniBillUnits} onChange={(e) => setUniBillUnits(e.target.value)} />
-              </div>
-
               {(() => {
-                const billAmount = (Number(newWorkerRate) || 0) * (Number(uniBillUnits) || 0);
+                const billAmount = Number(uniDailyBill) || 0;
                 const dueAfter = Math.max(0, billAmount - (Number(uniPayingNow) || 0));
                 return (
                   <div className="grid grid-cols-2 gap-2">
@@ -2367,7 +2370,7 @@ export default function Dashboard() {
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
                           <p className="text-base font-semibold">{worker.name}</p>
-                          <p className="text-xs text-muted-foreground">{worker.payType === "daily" ? `Tk ${worker.rate}/day` : `Tk ${worker.rate}/unit`} · {totalUnits.toLocaleString()} {worker.payType === "daily" ? "days" : "units"}</p>
+                          <p className="text-xs text-muted-foreground">{worker.workAt ? workAreaLabels[worker.workAt] : (worker.payType === "daily" ? `Tk ${worker.rate}/day` : `Tk ${worker.rate}/unit`)} · Tk {totalUnits.toLocaleString(undefined, { maximumFractionDigits: 2 })} billed</p>
                         </div>
                         <Button variant="ghost" size="sm" onClick={() => handleRemoveWorker(worker.id)} className="text-destructive">Remove</Button>
                       </div>
