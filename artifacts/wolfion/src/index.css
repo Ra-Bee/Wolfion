@@ -303,13 +303,48 @@
       0 -1px 0 rgba(0,0,0,0.55) inset,
       0 18px 40px -16px rgba(0,0,0,0.85);
   }
-  .dark [class*="bg-primary/5"] {
-    background-color: rgba(255, 90, 0, 0.06) !important;
+
+  /* Highlighted KPI tiles (e.g. "Total profit", "Daily profit",
+     "Total investment" boxes on the admin pages) — replace the
+     orange wash with a frosted iOS-style white→mint-green glass
+     tile. Works in both light and dark mode. Targets the
+     bg-primary/5 utility used by these tiles. */
+  [class*="bg-primary/5"] {
+    background-color: rgba(255, 255, 255, 0.55) !important;
     background-image:
-      linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(0,0,0,0.10) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+      linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(220, 252, 231, 0.55) 55%, rgba(187, 247, 208, 0.40) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.95) inset,
+      0 -1px 0 rgba(34, 197, 94, 0.15) inset,
+      0 1px 2px rgba(34, 197, 94, 0.10),
+      0 12px 28px -10px rgba(34, 197, 94, 0.18);
+    color: rgb(20, 83, 45);
+  }
+  [class*="bg-primary/5"] p,
+  [class*="bg-primary/5"] span {
+    color: inherit;
+  }
+  [class*="bg-primary/5"] .text-muted-foreground {
+    color: rgba(20, 83, 45, 0.65) !important;
+  }
+
+  .dark [class*="bg-primary/5"] {
+    background-color: rgba(20, 20, 20, 0.45) !important;
+    background-image:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(34, 197, 94, 0.10) 55%, rgba(34, 197, 94, 0.06) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    color: rgb(187, 247, 208);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.10) inset,
+      0 -1px 0 rgba(0, 0, 0, 0.55) inset,
+      0 1px 2px rgba(0, 0, 0, 0.55),
+      0 18px 40px -16px rgba(34, 197, 94, 0.20);
+  }
+  .dark [class*="bg-primary/5"] .text-muted-foreground {
+    color: rgba(187, 247, 208, 0.70) !important;
   }
 
   /* 3D side-menu items */
