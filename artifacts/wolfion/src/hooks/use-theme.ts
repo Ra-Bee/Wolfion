@@ -34,6 +34,15 @@ function applyTheme(mode: ThemeMode) {
   const root = document.documentElement;
   if (mode === "dark") root.classList.add("dark");
   else root.classList.remove("dark");
+  // Keep native form controls / scrollbars in sync with the chosen theme.
+  root.style.colorScheme = mode === "dark" ? "dark" : "light";
+  root.style.background = mode === "dark" ? "#0a0a0a" : "#ffffff";
+  // Flip the Android status-bar / iOS safari URL bar color so the system
+  // chrome around the app matches the in-app theme even when the user
+  // overrides the OS preference.
+  const fill = mode === "dark" ? "#0a0a0a" : "#ffffff";
+  const metas = document.querySelectorAll('meta[name="theme-color"]');
+  metas.forEach((m) => m.setAttribute("content", fill));
 }
 
 function resolve(pref: ThemePreference): ThemeMode {

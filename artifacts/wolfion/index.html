@@ -7,7 +7,8 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="theme-color" content="#1ABBC4" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
     <title>Wolfion</title>
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
@@ -20,8 +21,37 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      // Apply the saved theme (or system preference) BEFORE React mounts so
+      // the very first paint matches the user's phone — no light flash on a
+      // dark phone, no dark flash on a light phone. Mirrors the logic in
+      // src/hooks/use-theme.ts; if you change one, change the other.
+      (function () {
+        try {
+          var stored = null;
+          try { stored = localStorage.getItem("wolfion_theme"); } catch (e) {}
+          var pref = (stored === "light" || stored === "dark" || stored === "system") ? stored : "system";
+          var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var isDark = pref === "dark" || (pref === "system" && prefersDark);
+          var root = document.documentElement;
+          if (isDark) root.classList.add("dark"); else root.classList.remove("dark");
+          root.style.colorScheme = isDark ? "dark" : "light";
+          root.style.background = isDark ? "#0a0a0a" : "#ffffff";
+          // Also flip the Android status-bar color in real time when running
+          // in TWA / browser, because the `media` queries on theme-color metas
+          // only respond to OS, not to the in-app override the user picked.
+          var metaLight = document.querySelector('meta[name="theme-color"][media*="light"]');
+          var metaDark = document.querySelector('meta[name="theme-color"][media*="dark"]');
+          if (metaLight) metaLight.setAttribute("content", isDark ? "#0a0a0a" : "#ffffff");
+          if (metaDark) metaDark.setAttribute("content", isDark ? "#0a0a0a" : "#ffffff");
+        } catch (e) { /* ignore — purely best-effort */ }
+      })();
+    </script>
     <style>
-      html, body { margin: 0; padding: 0; background: #ffffff; }
+      html, body { margin: 0; padding: 0; }
+      html { background: #ffffff; }
+      html.dark { background: #0a0a0a; }
+      html.dark body { background: #0a0a0a; color: #f5f5f5; }
       #wolfion-splash {
         position: fixed;
         inset: 0;
