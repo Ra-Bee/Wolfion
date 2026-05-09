@@ -742,6 +742,24 @@ export default function ShopHome() {
         .dark .hero-halo-pulse {
           display: none !important;
         }
+        /* Dark mode: also strip the gold tint from the bevel itself so
+           the border reads as neutral glass (white highlight -> dark
+           shadow) instead of gold-tinted. Keeps the 3D bevel structure
+           and depth, just removes the warm color from the edge. */
+        .dark .hero-frame-3d {
+          background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.55) 0%,
+            rgba(255, 255, 255, 0.18) 35%,
+            rgba(0, 0, 0, 0.35) 70%,
+            rgba(0, 0, 0, 0.65) 100%
+          ) !important;
+          box-shadow:
+            0 24px 60px -22px rgba(0, 0, 0, 0.6),
+            0 6px 22px -10px rgba(0, 0, 0, 0.35),
+            inset 0 1px 0 rgba(255, 255, 255, 0.28),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.5) !important;
+        }
       `}</style>
     </ShopLayout>
   );
