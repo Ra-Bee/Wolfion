@@ -157,6 +157,98 @@ export default function ShopHome() {
     };
   }, []);
 
+  // === Generic touch/mouse tilt for product/collection/box cards ===
+  // Finds every element marked with [data-tilt-card] (sock category
+  // cards, Everyday Essentials cards, Wolfion Box cards) and applies
+  // the same press-to-tilt + spring-back interaction as the Craft
+  // frame. Cards keep their existing hover transforms; the tilt is
+  // applied as an inline transform on the card root.
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+    const cards = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-tilt-card]"),
+    );
+    if (cards.length === 0) return;
+
+    const cleanups: Array<() => void> = [];
+
+    cards.forEach((card) => {
+      let raf = 0;
+      let active = false;
+      let resetTimer: ReturnType<typeof setTimeout> | null = null;
+
+      const apply = (clientX: number, clientY: number) => {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          const rect = card.getBoundingClientRect();
+          const x = (clientX - rect.left) / rect.width;
+          const y = (clientY - rect.top) / rect.height;
+          const cx = Math.max(0, Math.min(1, x));
+          const cy = Math.max(0, Math.min(1, y));
+          const rx = (cy - 0.5) * -10;
+          const ry = (cx - 0.5) * 10;
+          card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+        });
+      };
+      const reset = () => {
+        cancelAnimationFrame(raf);
+        card.style.transform = "";
+      };
+      const onDown = (e: PointerEvent) => {
+        active = true;
+        if (resetTimer) {
+          clearTimeout(resetTimer);
+          resetTimer = null;
+        }
+        try {
+          card.setPointerCapture(e.pointerId);
+        } catch {
+          /* noop */
+        }
+        apply(e.clientX, e.clientY);
+      };
+      const onMove = (e: PointerEvent) => {
+        if (e.pointerType !== "mouse" && !active) return;
+        apply(e.clientX, e.clientY);
+      };
+      const onUp = (e: PointerEvent) => {
+        active = false;
+        try {
+          card.releasePointerCapture(e.pointerId);
+        } catch {
+          /* noop */
+        }
+        resetTimer = setTimeout(reset, 220);
+      };
+      const onLeave = (e: PointerEvent) => {
+        if (e.pointerType === "mouse") reset();
+      };
+      const onCancel = () => {
+        active = false;
+        reset();
+      };
+
+      card.addEventListener("pointerdown", onDown);
+      card.addEventListener("pointermove", onMove);
+      card.addEventListener("pointerup", onUp);
+      card.addEventListener("pointerleave", onLeave);
+      card.addEventListener("pointercancel", onCancel);
+      cleanups.push(() => {
+        card.removeEventListener("pointerdown", onDown);
+        card.removeEventListener("pointermove", onMove);
+        card.removeEventListener("pointerup", onUp);
+        card.removeEventListener("pointerleave", onLeave);
+        card.removeEventListener("pointercancel", onCancel);
+        cancelAnimationFrame(raf);
+        if (resetTimer) clearTimeout(resetTimer);
+      });
+    });
+
+    return () => cleanups.forEach((fn) => fn());
+  }, []);
+
   return (
     <ShopLayout>
       {/* 1 — HERO */}
@@ -407,9 +499,10 @@ export default function ShopHome() {
             <Link
               key={c.id}
               href={`/products?category=${c.id}`}
-              className={`group block ${FADE}`}
+              className={`group block tilt-card ${FADE}`}
               style={{ animationDelay: `${i * 120}ms` }}
               data-testid={`home-sock-${c.id}`}
+              data-tilt-card
             >
               <div className="relative" style={{ transformStyle: "preserve-3d" }}>
                 {/* Glow halo on hover */}
@@ -508,9 +601,10 @@ export default function ShopHome() {
             <Link
               key={col.label}
               href={col.href}
-              className={`group block ${FADE}`}
+              className={`group block tilt-card ${FADE}`}
               style={{ animationDelay: `${i * 120}ms` }}
               data-testid={`home-collection-${col.label.toLowerCase()}`}
+              data-tilt-card
             >
               <div className="relative" style={{ transformStyle: "preserve-3d" }}>
                 <div
@@ -607,7 +701,8 @@ export default function ShopHome() {
           ].map((box) => (
             <div
               key={box.label}
-              className="group relative rounded-xl sm:rounded-2xl overflow-hidden bg-white dark:bg-neutral-900 ring-1 ring-black/5 dark:ring-white/10 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.3)] hover:shadow-[0_20px_45px_-15px_rgba(0,0,0,0.4)] transition-all duration-500 hover:-translate-y-0.5"
+              className="group relative rounded-xl sm:rounded-2xl overflow-hidden bg-white dark:bg-neutral-900 ring-1 ring-black/5 dark:ring-white/10 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.3)] hover:shadow-[0_20px_45px_-15px_rgba(0,0,0,0.4)] transition-all duration-500 hover:-translate-y-0.5 tilt-card"
+              data-tilt-card
             >
               <div className="relative aspect-square overflow-hidden">
                 <div aria-hidden className="absolute inset-0 bg-[#e8ddd2] dark:bg-[#2d2521]" />
@@ -1018,6 +1113,22 @@ export default function ShopHome() {
           .craft-frame-3d {
             will-change: transform;
           }
+        }
+
+        /* === Touch/mouse tilt for product / collection / box cards ===
+           Marks any element with [data-tilt-card]: lets the browser
+           deliver finger-drag pointer events to the card (instead of
+           hijacking them for page scroll), kills the tap highlight
+           overlay, and gives the tilt transform a smooth spring back
+           when the JS clears it on pointerup. */
+        .tilt-card {
+          touch-action: none;
+          -webkit-tap-highlight-color: transparent;
+          transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+          will-change: transform;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .tilt-card { transition: none; transform: none !important; }
         }
       `}</style>
     </ShopLayout>
