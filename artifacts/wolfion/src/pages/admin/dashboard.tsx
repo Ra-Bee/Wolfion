@@ -2309,9 +2309,91 @@ export default function Dashboard() {
         <Card id="cost-history" className="border-2 border-primary/30 shadow-md scroll-mt-24">
           <CardHeader>
             <CardTitle className="text-2xl flex items-center gap-2"><Wrench className="h-6 w-6 text-primary" /> Cost History</CardTitle>
-            <CardDescription>Day-by-day yarn cost: kg used, rate, yarn cost, and total per-dozen cost.</CardDescription>
+            <CardDescription>Add a daily cost entry and review day-by-day yarn cost: kg used, rate, yarn cost, and total per-dozen cost.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
+            {/* Quick-add form — mirrors the Daily Production Entry form
+                so admins can log a new cost entry directly from this
+                card. Shares the same state + handleAddDailyEntry, so a
+                save here is identical to saving from Daily Production
+                Entry. Adds the Yarn cost (Tk/kg) field that the
+                production form doesn't expose, so the rate that drives
+                this card's "Tk/kg" + "Yarn cost" columns can actually
+                be set from here. */}
+            <form onSubmit={handleAddDailyEntry} className="space-y-3">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Add cost entry</h3>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="ch-date">Date</label>
+                  <Input id="ch-date" type="date" className="h-12 text-base" value={dailyDate} onChange={(e) => setDailyDate(e.target.value)} max={getToday()} required />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="ch-product-type">Product type</label>
+                  <Select value={dailyProductType} onValueChange={(v) => setDailyProductType(v as ProductType)}>
+                    <SelectTrigger id="ch-product-type" className="h-12 text-base">
+                      <SelectValue placeholder="Choose product" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(productTypeLabels).map(([value, label]) => (
+                        <SelectItem key={value} value={value}>{label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="ch-qty">Quantity (dz)</label>
+                  <Input id="ch-qty" type="number" min="0" step="1" inputMode="numeric" className="h-12 text-base" placeholder="0" value={dailyProductionDozen} onChange={(e) => setDailyProductionDozen(e.target.value)} required />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="ch-yarn">Yarn (kg)</label>
+                  <Input id="ch-yarn" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={dailyYarnKg} onChange={(e) => setDailyYarnKg(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="ch-machine">Machine hrs</label>
+                  <Input id="ch-machine" type="number" min="0" step="0.1" inputMode="decimal" className="h-12 text-base" placeholder="0" value={dailyMachineHours} onChange={(e) => setDailyMachineHours(e.target.value)} />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="ch-yarn-rate">Yarn cost (Tk / kg)</label>
+                <Input id="ch-yarn-rate" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={dailyYarnCostPerKg} onChange={(e) => setDailyYarnCostPerKg(e.target.value)} />
+              </div>
+
+              <Separator />
+
+              <div className="grid grid-cols-3 gap-2">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="ch-pkg">Packaging</label>
+                  <Input id="ch-pkg" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={dailyPackagingCost} onChange={(e) => setDailyPackagingCost(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="ch-iron">Iron Finishing</label>
+                  <Input id="ch-iron" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={dailyIronCost} onChange={(e) => setDailyIronCost(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="ch-staff">Staff Bill</label>
+                  <Input id="ch-staff" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={dailyStaffBill} onChange={(e) => setDailyStaffBill(e.target.value)} />
+                </div>
+              </div>
+
+              {dailyError && (
+                <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{dailyError}</p>
+              )}
+              {dailyConfirm && (
+                <p className="rounded-lg bg-green-100 px-3 py-2 text-sm font-medium text-green-800">{dailyConfirm}</p>
+              )}
+
+              <Button type="submit" size="lg" className="h-12 w-full text-base font-semibold">
+                <Plus className="h-5 w-5" /> Save cost entry
+              </Button>
+            </form>
+
+            <Separator />
+
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Recent days</span>
               <span className="text-xs text-muted-foreground">{sortedDailyEntries.length} records</span>
