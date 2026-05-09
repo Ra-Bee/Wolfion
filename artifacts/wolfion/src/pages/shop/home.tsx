@@ -251,6 +251,7 @@ export default function ShopHome() {
 
   return (
     <ShopLayout>
+      <div className="wf-page-in">
       {/* 1 — HERO */}
       <section
         className="relative w-full bg-white dark:bg-neutral-950 px-3 pt-3 pb-5 sm:px-5 sm:pt-5 sm:pb-8 overflow-hidden"
@@ -1438,6 +1439,58 @@ export default function ShopHome() {
           .source-chip-in { opacity: 1 !important; transform: none !important; animation: none !important; }
         }
 
+        /* === Phone-only flicker fix ===
+           On touch / coarse-pointer devices the long list of constantly
+           running infinite animations on the "Source" frame (animated
+           noise grain, sweep, vignette, mote drift, seal spin, float,
+           ping, bob) and the craft section (shimmer, spark) repaint
+           huge filtered/blended layers every frame. Combined with the
+           backdrop-filter blurs elsewhere, that causes a visible
+           flicker on lower-end Androids when the page first opens and
+           when scrolling. Kill them on phones — the static 3D bevels,
+           gold corners, halos, gradients and shadow depth are all
+           preserved, so the section still reads as a premium 3D scene,
+           just no perpetual motion. The press-to-tilt interaction is
+           unaffected (it sets inline transforms via JS). */
+        @media (hover: none), (pointer: coarse) {
+          .source-sweep,
+          .source-ping,
+          .source-bob,
+          .source-vignette,
+          .source-seal-spin,
+          .source-float,
+          .source-mote,
+          .source-grain,
+          .craft-spark,
+          .craft-shimmer {
+            animation: none !important;
+          }
+          /* The grain layer is the single biggest repaint cost on
+             phones (animated SVG noise with mix-blend-mode: overlay).
+             Hide it entirely on coarse-pointer devices. */
+          .source-grain { display: none !important; }
+          /* Pin the source frame to its own GPU layer so it doesn't
+             get re-rasterised on every scroll tick. */
+          .source-float {
+            transform: translateZ(0);
+            will-change: auto;
+          }
+        }
+
+        /* One-shot page-open fade so the very first paint doesn't
+           flash. Slow is fine, the user explicitly asked for "slow ok
+           but no flicker". Single 500ms ease, no infinite repaint. */
+        @keyframes wf-page-in {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        .wf-page-in {
+          animation: wf-page-in 500ms ease-out both;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .wf-page-in { animation: none !important; opacity: 1 !important; }
+        }
+
         /* === Touch/mouse tilt for product / collection / box cards ===
            Marks any element with [data-tilt-card]: lets the browser
            deliver finger-drag pointer events to the card (instead of
@@ -1460,6 +1513,7 @@ export default function ShopHome() {
           .tilt-card { transition: none; transform: none !important; }
         }
       `}</style>
+      </div>
     </ShopLayout>
   );
 }
