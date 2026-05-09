@@ -163,11 +163,22 @@ type DailyProductionEntry = {
   createdAt: string;
 };
 
+type CostCategory = "yarn" | "labour" | "packaging" | "electricity" | "other";
+const costCategoryLabels: Record<CostCategory, string> = {
+  yarn: "Yarn",
+  labour: "Labour",
+  packaging: "Packaging",
+  electricity: "Electricity",
+  other: "Other",
+};
+const costCategoryOrder: CostCategory[] = ["yarn", "labour", "packaging", "electricity", "other"];
+
 type CostEntry = {
   id: string;
   date: string;
   item: string;
   amount: number;
+  category?: CostCategory;
   createdAt: string;
 };
 
@@ -299,6 +310,7 @@ export default function Dashboard() {
   const [costEntryDate, setCostEntryDate] = useState(getToday());
   const [costEntryItem, setCostEntryItem] = useState("");
   const [costEntryAmount, setCostEntryAmount] = useState("");
+  const [costEntryCategory, setCostEntryCategory] = useState<CostCategory>("yarn");
   const [costEntryError, setCostEntryError] = useState("");
   const [quickSaleOpen, setQuickSaleOpen] = useState(false);
   const [quickSaleConfirm, setQuickSaleConfirm] = useState("");
@@ -456,6 +468,7 @@ export default function Dashboard() {
       date: costEntryDate,
       item,
       amount,
+      category: costEntryCategory,
       createdAt: new Date().toISOString(),
     };
     setCostEntries((current) => [entry, ...current]);
@@ -2364,14 +2377,29 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className="space-y-6">
             <form onSubmit={handleAddCostEntry} className="space-y-3">
-              <div className="grid grid-cols-[1fr_1fr_auto] gap-2 items-end">
+              <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="cm-date">Date</label>
                   <Input id="cm-date" type="date" className="h-12 text-base" value={costEntryDate} onChange={(e) => setCostEntryDate(e.target.value)} max={getToday()} required />
                 </div>
                 <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="cm-category">Category</label>
+                  <Select value={costEntryCategory} onValueChange={(v) => setCostEntryCategory(v as CostCategory)}>
+                    <SelectTrigger id="cm-category" className="h-12 text-base">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {costCategoryOrder.map((c) => (
+                        <SelectItem key={c} value={c}>{costCategoryLabels[c]}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="grid grid-cols-[1fr_auto] gap-2 items-end">
+                <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="cm-item">Item</label>
-                  <Input id="cm-item" type="text" className="h-12 text-base" placeholder="e.g. Yarn, Rent" value={costEntryItem} onChange={(e) => setCostEntryItem(e.target.value)} required />
+                  <Input id="cm-item" type="text" className="h-12 text-base" placeholder="e.g. Yarn lot, Worker bill, Bill no." value={costEntryItem} onChange={(e) => setCostEntryItem(e.target.value)} required />
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="cm-amount">Amount (Tk)</label>
@@ -2390,28 +2418,63 @@ export default function Dashboard() {
 
             <Separator />
 
+            {/* Totals — grand total + per-category breakdown so admins
+                can see at a glance how spend splits across yarn /
+                labour / packaging / electricity / other. */}
+            {(() => {
+              const grandTotal = costEntries.reduce((s, e) => s + (e.amount || 0), 0);
+              const totalsByCategory: Record<CostCategory, number> = {
+                yarn: 0, labour: 0, packaging: 0, electricity: 0, other: 0,
+              };
+              for (const e of costEntries) {
+                const cat: CostCategory = e.category ?? "other";
+                totalsByCategory[cat] += e.amount || 0;
+              }
+              return (
+                <div className="space-y-3">
+                  <div className="rounded-xl border bg-card/60 p-4 flex items-center justify-between">
+                    <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Total cost</span>
+                    <span className="text-2xl font-bold text-green-700 dark:text-green-300">Tk {grandTotal.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                    {costCategoryOrder.map((c) => (
+                      <div key={c} className="rounded-xl border bg-card/40 p-3">
+                        <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{costCategoryLabels[c]}</p>
+                        <p className="mt-1 text-base font-bold">Tk {totalsByCategory[c].toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+
+            <Separator />
+
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Entries</span>
-              <span className="text-xs text-muted-foreground">{costEntries.length} records · Total Tk {costEntries.reduce((s, e) => s + (e.amount || 0), 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+              <span className="text-xs text-muted-foreground">{costEntries.length} records</span>
             </div>
             {costEntries.length > 0 ? (
               <div className="space-y-2 max-h-[28rem] overflow-y-auto pr-1">
                 {[...costEntries]
                   .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : (a.createdAt < b.createdAt ? 1 : -1)))
-                  .map((entry) => (
-                    <div key={entry.id} className="flex items-center justify-between gap-3 rounded-xl border bg-card/60 p-3">
-                      <div className="min-w-0">
-                        <p className="text-sm font-semibold truncate">{entry.item}</p>
-                        <p className="text-[11px] text-muted-foreground">{formatDateLabel(entry.date)}</p>
+                  .map((entry) => {
+                    const cat: CostCategory = entry.category ?? "other";
+                    return (
+                      <div key={entry.id} className="flex items-center justify-between gap-3 rounded-xl border bg-card/60 p-3">
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold truncate">{entry.item}</p>
+                          <p className="text-[11px] text-muted-foreground">{formatDateLabel(entry.date)} · {costCategoryLabels[cat]}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-bold whitespace-nowrap">Tk {entry.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                          <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleRemoveCostEntry(entry.id)} aria-label="Remove">
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <p className="text-sm font-bold whitespace-nowrap">Tk {entry.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                        <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleRemoveCostEntry(entry.id)} aria-label="Remove">
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
               </div>
             ) : (
               <div className="rounded-xl border border-dashed p-5 text-center">
