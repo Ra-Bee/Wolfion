@@ -2275,7 +2275,7 @@ export default function Dashboard() {
           <CardContent className="space-y-6">
             <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5">
               <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
-                <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Total payable</p>
+                <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Total payable due</p>
                 <p className="text-[13px] sm:text-base font-semibold truncate">Tk {totalPayable.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
               </div>
               <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
@@ -2362,7 +2362,7 @@ export default function Dashboard() {
               <h3 className="text-sm font-semibold">Workers</h3>
               {workerStats.length > 0 ? (
                 <div className="space-y-2">
-                  {workerStats.map(({ worker, totalUnits, totalEarned, totalPaid, remaining }) => (
+                  {workerStats.map(({ worker, totalUnits, totalPaid, remaining }) => (
                     <div key={worker.id} className="rounded-xl border bg-card/60 p-4">
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
@@ -2371,11 +2371,7 @@ export default function Dashboard() {
                         </div>
                         <Button variant="ghost" size="sm" onClick={() => handleRemoveWorker(worker.id)} className="text-destructive">Remove</Button>
                       </div>
-                      <div className="mt-3 grid grid-cols-3 gap-1.5 sm:gap-2.5 lg:gap-3">
-                        <div className="rounded-lg bg-muted/40 p-3">
-                          <p className="text-xs text-muted-foreground">Total earned</p>
-                          <p className="text-base font-bold">Tk {totalEarned.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                        </div>
+                      <div className="mt-3 grid grid-cols-2 gap-1.5 sm:gap-2.5 lg:gap-3">
                         <div className="rounded-lg bg-muted/40 p-3">
                           <p className="text-xs text-muted-foreground">Already paid</p>
                           <p className="text-base font-bold">Tk {totalPaid.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
