@@ -79,6 +79,7 @@ const yarnStockStorageKey = "wolfion_yarn_stock_kg";
 const yarnUsageStorageKey = "wolfion_yarn_usage_entries";
 const costStorageKey = "wolfion_cost_inputs";
 const dailyEntriesStorageKey = "wolfion_daily_production_entries";
+const costEntriesStorageKey = "wolfion_cost_management_entries";
 const electricityStorageKey = "wolfion_monthly_electricity";
 const workersStorageKey = "wolfion_workers";
 const workLogsStorageKey = "wolfion_worker_logs";
@@ -159,6 +160,14 @@ type DailyProductionEntry = {
   totalCost: number;
   costPerDozen: number;
   productType?: ProductType;
+  createdAt: string;
+};
+
+type CostEntry = {
+  id: string;
+  date: string;
+  item: string;
+  amount: number;
   createdAt: string;
 };
 
@@ -279,6 +288,18 @@ export default function Dashboard() {
   const [dailyStaffBill, setDailyStaffBill] = useState("");
   const [dailyError, setDailyError] = useState("");
   const [dailyConfirm, setDailyConfirm] = useState("");
+  const [costEntries, setCostEntries] = useState<CostEntry[]>(() => {
+    try {
+      const stored = localStorage.getItem(costEntriesStorageKey);
+      return stored ? (JSON.parse(stored) as CostEntry[]) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [costEntryDate, setCostEntryDate] = useState(getToday());
+  const [costEntryItem, setCostEntryItem] = useState("");
+  const [costEntryAmount, setCostEntryAmount] = useState("");
+  const [costEntryError, setCostEntryError] = useState("");
   const [quickSaleOpen, setQuickSaleOpen] = useState(false);
   const [quickSaleConfirm, setQuickSaleConfirm] = useState("");
   const [yarnPurchases, setYarnPurchases] = useState<YarnPurchase[]>(() => {
@@ -417,6 +438,36 @@ export default function Dashboard() {
   useEffect(() => {
     localStorage.setItem(dailyEntriesStorageKey, JSON.stringify(dailyEntries));
   }, [dailyEntries]);
+
+  useEffect(() => {
+    localStorage.setItem(costEntriesStorageKey, JSON.stringify(costEntries));
+  }, [costEntries]);
+
+  function handleAddCostEntry(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const item = costEntryItem.trim();
+    const amount = Number(costEntryAmount);
+    if (!costEntryDate || !item || !Number.isFinite(amount) || amount <= 0) {
+      setCostEntryError("Enter date, item name, and amount.");
+      return;
+    }
+    const entry: CostEntry = {
+      id: crypto.randomUUID(),
+      date: costEntryDate,
+      item,
+      amount,
+      createdAt: new Date().toISOString(),
+    };
+    setCostEntries((current) => [entry, ...current]);
+    setCostEntryDate(getToday());
+    setCostEntryItem("");
+    setCostEntryAmount("");
+    setCostEntryError("");
+  }
+
+  function handleRemoveCostEntry(id: string) {
+    setCostEntries((current) => current.filter((e) => e.id !== id));
+  }
 
   useEffect(() => {
     localStorage.setItem(electricityStorageKey, JSON.stringify(electricityEntries));
@@ -2302,136 +2353,70 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Cost History — promoted to its own first-class card so it
-            sits alongside the other top-level admin tasks instead of
-            being buried inside Yarn Calculation. Placed right before
-            Investment & Investor at the user's request. */}
+        {/* Cost Management — simple expense ledger: just date, item,
+            and amount. Independent of Daily Production Entry, with its
+            own state, storage key (wolfion_cost_management_entries),
+            and handlers (handleAddCostEntry / handleRemoveCostEntry). */}
         <Card id="cost-history" className="border-2 border-primary/30 shadow-md scroll-mt-24">
           <CardHeader>
-            <CardTitle className="text-2xl flex items-center gap-2"><Wrench className="h-6 w-6 text-primary" /> Cost History</CardTitle>
-            <CardDescription>Add a daily cost entry and review day-by-day yarn cost: kg used, rate, yarn cost, and total per-dozen cost.</CardDescription>
+            <CardTitle className="text-2xl flex items-center gap-2"><Wrench className="h-6 w-6 text-primary" /> Cost Management</CardTitle>
+            <CardDescription>Log any cost as date, item, and amount.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Quick-add form — mirrors the Daily Production Entry form
-                so admins can log a new cost entry directly from this
-                card. Shares the same state + handleAddDailyEntry, so a
-                save here is identical to saving from Daily Production
-                Entry. Adds the Yarn cost (Tk/kg) field that the
-                production form doesn't expose, so the rate that drives
-                this card's "Tk/kg" + "Yarn cost" columns can actually
-                be set from here. */}
-            <form onSubmit={handleAddDailyEntry} className="space-y-3">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Add cost entry</h3>
-
-              <div className="grid grid-cols-2 gap-2">
+            <form onSubmit={handleAddCostEntry} className="space-y-3">
+              <div className="grid grid-cols-[1fr_1fr_auto] gap-2 items-end">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="ch-date">Date</label>
-                  <Input id="ch-date" type="date" className="h-12 text-base" value={dailyDate} onChange={(e) => setDailyDate(e.target.value)} max={getToday()} required />
+                  <label className="text-sm font-medium" htmlFor="cm-date">Date</label>
+                  <Input id="cm-date" type="date" className="h-12 text-base" value={costEntryDate} onChange={(e) => setCostEntryDate(e.target.value)} max={getToday()} required />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="ch-product-type">Product type</label>
-                  <Select value={dailyProductType} onValueChange={(v) => setDailyProductType(v as ProductType)}>
-                    <SelectTrigger id="ch-product-type" className="h-12 text-base">
-                      <SelectValue placeholder="Choose product" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.entries(productTypeLabels).map(([value, label]) => (
-                        <SelectItem key={value} value={value}>{label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <label className="text-sm font-medium" htmlFor="cm-item">Item</label>
+                  <Input id="cm-item" type="text" className="h-12 text-base" placeholder="e.g. Yarn, Rent" value={costEntryItem} onChange={(e) => setCostEntryItem(e.target.value)} required />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="cm-amount">Amount (Tk)</label>
+                  <Input id="cm-amount" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base w-28" placeholder="0" value={costEntryAmount} onChange={(e) => setCostEntryAmount(e.target.value)} required />
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-2">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="ch-qty">Quantity (dz)</label>
-                  <Input id="ch-qty" type="number" min="0" step="1" inputMode="numeric" className="h-12 text-base" placeholder="0" value={dailyProductionDozen} onChange={(e) => setDailyProductionDozen(e.target.value)} required />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="ch-yarn">Yarn (kg)</label>
-                  <Input id="ch-yarn" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={dailyYarnKg} onChange={(e) => setDailyYarnKg(e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="ch-machine">Machine hrs</label>
-                  <Input id="ch-machine" type="number" min="0" step="0.1" inputMode="decimal" className="h-12 text-base" placeholder="0" value={dailyMachineHours} onChange={(e) => setDailyMachineHours(e.target.value)} />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="ch-yarn-rate">Yarn cost (Tk / kg)</label>
-                <Input id="ch-yarn-rate" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={dailyYarnCostPerKg} onChange={(e) => setDailyYarnCostPerKg(e.target.value)} />
-              </div>
-
-              <Separator />
-
-              <div className="grid grid-cols-3 gap-2">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="ch-pkg">Packaging</label>
-                  <Input id="ch-pkg" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={dailyPackagingCost} onChange={(e) => setDailyPackagingCost(e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="ch-iron">Iron Finishing</label>
-                  <Input id="ch-iron" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={dailyIronCost} onChange={(e) => setDailyIronCost(e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="ch-staff">Staff Bill</label>
-                  <Input id="ch-staff" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={dailyStaffBill} onChange={(e) => setDailyStaffBill(e.target.value)} />
-                </div>
-              </div>
-
-              {dailyError && (
-                <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{dailyError}</p>
-              )}
-              {dailyConfirm && (
-                <p className="rounded-lg bg-green-100 px-3 py-2 text-sm font-medium text-green-800">{dailyConfirm}</p>
+              {costEntryError && (
+                <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{costEntryError}</p>
               )}
 
               <Button type="submit" size="lg" className="h-12 w-full text-base font-semibold">
-                <Plus className="h-5 w-5" /> Save cost entry
+                <Plus className="h-5 w-5" /> Add cost
               </Button>
             </form>
 
             <Separator />
 
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Recent days</span>
-              <span className="text-xs text-muted-foreground">{sortedDailyEntries.length} records</span>
+              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Entries</span>
+              <span className="text-xs text-muted-foreground">{costEntries.length} records · Total Tk {costEntries.reduce((s, e) => s + (e.amount || 0), 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
             </div>
-            {sortedDailyEntries.length > 0 ? (
+            {costEntries.length > 0 ? (
               <div className="space-y-2 max-h-[28rem] overflow-y-auto pr-1">
-                {sortedDailyEntries.slice(0, 60).map((entry) => {
-                  const yarnCost = (entry.yarnUsedKg || 0) * (entry.yarnCostPerKg || 0);
-                  return (
-                    <div key={entry.id} className="flex flex-col gap-1 rounded-xl border bg-card/60 p-3 sm:flex-row sm:items-center sm:justify-between">
-                      <div>
-                        <p className="text-sm font-semibold">{formatDateLabel(entry.date)}</p>
-                        <p className="text-[11px] text-muted-foreground">
-                          {entry.yarnUsedKg.toLocaleString(undefined, { maximumFractionDigits: 2 })} kg used
-                        </p>
+                {[...costEntries]
+                  .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : (a.createdAt < b.createdAt ? 1 : -1)))
+                  .map((entry) => (
+                    <div key={entry.id} className="flex items-center justify-between gap-3 rounded-xl border bg-card/60 p-3">
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold truncate">{entry.item}</p>
+                        <p className="text-[11px] text-muted-foreground">{formatDateLabel(entry.date)}</p>
                       </div>
-                      <div className="grid grid-cols-3 gap-3 text-right sm:gap-6">
-                        <div>
-                          <p className="text-[10px] text-muted-foreground">Tk / kg</p>
-                          <p className="text-sm font-bold">Tk {entry.yarnCostPerKg.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                        </div>
-                        <div>
-                          <p className="text-[10px] text-muted-foreground">Yarn cost</p>
-                          <p className="text-sm font-bold">Tk {yarnCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                        </div>
-                        <div>
-                          <p className="text-[10px] text-muted-foreground">Total / dz</p>
-                          <p className="text-sm font-bold">Tk {entry.costPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                        </div>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-bold whitespace-nowrap">Tk {entry.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                        <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleRemoveCostEntry(entry.id)} aria-label="Remove">
+                          <X className="h-4 w-4" />
+                        </Button>
                       </div>
                     </div>
-                  );
-                })}
+                  ))}
               </div>
             ) : (
               <div className="rounded-xl border border-dashed p-5 text-center">
                 <p className="text-sm font-medium">No cost entries yet</p>
-                <p className="text-xs text-muted-foreground mt-1">Add a daily production entry to start tracking yarn cost.</p>
+                <p className="text-xs text-muted-foreground mt-1">Add your first cost above.</p>
               </div>
             )}
           </CardContent>
