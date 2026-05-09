@@ -1370,28 +1370,28 @@ export default function Dashboard() {
                   }}
                 >
                   <div
-                    className="relative rounded-[22px] overflow-hidden p-4 sm:p-5 bg-white/80 dark:bg-neutral-900/70"
+                    className="relative rounded-[22px] overflow-hidden p-4 sm:p-5 bg-white/55 dark:bg-neutral-900/55"
                     style={{
-                      backdropFilter: "blur(18px) saturate(160%)",
-                      WebkitBackdropFilter: "blur(18px) saturate(160%)",
+                      backdropFilter: "blur(22px) saturate(140%)",
+                      WebkitBackdropFilter: "blur(22px) saturate(140%)",
                     }}
                   >
-                    {/* Top glass sheen */}
+                    {/* Top glass sheen — subtle */}
                     <div
                       aria-hidden
-                      className="absolute inset-x-0 top-0 h-1/2 pointer-events-none"
+                      className="absolute inset-x-0 top-0 h-1/3 pointer-events-none"
                       style={{
                         background:
-                          "linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 100%)",
+                          "linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 100%)",
                       }}
                     />
-                    {/* Soft green halo behind numbers */}
+                    {/* Soft green halo behind numbers — toned down */}
                     <div
                       aria-hidden
-                      className="absolute -top-10 -right-10 h-40 w-40 rounded-full opacity-50 pointer-events-none blur-3xl"
+                      className="absolute -top-10 -right-10 h-36 w-36 rounded-full opacity-25 pointer-events-none blur-3xl"
                       style={{
                         background:
-                          "radial-gradient(circle, rgba(34,197,94,0.45) 0%, transparent 70%)",
+                          "radial-gradient(circle, rgba(34,197,94,0.35) 0%, transparent 70%)",
                       }}
                     />
                     <div className="relative grid grid-cols-2 gap-3 sm:gap-4">
@@ -1584,26 +1584,26 @@ export default function Dashboard() {
               }}
             >
               <div
-                className="relative rounded-[22px] overflow-hidden p-4 sm:p-5 bg-white/80 dark:bg-neutral-900/70"
+                className="relative rounded-[22px] overflow-hidden p-4 sm:p-5 bg-white/55 dark:bg-neutral-900/55"
                 style={{
-                  backdropFilter: "blur(18px) saturate(160%)",
-                  WebkitBackdropFilter: "blur(18px) saturate(160%)",
+                  backdropFilter: "blur(22px) saturate(140%)",
+                  WebkitBackdropFilter: "blur(22px) saturate(140%)",
                 }}
               >
                 <div
                   aria-hidden
-                  className="absolute inset-x-0 top-0 h-1/2 pointer-events-none"
+                  className="absolute inset-x-0 top-0 h-1/3 pointer-events-none"
                   style={{
                     background:
-                      "linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 100%)",
+                      "linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 100%)",
                   }}
                 />
                 <div
                   aria-hidden
-                  className="absolute -bottom-12 -left-10 h-44 w-44 rounded-full opacity-50 pointer-events-none blur-3xl"
+                  className="absolute -bottom-12 -left-10 h-40 w-40 rounded-full opacity-25 pointer-events-none blur-3xl"
                   style={{
                     background:
-                      "radial-gradient(circle, rgba(212,175,55,0.45) 0%, transparent 70%)",
+                      "radial-gradient(circle, rgba(212,175,55,0.35) 0%, transparent 70%)",
                   }}
                 />
                 <div className="relative grid grid-cols-2 gap-3 sm:gap-4">
@@ -1720,18 +1720,18 @@ export default function Dashboard() {
                   }}
                 >
                   <div
-                    className="relative rounded-[11px] overflow-hidden px-2 py-1.5 sm:px-2.5 sm:py-2 min-h-[48px] flex flex-col justify-center box-border bg-white/80 dark:bg-neutral-900/70"
+                    className="relative rounded-[11px] overflow-hidden px-2 py-1.5 sm:px-2.5 sm:py-2 min-h-[48px] flex flex-col justify-center box-border bg-white/55 dark:bg-neutral-900/55"
                     style={{
-                      backdropFilter: "blur(14px) saturate(160%)",
-                      WebkitBackdropFilter: "blur(14px) saturate(160%)",
+                      backdropFilter: "blur(18px) saturate(140%)",
+                      WebkitBackdropFilter: "blur(18px) saturate(140%)",
                     }}
                   >
                     <div
                       aria-hidden
-                      className="absolute inset-x-0 top-0 h-1/2 pointer-events-none"
+                      className="absolute inset-x-0 top-0 h-1/3 pointer-events-none"
                       style={{
                         background:
-                          "linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 100%)",
+                          "linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%)",
                       }}
                     />
                     <p className="relative text-[9px] sm:text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground truncate leading-tight">
