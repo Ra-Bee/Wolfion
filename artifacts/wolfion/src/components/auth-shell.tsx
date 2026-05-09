@@ -256,7 +256,7 @@ export const clerkAppearance = {
     socialButtonsProviderIcon: "!brightness-100",
     dividerLine: "!bg-white/15",
     dividerText: "!text-white/50 !text-[10px] !uppercase !tracking-[0.2em]",
-    formFieldLabel: "!text-white/85 !font-medium !text-xs !uppercase !tracking-[0.12em]",
+    formFieldLabel: "!text-white/85 !font-medium !text-[13px] !tracking-normal !normal-case !pl-0.5",
     formFieldInput:
       "!bg-white/[0.04] !text-white !border !border-white/15 hover:!border-white/25 focus:!border-[#1ABBC4] focus:!ring-2 focus:!ring-[#1ABBC4]/30 h-11 !rounded-[10px] placeholder:!text-white/35 !backdrop-blur-md !transition-all",
     formFieldHintText: "!text-white/60",
