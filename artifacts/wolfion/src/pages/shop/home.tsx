@@ -121,25 +121,15 @@ export default function ShopHome() {
               loading="eager"
               decoding="async"
               fetchPriority="high"
-              className="hero-photo absolute inset-0 h-full w-full object-cover object-[center_75%] scale-105 animate-in fade-in zoom-in-95 duration-[2000ms] fill-mode-both"
+              className="absolute inset-0 h-full w-full object-cover object-[center_75%] scale-105 animate-in fade-in zoom-in-95 duration-[2000ms] fill-mode-both"
               style={{
                 transition: "transform 380ms cubic-bezier(0.22, 1, 0.36, 1)",
-                // translateZ(0) promotes the image to its own GPU layer so
-                // it doesn't re-rasterize during scroll on phones, which
-                // was causing the hero to micro-flicker as it scrolled out
-                // of view. We deliberately don't set will-change:transform
-                // here because keeping that layer "hot" forever costs more
-                // memory than it saves.
                 transform: "translateZ(0)",
                 backfaceVisibility: "hidden",
               }}
             />
             {/* Soft bottom-only gradient so the glass card has contrast without covering the model */}
             <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/55 to-transparent pointer-events-none" />
-            {/* Dark-mode tone-down — only paints in dark mode. Knocks the
-                hero photo's brightness/saturation down so it stops feeling
-                blown-out next to the rest of the dark UI. */}
-            <div className="hidden dark:block absolute inset-0 bg-black/55 pointer-events-none" />
 
             {/* Inner top sheen — strong glass highlight at the top edge */}
             <div
@@ -732,10 +722,27 @@ export default function ShopHome() {
             will-change: auto !important;
           }
         }
-        /* Dim + desaturate the hero photo in dark mode so it stops
-           feeling jarringly bright against the surrounding black UI. */
-        .dark .hero-photo {
-          filter: brightness(0.55) saturate(0.65) contrast(1.02);
+        /* Dark mode: tone down the warm amber/peach halo and the gold
+           bevel frame around the hero photo so the surrounding shine
+           doesn't overpower the dark UI. The photo itself stays untouched
+           — only the glass/halo around it is muted. */
+        .dark .hero-halo-pulse {
+          opacity: 0.35 !important;
+          filter: saturate(0.55) hue-rotate(-8deg);
+        }
+        .dark .hero-frame-3d {
+          background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.45) 0%,
+            rgba(255, 255, 255, 0.12) 35%,
+            rgba(0, 0, 0, 0.45) 70%,
+            rgba(0, 0, 0, 0.7) 100%
+          ) !important;
+          box-shadow:
+            0 24px 60px -22px rgba(0, 0, 0, 0.65),
+            0 6px 22px -10px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.18),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.55) !important;
         }
       `}</style>
     </ShopLayout>
