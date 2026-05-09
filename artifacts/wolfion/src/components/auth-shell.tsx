@@ -90,7 +90,7 @@ export function AuthShell({ eyebrow, title, subtitle, children }: Props) {
           {/* Glow halo */}
           <div
             aria-hidden
-            className="absolute -inset-2 rounded-[32px] blur-2xl opacity-50"
+            className="absolute -inset-2 rounded-[14px] blur-2xl opacity-50"
             style={{
               background:
                 "linear-gradient(135deg, #1ABBC4 0%, #6E3CFB 50%, #D4AF37 100%)",
@@ -111,7 +111,7 @@ export function AuthShell({ eyebrow, title, subtitle, children }: Props) {
           >
             {/* Gradient border */}
             <div
-              className="rounded-[28px] p-[1.5px]"
+              className="rounded-[12px] p-[1.5px]"
               style={{
                 background:
                   "linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(26,187,196,0.35) 35%, rgba(212,175,55,0.35) 70%, rgba(255,255,255,0.15) 100%)",
@@ -119,7 +119,7 @@ export function AuthShell({ eyebrow, title, subtitle, children }: Props) {
             >
               {/* Glass card */}
               <div
-                className="rounded-[27px] p-5 sm:p-8 border border-white/10 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)] overflow-hidden"
+                className="rounded-[10px] p-5 sm:p-8 border border-white/10 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)] overflow-hidden"
                 style={{
                   background:
                     "linear-gradient(180deg, rgba(10,18,28,0.85) 0%, rgba(4,17,26,0.92) 100%)",
