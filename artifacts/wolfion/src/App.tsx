@@ -131,13 +131,11 @@ function ClerkQueryClientCacheInvalidator() {
 // (the Suspense fallback flashes and the click target unmounts mid-navigation).
 
 function HomeRedirect() {
-  const { isLoaded, isSignedIn } = useUser();
-  const { role } = useRole();
-  if (!isLoaded) return null;
-  if (isSignedIn) {
-    return <Redirect to={role === "admin" ? "/admin-dashboard" : "/shop"} />;
-  }
-  return <Home />;
+  // Always render the splash immediately so we never flash a black blank
+  // screen while Clerk is loading. If the user turns out to be signed in,
+  // <Home> will smoothly navigate to /shop or /admin-dashboard after the
+  // intro animation, instead of yanking them away mid-fade.
+  return <Home autoRedirect />;
 }
 
 // Customer routes — open to everyone signed in (admins can shop too).
