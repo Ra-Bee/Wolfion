@@ -592,7 +592,7 @@ export default function ShopHome() {
           {/* Glow halo behind the photo */}
           <div
             aria-hidden
-            className="absolute -inset-3 sm:-inset-5 rounded-[34px] blur-2xl opacity-50 pointer-events-none"
+            className="absolute -inset-3 sm:-inset-5 rounded-[34px] blur-2xl opacity-50 pointer-events-none craft-halo-pulse"
             style={{
               background:
                 "linear-gradient(135deg, #1ABBC4 0%, #6E3CFB 50%, #D4AF37 100%)",
@@ -600,7 +600,7 @@ export default function ShopHome() {
           />
           {/* Gradient ring */}
           <div
-            className="relative rounded-[28px] p-[1.5px] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.55)]"
+            className="relative rounded-[28px] p-[1.5px] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.55)] craft-frame-3d"
             style={{
               background:
                 "linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(26,187,196,0.45) 35%, rgba(110,60,251,0.4) 65%, rgba(212,175,55,0.55) 100%)",
@@ -632,31 +632,32 @@ export default function ShopHome() {
               {/* Diagonal sheen */}
               <div
                 aria-hidden
-                className="absolute inset-0 pointer-events-none rounded-[26px]"
+                className="absolute -inset-x-1/2 inset-y-0 pointer-events-none craft-sheen"
                 style={{
                   background:
-                    "linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.08) 50%, transparent 65%)",
+                    "linear-gradient(115deg, transparent 38%, rgba(255,255,255,0.18) 50%, transparent 62%)",
                 }}
               />
 
               {/* Text content overlay */}
               <div className="relative z-10 h-full flex items-center px-5 sm:px-10">
                 <div style={{ textShadow: "0 2px 16px rgba(0,0,0,0.6)" }}>
-                  <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 mb-4 bg-white/[0.12] backdrop-blur-md border border-white/25 text-[10px] uppercase tracking-[0.3em] text-white">
-                    <Sparkles className="h-3 w-3 text-amber-300" />
+                  <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 mb-4 bg-white/[0.12] backdrop-blur-md border border-white/25 text-[10px] uppercase tracking-[0.3em] text-white craft-rise craft-rise-1">
+                    <Sparkles className="h-3 w-3 text-amber-300 craft-spark" />
                     The Craft
                   </div>
                   <h2
-                    className="text-4xl sm:text-6xl font-light leading-[1.05] tracking-tight text-white"
+                    className="text-4xl sm:text-6xl font-light leading-[1.05] tracking-tight text-white craft-rise craft-rise-2"
                     style={{ filter: "drop-shadow(0 4px 18px rgba(0,0,0,0.5))" }}
                   >
                     Every stitch
                     <br />
                     <span
-                      className="font-serif italic"
+                      className="font-serif italic craft-shimmer"
                       style={{
-                        background:
-                          "linear-gradient(135deg, #B8E8EC 0%, #D4AF37 100%)",
+                        backgroundImage:
+                          "linear-gradient(115deg, #B8E8EC 0%, #D4AF37 35%, #FFFFFF 50%, #D4AF37 65%, #B8E8EC 100%)",
+                        backgroundSize: "200% 100%",
                         WebkitBackgroundClip: "text",
                         WebkitTextFillColor: "transparent",
                         backgroundClip: "text",
@@ -665,7 +666,7 @@ export default function ShopHome() {
                       considered.
                     </span>
                   </h2>
-                  <p className="mt-4 text-sm sm:text-base text-white/95 leading-relaxed font-light max-w-sm">
+                  <p className="mt-4 text-sm sm:text-base text-white/95 leading-relaxed font-light max-w-sm craft-rise craft-rise-3">
                     Spun from Pima cotton and Italian merino. Tensioned by hand. Finished without compromise.
                   </p>
                 </div>
@@ -759,6 +760,89 @@ export default function ShopHome() {
             0 6px 22px -10px rgba(0, 0, 0, 0.35),
             inset 0 1px 0 rgba(255, 255, 255, 0.28),
             inset 0 -1px 0 rgba(0, 0, 0, 0.5) !important;
+        }
+
+        /* === Editorial "Craft" section animations ===
+           Mirrors the hero's float/halo/sheen vocabulary so the whole
+           page feels alive, but with a slower, more editorial cadence. */
+        @keyframes wf-craft-float {
+          0%, 100% { transform: translateY(0); }
+          50%      { transform: translateY(-5px); }
+        }
+        @keyframes wf-craft-halo {
+          0%, 100% { opacity: 0.42; transform: scale(1); }
+          50%      { opacity: 0.6;  transform: scale(1.035); }
+        }
+        @keyframes wf-craft-sheen {
+          0%   { transform: translateX(-40%); opacity: 0; }
+          15%  { opacity: 1; }
+          85%  { opacity: 1; }
+          100% { transform: translateX(40%); opacity: 0; }
+        }
+        @keyframes wf-craft-rise {
+          from { opacity: 0; transform: translateY(14px); filter: blur(6px); }
+          to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
+        }
+        @keyframes wf-craft-shimmer {
+          0%   { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
+        }
+        @keyframes wf-craft-spark {
+          0%, 100% { opacity: 0.7; transform: scale(1) rotate(0deg); }
+          50%      { opacity: 1;   transform: scale(1.15) rotate(20deg); }
+        }
+        .craft-frame-3d {
+          animation: wf-craft-float 9s ease-in-out infinite;
+          will-change: transform;
+        }
+        .craft-halo-pulse {
+          animation: wf-craft-halo 6.5s ease-in-out infinite;
+        }
+        .craft-sheen {
+          animation: wf-craft-sheen 7.5s ease-in-out infinite;
+          animation-delay: 1.4s;
+        }
+        .craft-rise {
+          opacity: 0;
+          animation: wf-craft-rise 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        .craft-rise-1 { animation-delay: 80ms; }
+        .craft-rise-2 { animation-delay: 240ms; }
+        .craft-rise-3 { animation-delay: 480ms; }
+        .craft-shimmer {
+          animation: wf-craft-shimmer 6s linear infinite;
+        }
+        .craft-spark {
+          animation: wf-craft-spark 2.8s ease-in-out infinite;
+          transform-origin: center;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .craft-frame-3d,
+          .craft-halo-pulse,
+          .craft-sheen,
+          .craft-rise,
+          .craft-shimmer,
+          .craft-spark {
+            animation: none !important;
+            opacity: 1 !important;
+            filter: none !important;
+            transform: none !important;
+          }
+        }
+        @media (hover: none), (pointer: coarse) {
+          /* Match the hero policy: kill the constantly-running heavy
+             animations on phones (sheen sweep + halo pulse + float) so
+             scroll past this section stays buttery. The one-shot text
+             rises and the gentle text shimmer are cheap, so they stay. */
+          .craft-frame-3d,
+          .craft-halo-pulse,
+          .craft-sheen {
+            animation: none !important;
+          }
+          .craft-frame-3d {
+            transform: translateZ(0) !important;
+            will-change: auto !important;
+          }
         }
       `}</style>
     </ShopLayout>

@@ -9,7 +9,7 @@
 //
 // We also bump the cache version on every behavioural change so that the
 // activate handler purges stale caches from prior service worker versions.
-const CACHE = "wolfion-shell-v61";
+const CACHE = "wolfion-shell-v62";
 const SHELL = [
   "/",
   "/app-icon.jpg",
