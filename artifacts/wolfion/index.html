@@ -22,17 +22,29 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
-      // Apply the saved theme (or system preference) BEFORE React mounts so
-      // the very first paint matches the user's phone — no light flash on a
-      // dark phone, no dark flash on a light phone. Mirrors the logic in
-      // src/hooks/use-theme.ts; if you change one, change the other.
+      // Apply the saved theme BEFORE React mounts so the very first
+      // paint matches the user's preference — no light flash on a
+      // dark phone, no dark flash on a light phone. Mirrors the logic
+      // in src/hooks/use-theme.ts; if you change one, change the
+      // other. Only "light" and "dark" are supported now (the
+      // previous "system" option was removed); a stored "system"
+      // value is migrated by reading the OS preference once.
       (function () {
         try {
           var stored = null;
           try { stored = localStorage.getItem("wolfion_theme"); } catch (e) {}
-          var pref = (stored === "light" || stored === "dark" || stored === "system") ? stored : "system";
           var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-          var isDark = pref === "dark" || (pref === "system" && prefersDark);
+          var isDark;
+          if (stored === "dark") {
+            isDark = true;
+          } else if (stored === "light") {
+            isDark = false;
+          } else {
+            // Legacy "system" or no value → derive from OS once,
+            // then persist as a concrete mode.
+            isDark = !!prefersDark;
+            try { localStorage.setItem("wolfion_theme", isDark ? "dark" : "light"); } catch (e) {}
+          }
           var root = document.documentElement;
           if (isDark) root.classList.add("dark"); else root.classList.remove("dark");
           root.style.colorScheme = isDark ? "dark" : "light";

@@ -972,11 +972,12 @@ export default function ShopHome() {
             style={{
               transformStyle: "preserve-3d",
               transition: "transform 380ms cubic-bezier(0.22, 1, 0.36, 1)",
-              // touchAction:none lets the browser deliver pointermove
-              // events for finger drags inside this frame instead of
-              // hijacking them for page scroll. The rest of the page
-              // still scrolls normally.
-              touchAction: "none",
+              // pan-y keeps vertical finger scroll working (so the
+              // user can swipe past this big hero frame), while
+              // horizontal drags still deliver pointermove for the
+              // tilt to engage. Was previously "none" which trapped
+              // vertical scroll inside the frame.
+              touchAction: "pan-y",
             }}
           >
             <div
@@ -1444,7 +1445,13 @@ export default function ShopHome() {
            overlay, and gives the tilt transform a smooth spring back
            when the JS clears it on pointerup. */
         .tilt-card {
-          touch-action: none;
+          /* pan-y lets the browser keep handling vertical finger
+             scrolls (so the page scrolls normally when the user
+             drags up/down on a card), while still firing
+             pointermove for horizontal drags so the card can tilt
+             around the Y axis. Fixes "can't scroll when I touch a
+             picture" on the customer page. */
+          touch-action: pan-y;
           -webkit-tap-highlight-color: transparent;
           transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
           will-change: transform;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export type ThemePreference = "light" | "dark" | "system";
+export type ThemePreference = "light" | "dark";
 export type ThemeMode = "light" | "dark";
 
 const THEME_KEY = "wolfion_theme";
@@ -17,16 +17,19 @@ function getSystemMode(): ThemeMode {
 }
 
 function getInitialPreference(): ThemePreference {
-  if (typeof window === "undefined") return "system";
+  if (typeof window === "undefined") return "light";
   try {
     const stored = localStorage.getItem(THEME_KEY);
-    if (stored === "light" || stored === "dark" || stored === "system") {
-      return stored;
-    }
+    if (stored === "light" || stored === "dark") return stored;
+    // Migrate legacy "system" preference to a concrete mode based on
+    // the user's current OS setting, then forget the system option.
+    if (stored === "system") return getSystemMode();
   } catch {
     /* ignore */
   }
-  return "system";
+  // First-time visitors fall back to whatever their OS prefers, but
+  // we lock that choice in immediately rather than tracking it live.
+  return getSystemMode();
 }
 
 function applyTheme(mode: ThemeMode) {
@@ -45,19 +48,14 @@ function applyTheme(mode: ThemeMode) {
   metas.forEach((m) => m.setAttribute("content", fill));
 }
 
-function resolve(pref: ThemePreference): ThemeMode {
-  return pref === "system" ? getSystemMode() : pref;
-}
-
 export function useTheme() {
   const [preference, setPreference] = useState<ThemePreference>(getInitialPreference);
-  const [theme, setTheme] = useState<ThemeMode>(() => resolve(getInitialPreference()));
+  const [theme, setTheme] = useState<ThemeMode>(getInitialPreference);
 
-  // Apply theme + persist preference
+  // Apply theme + persist preference whenever it changes.
   useEffect(() => {
-    const mode = resolve(preference);
-    setTheme(mode);
-    applyTheme(mode);
+    setTheme(preference);
+    applyTheme(preference);
     try {
       localStorage.setItem(THEME_KEY, preference);
     } catch {
@@ -65,28 +63,10 @@ export function useTheme() {
     }
   }, [preference]);
 
-  // Live-follow OS dark mode toggle while preference === "system"
-  useEffect(() => {
-    if (preference !== "system" || typeof window === "undefined" || !window.matchMedia) {
-      return;
-    }
-    const mql = window.matchMedia("(prefers-color-scheme: dark)");
-    const onChange = () => {
-      const mode: ThemeMode = mql.matches ? "dark" : "light";
-      setTheme(mode);
-      applyTheme(mode);
-    };
-    if (mql.addEventListener) mql.addEventListener("change", onChange);
-    else mql.addListener(onChange);
-    return () => {
-      if (mql.removeEventListener) mql.removeEventListener("change", onChange);
-      else mql.removeListener(onChange);
-    };
-  }, [preference]);
-
-  // Cycle: light -> dark -> system -> light ...
+  // Simple flip: light <-> dark. The "system" option was removed at
+  // the user's request — only two concrete modes are supported now.
   function toggleTheme() {
-    setPreference((prev) => (prev === "light" ? "dark" : prev === "dark" ? "system" : "light"));
+    setPreference((prev) => (prev === "light" ? "dark" : "light"));
   }
 
   return { theme, preference, setPreference, toggleTheme };

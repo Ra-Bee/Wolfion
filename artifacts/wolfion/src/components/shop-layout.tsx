@@ -6,7 +6,7 @@ import { useCart } from "@/hooks/use-cart";
 import { useRole } from "@/hooks/use-role";
 import { useStableDisclosure } from "@/hooks/use-stable-disclosure";
 import { useTheme } from "@/hooks/use-theme";
-import { ShoppingBag, Menu, User, LogOut, Search, ShieldCheck, ChevronDown, Home as HomeIcon, Store, Mail, Info, Settings, X, Plus, Sun, Moon, Monitor } from "lucide-react";
+import { ShoppingBag, Menu, User, LogOut, Search, ShieldCheck, ChevronDown, Home as HomeIcon, Store, Mail, Info, Settings, X, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose, SheetFooter } from "@/components/ui/sheet";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -415,8 +415,8 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
             <Button
               variant="ghost"
               size="icon"
-              aria-label={`Theme: ${preference}. Click to change`}
-              title={`Theme: ${preference[0].toUpperCase() + preference.slice(1)} (tap to cycle Light → Dark → System)`}
+              aria-label={`Theme: ${preference}. Click to switch to ${preference === "light" ? "dark" : "light"}`}
+              title={`Theme: ${preference[0].toUpperCase() + preference.slice(1)} (tap to switch)`}
               data-testid="btn-theme-toggle"
               onClick={toggleTheme}
               className="rounded-full h-9 w-9"
@@ -424,10 +424,8 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
             >
               {preference === "light" ? (
                 <Sun className="h-5 w-5" />
-              ) : preference === "dark" ? (
-                <Moon className="h-5 w-5" />
               ) : (
-                <Monitor className="h-5 w-5" />
+                <Moon className="h-5 w-5" />
               )}
             </Button>
 
@@ -997,30 +995,17 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
         </DialogContent>
       </Dialog>
 
-      {/* Admin-only floating "Add product" button — visible on every shop page
-          for allowlisted admin emails. Server still enforces auth on POST. */}
+      {/* Admin "Add product" UI is reachable via the admin dashboard
+          and the dedicated admin products page; the floating shop FAB
+          was removed at the user's request to keep the customer
+          surface clean. We still mount the dialog (closed) so other
+          places that may open it programmatically keep working. */}
       {isAdmin && (
-        <>
-          <button
-            type="button"
-            onClick={() => setAddProductOpen(true)}
-            aria-label="Add new product"
-            data-testid="fab-add-product"
-            className="fixed z-50 bottom-5 right-5 sm:bottom-7 sm:right-7 inline-flex items-center gap-2 h-12 sm:h-14 px-5 sm:px-6 rounded-full bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-2xl hover:shadow-[0_20px_50px_-15px_rgba(0,0,0,0.6)] active:scale-95 transition-all text-xs uppercase tracking-[0.2em] font-medium"
-            style={{
-              boxShadow:
-                "0 18px 40px -12px rgba(0,0,0,0.55), 0 6px 14px -6px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.18)",
-            }}
-          >
-            <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
-            <span className="hidden sm:inline">Add product</span>
-          </button>
-          <ProductFormDialog
-            open={addProductOpen}
-            onOpenChange={setAddProductOpen}
-            editingProduct={null}
-          />
-        </>
+        <ProductFormDialog
+          open={addProductOpen}
+          onOpenChange={setAddProductOpen}
+          editingProduct={null}
+        />
       )}
     </div>
   );
