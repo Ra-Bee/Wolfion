@@ -35,7 +35,6 @@ const YarnCalculationPage = lazy(() => import("@/pages/admin/yarn-calculation"))
 const DailyProductionPage = lazy(() => import("@/pages/admin/daily-production"));
 const DailySalesPage = lazy(() => import("@/pages/admin/daily-sales"));
 const ProfitDashboardPage = lazy(() => import("@/pages/admin/profit"));
-const InvestmentsPage = lazy(() => import("@/pages/admin/investments"));
 const DebtsPage = lazy(() => import("@/pages/admin/debts"));
 const CostHistoryPage = lazy(() => import("@/pages/admin/cost-history"));
 const AdminProductsPage = lazy(() => import("@/pages/admin/products"));
@@ -209,7 +208,6 @@ function AppRouter() {
       <Route path="/admin/daily-production"><AdminRouteWrapper><DailyProductionPage /></AdminRouteWrapper></Route>
       <Route path="/admin/daily-sales"><AdminRouteWrapper><DailySalesPage /></AdminRouteWrapper></Route>
       <Route path="/admin/profit"><AdminRouteWrapper><ProfitDashboardPage /></AdminRouteWrapper></Route>
-      <Route path="/admin/investments"><AdminRouteWrapper><InvestmentsPage /></AdminRouteWrapper></Route>
       <Route path="/admin/debts"><AdminRouteWrapper><DebtsPage /></AdminRouteWrapper></Route>
       <Route path="/admin/cost-history"><AdminRouteWrapper><CostHistoryPage /></AdminRouteWrapper></Route>
       <Route path="/admin/products"><AdminRouteWrapper><AdminProductsPage /></AdminRouteWrapper></Route>

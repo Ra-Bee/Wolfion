@@ -5,7 +5,7 @@ import { useTheme } from "@/hooks/use-theme";
 import { clearAdminStorage } from "@/lib/wolfion-store";
 import {
   LogOut, Menu, ShieldCheck, Sun, Moon, FileText, Users as UsersIcon,
-  Wrench, Factory, ShoppingCart, TrendingUp, Wallet, HandCoins, LayoutDashboard, ShoppingBag,
+  Wrench, Factory, ShoppingCart, TrendingUp, HandCoins, LayoutDashboard, ShoppingBag,
   Package, Receipt,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,6 @@ const ADMIN_NAV: AdminNavItem[] = [
   { path: "/admin/inventory-report", label: "Inventory Report", icon: FileText },
   { path: "/admin/labor-payroll", label: "Labor Payroll", icon: UsersIcon },
   { path: "/admin/yarn-calculation", label: "Yarn Calculation", icon: Wrench },
-  { path: "/admin/investments", label: "Investment & Investor", icon: Wallet },
   { path: "/admin/debts", label: "Debt Management", icon: HandCoins },
   { path: "/admin/cost-history", label: "Cost History", icon: Receipt },
 ];
