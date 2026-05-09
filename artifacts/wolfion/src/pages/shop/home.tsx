@@ -748,12 +748,16 @@ export default function ShopHome() {
                 "linear-gradient(135deg, #064E3B 0%, #B45309 60%, #E5D4A8 100%)",
             }}
           />
-          {/* Copper-tinted bevel ring (sharp corners) */}
+          {/* Copper-tinted bevel ring (sharp corners) — also acts as
+              a touch/mouse 3D tilt surface so the whole framed
+              composition leans into the finger like a heavy plate. */}
           <div
-            className="relative p-[2px] sm:p-[3px] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.5)]"
+            className="relative p-[2px] sm:p-[3px] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.5)] tilt-card source-float"
+            data-tilt-card
             style={{
               background:
                 "linear-gradient(135deg, rgba(252,211,77,0.55) 0%, rgba(180,83,9,0.45) 50%, rgba(0,0,0,0.55) 100%)",
+              transformStyle: "preserve-3d",
             }}
           >
             <div className="relative overflow-hidden bg-emerald-950">
@@ -911,14 +915,21 @@ export default function ShopHome() {
                 </div>
               </div>
 
-              {/* Drifting diagonal shimmer hatch — fine warm lines
-                  slowly sliding across the surface, like fabric
-                  catching light at an angle. */}
+              {/* Floating depth particles — six tiny copper specks
+                  drifting in 3D above the photo, each on its own
+                  staggered orbit, giving the frame a sense of
+                  volumetric space. */}
               <div
                 aria-hidden
-                className="absolute inset-0 pointer-events-none overflow-hidden source-hatch-mask"
+                className="absolute inset-0 pointer-events-none overflow-hidden"
+                style={{ transformStyle: "preserve-3d", perspective: "600px" }}
               >
-                <div className="absolute -inset-y-8 -inset-x-12 source-hatch" />
+                <span className="source-mote source-mote-1" />
+                <span className="source-mote source-mote-2" />
+                <span className="source-mote source-mote-3" />
+                <span className="source-mote source-mote-4" />
+                <span className="source-mote source-mote-5" />
+                <span className="source-mote source-mote-6" />
               </div>
 
               {/* Film-grain texture — extremely subtle moving noise
@@ -1353,22 +1364,49 @@ export default function ShopHome() {
         }
         .source-seal-spin { animation: source-seal-spin 18s linear infinite; transform-origin: 50% 50%; }
 
-        @keyframes source-hatch-drift {
-          0%   { transform: translate(0, 0); }
-          100% { transform: translate(48px, 48px); }
+        /* Gentle continuous 3D float on the whole framed photo —
+           composes with the touch-tilt inline transform via the
+           wrapper, but here we just animate a soft levitation +
+           micro yaw so the frame feels alive even when idle. */
+        @keyframes source-float {
+          0%, 100% {
+            transform: translateY(0) rotateX(0deg) rotateY(0deg);
+          }
+          50% {
+            transform: translateY(-4px) rotateX(0.6deg) rotateY(-0.8deg);
+          }
         }
-        .source-hatch {
-          background-image: repeating-linear-gradient(
-            135deg,
-            rgba(255, 220, 160, 0.0) 0px,
-            rgba(255, 220, 160, 0.0) 14px,
-            rgba(255, 220, 160, 0.06) 14px,
-            rgba(255, 220, 160, 0.06) 16px
-          );
-          mix-blend-mode: screen;
-          animation: source-hatch-drift 14s linear infinite;
+        .source-float {
+          animation: source-float 9s ease-in-out infinite;
           will-change: transform;
         }
+        /* Once a finger / cursor is engaged, [data-tilt-card] sets an
+           inline transform — pause the float so the two don't fight. */
+        .source-float[style*="transform"] { animation: none; }
+
+        /* Floating depth particles — copper motes drifting in 3D. */
+        .source-mote {
+          position: absolute;
+          width: 4px;
+          height: 4px;
+          border-radius: 9999px;
+          background: radial-gradient(circle, rgba(255, 230, 170, 0.95) 0%, rgba(180, 83, 9, 0) 70%);
+          box-shadow: 0 0 6px rgba(252, 211, 77, 0.55);
+          opacity: 0;
+          will-change: transform, opacity;
+        }
+        @keyframes source-mote-drift {
+          0%   { opacity: 0; transform: translate3d(0, 20px, -40px) scale(0.6); }
+          15%  { opacity: 0.9; }
+          85%  { opacity: 0.9; }
+          100% { opacity: 0; transform: translate3d(60px, -120px, 60px) scale(1.2); }
+        }
+        .source-mote-1 { left: 12%; top: 78%; animation: source-mote-drift 11s ease-in-out  0.0s infinite; }
+        .source-mote-2 { left: 28%; top: 88%; animation: source-mote-drift 13s ease-in-out  1.6s infinite; width: 3px; height: 3px; }
+        .source-mote-3 { left: 46%; top: 70%; animation: source-mote-drift 12s ease-in-out  3.2s infinite; }
+        .source-mote-4 { left: 62%; top: 92%; animation: source-mote-drift 14s ease-in-out  4.8s infinite; width: 5px; height: 5px; }
+        .source-mote-5 { left: 78%; top: 80%; animation: source-mote-drift 12s ease-in-out  6.4s infinite; }
+        .source-mote-6 { left: 90%; top: 86%; animation: source-mote-drift 13s ease-in-out  8.0s infinite; width: 3px; height: 3px; }
 
         @keyframes source-grain {
           0%   { transform: translate(0, 0); }
@@ -1392,7 +1430,8 @@ export default function ShopHome() {
           .source-bob,
           .source-vignette,
           .source-seal-spin,
-          .source-hatch,
+          .source-float,
+          .source-mote,
           .source-grain { animation: none !important; }
           .source-corner,
           .source-chip-in { opacity: 1 !important; transform: none !important; animation: none !important; }
