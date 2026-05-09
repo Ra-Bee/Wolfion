@@ -823,33 +823,50 @@ export default function ShopHome() {
                 </div>
               </div>
 
-              {/* Top-right "EST. ###" monogram — small editorial
-                  serif marker. */}
+              {/* Top-right circular "W" monogram seal — copper wax
+                  seal feel, slowly rotating ring of dashes around a
+                  static serif W. */}
               <div className="absolute top-2.5 right-2.5 sm:top-4 sm:right-4 pointer-events-none source-chip-in source-chip-delay-1">
-                <div
-                  className="rounded-md px-2 py-1 sm:px-2.5 sm:py-1.5 border border-amber-200/30 shadow-[0_6px_18px_-4px_rgba(0,0,0,0.6)]"
-                  style={{
-                    background:
-                      "linear-gradient(180deg, rgba(20,12,4,0.55) 0%, rgba(20,12,4,0.35) 100%)",
-                    backdropFilter: "blur(12px) saturate(160%)",
-                    WebkitBackdropFilter: "blur(12px) saturate(160%)",
-                  }}
-                >
-                  <p className="text-[8px] sm:text-[9px] uppercase tracking-[0.4em] text-amber-200/80 leading-none">
-                    Est.
-                  </p>
-                  <p
-                    className="font-serif italic text-[13px] sm:text-base leading-none mt-0.5"
+                <div className="relative h-9 w-9 sm:h-11 sm:w-11">
+                  {/* Rotating dashed ring */}
+                  <svg
+                    aria-hidden
+                    viewBox="0 0 44 44"
+                    className="absolute inset-0 h-full w-full source-seal-spin"
+                  >
+                    <circle
+                      cx="22"
+                      cy="22"
+                      r="20"
+                      fill="none"
+                      stroke="rgba(252,211,77,0.85)"
+                      strokeWidth="1"
+                      strokeDasharray="2 4"
+                    />
+                  </svg>
+                  {/* Solid inner glass disc with copper W */}
+                  <div
+                    className="absolute inset-1 rounded-full flex items-center justify-center border border-amber-200/40 shadow-[0_4px_14px_-2px_rgba(0,0,0,0.6)]"
                     style={{
                       background:
-                        "linear-gradient(135deg, #FDE68A 0%, #C9A66B 60%, #B45309 100%)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      backgroundClip: "text",
+                        "radial-gradient(circle at 35% 30%, rgba(40,24,8,0.85) 0%, rgba(20,12,4,0.7) 100%)",
+                      backdropFilter: "blur(10px) saturate(160%)",
+                      WebkitBackdropFilter: "blur(10px) saturate(160%)",
                     }}
                   >
-                    1972
-                  </p>
+                    <span
+                      className="font-serif italic text-[13px] sm:text-base leading-none"
+                      style={{
+                        background:
+                          "linear-gradient(135deg, #FDE68A 0%, #C9A66B 60%, #B45309 100%)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        backgroundClip: "text",
+                      }}
+                    >
+                      W
+                    </span>
+                  </div>
                 </div>
               </div>
 
@@ -893,6 +910,23 @@ export default function ShopHome() {
                   </span>
                 </div>
               </div>
+
+              {/* Drifting diagonal shimmer hatch — fine warm lines
+                  slowly sliding across the surface, like fabric
+                  catching light at an angle. */}
+              <div
+                aria-hidden
+                className="absolute inset-0 pointer-events-none overflow-hidden source-hatch-mask"
+              >
+                <div className="absolute -inset-y-8 -inset-x-12 source-hatch" />
+              </div>
+
+              {/* Film-grain texture — extremely subtle moving noise
+                  to give the photo a tactile, analog feel. */}
+              <div
+                aria-hidden
+                className="absolute inset-0 pointer-events-none source-grain"
+              />
 
               {/* Edge vignette pulse — barely-visible inner shadow
                   that breathes, giving the frame depth. */}
@@ -1313,11 +1347,53 @@ export default function ShopHome() {
         }
         .source-vignette { animation: source-vignette 6s ease-in-out infinite; }
 
+        @keyframes source-seal-spin {
+          0%   { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        .source-seal-spin { animation: source-seal-spin 18s linear infinite; transform-origin: 50% 50%; }
+
+        @keyframes source-hatch-drift {
+          0%   { transform: translate(0, 0); }
+          100% { transform: translate(48px, 48px); }
+        }
+        .source-hatch {
+          background-image: repeating-linear-gradient(
+            135deg,
+            rgba(255, 220, 160, 0.0) 0px,
+            rgba(255, 220, 160, 0.0) 14px,
+            rgba(255, 220, 160, 0.06) 14px,
+            rgba(255, 220, 160, 0.06) 16px
+          );
+          mix-blend-mode: screen;
+          animation: source-hatch-drift 14s linear infinite;
+          will-change: transform;
+        }
+
+        @keyframes source-grain {
+          0%   { transform: translate(0, 0); }
+          25%  { transform: translate(-6px, 4px); }
+          50%  { transform: translate(4px, -8px); }
+          75%  { transform: translate(-3px, -3px); }
+          100% { transform: translate(0, 0); }
+        }
+        .source-grain {
+          opacity: 0.10;
+          mix-blend-mode: overlay;
+          background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.95  0 0 0 0 0.85  0 0 0 0 0.55  0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+          background-size: 160px 160px;
+          animation: source-grain 1.2s steps(4) infinite;
+          will-change: transform;
+        }
+
         @media (prefers-reduced-motion: reduce) {
           .source-sweep,
           .source-ping,
           .source-bob,
-          .source-vignette { animation: none !important; }
+          .source-vignette,
+          .source-seal-spin,
+          .source-hatch,
+          .source-grain { animation: none !important; }
           .source-corner,
           .source-chip-in { opacity: 1 !important; transform: none !important; animation: none !important; }
         }
