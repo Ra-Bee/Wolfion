@@ -286,13 +286,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
             <div className="h-8 w-8 rounded-md bg-black flex items-center justify-center overflow-hidden shadow-sm">
               <img src={imgLogoWhite} alt="Wolfion" className="h-full w-full object-contain p-0.5" />
             </div>
-            <span
-              className="font-bold tracking-[0.3em] text-sm sm:text-base whitespace-nowrap text-black dark:text-white"
-              style={{
-                textShadow:
-                  "0 1px 0 rgba(255,255,255,0.7), 0 2px 4px rgba(0,0,0,0.18)",
-              }}
-            >
+            <span className="wf-brand-text font-bold tracking-[0.3em] text-sm sm:text-base whitespace-nowrap text-black dark:text-white">
               WOLFION
             </span>
           </Link>
@@ -1038,6 +1032,24 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
             inset 0 -1px 0 rgba(0, 0, 0, 0.55),
             0 14px 34px -12px rgba(0, 0, 0, 0.55),
             0 4px 12px -6px rgba(0, 0, 0, 0.45);
+        }
+
+        /* WOLFION wordmark text shadow — light mode kept the original
+           white sheen + soft dark drop. In dark mode that white sheen
+           was washing the white text into the lighter top of the new
+           glass gradient, making "WOLFION" hard to read. Swap to a
+           dark embossed shadow + a faint glow that lifts the white
+           letters off the glass. */
+        .wf-brand-text {
+          text-shadow:
+            0 1px 0 rgba(255, 255, 255, 0.7),
+            0 2px 4px rgba(0, 0, 0, 0.18);
+        }
+        .dark .wf-brand-text {
+          text-shadow:
+            0 1px 0 rgba(0, 0, 0, 0.85),
+            0 2px 6px rgba(0, 0, 0, 0.7),
+            0 0 14px rgba(255, 255, 255, 0.18);
         }
       `}</style>
     </div>
