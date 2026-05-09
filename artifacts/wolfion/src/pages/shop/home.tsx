@@ -122,7 +122,17 @@ export default function ShopHome() {
               decoding="async"
               fetchPriority="high"
               className="absolute inset-0 h-full w-full object-cover object-[center_75%] scale-105 animate-in fade-in zoom-in-95 duration-[2000ms] fill-mode-both"
-              style={{ transition: "transform 380ms cubic-bezier(0.22, 1, 0.36, 1)", willChange: "transform" }}
+              style={{
+                transition: "transform 380ms cubic-bezier(0.22, 1, 0.36, 1)",
+                // translateZ(0) promotes the image to its own GPU layer so
+                // it doesn't re-rasterize during scroll on phones, which
+                // was causing the hero to micro-flicker as it scrolled out
+                // of view. We deliberately don't set will-change:transform
+                // here because keeping that layer "hot" forever costs more
+                // memory than it saves.
+                transform: "translateZ(0)",
+                backfaceVisibility: "hidden",
+              }}
             />
             {/* Soft bottom-only gradient so the glass card has contrast without covering the model */}
             <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/55 to-transparent pointer-events-none" />
@@ -698,6 +708,25 @@ export default function ShopHome() {
         }
         @media (prefers-reduced-motion: reduce) {
           .hero-frame-3d, .hero-sheen, .hero-halo-pulse { animation: none !important; }
+        }
+        /* On touch / coarse-pointer devices (i.e. phones) the constantly-
+           running sheen sweep + halo pulse + float repaint a huge blurred
+           layer every frame. When the user scrolls past the hero the
+           compositor has to keep doing that work in parallel with the
+           scroll, which causes a visible micro-flicker on lower-end
+           Androids. Disable those continuous animations on touch devices
+           and pin the frame to its own GPU layer so scroll stays smooth.
+           The 3D mouse-tilt is pointer-only anyway. */
+        @media (hover: none), (pointer: coarse) {
+          .hero-frame-3d,
+          .hero-sheen,
+          .hero-halo-pulse {
+            animation: none !important;
+          }
+          .hero-frame-3d {
+            transform: translateZ(0) !important;
+            will-change: auto !important;
+          }
         }
       `}</style>
     </ShopLayout>
