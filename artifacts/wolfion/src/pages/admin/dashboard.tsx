@@ -1366,7 +1366,7 @@ export default function Dashboard() {
                   className="stat-glass relative rounded-3xl p-[1px] shadow-[0_14px_40px_-22px_rgba(0,0,0,0.35)]"
                   style={{
                     background:
-                      "linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.45) 100%)",
+                      "linear-gradient(135deg, rgba(190,235,210,0.65) 0%, rgba(255,255,255,0.2) 50%, rgba(190,235,210,0.55) 100%)",
                   }}
                 >
                   <div
@@ -1383,6 +1383,15 @@ export default function Dashboard() {
                       style={{
                         background:
                           "linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 100%)",
+                      }}
+                    />
+                    {/* Whisper of green so the glass tints when light hits it */}
+                    <div
+                      aria-hidden
+                      className="absolute -top-12 -right-12 h-40 w-40 rounded-full opacity-40 pointer-events-none blur-3xl"
+                      style={{
+                        background:
+                          "radial-gradient(circle, rgba(34,197,94,0.18) 0%, transparent 70%)",
                       }}
                     />
                     <div className="relative grid grid-cols-2 gap-3 sm:gap-4">
@@ -1571,7 +1580,7 @@ export default function Dashboard() {
               className="stat-glass relative rounded-3xl p-[1px] shadow-[0_14px_40px_-22px_rgba(0,0,0,0.35)]"
               style={{
                 background:
-                  "linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.45) 100%)",
+                  "linear-gradient(135deg, rgba(190,235,210,0.65) 0%, rgba(255,255,255,0.2) 50%, rgba(190,235,210,0.55) 100%)",
               }}
             >
               <div
@@ -1587,6 +1596,15 @@ export default function Dashboard() {
                   style={{
                     background:
                       "linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 100%)",
+                  }}
+                />
+                {/* Whisper of green so the glass tints when light hits it */}
+                <div
+                  aria-hidden
+                  className="absolute -bottom-14 -left-12 h-44 w-44 rounded-full opacity-40 pointer-events-none blur-3xl"
+                  style={{
+                    background:
+                      "radial-gradient(circle, rgba(34,197,94,0.18) 0%, transparent 70%)",
                   }}
                 />
                 <div className="relative grid grid-cols-2 gap-3 sm:gap-4">
@@ -1699,7 +1717,7 @@ export default function Dashboard() {
                   className="stat-glass-sm relative rounded-xl p-[1px] shadow-[0_6px_18px_-12px_rgba(0,0,0,0.35)]"
                   style={{
                     background:
-                      "linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.45) 100%)",
+                      "linear-gradient(135deg, rgba(190,235,210,0.6) 0%, rgba(255,255,255,0.2) 50%, rgba(190,235,210,0.5) 100%)",
                   }}
                 >
                   <div
@@ -2023,27 +2041,73 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5 lg:gap-3">
-              <div className="rounded-2xl border bg-primary/5 p-4">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Purchased</p>
-                <p className="text-2xl font-bold mt-1">{totalYarnPurchasedKg.toLocaleString(undefined, { maximumFractionDigits: 1 })} kg</p>
-              </div>
-              <div className="rounded-2xl border bg-muted/40 p-4">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Used (total)</p>
-                <p className="text-2xl font-bold mt-1">{totalYarnUsedAllKg.toLocaleString(undefined, { maximumFractionDigits: 1 })} kg</p>
-              </div>
-              <div className="rounded-2xl border bg-muted/40 p-4">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Remaining</p>
-                <p className="text-2xl font-bold mt-1">{remainingYarnAvailableKg.toLocaleString(undefined, { maximumFractionDigits: 1 })} kg</p>
-              </div>
-              <div className="rounded-2xl border bg-muted/40 p-4">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Efficiency</p>
-                <p className="text-2xl font-bold mt-1">{yarnEfficiency.toFixed(1)}%</p>
-              </div>
-              <div className="rounded-2xl border bg-orange-100/50 dark:bg-orange-900/20 p-4">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Future need</p>
-                <p className="text-2xl font-bold mt-1">{futureYarnNeed.toLocaleString(undefined, { maximumFractionDigits: 1 })} kg</p>
-                <p className="text-[10px] text-muted-foreground mt-1">For current stock</p>
-              </div>
+              {(() => {
+                // Same liter-green glass treatment as the profit/
+                // production cards above, applied to each yarn stat.
+                // The "Future need" tile gets a warm amber tint
+                // instead of green so it still reads as a soft
+                // warning at a glance.
+                const tiles: Array<{
+                  key: string;
+                  label: string;
+                  value: string;
+                  hint?: string;
+                  tone: "green" | "amber";
+                }> = [
+                  { key: "purchased", label: "Purchased", value: `${totalYarnPurchasedKg.toLocaleString(undefined, { maximumFractionDigits: 1 })} kg`, tone: "green" },
+                  { key: "used",      label: "Used (total)", value: `${totalYarnUsedAllKg.toLocaleString(undefined, { maximumFractionDigits: 1 })} kg`, tone: "green" },
+                  { key: "remaining", label: "Remaining", value: `${remainingYarnAvailableKg.toLocaleString(undefined, { maximumFractionDigits: 1 })} kg`, tone: "green" },
+                  { key: "efficiency", label: "Efficiency", value: `${yarnEfficiency.toFixed(1)}%`, tone: "green" },
+                  { key: "future",    label: "Future need", value: `${futureYarnNeed.toLocaleString(undefined, { maximumFractionDigits: 1 })} kg`, hint: "For current stock", tone: "amber" },
+                ];
+                const ringByTone: Record<"green" | "amber", string> = {
+                  green: "linear-gradient(135deg, rgba(190,235,210,0.65) 0%, rgba(255,255,255,0.2) 50%, rgba(190,235,210,0.55) 100%)",
+                  amber: "linear-gradient(135deg, rgba(253,224,180,0.7) 0%, rgba(255,255,255,0.2) 50%, rgba(253,224,180,0.6) 100%)",
+                };
+                const haloByTone: Record<"green" | "amber", string> = {
+                  green: "radial-gradient(circle, rgba(34,197,94,0.18) 0%, transparent 70%)",
+                  amber: "radial-gradient(circle, rgba(245,158,11,0.22) 0%, transparent 70%)",
+                };
+                return tiles.map((tile) => (
+                  <div
+                    key={tile.key}
+                    className="stat-glass relative rounded-2xl p-[1px] shadow-[0_10px_28px_-18px_rgba(0,0,0,0.35)]"
+                    style={{ background: ringByTone[tile.tone] }}
+                  >
+                    <div
+                      className="relative rounded-[15px] overflow-hidden p-4 bg-white/40 dark:bg-neutral-900/40 h-full"
+                      style={{
+                        backdropFilter: "blur(22px) saturate(120%)",
+                        WebkitBackdropFilter: "blur(22px) saturate(120%)",
+                      }}
+                    >
+                      <div
+                        aria-hidden
+                        className="absolute inset-x-0 top-0 h-1/3 pointer-events-none"
+                        style={{
+                          background:
+                            "linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 100%)",
+                        }}
+                      />
+                      <div
+                        aria-hidden
+                        className="absolute -top-10 -right-10 h-32 w-32 rounded-full opacity-40 pointer-events-none blur-3xl"
+                        style={{ background: haloByTone[tile.tone] }}
+                      />
+                      <p className="relative text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">{tile.label}</p>
+                      <p
+                        className="relative text-2xl font-bold mt-1 leading-tight truncate"
+                        style={{ textShadow: "0 1px 0 rgba(255,255,255,0.55)" }}
+                      >
+                        {tile.value}
+                      </p>
+                      {tile.hint && (
+                        <p className="relative text-[10px] text-muted-foreground mt-1">{tile.hint}</p>
+                      )}
+                    </div>
+                  </div>
+                ));
+              })()}
             </div>
 
             <Separator />
