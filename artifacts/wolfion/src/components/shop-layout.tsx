@@ -5,7 +5,8 @@ import { clearAdminStorage } from "@/lib/wolfion-store";
 import { useCart } from "@/hooks/use-cart";
 import { useRole } from "@/hooks/use-role";
 import { useStableDisclosure } from "@/hooks/use-stable-disclosure";
-import { ShoppingBag, Menu, User, LogOut, Search, ShieldCheck, ChevronDown, Home as HomeIcon, Store, Mail, Info, Settings, X, Plus } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
+import { ShoppingBag, Menu, User, LogOut, Search, ShieldCheck, ChevronDown, Home as HomeIcon, Store, Mail, Info, Settings, X, Plus, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose, SheetFooter } from "@/components/ui/sheet";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -59,6 +60,7 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
   const [addProductOpen, setAddProductOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useStableDisclosure();
   const [accountMenuOpen, setAccountMenuOpen] = useStableDisclosure();
+  const { theme, toggleTheme } = useTheme();
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Live catalog from the API. The query is shared with the products listing
@@ -408,6 +410,18 @@ export function ShopLayout({ children }: { children: React.ReactNode }) {
               className="active:scale-95 transition-transform"
             >
               <Search className="h-5 w-5" />
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+              data-testid="btn-theme-toggle"
+              onClick={toggleTheme}
+              className="rounded-full h-9 w-9"
+              style={{ touchAction: "manipulation", WebkitTapHighlightColor: "transparent" }}
+            >
+              {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
             </Button>
 
             <div className="hidden md:block">
