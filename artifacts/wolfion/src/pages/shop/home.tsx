@@ -66,6 +66,18 @@ export default function ShopHome() {
         className="relative w-full bg-white dark:bg-neutral-950 px-3 pt-3 pb-5 sm:px-5 sm:pt-5 sm:pb-8 overflow-hidden"
         style={{ perspective: "1400px" }}
       >
+        {/* Dark-mode-only warm wash across the whole hero section background.
+            A pair of soft radial glows (amber top-left, peach bottom-right)
+            so the warm "sine" color spreads through the section bg, not just
+            inside the bevel. Light mode keeps its plain white. */}
+        <div
+          aria-hidden
+          className="hidden dark:block absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(120% 90% at 15% 10%, rgba(251,146,60,0.18) 0%, rgba(251,146,60,0) 55%), radial-gradient(110% 80% at 85% 95%, rgba(244,114,182,0.14) 0%, rgba(244,114,182,0) 55%), radial-gradient(140% 100% at 50% 50%, rgba(229,212,168,0.08) 0%, rgba(229,212,168,0) 70%)",
+          }}
+        />
         {/* Soft warm halo — gentle amber glow behind the frame */}
         <div
           aria-hidden
