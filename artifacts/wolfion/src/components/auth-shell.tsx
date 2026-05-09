@@ -258,8 +258,8 @@ export const clerkAppearance = {
     dividerText: "!text-white/50 !text-[10px] !uppercase !tracking-[0.2em]",
     formField: "!overflow-visible !min-w-0",
     formFieldRow: "!overflow-visible",
-    formFieldLabelRow: "!overflow-visible !pl-1",
-    formFieldLabel: "!text-white/85 !font-medium !text-[13px] !tracking-normal !normal-case !pl-1 !leading-tight !overflow-visible",
+    formFieldLabelRow: "!overflow-visible !pl-3",
+    formFieldLabel: "!text-white/85 !font-medium !text-[13px] !tracking-normal !normal-case !pl-3 !leading-tight !overflow-visible",
     formFieldInput:
       "!bg-white/[0.04] !text-white !border !border-white/15 hover:!border-white/25 focus:!border-[#1ABBC4] focus:!ring-2 focus:!ring-[#1ABBC4]/30 h-11 !rounded-[10px] !pl-3.5 !pr-11 placeholder:!text-white/35 !backdrop-blur-md !transition-all",
     formFieldInputShowPasswordButton: "!right-2 !text-white/60 hover:!text-white",
