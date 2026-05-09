@@ -774,6 +774,132 @@ export default function ShopHome() {
                     "linear-gradient(180deg, rgba(255,255,255,0.10) 0%, transparent 100%)",
                 }}
               />
+
+              {/* === Cinematic UX overlays — all pointer-events-none so
+                  the original image stays the hero. ============== */}
+
+              {/* Slow scanning light sweep across the image — like a
+                  film projector beam catching the surface every few
+                  seconds. */}
+              <div
+                aria-hidden
+                className="absolute inset-0 pointer-events-none overflow-hidden source-sweep-mask"
+              >
+                <div className="absolute inset-y-0 -left-1/3 w-1/3 source-sweep" />
+              </div>
+
+              {/* Four cinematic corner brackets — copper hairlines
+                  that frame the photo like a viewfinder. */}
+              <div aria-hidden className="absolute inset-2 sm:inset-3 pointer-events-none source-corners">
+                <span className="source-corner source-corner-tl" />
+                <span className="source-corner source-corner-tr" />
+                <span className="source-corner source-corner-bl" />
+                <span className="source-corner source-corner-br" />
+              </div>
+
+              {/* Top-left heritage chip — glass pill with copper
+                  monogram dot. */}
+              <div className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 pointer-events-none source-chip-in">
+                <div
+                  className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 sm:px-3 sm:py-1.5 border border-white/20 shadow-[0_8px_24px_-6px_rgba(0,0,0,0.6)]"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, rgba(8,18,28,0.55) 0%, rgba(8,18,28,0.35) 100%)",
+                    backdropFilter: "blur(14px) saturate(160%)",
+                    WebkitBackdropFilter: "blur(14px) saturate(160%)",
+                  }}
+                >
+                  <span
+                    className="h-1.5 w-1.5 rounded-full"
+                    style={{
+                      background:
+                        "radial-gradient(circle, #FCD34D 0%, #B45309 80%)",
+                      boxShadow: "0 0 8px rgba(252,211,77,0.7)",
+                    }}
+                  />
+                  <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.3em] text-white/95 font-medium">
+                    Heritage
+                  </span>
+                </div>
+              </div>
+
+              {/* Top-right "EST. ###" monogram — small editorial
+                  serif marker. */}
+              <div className="absolute top-2.5 right-2.5 sm:top-4 sm:right-4 pointer-events-none source-chip-in source-chip-delay-1">
+                <div
+                  className="rounded-md px-2 py-1 sm:px-2.5 sm:py-1.5 border border-amber-200/30 shadow-[0_6px_18px_-4px_rgba(0,0,0,0.6)]"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, rgba(20,12,4,0.55) 0%, rgba(20,12,4,0.35) 100%)",
+                    backdropFilter: "blur(12px) saturate(160%)",
+                    WebkitBackdropFilter: "blur(12px) saturate(160%)",
+                  }}
+                >
+                  <p className="text-[8px] sm:text-[9px] uppercase tracking-[0.4em] text-amber-200/80 leading-none">
+                    Est.
+                  </p>
+                  <p
+                    className="font-serif italic text-[13px] sm:text-base leading-none mt-0.5"
+                    style={{
+                      background:
+                        "linear-gradient(135deg, #FDE68A 0%, #C9A66B 60%, #B45309 100%)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                    }}
+                  >
+                    1972
+                  </p>
+                </div>
+              </div>
+
+              {/* Bottom-left location stamp with live pulsing dot —
+                  feels like a documentary geo-tag. */}
+              <div className="absolute bottom-2.5 left-2.5 sm:bottom-4 sm:left-4 pointer-events-none source-chip-in source-chip-delay-2">
+                <div
+                  className="inline-flex items-center gap-2 rounded-full px-2.5 py-1 sm:px-3 sm:py-1.5 border border-white/15 shadow-[0_8px_24px_-6px_rgba(0,0,0,0.6)]"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, rgba(8,18,28,0.6) 0%, rgba(8,18,28,0.4) 100%)",
+                    backdropFilter: "blur(14px) saturate(160%)",
+                    WebkitBackdropFilter: "blur(14px) saturate(160%)",
+                  }}
+                >
+                  <span className="relative flex h-2 w-2 flex-shrink-0">
+                    <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 source-ping" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-300" />
+                  </span>
+                  <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.28em] text-white/95 font-medium leading-none">
+                    Dhaka · Bangladesh
+                  </span>
+                </div>
+              </div>
+
+              {/* Bottom-right "tap to explore" cue — animated arrow
+                  that subtly bobs to invite engagement. */}
+              <div className="absolute bottom-2.5 right-2.5 sm:bottom-4 sm:right-4 pointer-events-none source-chip-in source-chip-delay-3">
+                <div
+                  className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 sm:px-3 sm:py-1.5 border border-amber-200/25 shadow-[0_6px_18px_-4px_rgba(0,0,0,0.6)] source-bob"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, rgba(20,12,4,0.55) 0%, rgba(20,12,4,0.35) 100%)",
+                    backdropFilter: "blur(12px) saturate(160%)",
+                    WebkitBackdropFilter: "blur(12px) saturate(160%)",
+                  }}
+                >
+                  <Sparkles className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-amber-300" />
+                  <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.28em] text-amber-100/95 font-medium leading-none">
+                    The Source
+                  </span>
+                </div>
+              </div>
+
+              {/* Edge vignette pulse — barely-visible inner shadow
+                  that breathes, giving the frame depth. */}
+              <div
+                aria-hidden
+                className="absolute inset-0 pointer-events-none source-vignette"
+              />
             </div>
           </div>
         </div>
@@ -1113,6 +1239,87 @@ export default function ShopHome() {
           .craft-frame-3d {
             will-change: transform;
           }
+        }
+
+        /* === Experience the Source overlays === */
+        @keyframes source-sweep {
+          0%   { transform: translateX(0) skewX(-18deg); opacity: 0; }
+          12%  { opacity: 0.55; }
+          50%  { opacity: 0.55; }
+          80%  { opacity: 0; }
+          100% { transform: translateX(520%) skewX(-18deg); opacity: 0; }
+        }
+        .source-sweep {
+          background: linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(255, 230, 170, 0.0) 20%,
+            rgba(255, 230, 170, 0.55) 50%,
+            rgba(255, 230, 170, 0.0) 80%,
+            transparent 100%
+          );
+          filter: blur(6px);
+          animation: source-sweep 7s ease-in-out 1.2s infinite;
+          mix-blend-mode: screen;
+        }
+        @keyframes source-corner-in {
+          0%   { opacity: 0; transform: scale(0.7); }
+          100% { opacity: 1; transform: scale(1); }
+        }
+        .source-corner {
+          position: absolute;
+          width: 22px;
+          height: 22px;
+          border: 1.5px solid rgba(252, 211, 77, 0.85);
+          filter: drop-shadow(0 0 6px rgba(252, 211, 77, 0.35));
+          opacity: 0;
+          animation: source-corner-in 700ms cubic-bezier(0.22, 1, 0.36, 1) 250ms forwards;
+        }
+        @media (min-width: 640px) {
+          .source-corner { width: 28px; height: 28px; }
+        }
+        .source-corner-tl { top: 0;    left: 0;    border-right: 0; border-bottom: 0; }
+        .source-corner-tr { top: 0;    right: 0;   border-left:  0; border-bottom: 0; animation-delay: 350ms; }
+        .source-corner-bl { bottom: 0; left: 0;    border-right: 0; border-top:    0; animation-delay: 450ms; }
+        .source-corner-br { bottom: 0; right: 0;   border-left:  0; border-top:    0; animation-delay: 550ms; }
+
+        @keyframes source-chip-in {
+          0%   { opacity: 0; transform: translateY(8px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        .source-chip-in {
+          opacity: 0;
+          animation: source-chip-in 600ms cubic-bezier(0.22, 1, 0.36, 1) 700ms forwards;
+        }
+        .source-chip-delay-1 { animation-delay: 850ms; }
+        .source-chip-delay-2 { animation-delay: 1000ms; }
+        .source-chip-delay-3 { animation-delay: 1150ms; }
+
+        @keyframes source-ping {
+          0%   { transform: scale(1);   opacity: 0.75; }
+          75%, 100% { transform: scale(2.4); opacity: 0; }
+        }
+        .source-ping { animation: source-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite; }
+
+        @keyframes source-bob {
+          0%, 100% { transform: translateY(0); }
+          50%      { transform: translateY(-3px); }
+        }
+        .source-bob { animation: source-bob 2.4s ease-in-out infinite; }
+
+        @keyframes source-vignette {
+          0%, 100% { box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.35); }
+          50%      { box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.55); }
+        }
+        .source-vignette { animation: source-vignette 6s ease-in-out infinite; }
+
+        @media (prefers-reduced-motion: reduce) {
+          .source-sweep,
+          .source-ping,
+          .source-bob,
+          .source-vignette { animation: none !important; }
+          .source-corner,
+          .source-chip-in { opacity: 1 !important; transform: none !important; animation: none !important; }
         }
 
         /* === Touch/mouse tilt for product / collection / box cards ===
