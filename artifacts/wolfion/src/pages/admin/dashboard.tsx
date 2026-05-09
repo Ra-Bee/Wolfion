@@ -23,7 +23,7 @@ import { downloadReport, type WolfionReportData, type ReportRange } from "@/lib/
 import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { Fragment, useEffect, useMemo, useState, type FormEvent } from "react";
 
 type ProductType = string;
 
@@ -2288,20 +2288,34 @@ export default function Dashboard() {
             <CardDescription>Track each worker's earnings, payments, and remaining balance.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5">
-              <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
-                <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Total payable due</p>
-                <p className="text-[13px] sm:text-base font-semibold truncate">Tk {totalPayable.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
-              </div>
+            <div className="grid grid-cols-2 gap-1.5 sm:gap-2.5">
               <div className="rounded-lg border bg-primary/5 p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border">
                 <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Total paid</p>
                 <p className="text-[13px] sm:text-base font-semibold truncate">Tk {totalPaidAll.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
               </div>
               <div className={`rounded-lg border p-2 sm:p-3 min-h-[55px] flex flex-col justify-center box-border ${totalRemainingAll > 0 ? "bg-orange-50 border-orange-200" : "bg-green-50 border-green-200"}`}>
-                <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Remaining</p>
+                <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Remaining due</p>
                 <p className={`text-[13px] sm:text-base font-semibold truncate ${totalRemainingAll > 0 ? "text-orange-700" : "text-green-700"}`}>Tk {totalRemainingAll.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
               </div>
             </div>
+
+            {workerStats.length > 0 && (
+              <div className="rounded-2xl border bg-card/60 p-3 space-y-2">
+                <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Workers summary</p>
+                <div className="grid grid-cols-[1fr_auto_auto] gap-x-3 gap-y-1.5 text-xs">
+                  <p className="font-semibold text-muted-foreground">Name</p>
+                  <p className="font-semibold text-muted-foreground text-right">Paid</p>
+                  <p className="font-semibold text-muted-foreground text-right">Due</p>
+                  {workerStats.map(({ worker, totalPaid, remaining }) => (
+                    <Fragment key={worker.id}>
+                      <p className="font-medium truncate">{worker.name}</p>
+                      <p className="text-right tabular-nums">Tk {totalPaid.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                      <p className={`text-right tabular-nums font-semibold ${remaining > 0 ? "text-orange-700" : "text-green-700"}`}>Tk {remaining.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                    </Fragment>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <form onSubmit={handleAddWorker} className="space-y-3 rounded-2xl border bg-muted/20 p-4">
               <h3 className="text-sm font-semibold">Worker entry</h3>
