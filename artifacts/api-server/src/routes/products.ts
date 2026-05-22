@@ -4,6 +4,37 @@ import { z } from "zod";
 import { db, productsTable, type ProductRow } from "@workspace/db";
 import { CreateProductBody, UpdateProductBody } from "@workspace/api-zod";
 import { requireAdmin } from "../lib/admin";
+import { firebaseDb } from "../lib/firebase";
+
+// Phase-3 migration fallback: the canonical product catalog still lives in
+// Postgres, but the Render deploy has had its DATABASE_URL unset (see
+// migration plan). When the SQL read fails we serve the snapshot that admin
+// cloud-sync writes to RTDB at /wolfion/products so the customer storefront
+// keeps working instead of returning 500.
+async function listProductsFromFirebase(): Promise<ReturnType<typeof serializeProduct>[]> {
+  const snap = await firebaseDb().ref("wolfion/products").once("value");
+  const val = snap.val() as Record<string, Record<string, unknown>> | null;
+  if (!val) return [];
+  const rows = Object.values(val).map((p) => ({
+    id: String(p.id ?? ""),
+    name: String(p.name ?? ""),
+    price: Number(p.price ?? 0),
+    color: String(p.color ?? ""),
+    category: String(p.category ?? ""),
+    sizes: (p.sizes as string[] | undefined) ?? [],
+    description: String(p.description ?? ""),
+    inventory: Number(p.inventory ?? 0),
+    image: (p.image as string | null) ?? "",
+    video: (p.video as string | null) ?? "",
+    sortOrder: Number(p.sortOrder ?? 0),
+    createdAt: String(p.createdAt ?? new Date(0).toISOString()),
+    updatedAt: String(p.updatedAt ?? new Date(0).toISOString()),
+  }));
+  rows.sort((a, b) =>
+    a.sortOrder - b.sortOrder || a.createdAt.localeCompare(b.createdAt),
+  );
+  return rows;
+}
 
 // The OpenAPI spec declares `inventory` and `sortOrder` as `integer`, but the
 // generated Zod schemas only call `z.number()` (the orval->zod codegen does not
@@ -54,8 +85,14 @@ router.get("/products", async (req, res): Promise<void> => {
       .orderBy(asc(productsTable.sortOrder), asc(productsTable.createdAt));
     res.json(rows.map(serializeProduct));
   } catch (err) {
-    req.log.error({ err }, "products: list failed");
-    res.status(500).json({ error: "Could not load products." });
+    req.log.warn({ err }, "products: SQL list failed, falling back to Firebase");
+    try {
+      const rows = await listProductsFromFirebase();
+      res.json(rows);
+    } catch (fbErr) {
+      req.log.error({ err: fbErr }, "products: Firebase fallback also failed");
+      res.status(500).json({ error: "Could not load products." });
+    }
   }
 });
 
