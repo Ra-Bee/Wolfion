@@ -21,6 +21,13 @@ RUN corepack enable
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json .npmrc ./
 COPY tsconfig.base.json tsconfig.json ./
 
+# Strip the root `preinstall` lifecycle script. Locally it guards
+# against `npm install`, but inside Docker it fires under busybox sh
+# and trips up corepack's pnpm wrapper. Removing it does NOT touch
+# dependency resolution (lockfile is the source of truth) and is
+# only applied inside this build stage.
+RUN node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json'));delete p.preinstall;if(p.scripts)delete p.scripts.preinstall;fs.writeFileSync('package.json',JSON.stringify(p,null,2));"
+
 # pnpm --frozen-lockfile validates EVERY workspace package's
 # package.json against the lockfile, so we must copy them all even
 # though we only build the api-server. The files are tiny.
