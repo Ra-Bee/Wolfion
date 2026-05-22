@@ -6,8 +6,8 @@
 # resolve correctly.
 #
 # Build context MUST be the repo root, not artifacts/api-server.
-# On Render: set "Docker Build Context Directory" to "." and
-# "Dockerfile Path" to "artifacts/api-server/Dockerfile".
+# On Render: dockerfilePath = artifacts/api-server/Dockerfile,
+# dockerContext = "." (already set in render.yaml).
 # ─────────────────────────────────────────────────────────────────
 
 FROM node:24-alpine AS build
@@ -16,19 +16,39 @@ WORKDIR /repo
 # Enable corepack so the `pnpm` version pinned in package.json is used.
 RUN corepack enable
 
-# Copy lockfile + workspace manifest first for better layer caching.
+# Copy lockfile + workspace manifest + root configs first so layer
+# caching survives source edits.
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json .npmrc ./
 COPY tsconfig.base.json tsconfig.json ./
-# Copy every package.json so pnpm can resolve the workspace graph.
-COPY artifacts/api-server/package.json artifacts/api-server/
+
+# pnpm --frozen-lockfile validates EVERY workspace package's
+# package.json against the lockfile, so we must copy them all even
+# though we only build the api-server. The files are tiny.
+COPY artifacts/api-server/package.json     artifacts/api-server/package.json
+COPY artifacts/wolfion/package.json        artifacts/wolfion/package.json
+COPY artifacts/mockup-sandbox/package.json artifacts/mockup-sandbox/package.json
+COPY artifacts/uniless/package.json        artifacts/uniless/package.json
+COPY scripts/package.json                  scripts/package.json
+COPY lib/api-spec/package.json             lib/api-spec/package.json
+COPY lib/api-client-react/package.json     lib/api-client-react/package.json
+COPY lib/api-zod/package.json              lib/api-zod/package.json
+COPY lib/db/package.json                   lib/db/package.json
+COPY lib/integrations-openai-ai-react/package.json  lib/integrations-openai-ai-react/package.json
+COPY lib/integrations-openai-ai-server/package.json lib/integrations-openai-ai-server/package.json
+
+# Install ONLY the api-server and its transitive workspace deps.
+# `--filter "@workspace/api-server..."` (note the trailing `...`)
+# includes the package and everything it depends on, skipping the
+# heavy frontend deps (wolfion, mockup-sandbox, uniless/expo).
+# `--ignore-scripts` skips postinstall hooks (e.g. native compilation)
+# that aren't needed for our esbuild bundle.
+RUN pnpm install --frozen-lockfile --ignore-scripts \
+      --filter "@workspace/api-server..."
+
+# Now copy the api-server source + any libs it actually imports.
 COPY lib lib
-COPY scripts scripts
-
-# Install ALL deps (we'll prune below). Frozen lockfile = reproducible.
-RUN pnpm install --frozen-lockfile
-
-# Now copy the api-server source and build.
 COPY artifacts/api-server artifacts/api-server
+
 RUN pnpm --filter @workspace/api-server run build
 
 # ─────────────────────────────────────────────────────────────────
@@ -36,18 +56,17 @@ FROM node:24-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 
-# Copy ONLY the built bundle. The bundle is self-contained except for the
-# `external` packages declared in build.mjs, which we install fresh.
+# Copy ONLY the built bundle. The bundle is self-contained except for
+# the `external` packages declared in build.mjs.
 COPY --from=build /repo/artifacts/api-server/dist ./dist
 COPY --from=build /repo/artifacts/api-server/package.json ./package.json
 
-# Install only runtime deps that esbuild left external (firebase-admin,
-# pdf-parse, etc.). We use npm here to avoid pulling the whole pnpm
-# workspace into the runtime image.
+# Install only the runtime deps that esbuild left external. Use npm
+# (not pnpm) so the runtime image doesn't carry the whole pnpm
+# workspace machinery.
 RUN npm install --omit=dev --no-package-lock --ignore-scripts \
-      firebase-admin pdf-parse pino pino-pretty
+      firebase-admin@^13 pdf-parse@^2 pino@^9 pino-pretty@^13
 
-# Render assigns $PORT dynamically; we honor it.
 ENV PORT=8080
 EXPOSE 8080
 
