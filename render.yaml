@@ -1,0 +1,36 @@
+# ─────────────────────────────────────────────────────────────────
+# Render Blueprint — one-click deploy for the Wolfion API server.
+# After connecting this repo to Render (https://dashboard.render.com →
+# New → Blueprint), Render will read this file and create the service.
+# You'll be prompted to fill in the env-var values (set as `sync: false`
+# below so Render doesn't auto-generate them).
+# ─────────────────────────────────────────────────────────────────
+services:
+  - type: web
+    name: wolfion-api
+    runtime: docker
+    plan: starter        # free tier sleeps; upgrade to keep warm
+    region: oregon       # change if you want a closer region
+    dockerfilePath: artifacts/api-server/Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/healthz
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 8080
+      - key: CLERK_PUBLISHABLE_KEY
+        sync: false
+      - key: CLERK_SECRET_KEY
+        sync: false
+      - key: FIREBASE_SERVICE_ACCOUNT
+        sync: false
+      - key: WOLFION_ADMIN_EMAILS
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false

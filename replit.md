@@ -4,6 +4,17 @@
 
 pnpm workspace monorepo using TypeScript. Each package manages its own dependencies.
 
+## Migration off Replit
+
+Underway. See `MIGRATION.md` for the full plan. Phase 1 (deploy
+configs + GitHub-ready repo) is complete. User is doing Phase 2
+(create own Clerk + Vercel + Render + push to GitHub). Phase 3
+(swap Clerk to own account, move products Postgres→Firebase, strip
+@replit/vite-plugin-*) happens after user confirms Phase 2 success.
+Until then: keep .replit, artifact.toml, replit.nix, and the
+Replit Vite plugins in place — the live Replit deploy must keep
+working in parallel.
+
 ## Artifacts
 
 - **Wolfion** (`artifacts/wolfion`) — React + Vite mobile-friendly web app for the Wolfion socks brand. Includes Clerk-powered login/sign-up, local role selection for Admin vs Customer, customer product browsing/cart/simple checkout, and an admin management dashboard with Production, Sales, Inventory, Yarn, and Cost & Profit sections.

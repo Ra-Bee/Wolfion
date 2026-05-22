@@ -1,5 +1,3 @@
-# See https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
-
 # compiled output
 dist
 tmp
@@ -10,6 +8,14 @@ out-tsc
 
 # dependencies
 node_modules
+
+# env / secrets — NEVER commit real values
+.env
+.env.local
+.env.*.local
+*.secret
+service-account*.json
+firebase-admin-*.json
 
 # IDEs and editors
 /.idea
@@ -44,6 +50,16 @@ Thumbs.db
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
 
-# Replit
+# Replit (kept so the project still runs here today, but not pushed to GitHub)
 .cache/
 .local/
+.upm/
+.breakpoints
+
+# Android build outputs
+artifacts/wolfion/android/app/build/
+artifacts/wolfion/android/.gradle/
+artifacts/wolfion/android/build/
+artifacts/wolfion/android/local.properties
+*.keystore
+*.jks
