@@ -16,13 +16,14 @@ import {
   type ProductTypeOption,
   type SaleEntry,
 } from "@/lib/wolfion-store";
+import { useCloudStored } from "@/lib/cloud-store";
 
 function fmt(n: number) { return new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(n); }
 function money(n: number) { return `Tk ${fmt(n)}`; }
 
 export default function DailySalesPage() {
-  const [productTypes] = useStored<ProductTypeOption[]>(STORAGE_KEYS.productTypes, defaultProductTypes);
-  const [sales, setSales] = useStored<SaleEntry[]>(STORAGE_KEYS.sales, []);
+  const [productTypes] = useCloudStored<ProductTypeOption[]>(STORAGE_KEYS.productTypes, defaultProductTypes);
+  const [sales, setSales] = useCloudStored<SaleEntry[]>(STORAGE_KEYS.sales, []);
 
   const [date, setDate] = useState(getToday());
   const [productType, setProductType] = useState(productTypes[0]?.id ?? "");

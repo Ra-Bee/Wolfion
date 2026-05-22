@@ -19,15 +19,16 @@ import {
   type ProductTypeOption,
   type YarnUsageEntry,
 } from "@/lib/wolfion-store";
+import { useCloudStored } from "@/lib/cloud-store";
 
 function fmt(n: number) { return new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(n); }
 function money(n: number) { return `Tk ${new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(n)}`; }
 
 export default function DailyProductionPage() {
-  const [productTypes] = useStored<ProductTypeOption[]>(STORAGE_KEYS.productTypes, defaultProductTypes);
-  const [dailyEntries, setDailyEntries] = useStored<DailyProductionEntry[]>(STORAGE_KEYS.daily, []);
-  const [productionEntries, setProductionEntries] = useStored<ProductionEntry[]>(STORAGE_KEYS.production, []);
-  const [yarnUsageEntries, setYarnUsageEntries] = useStored<YarnUsageEntry[]>(STORAGE_KEYS.yarnUsage, []);
+  const [productTypes] = useCloudStored<ProductTypeOption[]>(STORAGE_KEYS.productTypes, defaultProductTypes);
+  const [dailyEntries, setDailyEntries] = useCloudStored<DailyProductionEntry[]>(STORAGE_KEYS.daily, []);
+  const [productionEntries, setProductionEntries] = useCloudStored<ProductionEntry[]>(STORAGE_KEYS.production, []);
+  const [yarnUsageEntries, setYarnUsageEntries] = useCloudStored<YarnUsageEntry[]>(STORAGE_KEYS.yarnUsage, []);
   const [yarnStockKg, setYarnStockKg] = useStoredNumber(STORAGE_KEYS.yarnStock, 0);
 
   const [date, setDate] = useState(getToday());

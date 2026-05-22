@@ -27,14 +27,15 @@ import {
   type YarnPerDozen,
   type YarnUsageEntry,
 } from "@/lib/wolfion-store";
+import { useCloudStored } from "@/lib/cloud-store";
 
 type Mode = "daily" | "monthly" | "yearly" | "custom";
 
 export default function InventoryReportPage() {
-  const [productTypes] = useStored<ProductTypeOption[]>(STORAGE_KEYS.productTypes, defaultProductTypes);
-  const [productionEntries] = useStored<ProductionEntry[]>(STORAGE_KEYS.production, []);
-  const [salesEntries] = useStored<SaleEntry[]>(STORAGE_KEYS.sales, []);
-  const [dailyEntries] = useStored<DailyProductionEntry[]>(STORAGE_KEYS.daily, []);
+  const [productTypes] = useCloudStored<ProductTypeOption[]>(STORAGE_KEYS.productTypes, defaultProductTypes);
+  const [productionEntries] = useCloudStored<ProductionEntry[]>(STORAGE_KEYS.production, []);
+  const [salesEntries] = useCloudStored<SaleEntry[]>(STORAGE_KEYS.sales, []);
+  const [dailyEntries] = useCloudStored<DailyProductionEntry[]>(STORAGE_KEYS.daily, []);
   const [electricityEntries] = useStored<ElectricityEntry[]>(STORAGE_KEYS.electricity, []);
   const [workers] = useStored<Worker[]>(STORAGE_KEYS.workers, []);
   const [workLogs] = useStored<WorkLog[]>(STORAGE_KEYS.workLogs, []);

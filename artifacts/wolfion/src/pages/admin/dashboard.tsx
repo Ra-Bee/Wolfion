@@ -25,6 +25,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Fragment, useEffect, useMemo, useState, type FormEvent } from "react";
 import { useStored, STORAGE_KEYS } from "@/lib/wolfion-store";
+import { useCloudStored } from "@/lib/cloud-store";
 
 type ProductType = string;
 
@@ -226,7 +227,7 @@ export default function Dashboard() {
   // The cloud allow-list in wolfion-store.ts routes this key through
   // Firebase Realtime Database, so admin product categories are shared
   // across every signed-in admin device in real time.
-  const [productTypes, setProductTypes] = useStored<ProductTypeOption[]>(
+  const [productTypes, setProductTypes] = useCloudStored<ProductTypeOption[]>(
     STORAGE_KEYS.productTypes,
     defaultProductTypes,
   );
