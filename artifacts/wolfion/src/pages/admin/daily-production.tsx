@@ -13,7 +13,6 @@ import {
   defaultProductTypes,
   formatDateLabel,
   getToday,
-  useStored,
   useStoredNumber,
   type DailyProductionEntry,
   type ProductionEntry,

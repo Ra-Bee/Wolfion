@@ -13,7 +13,6 @@ import {
   defaultProductTypes,
   formatDateLabel,
   getToday,
-  useStored,
   type ProductTypeOption,
   type SaleEntry,
 } from "@/lib/wolfion-store";

@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Activity, DollarSign, Package, Factory, TrendingUp, Plus, Zap, X, MoreVertical, FileDown, Users, Wrench, LogOut as LogOutIcon, ChevronRight } from "lucide-react";
+import { Activity, DollarSign, Package, Factory, TrendingUp, Plus, Zap, Users, Wrench, LogOut as LogOutIcon, ChevronRight } from "lucide-react";
 import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
 import {
   DropdownMenu,
@@ -927,32 +927,6 @@ export default function Dashboard() {
     setWorkerPayments((current) => current.filter((p) => p.workerId !== id));
   }
 
-  function handleAddInvestment(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setInvError("");
-    const amount = Number(invAmount);
-    if (!invDate || !invType || !Number.isFinite(amount) || amount <= 0) {
-      setInvError("Enter date, type, and valid amount.");
-      return;
-    }
-    const entry: Investment = {
-      id: crypto.randomUUID(),
-      date: invDate,
-      type: invType,
-      description: invDescription.trim(),
-      amount,
-      source: invSource.trim() || "personal",
-      createdAt: new Date().toISOString(),
-    };
-    setInvestments((current) => [entry, ...current]);
-    setInvAmount("");
-    setInvDescription("");
-  }
-
-  function handleRemoveInvestment(id: string) {
-    setInvestments((current) => current.filter((i) => i.id !== id));
-  }
-
   function handleAddInvestor(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setInvestorError("");
@@ -975,12 +949,6 @@ export default function Dashboard() {
   function handleRemoveInvestor(id: string) {
     setInvestors((current) => current.filter((i) => i.id !== id));
   }
-
-  const sortedInvestments = useMemo(
-    () => [...investments].sort((a, b) => (a.date < b.date ? 1 : -1)),
-    [investments],
-  );
-  const totalInvestmentAmount = investments.reduce((sum, i) => sum + i.amount, 0);
 
   const investorTotals = useMemo(() => {
     const map = new Map<string, number>();
