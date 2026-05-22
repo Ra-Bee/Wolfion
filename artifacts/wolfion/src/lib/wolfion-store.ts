@@ -199,15 +199,29 @@ function notifySameTab(key: string) {
 }
 
 // Storage keys that mirror to Firebase Realtime Database for cross-device
-// admin sync. Phase 1 scope: product types (the admin catalog/categories),
-// daily-production entries, and sales — the three datasets that drive
-// inventory math + the admin dashboards. Every key here is consumed
-// only by admin pages; customer pages don't read these keys, so no
-// extra read-access is granted to non-admins.
-const CLOUD_SYNCED_KEYS: ReadonlySet<string> = new Set([
+// admin sync. As of Phase 2 this covers ALL admin datasets — every
+// key in STORAGE_KEYS below. Every key here is consumed only by admin
+// pages; customer pages don't read these keys, so no extra read-access
+// is granted to non-admins (RTDB rules still require admin claim).
+const CLOUD_SYNCED_KEYS: ReadonlySet<string> = new Set<string>([
   STORAGE_KEYS.productTypes,
-  STORAGE_KEYS.sales,
   STORAGE_KEYS.production,
+  STORAGE_KEYS.sales,
+  STORAGE_KEYS.yarnStock,
+  STORAGE_KEYS.yarnUsage,
+  STORAGE_KEYS.daily,
+  STORAGE_KEYS.electricity,
+  STORAGE_KEYS.workers,
+  STORAGE_KEYS.workLogs,
+  STORAGE_KEYS.workerPayments,
+  STORAGE_KEYS.yarnPurchases,
+  STORAGE_KEYS.yarnPerDozen,
+  STORAGE_KEYS.investments,
+  STORAGE_KEYS.investors,
+  STORAGE_KEYS.debts,
+  STORAGE_KEYS.debtPayments,
+  STORAGE_KEYS.costInputs,
+  STORAGE_KEYS.costHistory,
 ]);
 
 export function useStored<T>(key: string, fallback: T) {
@@ -255,6 +269,19 @@ function useLocalStored<T>(key: string, fallback: T) {
 }
 
 export function useStoredNumber(key: string, fallback: number) {
+  // Route cloud-synced number keys (e.g. yarnStockKg) through the
+  // same cloud-store hook used for arrays/objects. Same stable-branch
+  // safety argument as useStored — call sites always pass a constant
+  // STORAGE_KEYS literal.
+  if (CLOUD_SYNCED_KEYS.has(key)) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useCloudStored<number>(key, fallback);
+  }
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  return useLocalStoredNumber(key, fallback);
+}
+
+function useLocalStoredNumber(key: string, fallback: number) {
   const readNum = (): number => {
     try {
       const v = localStorage.getItem(key);
