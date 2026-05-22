@@ -56,7 +56,11 @@ RUN pnpm install --frozen-lockfile --ignore-scripts \
 COPY lib lib
 COPY artifacts/api-server artifacts/api-server
 
-RUN pnpm --filter @workspace/api-server run build
+# Invoke esbuild directly via node. Going through `pnpm run build`
+# makes pnpm 11 re-validate the workspace and fail on
+# ERR_PNPM_IGNORED_BUILDS (core-js). The bundler doesn't care about
+# any of that — it just needs node_modules to be in place.
+RUN cd artifacts/api-server && node ./build.mjs
 
 # ─────────────────────────────────────────────────────────────────
 FROM node:24-alpine AS runtime
