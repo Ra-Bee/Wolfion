@@ -59,12 +59,12 @@ ENV NODE_ENV=production
 # Copy ONLY the built bundle. The bundle is self-contained except for
 # the `external` packages declared in build.mjs.
 COPY --from=build /repo/artifacts/api-server/dist ./dist
-COPY --from=build /repo/artifacts/api-server/package.json ./package.json
 
-# Install only the runtime deps that esbuild left external. Use npm
-# (not pnpm) so the runtime image doesn't carry the whole pnpm
-# workspace machinery.
-RUN npm install --omit=dev --no-package-lock --ignore-scripts \
+# Write a fresh, minimal package.json (do NOT copy the workspace
+# package.json — it contains "workspace:*" deps that npm can't parse).
+# Then install only the runtime externals from build.mjs.
+RUN echo '{"name":"wolfion-api-runtime","private":true,"type":"module"}' > package.json \
+ && npm install --omit=dev --no-package-lock --ignore-scripts \
       firebase-admin@^13 pdf-parse@^2 pino@^9 pino-pretty@^13
 
 ENV PORT=8080
