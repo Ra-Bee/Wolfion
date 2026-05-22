@@ -208,9 +208,14 @@ export default function LaborPayrollPage() {
                       <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Payment history — {selectedStat.worker.name}</h3>
                       <ManageEntriesDialog
                         title={`Manage payments — ${selectedStat.worker.name}`}
-                        description="Delete saved payment records."
+                        description="Edit or delete saved payment records."
                         entries={selectedHistory}
                         onDelete={handleRemovePayment}
+                        editFields={[
+                          { key: "date", label: "Date", type: "date" },
+                          { key: "amount", label: "Amount (Tk)", type: "number" },
+                        ]}
+                        onSave={(id, patch) => setPayments((prev) => prev.map((p) => p.id === id ? { ...p, ...patch } : p))}
                         columns={[
                           { header: "Date", render: (p) => formatDateLabel(p.date) },
                           { header: "Amount", render: (p) => `Tk ${p.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}`, className: "text-right" },

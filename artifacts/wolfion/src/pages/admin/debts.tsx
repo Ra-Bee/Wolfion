@@ -178,9 +178,15 @@ export default function DebtsPage() {
             </div>
             <ManageEntriesDialog
               title="Manage debts"
-              description="Delete saved debt records."
+              description="Edit or delete saved debt records. Editing the total updates the remaining balance automatically."
               entries={summary}
               onDelete={deleteDebt}
+              editFields={[
+                { key: "date", label: "Date", type: "date" },
+                { key: "personName", label: "Person", type: "text" },
+                { key: "amount", label: "Total amount (Tk)", type: "number" },
+              ]}
+              onSave={(id, patch) => setDebts((prev) => prev.map((d) => d.id === id ? { ...d, ...patch } : d))}
               columns={[
                 { header: "Date", render: (d) => formatDateLabel(d.date) },
                 { header: "Person", render: (d) => d.personName },
@@ -271,9 +277,14 @@ export default function DebtsPage() {
             </div>
             <ManageEntriesDialog
               title="Manage payments"
-              description="Delete saved payment records."
+              description="Edit or delete saved payment records."
               entries={payments}
               onDelete={(id) => setPayments((prev) => prev.filter((x) => x.id !== id))}
+              editFields={[
+                { key: "date", label: "Date", type: "date" },
+                { key: "amount", label: "Amount (Tk)", type: "number" },
+              ]}
+              onSave={(id, patch) => setPayments((prev) => prev.map((p) => p.id === id ? { ...p, ...patch } : p))}
               columns={[
                 { header: "Date", render: (p) => formatDateLabel(p.date) },
                 { header: "Debt", render: (p) => {

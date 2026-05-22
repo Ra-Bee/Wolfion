@@ -191,9 +191,30 @@ export default function DailyProductionPage() {
             </div>
             <ManageEntriesDialog
               title="Manage production entries"
-              description="Delete saved production entries."
+              description="Edit or delete saved production entries. Total cost and per-dozen cost recompute automatically."
               entries={dailyEntries}
               onDelete={handleDelete}
+              editFields={[
+                { key: "date", label: "Date", type: "date" },
+                { key: "totalProductionDozen", label: "Quantity (dz)", type: "number" },
+                { key: "yarnUsedKg", label: "Yarn used (kg)", type: "number" },
+                { key: "yarnCostPerKg", label: "Yarn cost / kg (Tk)", type: "number" },
+                { key: "packagingCost", label: "Packaging (Tk)", type: "number" },
+                { key: "ironCost", label: "Iron / finishing (Tk)", type: "number" },
+                { key: "laborCost", label: "Labor (Tk)", type: "number" },
+              ]}
+              onSave={(id, patch) => setDailyEntries((prev) => prev.map((e) => {
+                if (e.id !== id) return e;
+                const merged = { ...e, ...patch };
+                const totalCost =
+                  (Number(merged.yarnUsedKg) || 0) * (Number(merged.yarnCostPerKg) || 0) +
+                  (Number(merged.laborCost) || 0) +
+                  (Number(merged.packagingCost) || 0) +
+                  (Number(merged.ironCost) || 0) +
+                  (Number((merged as { staffBill?: number }).staffBill) || 0);
+                const qty = Number(merged.totalProductionDozen) || 0;
+                return { ...merged, totalCost, costPerDozen: qty > 0 ? totalCost / qty : 0 };
+              }))}
               columns={[
                 { header: "Date", render: (e) => formatDateLabel(e.date) },
                 { header: "Type", render: (e) => (e.productType ? labelById[e.productType] || e.productType : "—") },

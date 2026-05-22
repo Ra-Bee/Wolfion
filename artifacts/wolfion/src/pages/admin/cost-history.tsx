@@ -167,9 +167,15 @@ export default function CostHistoryPage() {
             </div>
             <ManageEntriesDialog
               title="Manage cost entries"
-              description="Delete saved cost entries."
+              description="Edit or delete saved cost entries."
               entries={sorted}
               onDelete={remove}
+              editFields={[
+                { key: "date", label: "Date", type: "date" },
+                { key: "item", label: "Item", type: "text" },
+                { key: "amount", label: "Amount (Tk)", type: "number" },
+              ]}
+              onSave={(id, patch) => setEntries((prev) => prev.map((e) => e.id === id ? { ...e, ...patch } : e))}
               columns={[
                 { header: "Date", render: (e) => formatDateLabel(e.date) },
                 { header: "Item", render: (e) => e.item },

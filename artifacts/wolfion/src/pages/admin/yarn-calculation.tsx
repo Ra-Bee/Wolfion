@@ -127,9 +127,14 @@ export default function YarnCalculationPage() {
             </div>
             <ManageEntriesDialog
               title="Manage yarn purchases"
-              description="Delete saved yarn purchase records."
+              description="Edit or delete saved yarn purchase records."
               entries={yarnPurchases}
               onDelete={handleRemovePurchase}
+              editFields={[
+                { key: "date", label: "Date", type: "date" },
+                { key: "kg", label: "Quantity (kg)", type: "number" },
+              ]}
+              onSave={(id, patch) => setYarnPurchases((prev) => prev.map((p) => p.id === id ? { ...p, ...patch } : p))}
               columns={[
                 { header: "Date", render: (p) => formatDateLabel(p.date) },
                 { header: "Quantity", render: (p) => `${p.kg.toLocaleString(undefined, { maximumFractionDigits: 2 })} kg`, className: "text-right" },

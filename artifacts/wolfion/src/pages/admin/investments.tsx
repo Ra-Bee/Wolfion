@@ -165,9 +165,17 @@ export default function InvestmentsPage() {
             </div>
             <ManageEntriesDialog
               title="Manage investments"
-              description="Delete saved investment entries."
+              description="Edit or delete saved investment entries."
               entries={investments}
               onDelete={(id) => setInvestments((p) => p.filter((x) => x.id !== id))}
+              editFields={[
+                { key: "date", label: "Date", type: "date" },
+                { key: "type", label: "Type", type: "text" },
+                { key: "description", label: "Description", type: "text" },
+                { key: "amount", label: "Amount (Tk)", type: "number" },
+                { key: "source", label: "Source", type: "text" },
+              ]}
+              onSave={(id, patch) => setInvestments((prev) => prev.map((i) => i.id === id ? { ...i, ...patch } : i))}
               columns={[
                 { header: "Date", render: (i) => formatDateLabel(i.date) },
                 { header: "Type", render: (i) => i.type },
@@ -248,9 +256,15 @@ export default function InvestmentsPage() {
                   <h3 className="text-sm font-semibold">Recent contributions</h3>
                   <ManageEntriesDialog
                     title="Manage contributions"
-                    description="Delete saved investor contributions."
+                    description="Edit or delete saved investor contributions."
                     entries={investors}
                     onDelete={(id) => setInvestors((p) => p.filter((x) => x.id !== id))}
+                    editFields={[
+                      { key: "date", label: "Date", type: "date" },
+                      { key: "name", label: "Investor name", type: "text" },
+                      { key: "amount", label: "Amount (Tk)", type: "number" },
+                    ]}
+                    onSave={(id, patch) => setInvestors((prev) => prev.map((v) => v.id === id ? { ...v, ...patch } : v))}
                     columns={[
                       { header: "Date", render: (v) => formatDateLabel(v.date) },
                       { header: "Investor", render: (v) => v.name },

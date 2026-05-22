@@ -74,8 +74,10 @@ export function ManageEntriesDialog<T extends { id: string }>({
   const [editingRow, setEditingRow] = useState<T | null>(null);
   const [editValues, setEditValues] = useState<Record<string, string>>({});
   const [editError, setEditError] = useState("");
+  const [pendingEditPatch, setPendingEditPatch] = useState<{ id: string; patch: Partial<T> } | null>(null);
 
   const canInlineEdit = !onEdit && editFields && editFields.length > 0 && onSave;
+  const confirmMode: "delete" | "edit" | null = confirmId !== null ? "delete" : pendingEditPatch !== null ? "edit" : null;
 
   useEffect(() => {
     if (editingRow && editFields) {
@@ -91,13 +93,14 @@ export function ManageEntriesDialog<T extends { id: string }>({
 
   const closeConfirm = () => {
     setConfirmId(null);
+    setPendingEditPatch(null);
     setPassword("");
     setVerifyError("");
     setVerifying(false);
   };
 
-  const handleConfirmDelete = async () => {
-    if (!confirmId) return;
+  const handleConfirmAction = async () => {
+    if (!confirmId && !pendingEditPatch) return;
     if (!password) {
       setVerifyError("Enter your login password to confirm.");
       return;
@@ -119,7 +122,12 @@ export function ManageEntriesDialog<T extends { id: string }>({
         setVerifying(false);
         return;
       }
-      onDelete(confirmId);
+      if (confirmId) {
+        onDelete(confirmId);
+      } else if (pendingEditPatch && onSave) {
+        onSave(pendingEditPatch.id, pendingEditPatch.patch);
+        setEditingRow(null);
+      }
       closeConfirm();
     } catch (err: unknown) {
       const msg =
@@ -153,8 +161,7 @@ export function ManageEntriesDialog<T extends { id: string }>({
         patch[f.key] = f.type === "text" ? raw.trim() : raw;
       }
     }
-    onSave(editingRow.id, patch as Partial<T>);
-    setEditingRow(null);
+    setPendingEditPatch({ id: editingRow.id, patch: patch as Partial<T> });
   };
 
   const handlePencilClick = (row: T) => {
@@ -296,15 +303,18 @@ export function ManageEntriesDialog<T extends { id: string }>({
       ) : null}
 
       <AlertDialog
-        open={confirmId !== null}
+        open={confirmMode !== null}
         onOpenChange={(o) => !o && closeConfirm()}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirm delete with password</AlertDialogTitle>
+            <AlertDialogTitle>
+              {confirmMode === "edit" ? "Confirm edit with password" : "Confirm delete with password"}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              Enter your login password to permanently delete this entry. This
-              cannot be undone.
+              {confirmMode === "edit"
+                ? "Enter your login password to save these changes."
+                : "Enter your login password to permanently delete this entry. This cannot be undone."}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="space-y-2 py-2">
@@ -322,7 +332,7 @@ export function ManageEntriesDialog<T extends { id: string }>({
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !verifying) {
                   e.preventDefault();
-                  handleConfirmDelete();
+                  handleConfirmAction();
                 }
               }}
               placeholder="Your account password"
@@ -337,11 +347,11 @@ export function ManageEntriesDialog<T extends { id: string }>({
             </AlertDialogCancel>
             <Button
               type="button"
-              variant="destructive"
+              variant={confirmMode === "edit" ? "default" : "destructive"}
               disabled={verifying || !password}
-              onClick={handleConfirmDelete}
+              onClick={handleConfirmAction}
             >
-              {verifying ? "Verifying..." : "Confirm delete"}
+              {verifying ? "Verifying..." : confirmMode === "edit" ? "Confirm save" : "Confirm delete"}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

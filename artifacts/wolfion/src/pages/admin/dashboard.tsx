@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Activity, DollarSign, Package, Factory, TrendingUp, Plus, Zap, Users, Wrench, LogOut as LogOutIcon, ChevronRight } from "lucide-react";
+import { Activity, DollarSign, Package, Factory, TrendingUp, Plus, Minus, Zap, Users, Wrench, LogOut as LogOutIcon, ChevronRight } from "lucide-react";
 import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
 import { ReceiptCapture, ReceiptThumb } from "@/components/admin/receipt-capture";
 import {
@@ -262,10 +262,14 @@ export default function Dashboard() {
   const [costs, setCosts] = useCloudStored<CostInputs>(STORAGE_KEYS.costInputs, defaultCosts);
   const [dailyEntries, setDailyEntries] = useCloudStored<DailyProductionEntry[]>(STORAGE_KEYS.daily, []);
   const [dailyDate, setDailyDate] = useState(getToday());
-  const [dailyProductionDozen, setDailyProductionDozen] = useState("");
   const [dailyYarnKg, setDailyYarnKg] = useState("");
   const [dailyMachineHours, setDailyMachineHours] = useState("");
-  const [dailyProductType, setDailyProductType] = useState<ProductType>("short-socks");
+  // Multi-product daily production. Each row = one product with its own qty.
+  // Costs (yarn, packaging, iron, staff) are entered once for the day and
+  // split proportionally across rows by qty when saving.
+  const [dailyRows, setDailyRows] = useState<Array<{ id: string; productType: ProductType; qty: string }>>(
+    () => [{ id: crypto.randomUUID(), productType: "short-socks", qty: "" }],
+  );
   const [dailyYarnCostPerKg, setDailyYarnCostPerKg] = useState("");
   const [dailyLaborCost, setDailyLaborCost] = useState("");
   const [dailyPackagingCost, setDailyPackagingCost] = useState("");
@@ -723,7 +727,6 @@ export default function Dashboard() {
 
   function handleAddDailyEntry(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const totalProductionDozen = Number(dailyProductionDozen);
     const yarnUsedKg = Number(dailyYarnKg);
     const machineHours = Number(dailyMachineHours);
     const yarnCostPerKg = Number(dailyYarnCostPerKg);
@@ -734,8 +737,34 @@ export default function Dashboard() {
       + (Number.isFinite(ironCost) ? ironCost : 0)
       + (Number.isFinite(staffBill) ? staffBill : 0);
 
-    if (!dailyDate || !Number.isFinite(totalProductionDozen) || totalProductionDozen <= 0) {
-      setDailyError("Enter date and total production.");
+    // Validate rows: each must have a product + positive qty, no duplicate product types.
+    const parsedRows = dailyRows.map((r) => ({ ...r, qtyNum: Number(r.qty) }));
+    if (parsedRows.length === 0) {
+      setDailyError("Add at least one product.");
+      return;
+    }
+    for (const r of parsedRows) {
+      if (!r.productType) {
+        setDailyError("Choose a product type for every row.");
+        return;
+      }
+      if (!Number.isFinite(r.qtyNum) || r.qtyNum <= 0) {
+        setDailyError("Every product row needs a quantity greater than 0.");
+        return;
+      }
+    }
+    const seen = new Set<string>();
+    for (const r of parsedRows) {
+      if (seen.has(r.productType)) {
+        setDailyError("Same product type listed twice — combine the rows.");
+        return;
+      }
+      seen.add(r.productType);
+    }
+    const totalProductionDozen = parsedRows.reduce((s, r) => s + r.qtyNum, 0);
+
+    if (!dailyDate) {
+      setDailyError("Enter date.");
       return;
     }
     if (
@@ -751,40 +780,49 @@ export default function Dashboard() {
       return;
     }
 
-    const totalCost = yarnUsedKg * yarnCostPerKg + laborCost + packagingCost + ironCost + staffBill;
-    const costPerDozen = totalProductionDozen > 0 ? totalCost / totalProductionDozen : 0;
+    const now = new Date().toISOString();
+    const newDailyEntries: DailyProductionEntry[] = [];
+    const newProductionEntries: ProductionEntry[] = [];
+    for (const r of parsedRows) {
+      const share = totalProductionDozen > 0 ? r.qtyNum / totalProductionDozen : 0;
+      const rowYarnKg = yarnUsedKg * share;
+      const rowMachineHours = machineHours * share;
+      const rowPackaging = packagingCost * share;
+      const rowIron = ironCost * share;
+      const rowStaff = staffBill * share;
+      const rowLabor = laborCost * share;
+      const rowTotalCost = rowYarnKg * yarnCostPerKg + rowLabor + rowPackaging + rowIron + rowStaff;
+      const rowCostPerDozen = r.qtyNum > 0 ? rowTotalCost / r.qtyNum : 0;
+      newDailyEntries.push({
+        id: crypto.randomUUID(),
+        date: dailyDate,
+        totalProductionDozen: r.qtyNum,
+        yarnUsedKg: rowYarnKg,
+        machineHours: rowMachineHours,
+        yarnCostPerKg,
+        laborCost: rowLabor,
+        packagingCost: rowPackaging,
+        ironCost: rowIron,
+        staffBill: rowStaff,
+        totalCost: rowTotalCost,
+        costPerDozen: rowCostPerDozen,
+        productType: r.productType,
+        createdAt: now,
+        ...(dailyReceipt ? { receiptImage: dailyReceipt } : {}),
+      });
+      newProductionEntries.push({
+        id: crypto.randomUUID(),
+        date: dailyDate,
+        productType: r.productType,
+        quantityDozen: r.qtyNum,
+      });
+    }
 
-    const entry: DailyProductionEntry = {
-      id: crypto.randomUUID(),
-      date: dailyDate,
-      totalProductionDozen,
-      yarnUsedKg,
-      machineHours,
-      yarnCostPerKg,
-      laborCost,
-      packagingCost,
-      ironCost,
-      staffBill,
-      totalCost,
-      costPerDozen,
-      productType: dailyProductType,
-      createdAt: new Date().toISOString(),
-      ...(dailyReceipt ? { receiptImage: dailyReceipt } : {}),
-    };
-
-    setDailyEntries((current) => [entry, ...current]);
-    // Also add to production entries to update inventory by product type
-    const productionEntry: ProductionEntry = {
-      id: crypto.randomUUID(),
-      date: dailyDate,
-      productType: dailyProductType,
-      quantityDozen: totalProductionDozen,
-    };
-    setProductionEntries((current) => [productionEntry, ...current]);
-    setDailyProductionDozen("");
+    setDailyEntries((current) => [...newDailyEntries, ...current]);
+    setProductionEntries((current) => [...newProductionEntries, ...current]);
+    setDailyRows([{ id: crypto.randomUUID(), productType: "short-socks", qty: "" }]);
     setDailyYarnKg("");
     setDailyMachineHours("");
-    setDailyProductType("short-socks");
     setDailyYarnCostPerKg("");
     setDailyLaborCost("");
     setDailyPackagingCost("");
@@ -793,7 +831,7 @@ export default function Dashboard() {
     setDailyDate(getToday());
     setDailyReceipt(undefined);
     setDailyError("");
-    setDailyConfirm("Saved.");
+    setDailyConfirm(newDailyEntries.length > 1 ? `Saved ${newDailyEntries.length} entries.` : "Saved.");
     setTimeout(() => setDailyConfirm(""), 1500);
   }
 
@@ -1391,35 +1429,75 @@ export default function Dashboard() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="daily-product-type">Product type</label>
-                <Select value={dailyProductType} onValueChange={(value) => setDailyProductType(value as ProductType)}>
-                  <SelectTrigger id="daily-product-type" className="h-12 text-base">
-                    <SelectValue placeholder="Choose product" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(productTypeLabels).map(([value, label]) => (
-                      <SelectItem key={value} value={value}>{label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium">Products produced today</label>
+                  <span className="text-xs text-muted-foreground">{dailyRows.length} {dailyRows.length === 1 ? "product" : "products"}</span>
+                </div>
+                <div className="space-y-2">
+                  {dailyRows.map((row, idx) => (
+                    <div key={row.id} className="flex items-end gap-2">
+                      <div className="flex-1 space-y-1">
+                        <label className="text-xs text-muted-foreground" htmlFor={`daily-row-type-${row.id}`}>Product</label>
+                        <Select
+                          value={row.productType}
+                          onValueChange={(value) =>
+                            setDailyRows((rows) => rows.map((r, i) => i === idx ? { ...r, productType: value as ProductType } : r))
+                          }
+                        >
+                          <SelectTrigger id={`daily-row-type-${row.id}`} className="h-12 text-base">
+                            <SelectValue placeholder="Choose product" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.entries(productTypeLabels).map(([value, label]) => (
+                              <SelectItem key={value} value={value}>{label}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="w-28 space-y-1">
+                        <label className="text-xs text-muted-foreground" htmlFor={`daily-row-qty-${row.id}`}>Qty (dz)</label>
+                        <Input
+                          id={`daily-row-qty-${row.id}`}
+                          type="number"
+                          min="0"
+                          step="1"
+                          inputMode="numeric"
+                          className="h-12 text-base"
+                          placeholder="0"
+                          value={row.qty}
+                          onChange={(e) =>
+                            setDailyRows((rows) => rows.map((r, i) => i === idx ? { ...r, qty: e.target.value } : r))
+                          }
+                          required
+                        />
+                      </div>
+                      {dailyRows.length > 1 && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          className="h-12 w-12 shrink-0"
+                          aria-label="Remove product"
+                          onClick={() => setDailyRows((rows) => rows.filter((_, i) => i !== idx))}
+                        >
+                          <Minus className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                  onClick={() => setDailyRows((rows) => [...rows, { id: crypto.randomUUID(), productType: "short-socks", qty: "" }])}
+                >
+                  <Plus className="h-4 w-4" /> Add another product
+                </Button>
               </div>
 
-              <div className="grid grid-cols-3 gap-2">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-production">Quantity (dz)</label>
-                  <Input
-                    id="daily-production"
-                    type="number"
-                    min="0"
-                    step="1"
-                    inputMode="numeric"
-                    className="h-12 text-base"
-                    placeholder="0"
-                    value={dailyProductionDozen}
-                    onChange={(event) => setDailyProductionDozen(event.target.value)}
-                    required
-                  />
-                </div>
+              <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="daily-yarn">Yarn (kg)</label>
                   <Input
@@ -1449,6 +1527,10 @@ export default function Dashboard() {
                   />
                 </div>
               </div>
+
+              <p className="text-xs text-muted-foreground">
+                Yarn, packaging, iron, and staff costs entered below cover the whole day and are split between products by quantity.
+              </p>
 
               <Separator />
 
@@ -1502,7 +1584,7 @@ export default function Dashboard() {
                   save. Forward-only: yarn kg × rate, plus packaging
                   + iron + staff, divided by qty. No back-solving. */}
               {(() => {
-                const qty = Number(dailyProductionDozen) || 0;
+                const qty = dailyRows.reduce((s, r) => s + (Number(r.qty) || 0), 0);
                 const yKg = Number(dailyYarnKg) || 0;
                 const yRate = Number(dailyYarnCostPerKg) || 0;
                 const pkg = Number(dailyPackagingCost) || 0;
@@ -2107,9 +2189,14 @@ export default function Dashboard() {
                   <div className="flex justify-end">
                     <ManageEntriesDialog
                       title="Manage yarn purchases"
-                      description="Delete saved yarn purchases."
+                      description="Edit or delete saved yarn purchases."
                       entries={yarnPurchases}
                       onDelete={(id) => setYarnPurchases((prev) => prev.filter((x) => x.id !== id))}
+                      editFields={[
+                        { key: "date", label: "Date", type: "date" },
+                        { key: "kg", label: "Quantity (kg)", type: "number" },
+                      ]}
+                      onSave={(id, patch) => setYarnPurchases((prev) => prev.map((p) => p.id === id ? { ...p, ...patch } : p))}
                       columns={[
                         { header: "Date", render: (p) => formatDateLabel(p.date) },
                         { header: "Quantity", render: (p) => `${p.kg.toLocaleString(undefined, { maximumFractionDigits: 2 })} kg`, className: "text-right" },
@@ -2268,9 +2355,14 @@ export default function Dashboard() {
                 <h3 className="text-sm font-semibold">Workers</h3>
                 <ManageEntriesDialog
                   title="Manage workers"
-                  description="Delete saved workers."
+                  description="Edit or delete saved workers."
                   entries={workers}
                   onDelete={handleRemoveWorker}
+                  editFields={[
+                    { key: "name", label: "Name", type: "text" },
+                    { key: "rate", label: "Rate (Tk)", type: "number" },
+                  ]}
+                  onSave={(id, patch) => setWorkers((prev) => prev.map((w) => w.id === id ? { ...w, ...patch } : w))}
                   columns={[
                     { header: "Name", render: (w) => w.name },
                     { header: "Role", render: (w) => w.workAt ? workAreaLabels[w.workAt] : (w.payType === "daily" ? `Tk ${w.rate}/day` : `Tk ${w.rate}/unit`) },
@@ -2448,9 +2540,15 @@ export default function Dashboard() {
                 <span className="text-xs text-muted-foreground">{costEntries.length} records</span>
                 <ManageEntriesDialog
                   title="Manage cost entries"
-                  description="Delete saved cost entries."
+                  description="Edit or delete saved cost entries."
                   entries={costEntries}
                   onDelete={handleRemoveCostEntry}
+                  editFields={[
+                    { key: "date", label: "Date", type: "date" },
+                    { key: "item", label: "Item", type: "text" },
+                    { key: "amount", label: "Amount (Tk)", type: "number" },
+                  ]}
+                  onSave={(id, patch) => setCostEntries((prev) => prev.map((e) => e.id === id ? { ...e, ...patch } : e))}
                   columns={[
                     { header: "Date", render: (e) => formatDateLabel(e.date) },
                     { header: "Item", render: (e) => e.item },
@@ -2546,9 +2644,15 @@ export default function Dashboard() {
                   <span className="text-xs text-muted-foreground">{investors.length} records</span>
                   <ManageEntriesDialog
                     title="Manage investor entries"
-                    description="Delete saved investor entries."
+                    description="Edit or delete saved investor entries."
                     entries={investors}
                     onDelete={handleRemoveInvestor}
+                    editFields={[
+                      { key: "date", label: "Date", type: "date" },
+                      { key: "name", label: "Investor name", type: "text" },
+                      { key: "amount", label: "Amount (Tk)", type: "number" },
+                    ]}
+                    onSave={(id, patch) => setInvestors((prev) => prev.map((e) => e.id === id ? { ...e, ...patch } : e))}
                     columns={[
                       { header: "Date", render: (e) => formatDateLabel(e.date) },
                       { header: "Investor", render: (e) => e.name },
@@ -2609,9 +2713,13 @@ export default function Dashboard() {
             <div className="flex justify-end">
               <ManageEntriesDialog
                 title="Manage product types"
-                description="Delete product types. Types currently used by production or sales cannot be removed."
+                description="Edit names or delete product types. Types currently used by production or sales cannot be removed."
                 entries={productTypes}
                 onDelete={handleRemoveProductType}
+                editFields={[
+                  { key: "label", label: "Name", type: "text" },
+                ]}
+                onSave={(id, patch) => setProductTypes((prev) => prev.map((t) => t.id === id ? { ...t, ...patch } : t))}
                 columns={[
                   { header: "Name", render: (t) => t.label },
                   { header: "Status", render: (t) => {
