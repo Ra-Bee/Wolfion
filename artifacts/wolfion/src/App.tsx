@@ -4,6 +4,7 @@ import { Switch, Route, Redirect, useLocation, Router as WouterRouter } from 'wo
 import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Analytics } from '@vercel/analytics/react';
 
 import Home from "@/pages/home";
 import SignInPage from "@/pages/auth/sign-in";
@@ -326,6 +327,7 @@ function App() {
           <ClerkProviderWithRoutes />
         </WouterRouter>
         <Toaster />
+        <Analytics />
       </TooltipProvider>
     </VisibleErrorBoundary>
   );
