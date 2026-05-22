@@ -229,9 +229,6 @@ function ClerkProviderWithRoutes() {
     <ClerkProvider
       publishableKey={clerkPubKey}
       proxyUrl={clerkProxyUrl}
-      isSatellite={typeof window !== "undefined" && window.location.hostname.endsWith("wolfion.website")}
-      domain={typeof window !== "undefined" && window.location.hostname.endsWith("wolfion.website") ? window.location.host : undefined}
-      signInUrl={typeof window !== "undefined" && window.location.hostname.endsWith("wolfion.website") ? "https://exact-peacock-22.accounts.dev/sign-in" : undefined}
       appearance={clerkAppearance}
       localization={{
         signIn: { start: { title: "Welcome back", subtitle: "Sign in to access your account" } },
