@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Activity, DollarSign, Package, Factory, TrendingUp, Plus, Zap, Users, Wrench, LogOut as LogOutIcon, ChevronRight } from "lucide-react";
 import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
+import { ReceiptCapture, ReceiptThumb } from "@/components/admin/receipt-capture";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -115,6 +116,7 @@ type InvestorEntry = {
   date: string;
   amount: number;
   createdAt: string;
+  receiptImage?: string;
 };
 
 type ElectricityEntry = {
@@ -122,6 +124,7 @@ type ElectricityEntry = {
   month: string;
   totalBill: number;
   createdAt: string;
+  receiptImage?: string;
 };
 
 type WorkArea = "machine_run" | "iron" | "packaging" | "add_ons";
@@ -158,6 +161,7 @@ type WorkerPayment = {
   date: string;
   amount: number;
   createdAt: string;
+  receiptImage?: string;
 };
 
 type DailyProductionEntry = {
@@ -175,6 +179,7 @@ type DailyProductionEntry = {
   costPerDozen: number;
   productType?: ProductType;
   createdAt: string;
+  receiptImage?: string;
 };
 
 type CostCategory = "yarn" | "labour" | "packaging" | "electricity" | "other";
@@ -194,6 +199,7 @@ type CostEntry = {
   amount: number;
   category?: CostCategory;
   createdAt: string;
+  receiptImage?: string;
 };
 
 type YarnPerDozen = Record<string, number>;
@@ -205,7 +211,7 @@ const defaultYarnPerDozen: YarnPerDozen = {
   "others": 0.55,
 };
 const yarnPurchasesStorageKey = "wolfion_yarn_purchases";
-type YarnPurchase = { id: string; date: string; kg: number; createdAt: string };
+type YarnPurchase = { id: string; date: string; kg: number; createdAt: string; receiptImage?: string };
 
 type CostInputs = {
   yarnCostPerDozen: number;
@@ -346,6 +352,15 @@ export default function Dashboard() {
   const [investorAmount, setInvestorAmount] = useState("");
   const [investorError, setInvestorError] = useState("");
 
+  // Receipt/bill scans for dashboard forms
+  const [saleReceipt, setSaleReceipt] = useState<string | undefined>(undefined);
+  const [dailyReceipt, setDailyReceipt] = useState<string | undefined>(undefined);
+  const [electricityReceipt, setElectricityReceipt] = useState<string | undefined>(undefined);
+  const [yarnPurchaseReceipt, setYarnPurchaseReceipt] = useState<string | undefined>(undefined);
+  const [workerReceipt, setWorkerReceipt] = useState<string | undefined>(undefined);
+  const [costEntryReceipt, setCostEntryReceipt] = useState<string | undefined>(undefined);
+  const [investorReceipt, setInvestorReceipt] = useState<string | undefined>(undefined);
+
   // Persistence (local + cloud) handled by useCloudStored hooks above.
 
   function handleAddCostEntry(event: FormEvent<HTMLFormElement>) {
@@ -363,11 +378,13 @@ export default function Dashboard() {
       amount,
       category: costEntryCategory,
       createdAt: new Date().toISOString(),
+      ...(costEntryReceipt ? { receiptImage: costEntryReceipt } : {}),
     };
     setCostEntries((current) => [entry, ...current]);
     setCostEntryDate(getToday());
     setCostEntryItem("");
     setCostEntryAmount("");
+    setCostEntryReceipt(undefined);
     setCostEntryError("");
   }
 
@@ -647,6 +664,7 @@ export default function Dashboard() {
       totalValue,
       createdAt: new Date().toISOString(),
       date: saleDate || getToday(),
+      ...(saleReceipt ? { receiptImage: saleReceipt } : {}),
     };
 
     setSalesEntries((current) => [entry, ...current]);
@@ -656,6 +674,7 @@ export default function Dashboard() {
     setSalePrice("");
     setSaleTotalAmount("");
     setSaleDate(getToday());
+    setSaleReceipt(undefined);
     setSaleError("");
     setSaleConfirm("Sale saved.");
     setTimeout(() => setSaleConfirm(""), 1500);
@@ -750,6 +769,7 @@ export default function Dashboard() {
       costPerDozen,
       productType: dailyProductType,
       createdAt: new Date().toISOString(),
+      ...(dailyReceipt ? { receiptImage: dailyReceipt } : {}),
     };
 
     setDailyEntries((current) => [entry, ...current]);
@@ -771,6 +791,7 @@ export default function Dashboard() {
     setDailyIronCost("");
     setDailyStaffBill("");
     setDailyDate(getToday());
+    setDailyReceipt(undefined);
     setDailyError("");
     setDailyConfirm("Saved.");
     setTimeout(() => setDailyConfirm(""), 1500);
@@ -806,11 +827,13 @@ export default function Dashboard() {
           month: electricityMonth,
           totalBill: bill,
           createdAt: new Date().toISOString(),
+          ...(electricityReceipt ? { receiptImage: electricityReceipt } : {}),
         },
         ...filtered,
       ];
     });
     setElectricityBill("");
+    setElectricityReceipt(undefined);
     setElectricityConfirm(`Saved ${formatMonthLabel(electricityMonth)} electricity bill.`);
   }
 
@@ -875,6 +898,7 @@ export default function Dashboard() {
         date: uniDate,
         amount: payingNow,
         createdAt: new Date().toISOString(),
+        ...(workerReceipt ? { receiptImage: workerReceipt } : {}),
       };
       setWorkerPayments((current) => [payment, ...current]);
     }
@@ -885,6 +909,7 @@ export default function Dashboard() {
     setUniNote("");
     setUniPayingNow("");
     setUniNextPaymentDate("");
+    setWorkerReceipt(undefined);
   }
 
   function handleAddWorkLog(event: FormEvent<HTMLFormElement>) {
@@ -916,9 +941,11 @@ export default function Dashboard() {
       date: paymentDate,
       amount,
       createdAt: new Date().toISOString(),
+      ...(workerReceipt ? { receiptImage: workerReceipt } : {}),
     };
     setWorkerPayments((current) => [payment, ...current]);
     setPaymentAmount("");
+    setWorkerReceipt(undefined);
   }
 
   function handleRemoveWorker(id: string) {
@@ -941,9 +968,11 @@ export default function Dashboard() {
       date: investorDate,
       amount,
       createdAt: new Date().toISOString(),
+      ...(investorReceipt ? { receiptImage: investorReceipt } : {}),
     };
     setInvestors((current) => [entry, ...current]);
     setInvestorAmount("");
+    setInvestorReceipt(undefined);
   }
 
   function handleRemoveInvestor(id: string) {
@@ -1092,9 +1121,11 @@ export default function Dashboard() {
       date: yarnPurchaseDate,
       kg,
       createdAt: new Date().toISOString(),
+      ...(yarnPurchaseReceipt ? { receiptImage: yarnPurchaseReceipt } : {}),
     };
     setYarnPurchases((prev) => [entry, ...prev]);
     setYarnPurchaseKg("");
+    setYarnPurchaseReceipt(undefined);
   }
 
   function scrollToSection(id: string) {
@@ -1221,6 +1252,7 @@ export default function Dashboard() {
                 {quickSaleConfirm && (
                   <p className="rounded-lg bg-green-100 px-3 py-2 text-sm font-medium text-green-800">{quickSaleConfirm}</p>
                 )}
+                <ReceiptCapture value={saleReceipt} onChange={setSaleReceipt} />
                 <Button type="submit" size="lg" className="h-14 w-full text-base font-semibold">
                   <Plus className="h-5 w-5" />
                   Save Sale
@@ -1504,6 +1536,8 @@ export default function Dashboard() {
                 <p className="rounded-lg bg-green-100 px-3 py-2 text-sm font-medium text-green-800">{dailyConfirm}</p>
               )}
 
+              <ReceiptCapture value={dailyReceipt} onChange={setDailyReceipt} label="Yarn / bill photo (optional)" />
+
               <Button type="submit" size="lg" className="h-14 w-full text-base font-semibold">
                 <Plus className="h-5 w-5" />
                 Save day's entry
@@ -1772,6 +1806,8 @@ export default function Dashboard() {
                 <p className="rounded-lg bg-green-100 px-3 py-2 text-sm font-medium text-green-800">{saleConfirm}</p>
               )}
 
+              <ReceiptCapture value={saleReceipt} onChange={setSaleReceipt} />
+
               <Button type="submit" size="lg" className="h-14 w-full text-base font-semibold">
                 <Plus className="h-5 w-5" />
                 Save sale
@@ -1925,6 +1961,7 @@ export default function Dashboard() {
               </div>
               {electricityError && <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{electricityError}</p>}
               {electricityConfirm && <p className="rounded-lg bg-green-100 px-3 py-2 text-sm font-medium text-green-800">{electricityConfirm}</p>}
+              <ReceiptCapture value={electricityReceipt} onChange={setElectricityReceipt} label="Electricity bill photo (optional)" />
               <Button type="submit" size="lg" className="h-14 w-full text-base font-semibold">
                 <Plus className="h-5 w-5" /> Save monthly bill
               </Button>
@@ -1938,7 +1975,7 @@ export default function Dashboard() {
               {electricityWithCalc.length > 0 ? (
                 <div className="space-y-2">
                   {electricityWithCalc.map((entry) => (
-                    <div key={entry.id} className="grid gap-2 rounded-xl border bg-card/60 p-4 sm:grid-cols-4">
+                    <div key={entry.id} className="grid gap-2 rounded-xl border bg-card/60 p-4 sm:grid-cols-[1fr_1fr_1fr_1fr_auto]">
                       <div>
                         <p className="text-xs text-muted-foreground">Month</p>
                         <p className="text-base font-semibold">{formatMonthLabel(entry.month)}</p>
@@ -1955,6 +1992,7 @@ export default function Dashboard() {
                         <p className="text-xs text-muted-foreground">Cost / dozen</p>
                         <p className="text-base font-bold">Tk {entry.costPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                       </div>
+                      <div className="flex items-center justify-end"><ReceiptThumb src={entry.receiptImage} size={40} /></div>
                     </div>
                   ))}
                 </div>
@@ -2048,18 +2086,21 @@ export default function Dashboard() {
 
             <div className="space-y-3">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Add yarn purchase</h3>
-              <form onSubmit={handleAddYarnPurchase} className="grid grid-cols-[1fr_1fr_auto] gap-1.5 sm:gap-2.5 lg:gap-3 items-end">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="yarn-purchase-date">Date</label>
-                  <Input id="yarn-purchase-date" type="date" className="h-12 text-base" max={getToday()} value={yarnPurchaseDate} onChange={(e) => setYarnPurchaseDate(e.target.value)} required />
+              <form onSubmit={handleAddYarnPurchase} className="space-y-2">
+                <div className="grid grid-cols-[1fr_1fr_auto] gap-1.5 sm:gap-2.5 lg:gap-3 items-end">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium" htmlFor="yarn-purchase-date">Date</label>
+                    <Input id="yarn-purchase-date" type="date" className="h-12 text-base" max={getToday()} value={yarnPurchaseDate} onChange={(e) => setYarnPurchaseDate(e.target.value)} required />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium" htmlFor="yarn-purchase-kg">Quantity (kg)</label>
+                    <Input id="yarn-purchase-kg" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={yarnPurchaseKg} onChange={(e) => setYarnPurchaseKg(e.target.value)} required />
+                  </div>
+                  <Button type="submit" size="sm" className="h-12 px-3 whitespace-nowrap">
+                    <Plus className="h-4 w-4" /> Add
+                  </Button>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="yarn-purchase-kg">Quantity (kg)</label>
-                  <Input id="yarn-purchase-kg" type="number" min="0" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={yarnPurchaseKg} onChange={(e) => setYarnPurchaseKg(e.target.value)} required />
-                </div>
-                <Button type="submit" size="sm" className="h-12 px-3 whitespace-nowrap">
-                  <Plus className="h-4 w-4" /> Add
-                </Button>
+                <ReceiptCapture value={yarnPurchaseReceipt} onChange={setYarnPurchaseReceipt} label="Yarn purchase bill photo (optional)" />
               </form>
               {yarnPurchases.length > 0 && (
                 <>
@@ -2077,11 +2118,12 @@ export default function Dashboard() {
                   </div>
                   <div className="rounded-2xl border divide-y max-h-64 overflow-y-auto">
                     {yarnPurchases.slice(0, 10).map((p) => (
-                      <div key={p.id} className="flex items-center justify-between px-4 py-3">
+                      <div key={p.id} className="flex items-center justify-between gap-3 px-4 py-3">
                         <div>
                           <p className="font-medium">{p.kg.toLocaleString(undefined, { maximumFractionDigits: 2 })} kg</p>
                           <p className="text-xs text-muted-foreground">{formatDateLabel(p.date)}</p>
                         </div>
+                        <ReceiptThumb src={p.receiptImage} size={32} />
                       </div>
                     ))}
                   </div>
@@ -2217,6 +2259,7 @@ export default function Dashboard() {
 
               {workerError && <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{workerError}</p>}
               {uniConfirm && <p className="rounded-lg bg-green-100 px-3 py-2 text-sm font-medium text-green-800">{uniConfirm}</p>}
+              <ReceiptCapture value={workerReceipt} onChange={setWorkerReceipt} label="Salary slip / bill photo (optional)" />
               <Button type="submit" size="lg" className="h-14 w-full text-base font-semibold"><Plus className="h-5 w-5" /> Save entry</Button>
             </form>
 
@@ -2358,6 +2401,8 @@ export default function Dashboard() {
                 <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{costEntryError}</p>
               )}
 
+              <ReceiptCapture value={costEntryReceipt} onChange={setCostEntryReceipt} />
+
               <Button type="submit" size="lg" className="h-12 w-full text-base font-semibold">
                 <Plus className="h-5 w-5" /> Add cost
               </Button>
@@ -2476,6 +2521,7 @@ export default function Dashboard() {
                 </div>
               </div>
               {investorError && <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{investorError}</p>}
+              <ReceiptCapture value={investorReceipt} onChange={setInvestorReceipt} label="Deposit slip / proof photo (optional)" />
               <Button type="submit" size="lg" className="h-14 w-full text-base font-semibold"><Plus className="h-5 w-5" /> Save investor entry</Button>
             </form>
 
@@ -2519,7 +2565,10 @@ export default function Dashboard() {
                         <p className="text-base font-semibold">{e.name}</p>
                         <p className="text-xs text-muted-foreground">{formatDateLabel(e.date)}</p>
                       </div>
-                      <p className="text-lg font-bold">Tk {e.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                      <div className="flex items-center gap-3">
+                        <p className="text-lg font-bold">Tk {e.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                        <ReceiptThumb src={e.receiptImage} size={36} />
+                      </div>
                     </div>
                   ))}
                 </div>

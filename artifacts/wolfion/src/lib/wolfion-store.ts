@@ -43,6 +43,7 @@ export type DailyProductionEntry = {
 };
 
 export type ElectricityEntry = {
+  receiptImage?: string;
   id: string;
   month: string;
   totalBill: number;
