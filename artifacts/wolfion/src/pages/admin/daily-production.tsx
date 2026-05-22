@@ -40,6 +40,8 @@ export default function DailyProductionPage() {
   const [laborCost, setLaborCost] = useState("");
   const [packaging, setPackaging] = useState("");
   const [iron, setIron] = useState("");
+  const [showAllEntries, setShowAllEntries] = useState(false);
+  const PREVIEW_COUNT = 5;
   const [error, setError] = useState("");
 
   const labelById = useMemo(() => Object.fromEntries(productTypes.map((p) => [p.id, p.label])), [productTypes]);
@@ -198,32 +200,41 @@ export default function DailyProductionPage() {
               <p className="text-muted-foreground text-center py-8">No production entries yet.</p>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-xs">
                   <thead className="text-left text-muted-foreground border-b">
                     <tr>
-                      <th className="py-2 pr-4">Date</th>
-                      <th className="py-2 pr-4">Type</th>
-                      <th className="py-2 pr-4 text-right">Qty (dz)</th>
-                      <th className="py-2 pr-4 text-right">Yarn (kg)</th>
-                      <th className="py-2 pr-4 text-right">Total Cost</th>
-                      <th className="py-2 pr-4 text-right">Cost/dz</th>
+                      <th className="py-1.5 pr-3 font-medium">Date</th>
+                      <th className="py-1.5 pr-3 font-medium">Type</th>
+                      <th className="py-1.5 pr-3 text-right font-medium">Qty</th>
+                      <th className="py-1.5 pr-3 text-right font-medium">Yarn</th>
+                      <th className="py-1.5 pr-3 text-right font-medium">Total</th>
+                      <th className="py-1.5 pr-0 text-right font-medium">Cost/dz</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {dailyEntries.slice(0, 50).map((e) => (
-                      <tr key={e.id} className="border-b last:border-0">
-                        <td className="py-2 pr-4 whitespace-nowrap">{formatDateLabel(e.date)}</td>
-                        <td className="py-2 pr-4">{e.productType ? labelById[e.productType] || e.productType : "—"}</td>
-                        <td className="py-2 pr-4 text-right">{fmt(e.totalProductionDozen)}</td>
-                        <td className="py-2 pr-4 text-right">{fmt(e.yarnUsedKg)}</td>
-                        <td className="py-2 pr-4 text-right">{money(e.totalCost)}</td>
-                        <td className="py-2 pr-4 text-right">{money(e.costPerDozen)}</td>
+                    {(showAllEntries ? dailyEntries : dailyEntries.slice(0, PREVIEW_COUNT)).map((e) => (
+                      <tr key={e.id} className="border-b last:border-0 hover:bg-muted/30">
+                        <td className="py-1 pr-3 whitespace-nowrap">{formatDateLabel(e.date)}</td>
+                        <td className="py-1 pr-3 truncate max-w-[120px]">{e.productType ? labelById[e.productType] || e.productType : "—"}</td>
+                        <td className="py-1 pr-3 text-right whitespace-nowrap">{fmt(e.totalProductionDozen)}</td>
+                        <td className="py-1 pr-3 text-right whitespace-nowrap">{fmt(e.yarnUsedKg)}</td>
+                        <td className="py-1 pr-3 text-right whitespace-nowrap">{money(e.totalCost)}</td>
+                        <td className="py-1 pr-0 text-right whitespace-nowrap">{money(e.costPerDozen)}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
-                {dailyEntries.length > 50 && (
-                  <p className="text-xs text-muted-foreground mt-3">Showing first 50 of {dailyEntries.length}.</p>
+                {dailyEntries.length > PREVIEW_COUNT && (
+                  <div className="mt-2 flex justify-center">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowAllEntries((v) => !v)}
+                    >
+                      {showAllEntries ? "Show less" : `See more (${dailyEntries.length - PREVIEW_COUNT})`}
+                    </Button>
+                  </div>
                 )}
               </div>
             )}

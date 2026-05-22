@@ -66,7 +66,9 @@ export default function DailySalesPage() {
   const [scanning, setScanning] = useState(false);
   const [error, setError] = useState("");
   const [viewReceipt, setViewReceipt] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const PREVIEW_COUNT = 5;
 
   const labelById = useMemo(() => Object.fromEntries(productTypes.map((p) => [p.id, p.label])), [productTypes]);
 
@@ -295,49 +297,56 @@ export default function DailySalesPage() {
               <p className="text-muted-foreground text-center py-8">No sales recorded yet.</p>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-xs">
                   <thead className="text-left text-muted-foreground border-b">
                     <tr>
-                      <th className="py-2 pr-4">Date</th>
-                      <th className="py-2 pr-4">Customer</th>
-                      <th className="py-2 pr-4">Type</th>
-                      <th className="py-2 pr-4 text-right">Qty (dz)</th>
-                      <th className="py-2 pr-4 text-right">Price/dz</th>
-                      <th className="py-2 pr-4 text-right">Total</th>
-                      <th className="py-2 pr-4">Receipt</th>
+                      <th className="py-1.5 pr-3 font-medium">Date</th>
+                      <th className="py-1.5 pr-3 font-medium">Customer</th>
+                      <th className="py-1.5 pr-3 font-medium">Type</th>
+                      <th className="py-1.5 pr-3 text-right font-medium">Qty</th>
+                      <th className="py-1.5 pr-3 text-right font-medium">Price</th>
+                      <th className="py-1.5 pr-3 text-right font-medium">Total</th>
+                      <th className="py-1.5 pr-0 font-medium">Receipt</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {sales.slice(0, 50).map((s) => (
-                      <tr key={s.id} className="border-b last:border-0">
-                        <td className="py-2 pr-4 whitespace-nowrap">{formatDateLabel(s.date || s.createdAt.slice(0, 10))}</td>
-                        <td className="py-2 pr-4">{s.customerName}</td>
-                        <td className="py-2 pr-4">{labelById[s.productType] || s.productType}</td>
-                        <td className="py-2 pr-4 text-right">{fmt(s.quantityDozen)}</td>
-                        <td className="py-2 pr-4 text-right">{money(s.pricePerDozen)}</td>
-                        <td className="py-2 pr-4 text-right font-semibold">{money(s.totalValue)}</td>
-                        <td className="py-2 pr-4">
+                    {(showAll ? sales : sales.slice(0, PREVIEW_COUNT)).map((s) => (
+                      <tr key={s.id} className="border-b last:border-0 hover:bg-muted/30">
+                        <td className="py-1 pr-3 whitespace-nowrap">{formatDateLabel(s.date || s.createdAt.slice(0, 10))}</td>
+                        <td className="py-1 pr-3 truncate max-w-[120px]">{s.customerName}</td>
+                        <td className="py-1 pr-3 truncate max-w-[100px]">{labelById[s.productType] || s.productType}</td>
+                        <td className="py-1 pr-3 text-right whitespace-nowrap">{fmt(s.quantityDozen)}</td>
+                        <td className="py-1 pr-3 text-right whitespace-nowrap">{money(s.pricePerDozen)}</td>
+                        <td className="py-1 pr-3 text-right font-semibold whitespace-nowrap">{money(s.totalValue)}</td>
+                        <td className="py-1 pr-0">
                           {s.receiptImage ? (
                             <button
                               type="button"
                               onClick={() => setViewReceipt(s.receiptImage!)}
                               className="border rounded overflow-hidden block"
                             >
-                              <img
-                                src={s.receiptImage}
-                                alt="Receipt"
-                                className="h-10 w-10 object-cover"
-                              />
+                              <img src={s.receiptImage} alt="Receipt" className="h-6 w-6 object-cover" />
                             </button>
                           ) : (
-                            <span className="text-xs text-muted-foreground">—</span>
+                            <span className="text-muted-foreground">—</span>
                           )}
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
-                {sales.length > 50 && <p className="text-xs text-muted-foreground mt-3">Showing first 50 of {sales.length}.</p>}
+                {sales.length > PREVIEW_COUNT && (
+                  <div className="mt-2 flex justify-center">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowAll((v) => !v)}
+                    >
+                      {showAll ? "Show less" : `See more (${sales.length - PREVIEW_COUNT})`}
+                    </Button>
+                  </div>
+                )}
               </div>
             )}
             <Separator className="my-4" />
