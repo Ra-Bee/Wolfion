@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, SheetClose } from "@/components/ui/sheet";
 import { useStableDisclosure } from "@/hooks/use-stable-disclosure";
+import { useFirebaseAuth } from "@/hooks/use-firebase-auth";
 import wolfionLogo from "@assets/Image_20260421042552_60_2_1776716788241.jpg";
 
 type AdminNavItem = { path: string; label: string; icon: React.ComponentType<{ className?: string }> };
@@ -36,6 +37,9 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const { preference, toggleTheme } = useTheme();
   const [, setLocation] = useLocation();
   const [adminMenuOpen, setAdminMenuOpen] = useStableDisclosure();
+  // Bridge Clerk -> Firebase once at the layout level. Every admin page
+  // gets cloud sync as soon as it mounts, with no per-page setup.
+  const { cloudStatus, cloudError } = useFirebaseAuth();
 
   const handleSignOut = () => {
     clearAdminStorage();
@@ -116,6 +120,30 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                   <SheetTitle className="text-base">{user?.fullName || user?.emailAddresses[0]?.emailAddress}</SheetTitle>
                   <p className="text-xs text-muted-foreground flex items-center gap-1.5">
                     <ShieldCheck className="h-3 w-3 text-primary" /> Admin
+                  </p>
+                  <p
+                    className="text-[10px] mt-1 flex items-center gap-1.5"
+                    data-testid="cloud-status"
+                  >
+                    <span
+                      className={
+                        "inline-block h-1.5 w-1.5 rounded-full " +
+                        (cloudStatus === "ready"
+                          ? "bg-emerald-500"
+                          : cloudStatus === "error"
+                            ? "bg-red-500"
+                            : "bg-amber-500 animate-pulse")
+                      }
+                    />
+                    <span className="text-muted-foreground">
+                      {cloudStatus === "ready"
+                        ? "Cloud sync on"
+                        : cloudStatus === "error"
+                          ? `Cloud offline${cloudError ? `: ${cloudError}` : ""}`
+                          : cloudStatus === "not-admin"
+                            ? "Cloud disabled"
+                            : "Connecting cloud…"}
+                    </span>
                   </p>
                 </SheetHeader>
 

@@ -24,6 +24,7 @@ import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Fragment, useEffect, useMemo, useState, type FormEvent } from "react";
+import { useStored, STORAGE_KEYS } from "@/lib/wolfion-store";
 
 type ProductType = string;
 
@@ -221,18 +222,14 @@ function getToday() {
 }
 
 export default function Dashboard() {
-  const [productTypes, setProductTypes] = useState<ProductTypeOption[]>(() => {
-    try {
-      const stored = localStorage.getItem(productTypesStorageKey);
-      if (stored) {
-        const parsed = JSON.parse(stored) as ProductTypeOption[];
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      }
-    } catch {
-      /* fallthrough */
-    }
-    return defaultProductTypes;
-  });
+  // Cloud-synced via STORAGE_KEYS.productTypes (Phase 1 cloud sync).
+  // The cloud allow-list in wolfion-store.ts routes this key through
+  // Firebase Realtime Database, so admin product categories are shared
+  // across every signed-in admin device in real time.
+  const [productTypes, setProductTypes] = useStored<ProductTypeOption[]>(
+    STORAGE_KEYS.productTypes,
+    defaultProductTypes,
+  );
   const [newProductTypeName, setNewProductTypeName] = useState("");
   const [productTypeError, setProductTypeError] = useState("");
   const [productionEntries, setProductionEntries] = useState<ProductionEntry[]>(() => {
@@ -517,9 +514,9 @@ export default function Dashboard() {
     localStorage.setItem(investorsStorageKey, JSON.stringify(investors));
   }, [investors]);
 
-  useEffect(() => {
-    localStorage.setItem(productTypesStorageKey, JSON.stringify(productTypes));
-  }, [productTypes]);
+  // productTypes is now cloud-synced via useStored -> useCloudStored.
+  // The hook handles both localStorage cache and Firebase write-back,
+  // so the explicit localStorage useEffect is no longer needed.
 
   useEffect(() => {
     localStorage.setItem(yarnPurchasesStorageKey, JSON.stringify(yarnPurchases));

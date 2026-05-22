@@ -57,3 +57,8 @@ externalPort = 6000
 
 [nix]
 channel = "stable-25_05"
+
+[userenv]
+
+[userenv.shared]
+WOLFION_ADMIN_EMAILS = "md.rabbybaparilmn@gmail.com,md.rabbybaparilmn4@gmail.com"

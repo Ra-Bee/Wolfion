@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useCloudStored } from "@/lib/cloud-store";
 
 export type ProductType = string;
 export type ProductTypeOption = { id: string; label: string };
@@ -197,7 +198,33 @@ function notifySameTab(key: string) {
   } catch { /* ignore */ }
 }
 
+// Storage keys that mirror to Firebase Realtime Database for cross-device
+// admin sync. Phase 1 scope: product types (the admin catalog/categories),
+// daily-production entries, and sales — the three datasets that drive
+// inventory math + the admin dashboards. Every key here is consumed
+// only by admin pages; customer pages don't read these keys, so no
+// extra read-access is granted to non-admins.
+const CLOUD_SYNCED_KEYS: ReadonlySet<string> = new Set([
+  STORAGE_KEYS.productTypes,
+  STORAGE_KEYS.sales,
+  STORAGE_KEYS.production,
+]);
+
 export function useStored<T>(key: string, fallback: T) {
+  // NOTE on the conditional hook below: React forbids hooks whose
+  // identity changes across renders for the SAME component instance.
+  // Every call site passes a string literal from STORAGE_KEYS, so the
+  // branch chosen is constant for the lifetime of that call site --
+  // satisfies the underlying invariant the rule protects.
+  if (CLOUD_SYNCED_KEYS.has(key)) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useCloudStored<T>(key, fallback);
+  }
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  return useLocalStored<T>(key, fallback);
+}
+
+function useLocalStored<T>(key: string, fallback: T) {
   const [value, setValueState] = useState<T>(() => readJSON<T>(key, fallback));
 
   const setValue: typeof setValueState = (next) => {
