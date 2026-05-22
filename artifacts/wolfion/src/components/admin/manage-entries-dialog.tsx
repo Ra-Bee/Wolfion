@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from "react";
+import { useUser } from "@clerk/react";
 import {
   Dialog,
   DialogContent,
@@ -9,7 +10,6 @@ import {
 } from "@/components/ui/dialog";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -18,6 +18,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Pencil, Trash2 } from "lucide-react";
 
 export type ManageColumn<T> = {
@@ -47,8 +49,52 @@ export function ManageEntriesDialog<T extends { id: string }>({
   onEdit,
   emptyText = "No saved entries yet.",
 }: Props<T>) {
+  const { user } = useUser();
   const [open, setOpen] = useState(false);
   const [confirmId, setConfirmId] = useState<string | null>(null);
+  const [password, setPassword] = useState("");
+  const [verifying, setVerifying] = useState(false);
+  const [verifyError, setVerifyError] = useState("");
+
+  const closeConfirm = () => {
+    setConfirmId(null);
+    setPassword("");
+    setVerifyError("");
+    setVerifying(false);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!confirmId) return;
+    if (!password) {
+      setVerifyError("Enter your login password to confirm.");
+      return;
+    }
+    if (!user) {
+      setVerifyError("Not signed in.");
+      return;
+    }
+    setVerifying(true);
+    setVerifyError("");
+    try {
+      const res = await (
+        user as unknown as {
+          verifyPassword: (p: { password: string }) => Promise<{ verified: boolean }>;
+        }
+      ).verifyPassword({ password });
+      if (!res.verified) {
+        setVerifyError("Wrong password.");
+        setVerifying(false);
+        return;
+      }
+      onDelete(confirmId);
+      closeConfirm();
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error ? err.message : "Could not verify password.";
+      setVerifyError(msg.includes("password") ? "Wrong password." : msg);
+      setVerifying(false);
+    }
+  };
 
   return (
     <>
@@ -128,27 +174,52 @@ export function ManageEntriesDialog<T extends { id: string }>({
 
       <AlertDialog
         open={confirmId !== null}
-        onOpenChange={(o) => !o && setConfirmId(null)}
+        onOpenChange={(o) => !o && closeConfirm()}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete this entry?</AlertDialogTitle>
+            <AlertDialogTitle>Confirm delete with password</AlertDialogTitle>
             <AlertDialogDescription>
-              This cannot be undone. The entry will be permanently removed from
-              your records.
+              Enter your login password to permanently delete this entry. This
+              cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={() => {
-                if (confirmId) onDelete(confirmId);
-                setConfirmId(null);
+          <div className="space-y-2 py-2">
+            <Label htmlFor="delete-pw">Password</Label>
+            <Input
+              id="delete-pw"
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              disabled={verifying}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (verifyError) setVerifyError("");
               }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !verifying) {
+                  e.preventDefault();
+                  handleConfirmDelete();
+                }
+              }}
+              placeholder="Your account password"
+            />
+            {verifyError ? (
+              <p className="text-sm text-destructive">{verifyError}</p>
+            ) : null}
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={verifying} onClick={closeConfirm}>
+              Cancel
+            </AlertDialogCancel>
+            <Button
+              type="button"
+              variant="destructive"
+              disabled={verifying || !password}
+              onClick={handleConfirmDelete}
             >
-              Delete
-            </AlertDialogAction>
+              {verifying ? "Verifying..." : "Confirm delete"}
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { AdminLayout } from "@/components/admin-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { ShoppingCart, Plus } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ShoppingCart, Plus, Camera, X } from "lucide-react";
 import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
 import {
   STORAGE_KEYS,
@@ -21,6 +22,37 @@ import { useCloudStored } from "@/lib/cloud-store";
 function fmt(n: number) { return new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(n); }
 function money(n: number) { return `Tk ${fmt(n)}`; }
 
+const MAX_RECEIPT_DIM = 1280;
+const RECEIPT_QUALITY = 0.7;
+
+async function compressImage(file: File): Promise<string> {
+  const dataUrl = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+  const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const el = new Image();
+    el.onload = () => resolve(el);
+    el.onerror = () => reject(new Error("Could not read image"));
+    el.src = dataUrl;
+  });
+  let { width, height } = img;
+  if (width > MAX_RECEIPT_DIM || height > MAX_RECEIPT_DIM) {
+    const scale = Math.min(MAX_RECEIPT_DIM / width, MAX_RECEIPT_DIM / height);
+    width = Math.round(width * scale);
+    height = Math.round(height * scale);
+  }
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return dataUrl;
+  ctx.drawImage(img, 0, 0, width, height);
+  return canvas.toDataURL("image/jpeg", RECEIPT_QUALITY);
+}
+
 export default function DailySalesPage() {
   const [productTypes] = useCloudStored<ProductTypeOption[]>(STORAGE_KEYS.productTypes, defaultProductTypes);
   const [sales, setSales] = useCloudStored<SaleEntry[]>(STORAGE_KEYS.sales, []);
@@ -30,7 +62,11 @@ export default function DailySalesPage() {
   const [customer, setCustomer] = useState("");
   const [qty, setQty] = useState("");
   const [pricePerDozen, setPrice] = useState("");
+  const [receiptImage, setReceiptImage] = useState<string | undefined>(undefined);
+  const [scanning, setScanning] = useState(false);
   const [error, setError] = useState("");
+  const [viewReceipt, setViewReceipt] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const labelById = useMemo(() => Object.fromEntries(productTypes.map((p) => [p.id, p.label])), [productTypes]);
 
@@ -38,6 +74,22 @@ export default function DailySalesPage() {
     const q = Number(qty); const p = Number(pricePerDozen);
     return Number.isFinite(q) && Number.isFinite(p) ? q * p : 0;
   })();
+
+  const handleReceiptPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setScanning(true);
+    setError("");
+    try {
+      const compressed = await compressImage(file);
+      setReceiptImage(compressed);
+    } catch {
+      setError("Could not read receipt image. Try again.");
+    } finally {
+      setScanning(false);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,9 +110,10 @@ export default function DailySalesPage() {
       totalValue: q * p,
       createdAt: new Date().toISOString(),
       date,
+      ...(receiptImage ? { receiptImage } : {}),
     };
     setSales((prev) => [sale, ...prev]);
-    setCustomer(""); setQty(""); setPrice("");
+    setCustomer(""); setQty(""); setPrice(""); setReceiptImage(undefined);
   };
 
   const handleDelete = (id: string) => setSales((prev) => prev.filter((s) => s.id !== id));
@@ -113,6 +166,63 @@ export default function DailySalesPage() {
                 </Select>
               </div>
 
+              <div className="space-y-1.5 col-span-2">
+                <Label>Receipt / Cash Memo (optional)</Label>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  className="hidden"
+                  onChange={handleReceiptPick}
+                />
+                {receiptImage ? (
+                  <div className="flex items-start gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setViewReceipt(receiptImage)}
+                      className="block border rounded-md overflow-hidden shrink-0"
+                    >
+                      <img
+                        src={receiptImage}
+                        alt="Receipt preview"
+                        className="h-24 w-24 object-cover"
+                      />
+                    </button>
+                    <div className="flex flex-col gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={scanning}
+                      >
+                        <Camera className="h-4 w-4 mr-1" /> Retake
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setReceiptImage(undefined)}
+                      >
+                        <X className="h-4 w-4 mr-1" /> Remove
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full h-11"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={scanning}
+                  >
+                    <Camera className="h-5 w-5 mr-2" />
+                    {scanning ? "Processing..." : "Scan receipt with camera"}
+                  </Button>
+                )}
+              </div>
+
               {error && <p className="text-sm text-destructive col-span-2">{error}</p>}
 
               <Button type="submit" size="lg" className="col-span-2 h-12 text-base font-semibold">
@@ -139,6 +249,25 @@ export default function DailySalesPage() {
                 { header: "Type", render: (s) => labelById[s.productType] || s.productType },
                 { header: "Qty", render: (s) => `${fmt(s.quantityDozen)} dz`, className: "text-right" },
                 { header: "Total", render: (s) => money(s.totalValue), className: "text-right" },
+                {
+                  header: "Receipt",
+                  render: (s) =>
+                    s.receiptImage ? (
+                      <button
+                        type="button"
+                        onClick={() => setViewReceipt(s.receiptImage!)}
+                        className="border rounded overflow-hidden block"
+                      >
+                        <img
+                          src={s.receiptImage}
+                          alt="Receipt"
+                          className="h-10 w-10 object-cover"
+                        />
+                      </button>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">—</span>
+                    ),
+                },
               ]}
             />
           </CardHeader>
@@ -156,6 +285,7 @@ export default function DailySalesPage() {
                       <th className="py-2 pr-4 text-right">Qty (dz)</th>
                       <th className="py-2 pr-4 text-right">Price/dz</th>
                       <th className="py-2 pr-4 text-right">Total</th>
+                      <th className="py-2 pr-4">Receipt</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -167,6 +297,23 @@ export default function DailySalesPage() {
                         <td className="py-2 pr-4 text-right">{fmt(s.quantityDozen)}</td>
                         <td className="py-2 pr-4 text-right">{money(s.pricePerDozen)}</td>
                         <td className="py-2 pr-4 text-right font-semibold">{money(s.totalValue)}</td>
+                        <td className="py-2 pr-4">
+                          {s.receiptImage ? (
+                            <button
+                              type="button"
+                              onClick={() => setViewReceipt(s.receiptImage!)}
+                              className="border rounded overflow-hidden block"
+                            >
+                              <img
+                                src={s.receiptImage}
+                                alt="Receipt"
+                                className="h-10 w-10 object-cover"
+                              />
+                            </button>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">—</span>
+                          )}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -181,6 +328,17 @@ export default function DailySalesPage() {
             </div>
           </CardContent>
         </Card>
+
+        <Dialog open={viewReceipt !== null} onOpenChange={(o) => !o && setViewReceipt(null)}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Receipt</DialogTitle>
+            </DialogHeader>
+            {viewReceipt ? (
+              <img src={viewReceipt} alt="Receipt full size" className="w-full h-auto rounded" />
+            ) : null}
+          </DialogContent>
+        </Dialog>
       </div>
     </AdminLayout>
   );

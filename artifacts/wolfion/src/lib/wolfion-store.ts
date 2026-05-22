@@ -21,6 +21,7 @@ export type SaleEntry = {
   totalValue: number;
   createdAt: string;
   date?: string;
+  receiptImage?: string;
 };
 
 export type DailyProductionEntry = {
