@@ -54,7 +54,8 @@ import wolfionLogo from "@assets/Image_20260421042552_60_2_1776716788241.jpg";
 
 const queryClient = new QueryClient();
 
-const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+const CLERK_PUBLISHABLE_KEY_FALLBACK = "pk_test_ZXhhY3QtcGVhY29jay0yMi5jbGVyay5hY2NvdW50cy5kZXYk";
+const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || CLERK_PUBLISHABLE_KEY_FALLBACK;
 const clerkProxyUrl = import.meta.env.VITE_CLERK_PROXY_URL;
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
