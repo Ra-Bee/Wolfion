@@ -116,7 +116,8 @@ export function useCloudStored<T>(storageKey: string, fallback: T) {
       if (firebaseAuth().currentUser) {
         const db = firebaseDb();
         const nodeRef = ref(db, `${CLOUD_ROOT}/${storageKey}`);
-        const payload = resolved === undefined ? null : resolved;
+        const payload =
+          resolved === undefined ? null : stripUndefined(resolved);
         void set(nodeRef, payload as unknown).catch((err) => {
           // eslint-disable-next-line no-console
           console.error(
@@ -130,6 +131,28 @@ export function useCloudStored<T>(storageKey: string, fallback: T) {
   };
 
   return [value, setCloudValue] as const;
+}
+
+// Realtime Database rejects `undefined` anywhere in the payload with
+// "set failed: value argument contains undefined in property '...'".
+// React form state happily produces undefined for optional fields
+// (e.g. workers[i].nextPaymentDate before a date is picked), which
+// crashes the whole admin dashboard. Strip it out before writing —
+// drop undefined object keys entirely and convert undefined inside
+// arrays to null so indices stay aligned.
+function stripUndefined<T>(value: T): T {
+  if (Array.isArray(value)) {
+    return value.map((v) => (v === undefined ? null : stripUndefined(v))) as unknown as T;
+  }
+  if (value !== null && typeof value === "object") {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+      if (v === undefined) continue;
+      out[k] = stripUndefined(v);
+    }
+    return out as unknown as T;
+  }
+  return value;
 }
 
 function readLocal<T>(key: string, fallback: T): T {
