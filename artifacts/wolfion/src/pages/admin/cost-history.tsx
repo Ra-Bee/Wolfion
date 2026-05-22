@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Trash2, Receipt, Plus } from "lucide-react";
+import { Receipt, Plus } from "lucide-react";
+import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
 import {
   STORAGE_KEYS,
   formatDateLabel,
@@ -152,9 +153,23 @@ export default function CostHistoryPage() {
         </Card>
 
         <Card className="border shadow-md">
-          <CardHeader>
-            <CardTitle>History</CardTitle>
-            <CardDescription>{sorted.length} cost entries — newest first.</CardDescription>
+          <CardHeader className="flex flex-row items-start justify-between gap-2">
+            <div>
+              <CardTitle>History</CardTitle>
+              <CardDescription>{sorted.length} cost entries — newest first.</CardDescription>
+            </div>
+            <ManageEntriesDialog
+              title="Manage cost entries"
+              description="Delete saved cost entries."
+              entries={sorted}
+              onDelete={remove}
+              columns={[
+                { header: "Date", render: (e) => formatDateLabel(e.date) },
+                { header: "Item", render: (e) => e.item },
+                { header: "Note", render: (e) => e.note || "—" },
+                { header: "Amount", render: (e) => money(e.amount), className: "text-right" },
+              ]}
+            />
           </CardHeader>
           <CardContent>
             {sorted.length === 0 ? (
@@ -168,7 +183,6 @@ export default function CostHistoryPage() {
                       <th className="py-2 pr-4">Cost Item</th>
                       <th className="py-2 pr-4">Note</th>
                       <th className="py-2 pr-4 text-right">Amount</th>
-                      <th className="py-2 pr-2"></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -178,17 +192,6 @@ export default function CostHistoryPage() {
                         <td className="py-2 pr-4 font-medium">{e.item}</td>
                         <td className="py-2 pr-4 text-muted-foreground">{e.note || "—"}</td>
                         <td className="py-2 pr-4 text-right font-semibold">{money(e.amount)}</td>
-                        <td className="py-2 pr-2 text-right">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => remove(e.id)}
-                            aria-label="Delete"
-                            data-testid={`btn-delete-cost-${e.id}`}
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        </td>
                       </tr>
                     ))}
                   </tbody>

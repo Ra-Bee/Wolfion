@@ -4,7 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Activity, DollarSign, Package, Factory, TrendingUp, Plus, Zap, X, MoreVertical, FileDown, Users, Wrench, LogOut as LogOutIcon, ChevronRight, Trash2 } from "lucide-react";
+import { Activity, DollarSign, Package, Factory, TrendingUp, Plus, Zap, X, MoreVertical, FileDown, Users, Wrench, LogOut as LogOutIcon, ChevronRight } from "lucide-react";
+import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -2093,19 +2094,30 @@ export default function Dashboard() {
                 </Button>
               </form>
               {yarnPurchases.length > 0 && (
-                <div className="rounded-2xl border divide-y max-h-64 overflow-y-auto">
-                  {yarnPurchases.slice(0, 10).map((p) => (
-                    <div key={p.id} className="flex items-center justify-between px-4 py-3">
-                      <div>
-                        <p className="font-medium">{p.kg.toLocaleString(undefined, { maximumFractionDigits: 2 })} kg</p>
-                        <p className="text-xs text-muted-foreground">{formatDateLabel(p.date)}</p>
+                <>
+                  <div className="flex justify-end">
+                    <ManageEntriesDialog
+                      title="Manage yarn purchases"
+                      description="Delete saved yarn purchases."
+                      entries={yarnPurchases}
+                      onDelete={(id) => setYarnPurchases((prev) => prev.filter((x) => x.id !== id))}
+                      columns={[
+                        { header: "Date", render: (p) => formatDateLabel(p.date) },
+                        { header: "Quantity", render: (p) => `${p.kg.toLocaleString(undefined, { maximumFractionDigits: 2 })} kg`, className: "text-right" },
+                      ]}
+                    />
+                  </div>
+                  <div className="rounded-2xl border divide-y max-h-64 overflow-y-auto">
+                    {yarnPurchases.slice(0, 10).map((p) => (
+                      <div key={p.id} className="flex items-center justify-between px-4 py-3">
+                        <div>
+                          <p className="font-medium">{p.kg.toLocaleString(undefined, { maximumFractionDigits: 2 })} kg</p>
+                          <p className="text-xs text-muted-foreground">{formatDateLabel(p.date)}</p>
+                        </div>
                       </div>
-                      <Button variant="ghost" size="icon" onClick={() => setYarnPurchases((prev) => prev.filter((x) => x.id !== p.id))} aria-label="Remove">
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                </>
               )}
             </div>
 
@@ -2241,7 +2253,19 @@ export default function Dashboard() {
             </form>
 
             <div className="space-y-3">
-              <h3 className="text-sm font-semibold">Workers</h3>
+              <div className="flex items-center justify-between gap-2">
+                <h3 className="text-sm font-semibold">Workers</h3>
+                <ManageEntriesDialog
+                  title="Manage workers"
+                  description="Delete saved workers."
+                  entries={workers}
+                  onDelete={handleRemoveWorker}
+                  columns={[
+                    { header: "Name", render: (w) => w.name },
+                    { header: "Role", render: (w) => w.workAt ? workAreaLabels[w.workAt] : (w.payType === "daily" ? `Tk ${w.rate}/day` : `Tk ${w.rate}/unit`) },
+                  ]}
+                />
+              </div>
               {workerStats.length > 0 ? (
                 <div className="space-y-2">
                   {workerStats.map(({ worker, totalUnits, totalPaid, remaining }) => (
@@ -2251,7 +2275,6 @@ export default function Dashboard() {
                           <p className="text-base font-semibold">{worker.name}</p>
                           <p className="text-xs text-muted-foreground">{worker.workAt ? workAreaLabels[worker.workAt] : (worker.payType === "daily" ? `Tk ${worker.rate}/day` : `Tk ${worker.rate}/unit`)} · Tk {totalUnits.toLocaleString(undefined, { maximumFractionDigits: 2 })} billed</p>
                         </div>
-                        <Button variant="ghost" size="sm" onClick={() => handleRemoveWorker(worker.id)} className="text-destructive">Remove</Button>
                       </div>
                       <div className="mt-3 grid grid-cols-2 gap-1.5 sm:gap-2.5 lg:gap-3">
                         <div className="rounded-lg bg-muted/40 p-3">
@@ -2406,9 +2429,23 @@ export default function Dashboard() {
 
             <Separator />
 
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-2">
               <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Entries</span>
-              <span className="text-xs text-muted-foreground">{costEntries.length} records</span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground">{costEntries.length} records</span>
+                <ManageEntriesDialog
+                  title="Manage cost entries"
+                  description="Delete saved cost entries."
+                  entries={costEntries}
+                  onDelete={handleRemoveCostEntry}
+                  columns={[
+                    { header: "Date", render: (e) => formatDateLabel(e.date) },
+                    { header: "Item", render: (e) => e.item },
+                    { header: "Category", render: (e) => costCategoryLabels[e.category ?? "other"] },
+                    { header: "Amount", render: (e) => `Tk ${e.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}`, className: "text-right" },
+                  ]}
+                />
+              </div>
             </div>
             {costEntries.length > 0 ? (
               <div className="space-y-2 max-h-[28rem] overflow-y-auto pr-1">
@@ -2422,12 +2459,7 @@ export default function Dashboard() {
                           <p className="text-sm font-semibold truncate">{entry.item}</p>
                           <p className="text-[11px] text-muted-foreground">{formatDateLabel(entry.date)} · {costCategoryLabels[cat]}</p>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <p className="text-sm font-bold whitespace-nowrap">Tk {entry.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                          <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleRemoveCostEntry(entry.id)} aria-label="Remove">
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </div>
+                        <p className="text-sm font-bold whitespace-nowrap">Tk {entry.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                       </div>
                     );
                   })}
@@ -2494,9 +2526,22 @@ export default function Dashboard() {
             )}
 
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2">
                 <h3 className="text-sm font-semibold">All investor entries</h3>
-                <span className="text-xs text-muted-foreground">{investors.length} records</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">{investors.length} records</span>
+                  <ManageEntriesDialog
+                    title="Manage investor entries"
+                    description="Delete saved investor entries."
+                    entries={investors}
+                    onDelete={handleRemoveInvestor}
+                    columns={[
+                      { header: "Date", render: (e) => formatDateLabel(e.date) },
+                      { header: "Investor", render: (e) => e.name },
+                      { header: "Amount", render: (e) => `Tk ${e.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}`, className: "text-right" },
+                    ]}
+                  />
+                </div>
               </div>
               {sortedInvestorEntries.length > 0 ? (
                 <div className="space-y-2">
@@ -2506,10 +2551,7 @@ export default function Dashboard() {
                         <p className="text-base font-semibold">{e.name}</p>
                         <p className="text-xs text-muted-foreground">{formatDateLabel(e.date)}</p>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <p className="text-lg font-bold">Tk {e.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                        <Button variant="ghost" size="sm" onClick={() => handleRemoveInvestor(e.id)} className="text-destructive">Remove</Button>
-                      </div>
+                      <p className="text-lg font-bold">Tk {e.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                     </div>
                   ))}
                 </div>
@@ -2547,25 +2589,27 @@ export default function Dashboard() {
             {productTypeError && (
               <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{productTypeError}</p>
             )}
+            <div className="flex justify-end">
+              <ManageEntriesDialog
+                title="Manage product types"
+                description="Delete product types. Types currently used by production or sales cannot be removed."
+                entries={productTypes}
+                onDelete={handleRemoveProductType}
+                columns={[
+                  { header: "Name", render: (t) => t.label },
+                  { header: "Status", render: (t) => {
+                    const inUse = productionEntries.some((e) => e.productType === t.id) || salesEntries.some((e) => e.productType === t.id);
+                    return inUse ? <span className="text-xs text-muted-foreground">In use</span> : <span className="text-xs">Unused</span>;
+                  } },
+                ]}
+              />
+            </div>
             <div className="flex flex-wrap gap-2">
-              {productTypes.map((t) => {
-                const inUse = productionEntries.some((e) => e.productType === t.id) || salesEntries.some((e) => e.productType === t.id);
-                return (
-                  <div key={t.id} className="flex items-center gap-2 rounded-full border bg-card px-4 py-2 shadow-sm">
-                    <span className="text-sm font-medium">{t.label}</span>
-                    {!inUse && (
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveProductType(t.id)}
-                        className="text-muted-foreground hover:text-destructive transition"
-                        aria-label={`Remove ${t.label}`}
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
+              {productTypes.map((t) => (
+                <div key={t.id} className="flex items-center gap-2 rounded-full border bg-card px-4 py-2 shadow-sm">
+                  <span className="text-sm font-medium">{t.label}</span>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>

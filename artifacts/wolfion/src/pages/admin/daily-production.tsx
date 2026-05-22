@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Trash2, Factory, Plus, Package } from "lucide-react";
+import { Factory, Plus, Package } from "lucide-react";
+import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
 import {
   STORAGE_KEYS,
   defaultProductTypes,
@@ -175,9 +176,23 @@ export default function DailyProductionPage() {
         </Card>
 
         <Card className="border shadow-md">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2"><Package className="h-5 w-5 text-primary" /> Recent Entries</CardTitle>
-            <CardDescription>{dailyEntries.length} total entries</CardDescription>
+          <CardHeader className="flex flex-row items-start justify-between gap-2">
+            <div>
+              <CardTitle className="flex items-center gap-2"><Package className="h-5 w-5 text-primary" /> Recent Entries</CardTitle>
+              <CardDescription>{dailyEntries.length} total entries</CardDescription>
+            </div>
+            <ManageEntriesDialog
+              title="Manage production entries"
+              description="Delete saved production entries."
+              entries={dailyEntries}
+              onDelete={handleDelete}
+              columns={[
+                { header: "Date", render: (e) => formatDateLabel(e.date) },
+                { header: "Type", render: (e) => (e.productType ? labelById[e.productType] || e.productType : "—") },
+                { header: "Qty (dz)", render: (e) => fmt(e.totalProductionDozen), className: "text-right" },
+                { header: "Total cost", render: (e) => money(e.totalCost), className: "text-right" },
+              ]}
+            />
           </CardHeader>
           <CardContent>
             {dailyEntries.length === 0 ? (
@@ -193,7 +208,6 @@ export default function DailyProductionPage() {
                       <th className="py-2 pr-4 text-right">Yarn (kg)</th>
                       <th className="py-2 pr-4 text-right">Total Cost</th>
                       <th className="py-2 pr-4 text-right">Cost/dz</th>
-                      <th className="py-2 pr-2"></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -205,11 +219,6 @@ export default function DailyProductionPage() {
                         <td className="py-2 pr-4 text-right">{fmt(e.yarnUsedKg)}</td>
                         <td className="py-2 pr-4 text-right">{money(e.totalCost)}</td>
                         <td className="py-2 pr-4 text-right">{money(e.costPerDozen)}</td>
-                        <td className="py-2 pr-2 text-right">
-                          <Button variant="ghost" size="icon" onClick={() => handleDelete(e.id)} aria-label="Delete">
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        </td>
                       </tr>
                     ))}
                   </tbody>

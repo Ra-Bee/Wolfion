@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Trash2, Wallet, Plus, Users as UsersIcon } from "lucide-react";
+import { Wallet, Plus, Users as UsersIcon } from "lucide-react";
+import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
 import {
   STORAGE_KEYS,
   formatDateLabel,
@@ -150,9 +151,23 @@ export default function InvestmentsPage() {
         </div>
 
         <Card className="border shadow-md">
-          <CardHeader>
-            <CardTitle>All Investments</CardTitle>
-            <CardDescription>{investments.length} entries</CardDescription>
+          <CardHeader className="flex flex-row items-start justify-between gap-2">
+            <div>
+              <CardTitle>All Investments</CardTitle>
+              <CardDescription>{investments.length} entries</CardDescription>
+            </div>
+            <ManageEntriesDialog
+              title="Manage investments"
+              description="Delete saved investment entries."
+              entries={investments}
+              onDelete={(id) => setInvestments((p) => p.filter((x) => x.id !== id))}
+              columns={[
+                { header: "Date", render: (i) => formatDateLabel(i.date) },
+                { header: "Type", render: (i) => i.type },
+                { header: "Source", render: (i) => i.source || "—" },
+                { header: "Amount", render: (i) => money(i.amount), className: "text-right" },
+              ]}
+            />
           </CardHeader>
           <CardContent>
             {investments.length === 0 ? (
@@ -167,7 +182,6 @@ export default function InvestmentsPage() {
                       <th className="py-2 pr-4">Description</th>
                       <th className="py-2 pr-4">Source</th>
                       <th className="py-2 pr-4 text-right">Amount</th>
-                      <th className="py-2 pr-2"></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -178,11 +192,6 @@ export default function InvestmentsPage() {
                         <td className="py-2 pr-4">{i.description || "—"}</td>
                         <td className="py-2 pr-4">{i.source || "—"}</td>
                         <td className="py-2 pr-4 text-right font-semibold">{money(i.amount)}</td>
-                        <td className="py-2 pr-2 text-right">
-                          <Button variant="ghost" size="icon" onClick={() => setInvestments((p) => p.filter((x) => x.id !== i.id))} aria-label="Delete">
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -226,7 +235,20 @@ export default function InvestmentsPage() {
             {investors.length > 0 && (
               <>
                 <Separator className="my-4" />
-                <h3 className="text-sm font-semibold mb-2">Recent contributions</h3>
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <h3 className="text-sm font-semibold">Recent contributions</h3>
+                  <ManageEntriesDialog
+                    title="Manage contributions"
+                    description="Delete saved investor contributions."
+                    entries={investors}
+                    onDelete={(id) => setInvestors((p) => p.filter((x) => x.id !== id))}
+                    columns={[
+                      { header: "Date", render: (v) => formatDateLabel(v.date) },
+                      { header: "Investor", render: (v) => v.name },
+                      { header: "Amount", render: (v) => money(v.amount), className: "text-right" },
+                    ]}
+                  />
+                </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead className="text-left text-muted-foreground border-b">
@@ -234,7 +256,6 @@ export default function InvestmentsPage() {
                         <th className="py-2 pr-4">Date</th>
                         <th className="py-2 pr-4">Investor</th>
                         <th className="py-2 pr-4 text-right">Amount</th>
-                        <th className="py-2 pr-2"></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -243,11 +264,6 @@ export default function InvestmentsPage() {
                           <td className="py-2 pr-4 whitespace-nowrap">{formatDateLabel(v.date)}</td>
                           <td className="py-2 pr-4">{v.name}</td>
                           <td className="py-2 pr-4 text-right">{money(v.amount)}</td>
-                          <td className="py-2 pr-2 text-right">
-                            <Button variant="ghost" size="icon" onClick={() => setInvestors((p) => p.filter((x) => x.id !== v.id))} aria-label="Delete">
-                              <Trash2 className="h-4 w-4 text-destructive" />
-                            </Button>
-                          </td>
                         </tr>
                       ))}
                     </tbody>

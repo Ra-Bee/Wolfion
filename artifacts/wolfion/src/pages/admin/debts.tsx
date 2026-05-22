@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Trash2, HandCoins, Plus } from "lucide-react";
+import { HandCoins, Plus } from "lucide-react";
+import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
 import {
   STORAGE_KEYS,
   formatDateLabel,
@@ -163,9 +164,23 @@ export default function DebtsPage() {
         </div>
 
         <Card className="border shadow-md">
-          <CardHeader>
-            <CardTitle>Debts Overview</CardTitle>
-            <CardDescription>Per-debt status: total, paid and remaining.</CardDescription>
+          <CardHeader className="flex flex-row items-start justify-between gap-2">
+            <div>
+              <CardTitle>Debts Overview</CardTitle>
+              <CardDescription>Per-debt status: total, paid and remaining.</CardDescription>
+            </div>
+            <ManageEntriesDialog
+              title="Manage debts"
+              description="Delete saved debt records."
+              entries={summary}
+              onDelete={deleteDebt}
+              columns={[
+                { header: "Date", render: (d) => formatDateLabel(d.date) },
+                { header: "Person", render: (d) => d.personName },
+                { header: "Total", render: (d) => money(d.amount), className: "text-right" },
+                { header: "Remaining", render: (d) => money(d.remaining), className: "text-right" },
+              ]}
+            />
           </CardHeader>
           <CardContent>
             {summary.length === 0 ? (
@@ -181,7 +196,6 @@ export default function DebtsPage() {
                       <th className="py-2 pr-4 text-right">Total</th>
                       <th className="py-2 pr-4 text-right">Paid</th>
                       <th className="py-2 pr-4 text-right">Remaining</th>
-                      <th className="py-2 pr-2"></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -193,11 +207,6 @@ export default function DebtsPage() {
                         <td className="py-2 pr-4 text-right">{money(d.amount)}</td>
                         <td className="py-2 pr-4 text-right text-emerald-600">{money(d.paid)}</td>
                         <td className={`py-2 pr-4 text-right font-semibold ${d.remaining > 0 ? "text-destructive" : "text-emerald-600"}`}>{money(d.remaining)}</td>
-                        <td className="py-2 pr-2 text-right">
-                          <Button variant="ghost" size="icon" onClick={() => deleteDebt(d.id)} aria-label="Delete">
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -248,9 +257,25 @@ export default function DebtsPage() {
         </Card>
 
         <Card className="border shadow-md">
-          <CardHeader>
-            <CardTitle>Payment History</CardTitle>
-            <CardDescription>{payments.length} payments recorded</CardDescription>
+          <CardHeader className="flex flex-row items-start justify-between gap-2">
+            <div>
+              <CardTitle>Payment History</CardTitle>
+              <CardDescription>{payments.length} payments recorded</CardDescription>
+            </div>
+            <ManageEntriesDialog
+              title="Manage payments"
+              description="Delete saved payment records."
+              entries={payments}
+              onDelete={(id) => setPayments((prev) => prev.filter((x) => x.id !== id))}
+              columns={[
+                { header: "Date", render: (p) => formatDateLabel(p.date) },
+                { header: "Debt", render: (p) => {
+                  const d = debts.find((x) => x.id === p.debtId);
+                  return d ? `${d.personName} — ${money(d.amount)}` : "(deleted)";
+                } },
+                { header: "Amount", render: (p) => money(p.amount), className: "text-right" },
+              ]}
+            />
           </CardHeader>
           <CardContent>
             {payments.length === 0 ? (
@@ -263,7 +288,6 @@ export default function DebtsPage() {
                       <th className="py-2 pr-4">Date</th>
                       <th className="py-2 pr-4">Debt</th>
                       <th className="py-2 pr-4 text-right">Amount</th>
-                      <th className="py-2 pr-2"></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -274,11 +298,6 @@ export default function DebtsPage() {
                           <td className="py-2 pr-4 whitespace-nowrap">{formatDateLabel(p.date)}</td>
                           <td className="py-2 pr-4">{d ? `${d.personName} — ${money(d.amount)}` : "(deleted)"}</td>
                           <td className="py-2 pr-4 text-right font-semibold text-emerald-600">{money(p.amount)}</td>
-                          <td className="py-2 pr-2 text-right">
-                            <Button variant="ghost" size="icon" onClick={() => setPayments((prev) => prev.filter((x) => x.id !== p.id))} aria-label="Delete">
-                              <Trash2 className="h-4 w-4 text-destructive" />
-                            </Button>
-                          </td>
                         </tr>
                       );
                     })}

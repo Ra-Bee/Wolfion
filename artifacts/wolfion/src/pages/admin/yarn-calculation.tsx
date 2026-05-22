@@ -4,7 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Wrench, Plus, Trash2, Package } from "lucide-react";
+import { Wrench, Plus, Package } from "lucide-react";
+import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
 import {
   STORAGE_KEYS,
   defaultProductTypes,
@@ -119,9 +120,21 @@ export default function YarnCalculationPage() {
         </div>
 
         <Card className="border-2 border-primary/30 shadow-md">
-          <CardHeader>
-            <CardTitle className="text-xl flex items-center gap-2"><Package className="h-5 w-5 text-primary" /> Yarn purchases</CardTitle>
-            <CardDescription>Log every yarn purchase to track total stock available.</CardDescription>
+          <CardHeader className="flex flex-row items-start justify-between gap-2">
+            <div>
+              <CardTitle className="text-xl flex items-center gap-2"><Package className="h-5 w-5 text-primary" /> Yarn purchases</CardTitle>
+              <CardDescription>Log every yarn purchase to track total stock available.</CardDescription>
+            </div>
+            <ManageEntriesDialog
+              title="Manage yarn purchases"
+              description="Delete saved yarn purchase records."
+              entries={yarnPurchases}
+              onDelete={handleRemovePurchase}
+              columns={[
+                { header: "Date", render: (p) => formatDateLabel(p.date) },
+                { header: "Quantity", render: (p) => `${p.kg.toLocaleString(undefined, { maximumFractionDigits: 2 })} kg`, className: "text-right" },
+              ]}
+            />
           </CardHeader>
           <CardContent className="space-y-4">
             <form onSubmit={handleAddPurchase} className="grid gap-3 sm:grid-cols-3">
@@ -151,9 +164,6 @@ export default function YarnCalculationPage() {
                       <p className="font-medium">{p.kg.toLocaleString(undefined, { maximumFractionDigits: 2 })} kg</p>
                       <p className="text-xs text-muted-foreground">{formatDateLabel(p.date)}</p>
                     </div>
-                    <Button variant="ghost" size="icon" onClick={() => handleRemovePurchase(p.id)} aria-label="Remove">
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
                   </div>
                 ))}
               </div>

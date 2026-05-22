@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Trash2, ShoppingCart, Plus } from "lucide-react";
+import { ShoppingCart, Plus } from "lucide-react";
+import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
 import {
   STORAGE_KEYS,
   defaultProductTypes,
@@ -123,9 +124,24 @@ export default function DailySalesPage() {
         </Card>
 
         <Card className="border shadow-md">
-          <CardHeader>
-            <CardTitle>Recent Sales</CardTitle>
-            <CardDescription>{sales.length} sales recorded</CardDescription>
+          <CardHeader className="flex flex-row items-start justify-between gap-2">
+            <div>
+              <CardTitle>Recent Sales</CardTitle>
+              <CardDescription>{sales.length} sales recorded</CardDescription>
+            </div>
+            <ManageEntriesDialog
+              title="Manage sales"
+              description="Delete saved sales entries."
+              entries={sales}
+              onDelete={handleDelete}
+              columns={[
+                { header: "Date", render: (s) => formatDateLabel(s.date || s.createdAt.slice(0, 10)) },
+                { header: "Customer", render: (s) => s.customerName },
+                { header: "Type", render: (s) => labelById[s.productType] || s.productType },
+                { header: "Qty", render: (s) => `${fmt(s.quantityDozen)} dz`, className: "text-right" },
+                { header: "Total", render: (s) => money(s.totalValue), className: "text-right" },
+              ]}
+            />
           </CardHeader>
           <CardContent>
             {sales.length === 0 ? (
@@ -141,7 +157,6 @@ export default function DailySalesPage() {
                       <th className="py-2 pr-4 text-right">Qty (dz)</th>
                       <th className="py-2 pr-4 text-right">Price/dz</th>
                       <th className="py-2 pr-4 text-right">Total</th>
-                      <th className="py-2 pr-2"></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -153,11 +168,6 @@ export default function DailySalesPage() {
                         <td className="py-2 pr-4 text-right">{fmt(s.quantityDozen)}</td>
                         <td className="py-2 pr-4 text-right">{money(s.pricePerDozen)}</td>
                         <td className="py-2 pr-4 text-right font-semibold">{money(s.totalValue)}</td>
-                        <td className="py-2 pr-2 text-right">
-                          <Button variant="ghost" size="icon" onClick={() => handleDelete(s.id)} aria-label="Delete">
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        </td>
                       </tr>
                     ))}
                   </tbody>

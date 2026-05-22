@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { FileDown, Plus, Trash2, Users, DollarSign } from "lucide-react";
+import { FileDown, Plus, Users, DollarSign } from "lucide-react";
+import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
 import { downloadReport, type WolfionReportData, type ReportRange } from "@/lib/reports";
 import {
   STORAGE_KEYS,
@@ -196,7 +197,19 @@ export default function LaborPayrollPage() {
                   )}
 
                   <div className="space-y-2">
-                    <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Payment history — {selectedStat.worker.name}</h3>
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Payment history — {selectedStat.worker.name}</h3>
+                      <ManageEntriesDialog
+                        title={`Manage payments — ${selectedStat.worker.name}`}
+                        description="Delete saved payment records."
+                        entries={selectedHistory}
+                        onDelete={handleRemovePayment}
+                        columns={[
+                          { header: "Date", render: (p) => formatDateLabel(p.date) },
+                          { header: "Amount", render: (p) => `Tk ${p.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}`, className: "text-right" },
+                        ]}
+                      />
+                    </div>
                     {selectedHistory.length === 0 ? (
                       <p className="rounded-2xl border bg-muted/20 p-6 text-center text-sm text-muted-foreground">No payments recorded yet.</p>
                     ) : (
@@ -207,9 +220,6 @@ export default function LaborPayrollPage() {
                               <p className="font-medium">Tk {p.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                               <p className="text-xs text-muted-foreground">{formatDateLabel(p.date)}</p>
                             </div>
-                            <Button variant="ghost" size="icon" onClick={() => handleRemovePayment(p.id)} aria-label="Remove payment">
-                              <Trash2 className="h-4 w-4 text-destructive" />
-                            </Button>
                           </div>
                         ))}
                       </div>
