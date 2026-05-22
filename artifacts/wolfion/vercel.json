@@ -7,7 +7,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://wolfion-api.onrender.com/api/$1"
+      "destination": "https://wolfion-api-fqmu.onrender.com/api/$1"
     },
     {
       "source": "/((?!api/).*)",
