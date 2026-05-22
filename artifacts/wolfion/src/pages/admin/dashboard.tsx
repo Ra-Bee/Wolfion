@@ -277,6 +277,7 @@ export default function Dashboard() {
   const [dailyStaffBill, setDailyStaffBill] = useState("");
   const [dailyError, setDailyError] = useState("");
   const [dailyConfirm, setDailyConfirm] = useState("");
+  const [showAllDailyEntries, setShowAllDailyEntries] = useState(false);
   const [costEntries, setCostEntries] = useCloudStored<CostEntry[]>(STORAGE_KEYS.costHistory, []);
   const [costEntryDate, setCostEntryDate] = useState(getToday());
   const [costEntryItem, setCostEntryItem] = useState("");
@@ -1714,32 +1715,35 @@ export default function Dashboard() {
                 <span className="text-xs text-muted-foreground">{sortedDailyEntries.length} records</span>
               </div>
               {sortedDailyEntries.length > 0 ? (
-                <div className="space-y-2">
-                  {sortedDailyEntries.slice(0, 14).map((entry) => (
-                    <div key={entry.id} className="flex flex-col gap-1 rounded-xl border bg-card/60 p-4 sm:flex-row sm:items-center sm:justify-between">
-                      <div>
-                        <p className="text-base font-semibold">{formatDateLabel(entry.date)}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {new Date(`${entry.date}T00:00:00`).toLocaleDateString()} · {entry.machineHours.toLocaleString()} hrs · {entry.yarnUsedKg.toLocaleString()} kg yarn
-                        </p>
-                      </div>
-                      <div className="grid grid-cols-3 gap-3 text-right sm:gap-6">
-                        <div>
-                          <p className="text-xs text-muted-foreground">Production</p>
-                          <p className="text-sm font-bold">{entry.totalProductionDozen.toLocaleString()} dz</p>
+                <>
+                  <div className="rounded-xl border divide-y overflow-hidden">
+                    {(showAllDailyEntries ? sortedDailyEntries : sortedDailyEntries.slice(0, 5)).map((entry) => (
+                      <div key={entry.id} className="flex items-center justify-between gap-3 px-3 py-2 text-sm">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium truncate">{formatDateLabel(entry.date)}</p>
+                          <p className="text-[11px] text-muted-foreground truncate">
+                            {entry.totalProductionDozen.toLocaleString()} dz · {entry.yarnUsedKg.toLocaleString(undefined, { maximumFractionDigits: 1 })} kg
+                          </p>
                         </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">Total cost</p>
-                          <p className="text-sm font-bold">Tk {entry.totalCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">Per dozen</p>
-                          <p className="text-sm font-bold">Tk {entry.costPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                        <div className="text-right whitespace-nowrap">
+                          <p className="font-semibold">Tk {entry.totalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                          <p className="text-[11px] text-muted-foreground">Tk {entry.costPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}/dz</p>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                  {sortedDailyEntries.length > 5 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="w-full"
+                      onClick={() => setShowAllDailyEntries((v) => !v)}
+                    >
+                      {showAllDailyEntries ? "Show less" : `See more (${sortedDailyEntries.length - 5})`}
+                    </Button>
+                  )}
+                </>
               ) : (
                 <div className="rounded-xl border border-dashed p-5 text-center">
                   <p className="text-sm font-medium">No daily entries yet</p>
