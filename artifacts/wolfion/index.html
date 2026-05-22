@@ -2,6 +2,21 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      // Redirect the legacy Replit publish (wolfion-web.replit.app) to the
+      // canonical production host on Vercel. Anyone who still has the old
+      // URL bookmarked or pinned to a home screen lands on the live site.
+      (function () {
+        try {
+          var h = window.location.hostname;
+          if (h === "wolfion-web.replit.app" || h.endsWith(".replit.app")) {
+            var target = "https://wolfion.website" +
+              window.location.pathname + window.location.search + window.location.hash;
+            window.location.replace(target);
+          }
+        } catch (_) {}
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta name="format-detection" content="telephone=no" />
     <meta name="mobile-web-app-capable" content="yes" />
