@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { HandCoins, Plus } from "lucide-react";
 import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
+import { ReceiptCapture, ReceiptThumb } from "@/components/admin/receipt-capture";
 import {
   STORAGE_KEYS,
   formatDateLabel,
@@ -28,12 +29,14 @@ export default function DebtsPage() {
   const [dPerson, setDPerson] = useState("");
   const [dAmount, setDAmount] = useState("");
   const [dDesc, setDDesc] = useState("");
+  const [dReceipt, setDReceipt] = useState<string | undefined>(undefined);
   const [dError, setDError] = useState("");
 
   // Payment
   const [pDebtId, setPDebtId] = useState("");
   const [pDate, setPDate] = useState(getToday());
   const [pAmount, setPAmount] = useState("");
+  const [pReceipt, setPReceipt] = useState<string | undefined>(undefined);
   const [pError, setPError] = useState("");
 
   const summary = useMemo(() => {
@@ -75,9 +78,10 @@ export default function DebtsPage() {
       amount: a,
       description: dDesc.trim() || undefined,
       createdAt: new Date().toISOString(),
+      ...(dReceipt ? { receiptImage: dReceipt } : {}),
     };
     setDebts((prev) => [debt, ...prev]);
-    setDPerson(""); setDAmount(""); setDDesc("");
+    setDPerson(""); setDAmount(""); setDDesc(""); setDReceipt(undefined);
   };
 
   const submitPayment = (e: React.FormEvent) => {
@@ -93,9 +97,10 @@ export default function DebtsPage() {
       date: pDate,
       amount: a,
       createdAt: new Date().toISOString(),
+      ...(pReceipt ? { receiptImage: pReceipt } : {}),
     };
     setPayments((prev) => [pay, ...prev]);
-    setPAmount("");
+    setPAmount(""); setPReceipt(undefined);
   };
 
   const deleteDebt = (id: string) => {
@@ -132,6 +137,7 @@ export default function DebtsPage() {
                 <div className="space-y-1.5"><Label>Amount (Tk)</Label><Input type="number" step="0.01" min="0" value={dAmount} onChange={(e) => setDAmount(e.target.value)} placeholder="0" /></div>
                 <div className="space-y-1.5 sm:col-span-2"><Label>Person / Company</Label><Input value={dPerson} onChange={(e) => setDPerson(e.target.value)} placeholder="e.g. Yarn Bazar Ltd." /></div>
                 <div className="space-y-1.5 sm:col-span-2"><Label>Description (optional)</Label><Input value={dDesc} onChange={(e) => setDDesc(e.target.value)} placeholder="Purpose / invoice no." /></div>
+                <div className="sm:col-span-2"><ReceiptCapture value={dReceipt} onChange={setDReceipt} label="Bill / invoice photo (optional)" /></div>
                 {dError && <p className="text-sm text-destructive sm:col-span-2">{dError}</p>}
                 <Button type="submit" size="lg" className="sm:col-span-2 h-11"><Plus className="h-4 w-4 mr-1" /> Save Debt</Button>
               </form>
@@ -156,6 +162,7 @@ export default function DebtsPage() {
                 </div>
                 <div className="space-y-1.5"><Label>Date</Label><Input type="date" value={pDate} onChange={(e) => setPDate(e.target.value)} /></div>
                 <div className="space-y-1.5"><Label>Amount (Tk)</Label><Input type="number" step="0.01" min="0" value={pAmount} onChange={(e) => setPAmount(e.target.value)} placeholder="0" /></div>
+                <div className="sm:col-span-2"><ReceiptCapture value={pReceipt} onChange={setPReceipt} label="Payment receipt photo (optional)" /></div>
                 {pError && <p className="text-sm text-destructive sm:col-span-2">{pError}</p>}
                 <Button type="submit" size="lg" className="sm:col-span-2 h-11" disabled={!debts.length}><Plus className="h-4 w-4 mr-1" /> Save Payment</Button>
               </form>
@@ -288,6 +295,7 @@ export default function DebtsPage() {
                       <th className="py-2 pr-4">Date</th>
                       <th className="py-2 pr-4">Debt</th>
                       <th className="py-2 pr-4 text-right">Amount</th>
+                      <th className="py-2 pr-4">Receipt</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -298,6 +306,7 @@ export default function DebtsPage() {
                           <td className="py-2 pr-4 whitespace-nowrap">{formatDateLabel(p.date)}</td>
                           <td className="py-2 pr-4">{d ? `${d.personName} — ${money(d.amount)}` : "(deleted)"}</td>
                           <td className="py-2 pr-4 text-right font-semibold text-emerald-600">{money(p.amount)}</td>
+                          <td className="py-2 pr-4"><ReceiptThumb src={p.receiptImage} /></td>
                         </tr>
                       );
                     })}

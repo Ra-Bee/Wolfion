@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { FileDown, Plus, Users, DollarSign } from "lucide-react";
 import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
+import { ReceiptCapture, ReceiptThumb } from "@/components/admin/receipt-capture";
 import { downloadReport, type WolfionReportData, type ReportRange } from "@/lib/reports";
 import {
   STORAGE_KEYS,
@@ -35,6 +36,7 @@ export default function LaborPayrollPage() {
   const [selectedWorkerId, setSelectedWorkerId] = useState<string>(() => workers[0]?.id || "");
   const [paymentDate, setPaymentDate] = useState(getToday());
   const [paymentAmount, setPaymentAmount] = useState("");
+  const [paymentReceipt, setPaymentReceipt] = useState<string | undefined>(undefined);
   const [error, setError] = useState("");
 
   const workerStats = useMemo(() => workers.map((w) => {
@@ -62,9 +64,11 @@ export default function LaborPayrollPage() {
       date: paymentDate,
       amount: amt,
       createdAt: new Date().toISOString(),
+      ...(paymentReceipt ? { receiptImage: paymentReceipt } : {}),
     };
     setPayments((prev) => [entry, ...prev]);
     setPaymentAmount("");
+    setPaymentReceipt(undefined);
   }
 
   function handleRemovePayment(id: string) {
@@ -191,6 +195,9 @@ export default function LaborPayrollPage() {
                         <Plus className="h-4 w-4" /> Record payment
                       </Button>
                     </div>
+                    <div className="sm:col-span-3">
+                      <ReceiptCapture value={paymentReceipt} onChange={setPaymentReceipt} label="Salary slip / bill photo (optional)" />
+                    </div>
                   </form>
                   {error && (
                     <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{error}</p>
@@ -215,11 +222,12 @@ export default function LaborPayrollPage() {
                     ) : (
                       <div className="rounded-2xl border divide-y">
                         {selectedHistory.map((p) => (
-                          <div key={p.id} className="flex items-center justify-between px-4 py-3">
+                          <div key={p.id} className="flex items-center justify-between gap-3 px-4 py-3">
                             <div>
                               <p className="font-medium">Tk {p.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                               <p className="text-xs text-muted-foreground">{formatDateLabel(p.date)}</p>
                             </div>
+                            <ReceiptThumb src={p.receiptImage} size={32} />
                           </div>
                         ))}
                       </div>

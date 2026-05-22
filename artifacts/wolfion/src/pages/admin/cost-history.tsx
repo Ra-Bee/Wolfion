@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Receipt, Plus } from "lucide-react";
 import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
+import { ReceiptCapture, ReceiptThumb } from "@/components/admin/receipt-capture";
 import {
   STORAGE_KEYS,
   formatDateLabel,
@@ -26,6 +27,7 @@ export default function CostHistoryPage() {
   const [item, setItem] = useState("");
   const [amount, setAmount] = useState("");
   const [note, setNote] = useState("");
+  const [receiptImage, setReceiptImage] = useState<string | undefined>(undefined);
   const [error, setError] = useState("");
 
   const sorted = useMemo(
@@ -54,11 +56,13 @@ export default function CostHistoryPage() {
       amount: a,
       note: note.trim() || undefined,
       createdAt: new Date().toISOString(),
+      ...(receiptImage ? { receiptImage } : {}),
     };
     setEntries((prev) => [entry, ...prev]);
     setItem("");
     setAmount("");
     setNote("");
+    setReceiptImage(undefined);
   };
 
   const remove = (id: string) => {
@@ -144,6 +148,9 @@ export default function CostHistoryPage() {
                   data-testid="input-cost-note"
                 />
               </div>
+              <div className="sm:col-span-2">
+                <ReceiptCapture value={receiptImage} onChange={setReceiptImage} />
+              </div>
               {error && <p className="text-sm text-destructive sm:col-span-2">{error}</p>}
               <Button type="submit" size="lg" className="sm:col-span-2 h-11" data-testid="btn-add-cost">
                 <Plus className="h-4 w-4 mr-1" /> Save Cost
@@ -183,6 +190,7 @@ export default function CostHistoryPage() {
                       <th className="py-2 pr-4">Cost Item</th>
                       <th className="py-2 pr-4">Note</th>
                       <th className="py-2 pr-4 text-right">Amount</th>
+                      <th className="py-2 pr-4">Receipt</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -192,6 +200,7 @@ export default function CostHistoryPage() {
                         <td className="py-2 pr-4 font-medium">{e.item}</td>
                         <td className="py-2 pr-4 text-muted-foreground">{e.note || "—"}</td>
                         <td className="py-2 pr-4 text-right font-semibold">{money(e.amount)}</td>
+                        <td className="py-2 pr-4"><ReceiptThumb src={e.receiptImage} /></td>
                       </tr>
                     ))}
                   </tbody>

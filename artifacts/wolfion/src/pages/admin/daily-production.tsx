@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { Factory, Plus, Package } from "lucide-react";
 import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
+import { ReceiptCapture, ReceiptThumb } from "@/components/admin/receipt-capture";
 import {
   STORAGE_KEYS,
   defaultProductTypes,
@@ -40,6 +41,7 @@ export default function DailyProductionPage() {
   const [laborCost, setLaborCost] = useState("");
   const [packaging, setPackaging] = useState("");
   const [iron, setIron] = useState("");
+  const [receiptImage, setReceiptImage] = useState<string | undefined>(undefined);
   const [showAllEntries, setShowAllEntries] = useState(false);
   const PREVIEW_COUNT = 5;
   const [error, setError] = useState("");
@@ -79,6 +81,7 @@ export default function DailyProductionPage() {
       costPerDozen,
       productType,
       createdAt,
+      ...(receiptImage ? { receiptImage } : {}),
     };
     setDailyEntries((prev) => [dailyEntry, ...prev]);
 
@@ -92,7 +95,7 @@ export default function DailyProductionPage() {
     }
 
     setQty(""); setYarnUsed(""); setMachineHours(""); setYarnCost("");
-    setLaborCost(""); setPackaging(""); setIron("");
+    setLaborCost(""); setPackaging(""); setIron(""); setReceiptImage(undefined);
   };
 
   const handleDelete = (id: string) => {
@@ -162,6 +165,10 @@ export default function DailyProductionPage() {
                 </Select>
               </div>
 
+              <div className="col-span-2">
+                <ReceiptCapture value={receiptImage} onChange={setReceiptImage} label="Yarn purchase / bill photo (optional)" />
+              </div>
+
               {error && <p className="text-sm text-destructive col-span-2">{error}</p>}
 
               <div className="col-span-2 flex items-center justify-between rounded-lg border bg-muted/30 p-3 text-sm">
@@ -208,7 +215,8 @@ export default function DailyProductionPage() {
                       <th className="py-1.5 pr-3 text-right font-medium">Qty</th>
                       <th className="py-1.5 pr-3 text-right font-medium">Yarn</th>
                       <th className="py-1.5 pr-3 text-right font-medium">Total</th>
-                      <th className="py-1.5 pr-0 text-right font-medium">Cost/dz</th>
+                      <th className="py-1.5 pr-3 text-right font-medium">Cost/dz</th>
+                      <th className="py-1.5 pr-0 font-medium">Bill</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -219,7 +227,8 @@ export default function DailyProductionPage() {
                         <td className="py-1 pr-3 text-right whitespace-nowrap">{fmt(e.totalProductionDozen)}</td>
                         <td className="py-1 pr-3 text-right whitespace-nowrap">{fmt(e.yarnUsedKg)}</td>
                         <td className="py-1 pr-3 text-right whitespace-nowrap">{money(e.totalCost)}</td>
-                        <td className="py-1 pr-0 text-right whitespace-nowrap">{money(e.costPerDozen)}</td>
+                        <td className="py-1 pr-3 text-right whitespace-nowrap">{money(e.costPerDozen)}</td>
+                        <td className="py-1 pr-0"><ReceiptThumb src={e.receiptImage} /></td>
                       </tr>
                     ))}
                   </tbody>

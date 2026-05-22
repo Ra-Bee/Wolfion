@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Wallet, Plus, Users as UsersIcon } from "lucide-react";
 import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
+import { ReceiptCapture, ReceiptThumb } from "@/components/admin/receipt-capture";
 import {
   STORAGE_KEYS,
   formatDateLabel,
@@ -28,12 +29,14 @@ export default function InvestmentsPage() {
   const [iDesc, setIDesc] = useState("");
   const [iAmount, setIAmount] = useState("");
   const [iSource, setISource] = useState("");
+  const [iReceipt, setIReceipt] = useState<string | undefined>(undefined);
   const [iError, setIError] = useState("");
 
   // Investor form
   const [vName, setVName] = useState("");
   const [vDate, setVDate] = useState(getToday());
   const [vAmount, setVAmount] = useState("");
+  const [vReceipt, setVReceipt] = useState<string | undefined>(undefined);
   const [vError, setVError] = useState("");
 
   const totalInvested = investments.reduce((s, x) => s + x.amount, 0);
@@ -62,9 +65,10 @@ export default function InvestmentsPage() {
       amount: a,
       source: iSource.trim(),
       createdAt: new Date().toISOString(),
+      ...(iReceipt ? { receiptImage: iReceipt } : {}),
     };
     setInvestments((prev) => [inv, ...prev]);
-    setIType(""); setIDesc(""); setIAmount(""); setISource("");
+    setIType(""); setIDesc(""); setIAmount(""); setISource(""); setIReceipt(undefined);
   };
 
   const submitInvestor = (e: React.FormEvent) => {
@@ -80,9 +84,10 @@ export default function InvestmentsPage() {
       date: vDate,
       amount: a,
       createdAt: new Date().toISOString(),
+      ...(vReceipt ? { receiptImage: vReceipt } : {}),
     };
     setInvestors((prev) => [v, ...prev]);
-    setVName(""); setVAmount("");
+    setVName(""); setVAmount(""); setVReceipt(undefined);
   };
 
   return (
@@ -127,6 +132,7 @@ export default function InvestmentsPage() {
                 <div className="space-y-1.5 sm:col-span-2"><Label>Description</Label><Input value={iDesc} onChange={(e) => setIDesc(e.target.value)} placeholder="Optional" /></div>
                 <div className="space-y-1.5"><Label>Amount (Tk)</Label><Input type="number" step="0.01" min="0" value={iAmount} onChange={(e) => setIAmount(e.target.value)} placeholder="0" /></div>
                 <div className="space-y-1.5"><Label>Source</Label><Input value={iSource} onChange={(e) => setISource(e.target.value)} placeholder="Owner / Bank / Investor name" /></div>
+                <div className="sm:col-span-2"><ReceiptCapture value={iReceipt} onChange={setIReceipt} label="Receipt / proof photo (optional)" /></div>
                 {iError && <p className="text-sm text-destructive sm:col-span-2">{iError}</p>}
                 <Button type="submit" size="lg" className="sm:col-span-2 h-11"><Plus className="h-4 w-4 mr-1" /> Save Investment</Button>
               </form>
@@ -143,6 +149,7 @@ export default function InvestmentsPage() {
                 <div className="space-y-1.5 sm:col-span-2"><Label>Investor Name</Label><Input value={vName} onChange={(e) => setVName(e.target.value)} placeholder="e.g. Rahim Uddin" /></div>
                 <div className="space-y-1.5"><Label>Date</Label><Input type="date" value={vDate} onChange={(e) => setVDate(e.target.value)} /></div>
                 <div className="space-y-1.5"><Label>Amount (Tk)</Label><Input type="number" step="0.01" min="0" value={vAmount} onChange={(e) => setVAmount(e.target.value)} placeholder="0" /></div>
+                <div className="sm:col-span-2"><ReceiptCapture value={vReceipt} onChange={setVReceipt} label="Deposit slip photo (optional)" /></div>
                 {vError && <p className="text-sm text-destructive sm:col-span-2">{vError}</p>}
                 <Button type="submit" size="lg" className="sm:col-span-2 h-11"><Plus className="h-4 w-4 mr-1" /> Save Contribution</Button>
               </form>
@@ -182,6 +189,7 @@ export default function InvestmentsPage() {
                       <th className="py-2 pr-4">Description</th>
                       <th className="py-2 pr-4">Source</th>
                       <th className="py-2 pr-4 text-right">Amount</th>
+                      <th className="py-2 pr-4">Receipt</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -192,6 +200,7 @@ export default function InvestmentsPage() {
                         <td className="py-2 pr-4">{i.description || "—"}</td>
                         <td className="py-2 pr-4">{i.source || "—"}</td>
                         <td className="py-2 pr-4 text-right font-semibold">{money(i.amount)}</td>
+                        <td className="py-2 pr-4"><ReceiptThumb src={i.receiptImage} /></td>
                       </tr>
                     ))}
                   </tbody>
@@ -256,6 +265,7 @@ export default function InvestmentsPage() {
                         <th className="py-2 pr-4">Date</th>
                         <th className="py-2 pr-4">Investor</th>
                         <th className="py-2 pr-4 text-right">Amount</th>
+                        <th className="py-2 pr-4">Receipt</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -264,6 +274,7 @@ export default function InvestmentsPage() {
                           <td className="py-2 pr-4 whitespace-nowrap">{formatDateLabel(v.date)}</td>
                           <td className="py-2 pr-4">{v.name}</td>
                           <td className="py-2 pr-4 text-right">{money(v.amount)}</td>
+                          <td className="py-2 pr-4"><ReceiptThumb src={v.receiptImage} /></td>
                         </tr>
                       ))}
                     </tbody>

@@ -39,6 +39,7 @@ export type DailyProductionEntry = {
   costPerDozen: number;
   productType?: ProductType;
   createdAt: string;
+  receiptImage?: string;
 };
 
 export type ElectricityEntry = {
@@ -70,9 +71,10 @@ export type WorkerPayment = {
   date: string;
   amount: number;
   createdAt: string;
+  receiptImage?: string;
 };
 
-export type YarnPurchase = { id: string; date: string; kg: number; createdAt: string };
+export type YarnPurchase = { id: string; date: string; kg: number; createdAt: string; receiptImage?: string };
 
 export type Investment = {
   id: string;
@@ -82,6 +84,7 @@ export type Investment = {
   amount: number;
   source: string;
   createdAt: string;
+  receiptImage?: string;
 };
 
 export type InvestorEntry = {
@@ -90,6 +93,7 @@ export type InvestorEntry = {
   date: string;
   amount: number;
   createdAt: string;
+  receiptImage?: string;
 };
 
 export type Debt = {
@@ -99,6 +103,7 @@ export type Debt = {
   amount: number;
   description?: string;
   createdAt: string;
+  receiptImage?: string;
 };
 
 export type DebtPayment = {
@@ -107,6 +112,7 @@ export type DebtPayment = {
   date: string;
   amount: number;
   createdAt: string;
+  receiptImage?: string;
 };
 export type YarnPerDozen = Record<string, number>;
 export type YarnUsageEntry = {
@@ -145,6 +151,7 @@ export type CostHistoryEntry = {
   amount: number;
   note?: string;
   createdAt: string;
+  receiptImage?: string;
 };
 
 export const defaultProductTypes: ProductTypeOption[] = [
