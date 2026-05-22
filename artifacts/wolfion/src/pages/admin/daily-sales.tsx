@@ -240,9 +240,28 @@ export default function DailySalesPage() {
             </div>
             <ManageEntriesDialog
               title="Manage sales"
-              description="Delete saved sales entries."
+              description="Edit or delete saved sales entries."
               entries={sales}
               onDelete={handleDelete}
+              editFields={[
+                { key: "date", label: "Date", type: "date" },
+                { key: "customerName", label: "Customer name", type: "text" },
+                { key: "quantityDozen", label: "Quantity (dz)", type: "number" },
+                { key: "pricePerDozen", label: "Price / dozen", type: "number" },
+              ]}
+              onSave={(id, patch) =>
+                setSales((prev) =>
+                  prev.map((s) => {
+                    if (s.id !== id) return s;
+                    const merged = { ...s, ...patch };
+                    return {
+                      ...merged,
+                      totalValue:
+                        Number(merged.quantityDozen) * Number(merged.pricePerDozen),
+                    };
+                  }),
+                )
+              }
               columns={[
                 { header: "Date", render: (s) => formatDateLabel(s.date || s.createdAt.slice(0, 10)) },
                 { header: "Customer", render: (s) => s.customerName },

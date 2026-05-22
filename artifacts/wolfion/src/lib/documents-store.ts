@@ -1,6 +1,6 @@
 const DB_NAME = "wolfion_documents";
 const STORE = "files";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 export type DocumentKind = "image" | "audio" | "scan" | "pdf" | "video" | "other";
 
@@ -11,6 +11,10 @@ export type DocumentMeta = {
   mimeType: string;
   size: number;
   createdAt: number;
+  customerName?: string;
+  docDate?: string;
+  memoNumber?: string;
+  groupId?: string;
 };
 
 function openDb(): Promise<IDBDatabase> {
@@ -24,6 +28,35 @@ function openDb(): Promise<IDBDatabase> {
     };
     req.onsuccess = () => resolve(req.result);
     req.onerror = () => reject(req.error);
+  });
+}
+
+export async function updateDocumentMeta(
+  id: string,
+  patch: Partial<Omit<DocumentMeta, "id">>,
+): Promise<void> {
+  const db = await openDb();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE, "readwrite");
+    const store = tx.objectStore(STORE);
+    const getReq = store.get(id);
+    getReq.onsuccess = () => {
+      const existing = getReq.result;
+      if (!existing) {
+        db.close();
+        resolve();
+        return;
+      }
+      store.put({ ...existing, ...patch });
+    };
+    tx.oncomplete = () => {
+      db.close();
+      resolve();
+    };
+    tx.onerror = () => {
+      db.close();
+      reject(tx.error);
+    };
   });
 }
 

@@ -1,9 +1,10 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useUser } from "@clerk/react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -28,6 +29,13 @@ export type ManageColumn<T> = {
   className?: string;
 };
 
+export type EditField<T> = {
+  key: keyof T & string;
+  label: string;
+  type?: "text" | "number" | "date";
+  placeholder?: string;
+};
+
 type Props<T extends { id: string }> = {
   title: string;
   description?: string;
@@ -35,7 +43,12 @@ type Props<T extends { id: string }> = {
   entries: T[];
   columns: ManageColumn<T>[];
   onDelete: (id: string) => void;
+  /** Custom edit handler — overrides built-in editFields form if provided. */
   onEdit?: (row: T) => void;
+  /** Declarative inline edit. When set (and onEdit is not), pencil opens a form for these fields. */
+  editFields?: EditField<T>[];
+  /** Called when the user saves the inline edit form. Page should apply patch + recompute derived fields. */
+  onSave?: (id: string, patch: Partial<T>) => void;
   emptyText?: string;
 };
 
@@ -47,6 +60,8 @@ export function ManageEntriesDialog<T extends { id: string }>({
   columns,
   onDelete,
   onEdit,
+  editFields,
+  onSave,
   emptyText = "No saved entries yet.",
 }: Props<T>) {
   const { user } = useUser();
@@ -55,6 +70,24 @@ export function ManageEntriesDialog<T extends { id: string }>({
   const [password, setPassword] = useState("");
   const [verifying, setVerifying] = useState(false);
   const [verifyError, setVerifyError] = useState("");
+
+  const [editingRow, setEditingRow] = useState<T | null>(null);
+  const [editValues, setEditValues] = useState<Record<string, string>>({});
+  const [editError, setEditError] = useState("");
+
+  const canInlineEdit = !onEdit && editFields && editFields.length > 0 && onSave;
+
+  useEffect(() => {
+    if (editingRow && editFields) {
+      const init: Record<string, string> = {};
+      for (const f of editFields) {
+        const v = (editingRow as unknown as Record<string, unknown>)[f.key];
+        init[f.key] = v === undefined || v === null ? "" : String(v);
+      }
+      setEditValues(init);
+      setEditError("");
+    }
+  }, [editingRow, editFields]);
 
   const closeConfirm = () => {
     setConfirmId(null);
@@ -95,6 +128,45 @@ export function ManageEntriesDialog<T extends { id: string }>({
       setVerifying(false);
     }
   };
+
+  const handleSaveEdit = () => {
+    if (!editingRow || !editFields || !onSave) return;
+    const patch: Record<string, unknown> = {};
+    for (const f of editFields) {
+      const raw = editValues[f.key] ?? "";
+      if (f.type === "number") {
+        if (raw === "") {
+          setEditError(`${f.label} is required.`);
+          return;
+        }
+        const n = Number(raw);
+        if (!Number.isFinite(n)) {
+          setEditError(`${f.label} must be a number.`);
+          return;
+        }
+        patch[f.key] = n;
+      } else {
+        if (raw.trim() === "") {
+          setEditError(`${f.label} is required.`);
+          return;
+        }
+        patch[f.key] = f.type === "text" ? raw.trim() : raw;
+      }
+    }
+    onSave(editingRow.id, patch as Partial<T>);
+    setEditingRow(null);
+  };
+
+  const handlePencilClick = (row: T) => {
+    if (onEdit) {
+      onEdit(row);
+      setOpen(false);
+    } else if (canInlineEdit) {
+      setEditingRow(row);
+    }
+  };
+
+  const showPencil = Boolean(onEdit || canInlineEdit);
 
   return (
     <>
@@ -137,17 +209,14 @@ export function ManageEntriesDialog<T extends { id: string }>({
                         </td>
                       ))}
                       <td className="py-2 text-right whitespace-nowrap">
-                        {onEdit ? (
+                        {showPencil ? (
                           <Button
                             variant="ghost"
                             size="icon"
                             type="button"
                             className="h-8 w-8"
                             aria-label="Edit"
-                            onClick={() => {
-                              onEdit(row);
-                              setOpen(false);
-                            }}
+                            onClick={() => handlePencilClick(row)}
                           >
                             <Pencil className="h-4 w-4" />
                           </Button>
@@ -171,6 +240,60 @@ export function ManageEntriesDialog<T extends { id: string }>({
           )}
         </DialogContent>
       </Dialog>
+
+      {canInlineEdit ? (
+        <Dialog
+          open={editingRow !== null}
+          onOpenChange={(o) => {
+            if (!o) {
+              setEditingRow(null);
+              setEditError("");
+            }
+          }}
+        >
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit entry</DialogTitle>
+              <DialogDescription>
+                Change any field and save. Other linked totals will update.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-3 py-2">
+              {editFields!.map((f) => (
+                <div key={f.key} className="space-y-1.5">
+                  <Label htmlFor={`edit-${f.key}`}>{f.label}</Label>
+                  <Input
+                    id={`edit-${f.key}`}
+                    type={f.type === "number" ? "number" : f.type === "date" ? "date" : "text"}
+                    step={f.type === "number" ? "0.01" : undefined}
+                    value={editValues[f.key] ?? ""}
+                    placeholder={f.placeholder}
+                    onChange={(e) => {
+                      setEditValues((v) => ({ ...v, [f.key]: e.target.value }));
+                      if (editError) setEditError("");
+                    }}
+                  />
+                </div>
+              ))}
+              {editError ? (
+                <p className="text-sm text-destructive">{editError}</p>
+              ) : null}
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                type="button"
+                onClick={() => setEditingRow(null)}
+              >
+                Cancel
+              </Button>
+              <Button type="button" onClick={handleSaveEdit}>
+                Save changes
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      ) : null}
 
       <AlertDialog
         open={confirmId !== null}
