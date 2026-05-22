@@ -233,25 +233,11 @@ export default function Dashboard() {
   );
   const [newProductTypeName, setNewProductTypeName] = useState("");
   const [productTypeError, setProductTypeError] = useState("");
-  const [productionEntries, setProductionEntries] = useState<ProductionEntry[]>(() => {
-    try {
-      const stored = localStorage.getItem(productionStorageKey);
-      return stored ? JSON.parse(stored) as ProductionEntry[] : [];
-    } catch {
-      return [];
-    }
-  });
+  const [productionEntries, setProductionEntries] = useCloudStored<ProductionEntry[]>(STORAGE_KEYS.production, []);
   const [date, setDate] = useState(getToday());
   const [productType, setProductType] = useState<ProductType>("short-socks");
   const [quantity, setQuantity] = useState("");
-  const [salesEntries, setSalesEntries] = useState<SaleEntry[]>(() => {
-    try {
-      const stored = localStorage.getItem(salesStorageKey);
-      return stored ? JSON.parse(stored) as SaleEntry[] : [];
-    } catch {
-      return [];
-    }
-  });
+  const [salesEntries, setSalesEntries] = useCloudStored<SaleEntry[]>(STORAGE_KEYS.sales, []);
   const [customerName, setCustomerName] = useState("");
   const [saleProductType, setSaleProductType] = useState<ProductType>("short-socks");
   const [saleQuantity, setSaleQuantity] = useState("");
@@ -260,42 +246,14 @@ export default function Dashboard() {
   const [saleDate, setSaleDate] = useState(getToday());
   const [saleError, setSaleError] = useState("");
   const [saleConfirm, setSaleConfirm] = useState("");
-  const [yarnStockKg, setYarnStockKg] = useState(() => {
-    try {
-      const stored = localStorage.getItem(yarnStockStorageKey);
-      return stored ? Number(stored) : 0;
-    } catch {
-      return 0;
-    }
-  });
-  const [yarnUsageEntries, setYarnUsageEntries] = useState<YarnUsageEntry[]>(() => {
-    try {
-      const stored = localStorage.getItem(yarnUsageStorageKey);
-      return stored ? JSON.parse(stored) as YarnUsageEntry[] : [];
-    } catch {
-      return [];
-    }
-  });
+  const [yarnStockKg, setYarnStockKg] = useCloudStored<number>(STORAGE_KEYS.yarnStock, 0);
+  const [yarnUsageEntries, setYarnUsageEntries] = useCloudStored<YarnUsageEntry[]>(STORAGE_KEYS.yarnUsage, []);
   const [currentYarnStock, setCurrentYarnStock] = useState("");
   const [yarnUsageProductType, setYarnUsageProductType] = useState<ProductType>("short-socks");
   const [yarnUsageKg, setYarnUsageKg] = useState("");
   const [yarnError, setYarnError] = useState("");
-  const [costs, setCosts] = useState<CostInputs>(() => {
-    try {
-      const stored = localStorage.getItem(costStorageKey);
-      return stored ? { ...defaultCosts, ...(JSON.parse(stored) as CostInputs) } : defaultCosts;
-    } catch {
-      return defaultCosts;
-    }
-  });
-  const [dailyEntries, setDailyEntries] = useState<DailyProductionEntry[]>(() => {
-    try {
-      const stored = localStorage.getItem(dailyEntriesStorageKey);
-      return stored ? JSON.parse(stored) as DailyProductionEntry[] : [];
-    } catch {
-      return [];
-    }
-  });
+  const [costs, setCosts] = useCloudStored<CostInputs>(STORAGE_KEYS.costInputs, defaultCosts);
+  const [dailyEntries, setDailyEntries] = useCloudStored<DailyProductionEntry[]>(STORAGE_KEYS.daily, []);
   const [dailyDate, setDailyDate] = useState(getToday());
   const [dailyProductionDozen, setDailyProductionDozen] = useState("");
   const [dailyYarnKg, setDailyYarnKg] = useState("");
@@ -308,14 +266,7 @@ export default function Dashboard() {
   const [dailyStaffBill, setDailyStaffBill] = useState("");
   const [dailyError, setDailyError] = useState("");
   const [dailyConfirm, setDailyConfirm] = useState("");
-  const [costEntries, setCostEntries] = useState<CostEntry[]>(() => {
-    try {
-      const stored = localStorage.getItem(costEntriesStorageKey);
-      return stored ? (JSON.parse(stored) as CostEntry[]) : [];
-    } catch {
-      return [];
-    }
-  });
+  const [costEntries, setCostEntries] = useCloudStored<CostEntry[]>(STORAGE_KEYS.costHistory, []);
   const [costEntryDate, setCostEntryDate] = useState(getToday());
   const [costEntryItem, setCostEntryItem] = useState("");
   const [costEntryAmount, setCostEntryAmount] = useState("");
@@ -323,24 +274,10 @@ export default function Dashboard() {
   const [costEntryError, setCostEntryError] = useState("");
   const [quickSaleOpen, setQuickSaleOpen] = useState(false);
   const [quickSaleConfirm, setQuickSaleConfirm] = useState("");
-  const [yarnPurchases, setYarnPurchases] = useState<YarnPurchase[]>(() => {
-    try {
-      const stored = localStorage.getItem(yarnPurchasesStorageKey);
-      return stored ? (JSON.parse(stored) as YarnPurchase[]) : [];
-    } catch {
-      return [];
-    }
-  });
+  const [yarnPurchases, setYarnPurchases] = useCloudStored<YarnPurchase[]>(STORAGE_KEYS.yarnPurchases, []);
   const [yarnPurchaseDate, setYarnPurchaseDate] = useState(getToday());
   const [yarnPurchaseKg, setYarnPurchaseKg] = useState("");
-  const [yarnPerDozen, setYarnPerDozen] = useState<YarnPerDozen>(() => {
-    try {
-      const stored = localStorage.getItem(yarnPerDozenStorageKey);
-      return stored ? { ...defaultYarnPerDozen, ...(JSON.parse(stored) as YarnPerDozen) } : defaultYarnPerDozen;
-    } catch {
-      return defaultYarnPerDozen;
-    }
-  });
+  const [yarnPerDozen, setYarnPerDozen] = useCloudStored<YarnPerDozen>(STORAGE_KEYS.yarnPerDozen, defaultYarnPerDozen);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
   const [reportRangeMode, setReportRangeMode] = useState<"daily" | "monthly" | "yearly" | "custom">("monthly");
   const [reportCustomStart, setReportCustomStart] = useState(getToday());
@@ -352,43 +289,15 @@ export default function Dashboard() {
   const [laborCostInput, setLaborCostInput] = useState(() => (costs.laborCostPerDozen ? String(costs.laborCostPerDozen) : ""));
   const [packagingCostInput, setPackagingCostInput] = useState(() => (costs.packagingCostPerDozen ? String(costs.packagingCostPerDozen) : ""));
 
-  const [electricityEntries, setElectricityEntries] = useState<ElectricityEntry[]>(() => {
-    try {
-      const stored = localStorage.getItem(electricityStorageKey);
-      return stored ? JSON.parse(stored) as ElectricityEntry[] : [];
-    } catch {
-      return [];
-    }
-  });
+  const [electricityEntries, setElectricityEntries] = useCloudStored<ElectricityEntry[]>(STORAGE_KEYS.electricity, []);
   const [electricityMonth, setElectricityMonth] = useState(() => new Date().toISOString().slice(0, 7));
   const [electricityBill, setElectricityBill] = useState("");
   const [electricityError, setElectricityError] = useState("");
   const [electricityConfirm, setElectricityConfirm] = useState("");
 
-  const [workers, setWorkers] = useState<Worker[]>(() => {
-    try {
-      const stored = localStorage.getItem(workersStorageKey);
-      return stored ? JSON.parse(stored) as Worker[] : [];
-    } catch {
-      return [];
-    }
-  });
-  const [workLogs, setWorkLogs] = useState<WorkLog[]>(() => {
-    try {
-      const stored = localStorage.getItem(workLogsStorageKey);
-      return stored ? JSON.parse(stored) as WorkLog[] : [];
-    } catch {
-      return [];
-    }
-  });
-  const [workerPayments, setWorkerPayments] = useState<WorkerPayment[]>(() => {
-    try {
-      const stored = localStorage.getItem(workerPaymentsStorageKey);
-      return stored ? JSON.parse(stored) as WorkerPayment[] : [];
-    } catch {
-      return [];
-    }
-  });
+  const [workers, setWorkers] = useCloudStored<Worker[]>(STORAGE_KEYS.workers, []);
+  const [workLogs, setWorkLogs] = useCloudStored<WorkLog[]>(STORAGE_KEYS.workLogs, []);
+  const [workerPayments, setWorkerPayments] = useCloudStored<WorkerPayment[]>(STORAGE_KEYS.workerPayments, []);
   const [newWorkerName, setNewWorkerName] = useState("");
   const [newWorkerWorkAt, setNewWorkerWorkAt] = useState<WorkArea>("machine_run");
   const [uniDate, setUniDate] = useState(getToday());
@@ -436,33 +345,7 @@ export default function Dashboard() {
   const [investorAmount, setInvestorAmount] = useState("");
   const [investorError, setInvestorError] = useState("");
 
-  useEffect(() => {
-    localStorage.setItem(productionStorageKey, JSON.stringify(productionEntries));
-  }, [productionEntries]);
-
-  useEffect(() => {
-    localStorage.setItem(salesStorageKey, JSON.stringify(salesEntries));
-  }, [salesEntries]);
-
-  useEffect(() => {
-    localStorage.setItem(yarnStockStorageKey, String(yarnStockKg));
-  }, [yarnStockKg]);
-
-  useEffect(() => {
-    localStorage.setItem(yarnUsageStorageKey, JSON.stringify(yarnUsageEntries));
-  }, [yarnUsageEntries]);
-
-  useEffect(() => {
-    localStorage.setItem(costStorageKey, JSON.stringify(costs));
-  }, [costs]);
-
-  useEffect(() => {
-    localStorage.setItem(dailyEntriesStorageKey, JSON.stringify(dailyEntries));
-  }, [dailyEntries]);
-
-  useEffect(() => {
-    localStorage.setItem(costEntriesStorageKey, JSON.stringify(costEntries));
-  }, [costEntries]);
+  // Persistence (local + cloud) handled by useCloudStored hooks above.
 
   function handleAddCostEntry(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -491,22 +374,7 @@ export default function Dashboard() {
     setCostEntries((current) => current.filter((e) => e.id !== id));
   }
 
-  useEffect(() => {
-    localStorage.setItem(electricityStorageKey, JSON.stringify(electricityEntries));
-  }, [electricityEntries]);
-
-  useEffect(() => {
-    localStorage.setItem(workersStorageKey, JSON.stringify(workers));
-  }, [workers]);
-
-  useEffect(() => {
-    localStorage.setItem(workLogsStorageKey, JSON.stringify(workLogs));
-  }, [workLogs]);
-
-  useEffect(() => {
-    localStorage.setItem(workerPaymentsStorageKey, JSON.stringify(workerPayments));
-  }, [workerPayments]);
-
+  // Investments / investors persistence still local; everything else cloud-synced above.
   useEffect(() => {
     localStorage.setItem(investmentsStorageKey, JSON.stringify(investments));
   }, [investments]);
@@ -514,18 +382,6 @@ export default function Dashboard() {
   useEffect(() => {
     localStorage.setItem(investorsStorageKey, JSON.stringify(investors));
   }, [investors]);
-
-  // productTypes is now cloud-synced via useStored -> useCloudStored.
-  // The hook handles both localStorage cache and Firebase write-back,
-  // so the explicit localStorage useEffect is no longer needed.
-
-  useEffect(() => {
-    localStorage.setItem(yarnPurchasesStorageKey, JSON.stringify(yarnPurchases));
-  }, [yarnPurchases]);
-
-  useEffect(() => {
-    localStorage.setItem(yarnPerDozenStorageKey, JSON.stringify(yarnPerDozen));
-  }, [yarnPerDozen]);
 
   const productTypeLabels = useMemo<Record<string, string>>(() => {
     const labels: Record<string, string> = {};
