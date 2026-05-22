@@ -63,3 +63,4 @@ checklist (Clerk → Vercel → Render → Firebase). One-time setup, ~1h.
 ## License
 
 Private / proprietary. © Wolfion.
+# Wolfion
