@@ -1,4 +1,4 @@
-import { useEffect, useRef, lazy, Suspense, type ReactNode } from "react";
+import { useEffect, useRef, lazy, Suspense, Component, type ReactNode, type ErrorInfo } from "react";
 import { ClerkProvider, useClerk, useUser } from '@clerk/react';
 import { Switch, Route, Redirect, useLocation, Router as WouterRouter } from 'wouter';
 import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
@@ -41,6 +41,79 @@ const DocumentsPage = lazy(() => import("@/pages/admin/documents"));
 const AdminProductsPage = lazy(() => import("@/pages/admin/products"));
 
 import NotFound from "@/pages/not-found";
+
+// Visible error boundary — replaces the previous silent blank screen on
+// /admin-dashboard. If anything in the React tree throws, show the
+// message + stack on screen instead of a black page, so we can debug
+// production issues from a phone without DevTools.
+class VisibleErrorBoundary extends Component<
+  { children: ReactNode },
+  { error: Error | null; info: string }
+> {
+  state = { error: null as Error | null, info: "" };
+  static getDerivedStateFromError(error: Error) {
+    return { error, info: "" };
+  }
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    // eslint-disable-next-line no-console
+    console.error("[wolfion] uncaught render error", error, info);
+    this.setState({ error, info: info.componentStack ?? "" });
+  }
+  render() {
+    if (!this.state.error) return this.props.children;
+    return (
+      <div
+        style={{
+          minHeight: "100dvh",
+          background: "#0a0a0a",
+          color: "#f87171",
+          padding: 20,
+          fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+          fontSize: 13,
+          lineHeight: 1.4,
+          overflowWrap: "anywhere",
+          whiteSpace: "pre-wrap",
+        }}
+      >
+        <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 12 }}>
+          Wolfion crashed
+        </div>
+        <div style={{ marginBottom: 12, color: "#fca5a5" }}>
+          {this.state.error.message}
+        </div>
+        <div style={{ color: "#fef08a", marginBottom: 8 }}>Stack:</div>
+        <div style={{ color: "#cbd5e1" }}>{this.state.error.stack}</div>
+        {this.state.info ? (
+          <>
+            <div style={{ color: "#fef08a", margin: "12px 0 8px" }}>
+              Component tree:
+            </div>
+            <div style={{ color: "#cbd5e1" }}>{this.state.info}</div>
+          </>
+        ) : null}
+        <button
+          onClick={() => {
+            try {
+              localStorage.clear();
+            } catch {}
+            window.location.href = "/";
+          }}
+          style={{
+            marginTop: 20,
+            padding: "10px 16px",
+            background: "#f87171",
+            color: "#0a0a0a",
+            border: 0,
+            borderRadius: 6,
+            fontWeight: 600,
+          }}
+        >
+          Reset and go home
+        </button>
+      </div>
+    );
+  }
+}
 
 function PageFallback() {
   return (
@@ -247,12 +320,14 @@ function ClerkProviderWithRoutes() {
 
 function App() {
   return (
-    <TooltipProvider>
-      <WouterRouter base={basePath}>
-        <ClerkProviderWithRoutes />
-      </WouterRouter>
-      <Toaster />
-    </TooltipProvider>
+    <VisibleErrorBoundary>
+      <TooltipProvider>
+        <WouterRouter base={basePath}>
+          <ClerkProviderWithRoutes />
+        </WouterRouter>
+        <Toaster />
+      </TooltipProvider>
+    </VisibleErrorBoundary>
   );
 }
 
