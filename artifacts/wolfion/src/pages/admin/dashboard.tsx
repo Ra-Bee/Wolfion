@@ -25,7 +25,7 @@ import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Fragment, useEffect, useMemo, useState, type FormEvent } from "react";
-import { useStored, STORAGE_KEYS } from "@/lib/wolfion-store";
+import { STORAGE_KEYS } from "@/lib/wolfion-store";
 import { useCloudStored } from "@/lib/cloud-store";
 
 type ProductType = string;
