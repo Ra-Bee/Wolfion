@@ -2032,14 +2032,34 @@ export default function Dashboard() {
                   <span className="text-xs text-muted-foreground">{sortedDailyEntries.length} records</span>
                   {sortedDailyEntries.length > 0 && <ManageEntriesDialog
                     title="Manage daily entries"
-                    description="Edit date or delete a saved daily production entry. Recompute totals are derived from your inputs, so changes flow into the dashboards."
+                    description="Edit any field of a saved daily production entry. Total cost and cost-per-dozen auto-recalculate."
                     triggerLabel="Edit"
                     entries={sortedDailyEntries}
                     onDelete={(id) => setDailyEntries((prev) => prev.filter((x) => x.id !== id))}
                     editFields={[
                       { key: "date", label: "Date", type: "date" },
+                      { key: "totalProductionDozen", label: "Production (dz)", type: "number" },
+                      { key: "yarnUsedKg", label: "Yarn used (kg)", type: "number" },
+                      { key: "yarnCostPerKg", label: "Yarn cost per kg (Tk)", type: "number" },
+                      { key: "machineHours", label: "Machine hours", type: "number" },
+                      { key: "packagingCost", label: "Packaging cost (Tk)", type: "number" },
+                      { key: "ironCost", label: "Iron cost (Tk)", type: "number" },
+                      { key: "staffBill", label: "Staff bill (Tk)", type: "number" },
+                      { key: "yarnType", label: "Yarn type", type: "text" },
                     ]}
-                    onSave={(id, patch) => setDailyEntries((prev) => prev.map((e) => e.id === id ? { ...e, ...patch } : e))}
+                    onSave={(id, patch) => setDailyEntries((prev) => prev.map((e) => {
+                      if (e.id !== id) return e;
+                      const merged = { ...e, ...patch };
+                      const yarn = (Number(merged.yarnUsedKg) || 0) * (Number(merged.yarnCostPerKg) || 0);
+                      const pkg = Number(merged.packagingCost) || 0;
+                      const iron = Number(merged.ironCost) || 0;
+                      const staff = Number(merged.staffBill) || 0;
+                      merged.laborCost = pkg + iron + staff;
+                      merged.totalCost = yarn + merged.laborCost;
+                      const dz = Number(merged.totalProductionDozen) || 0;
+                      merged.costPerDozen = dz > 0 ? merged.totalCost / dz : 0;
+                      return merged;
+                    }))}
                     columns={[
                       { header: "Date", render: (e) => formatDateLabel(e.date) },
                       { header: "Dz", render: (e) => e.totalProductionDozen.toLocaleString(), className: "text-right" },
