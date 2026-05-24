@@ -2874,44 +2874,6 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {(workLogs.length > 0 || workerPayments.length > 0) && <div className="flex flex-wrap items-center justify-end gap-2">
-              {workLogs.length > 0 && <ManageEntriesDialog
-                title="Manage worker bills"
-                description="Edit or delete bills (work logs). Linked totals will recalculate."
-                triggerLabel="Edit bills"
-                entries={[...workLogs].sort((a, b) => (b.date + b.createdAt).localeCompare(a.date + a.createdAt))}
-                onDelete={(id) => setWorkLogs((prev) => prev.filter((x) => x.id !== id))}
-                editFields={[
-                  { key: "date", label: "Date", type: "date" },
-                  { key: "amount", label: "Amount (Tk)", type: "number" },
-                  { key: "note", label: "Note", type: "text" },
-                ]}
-                onSave={(id, patch) => setWorkLogs((prev) => prev.map((l) => l.id === id ? { ...l, ...patch } : l))}
-                columns={[
-                  { header: "Date", render: (l) => formatDateLabel(l.date) },
-                  { header: "Worker", render: (l) => workers.find((w) => w.id === l.workerId)?.name ?? "—" },
-                  { header: "Amount", render: (l) => `Tk ${l.amount.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, className: "text-right" },
-                ]}
-              />}
-              {workerPayments.length > 0 && <ManageEntriesDialog
-                title="Manage payments"
-                description="Edit or delete payments made to workers."
-                triggerLabel="Edit payments"
-                entries={[...workerPayments].sort((a, b) => (b.date + b.createdAt).localeCompare(a.date + a.createdAt))}
-                onDelete={(id) => setWorkerPayments((prev) => prev.filter((x) => x.id !== id))}
-                editFields={[
-                  { key: "date", label: "Date", type: "date" },
-                  { key: "amount", label: "Amount (Tk)", type: "number" },
-                ]}
-                onSave={(id, patch) => setWorkerPayments((prev) => prev.map((p) => p.id === id ? { ...p, ...patch } : p))}
-                columns={[
-                  { header: "Date", render: (p) => formatDateLabel(p.date) },
-                  { header: "Worker", render: (p) => workers.find((w) => w.id === p.workerId)?.name ?? "—" },
-                  { header: "Amount", render: (p) => `Tk ${p.amount.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, className: "text-right" },
-                ]}
-              />}
-            </div>}
-
             {workerStats.length > 0 && (
               <div className="rounded-2xl border bg-card/60 p-3 space-y-2">
                 <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Workers summary</p>
