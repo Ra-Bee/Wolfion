@@ -128,6 +128,15 @@ type ElectricityEntry = {
   receiptImage?: string;
 };
 
+type ElectricityRecharge = {
+  id: string;
+  date: string;
+  amount: number;
+  note?: string;
+  createdAt: string;
+  receiptImage?: string;
+};
+
 type WorkArea = "machine_run" | "iron" | "packaging" | "add_ons";
 const workAreaLabels: Record<WorkArea, string> = {
   machine_run: "Machine run",
@@ -336,6 +345,13 @@ export default function Dashboard() {
   const [electricityBill, setElectricityBill] = useState("");
   const [electricityError, setElectricityError] = useState("");
   const [electricityConfirm, setElectricityConfirm] = useState("");
+  const [electricityRecharges, setElectricityRecharges] = useCloudStored<ElectricityRecharge[]>(STORAGE_KEYS.electricityRecharges, []);
+  const [rechargeDate, setRechargeDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [rechargeAmount, setRechargeAmount] = useState("");
+  const [rechargeNote, setRechargeNote] = useState("");
+  const [rechargeReceipt, setRechargeReceipt] = useState<string | undefined>(undefined);
+  const [rechargeError, setRechargeError] = useState("");
+  const [rechargeConfirm, setRechargeConfirm] = useState("");
 
   const [workers, setWorkers] = useCloudStored<Worker[]>(STORAGE_KEYS.workers, []);
   const [workLogs, setWorkLogs] = useCloudStored<WorkLog[]>(STORAGE_KEYS.workLogs, []);
@@ -1035,6 +1051,32 @@ export default function Dashboard() {
     setElectricityBill("");
     setElectricityReceipt(undefined);
     setElectricityConfirm(`Saved ${formatMonthLabel(electricityMonth)} electricity bill.`);
+  }
+
+  function handleAddRecharge(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setRechargeError("");
+    setRechargeConfirm("");
+    const amt = Number(rechargeAmount);
+    if (!rechargeDate || !Number.isFinite(amt) || amt <= 0) {
+      setRechargeError("Enter a date and a valid recharge amount.");
+      return;
+    }
+    setElectricityRecharges((current) => [
+      {
+        id: crypto.randomUUID(),
+        date: rechargeDate,
+        amount: amt,
+        ...(rechargeNote.trim() ? { note: rechargeNote.trim() } : {}),
+        createdAt: new Date().toISOString(),
+        ...(rechargeReceipt ? { receiptImage: rechargeReceipt } : {}),
+      },
+      ...current,
+    ]);
+    setRechargeAmount("");
+    setRechargeNote("");
+    setRechargeReceipt(undefined);
+    setRechargeConfirm(`Recharge of Tk ${amt.toLocaleString()} saved.`);
   }
 
   function handleAddWorker(event: FormEvent<HTMLFormElement>) {
@@ -2479,6 +2521,83 @@ export default function Dashboard() {
                 <Plus className="h-5 w-5" /> Save monthly bill
               </Button>
             </form>
+
+            <div className="rounded-2xl border-2 border-primary/20 bg-primary/5 p-4 space-y-5">
+              <div>
+                <h3 className="text-base font-semibold flex items-center gap-2"><Zap className="h-4 w-4 text-primary" /> Card recharge</h3>
+                <p className="text-xs text-muted-foreground mt-0.5">Prepaid meter recharge log. Auto-pay from card on each top-up.</p>
+              </div>
+              <form onSubmit={handleAddRecharge} className="space-y-4">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium" htmlFor="rec-date">Date</label>
+                    <Input id="rec-date" type="date" className="h-12 text-base" value={rechargeDate} onChange={(e) => setRechargeDate(e.target.value)} required />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium" htmlFor="rec-amt">Recharge amount (Tk)</label>
+                    <Input id="rec-amt" type="number" min="1" step="0.01" inputMode="decimal" className="h-12 text-base" placeholder="0" value={rechargeAmount} onChange={(e) => setRechargeAmount(e.target.value)} required />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="rec-note">Note (optional)</label>
+                  <Input id="rec-note" type="text" className="h-12 text-base" placeholder="e.g. Auto-pay from bKash card" value={rechargeNote} onChange={(e) => setRechargeNote(e.target.value)} />
+                </div>
+                {rechargeError && <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{rechargeError}</p>}
+                {rechargeConfirm && <p className="rounded-lg bg-green-100 px-3 py-2 text-sm font-medium text-green-800">{rechargeConfirm}</p>}
+                <ReceiptCapture value={rechargeReceipt} onChange={setRechargeReceipt} label="Recharge receipt photo (optional)" />
+                <Button type="submit" size="lg" className="h-12 w-full text-base font-semibold">
+                  <Plus className="h-5 w-5" /> Save recharge
+                </Button>
+              </form>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-semibold">Recharge history</h4>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground">
+                      {electricityRecharges.length} · Total Tk {electricityRecharges.reduce((s, r) => s + (Number(r.amount) || 0), 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    </span>
+                    {electricityRecharges.length > 0 && <ManageEntriesDialog
+                      title="Manage recharges"
+                      description="Edit or delete a saved electricity card recharge."
+                      triggerLabel="Edit"
+                      entries={[...electricityRecharges].sort((a, b) => (a.date < b.date ? 1 : -1))}
+                      onDelete={(id) => setElectricityRecharges((prev) => prev.filter((x) => x.id !== id))}
+                      editFields={[
+                        { key: "date", label: "Date", type: "date" },
+                        { key: "amount", label: "Amount (Tk)", type: "number" },
+                        { key: "note", label: "Note", type: "text" },
+                      ]}
+                      onSave={(id, patch) => setElectricityRecharges((prev) => prev.map((e) => e.id === id ? { ...e, ...patch } : e))}
+                      columns={[
+                        { header: "Date", render: (e) => formatDateLabel(e.date) },
+                        { header: "Amount", render: (e) => `Tk ${e.amount.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, className: "text-right" },
+                      ]}
+                    />}
+                  </div>
+                </div>
+                {electricityRecharges.length > 0 ? (
+                  <div className="space-y-2">
+                    {[...electricityRecharges].sort((a, b) => (a.date < b.date ? 1 : -1)).map((r) => (
+                      <div key={r.id} className="flex items-center justify-between gap-3 rounded-xl border bg-card/60 px-4 py-3">
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold">{formatDateLabel(r.date)}</p>
+                          {r.note && <p className="text-xs text-muted-foreground truncate">{r.note}</p>}
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <p className="text-base font-bold whitespace-nowrap">Tk {r.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                          <ReceiptThumb src={r.receiptImage} size={36} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="rounded-xl border border-dashed p-4 text-center">
+                    <p className="text-xs text-muted-foreground">No recharges yet. Add the first top-up above.</p>
+                  </div>
+                )}
+              </div>
+            </div>
 
             <div className="space-y-3">
               <div className="flex items-center justify-between">
