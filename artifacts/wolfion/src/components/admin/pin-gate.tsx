@@ -28,15 +28,11 @@ export function PinGate({
   children: ReactNode;
 }) {
   const pinKey = `wolfion_pin_${pinId}`;
-  const unlockKey = `wolfion_pin_unlocked_${pinId}`;
 
-  const [unlocked, setUnlocked] = useState<boolean>(() => {
-    try {
-      return sessionStorage.getItem(unlockKey) === "1";
-    } catch {
-      return false;
-    }
-  });
+  // Always start locked. The PIN must be entered every time the gated
+  // page is opened (and every time the user navigates away and back),
+  // not cached for the rest of the session.
+  const [unlocked, setUnlocked] = useState<boolean>(false);
   const [needsSetup, setNeedsSetup] = useState(false);
   const [pin, setPin] = useState("");
   const [pinConfirm, setPinConfirm] = useState("");
@@ -94,11 +90,6 @@ export function PinGate({
           setError("Wrong PIN.");
           return;
         }
-      }
-      try {
-        sessionStorage.setItem(unlockKey, "1");
-      } catch {
-        // ignore
       }
       setPin("");
       setPinConfirm("");
