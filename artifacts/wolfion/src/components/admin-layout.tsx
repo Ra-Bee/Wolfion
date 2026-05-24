@@ -6,7 +6,7 @@ import { clearAdminStorage } from "@/lib/wolfion-store";
 import {
   LogOut, Menu, ShieldCheck, Sun, Moon, Monitor, FileText, Users as UsersIcon,
   Wrench, Factory, ShoppingCart, TrendingUp, HandCoins, LayoutDashboard, ShoppingBag,
-  Package, Receipt, FolderArchive, Home,
+  Package, Receipt, FolderArchive, Home, Zap, PiggyBank,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, SheetClose } from "@/components/ui/sheet";
@@ -28,6 +28,8 @@ const ADMIN_NAV: AdminNavItem[] = [
   { path: "/admin/debts", label: "Debt Management", icon: HandCoins },
   { path: "/admin/cost-history", label: "Cost History", icon: Receipt },
   { path: "/admin/rent", label: "Rent", icon: Home },
+  { path: "/admin-dashboard#electricity", label: "Electricity Bill", icon: Zap },
+  { path: "/admin/investments", label: "Investments & Investors", icon: PiggyBank },
   { path: "/admin/documents", label: "Documents", icon: FolderArchive },
 ];
 
@@ -157,7 +159,13 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                           <Button
                             variant="ghost"
                             className="w-full justify-start h-11"
-                            onClick={() => setLocation(item.path)}
+                            onClick={() => {
+                              if (item.path.includes("#")) {
+                                window.location.assign(item.path);
+                              } else {
+                                setLocation(item.path);
+                              }
+                            }}
                             data-testid={`nav-${item.path.replace(/\//g, "-")}`}
                           >
                             <Icon className="mr-3 h-4 w-4" /> {item.label}

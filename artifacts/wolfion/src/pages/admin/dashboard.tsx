@@ -455,6 +455,17 @@ export default function Dashboard() {
     localStorage.setItem(investorsStorageKey, JSON.stringify(investors));
   }, [investors]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const hash = window.location.hash.replace(/^#/, "");
+    if (!hash) return;
+    const t = window.setTimeout(() => {
+      const el = document.getElementById(hash);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
+    return () => window.clearTimeout(t);
+  }, []);
+
   const productTypeLabels = useMemo<Record<string, string>>(() => {
     const labels: Record<string, string> = {};
     for (const t of productTypes) labels[t.id] = t.label;
@@ -2475,7 +2486,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-2 border-primary/30 shadow-md">
+        <Card id="electricity" className="border-2 border-primary/30 shadow-md scroll-mt-24">
           <CardHeader>
             <CardTitle className="text-2xl flex items-center gap-2"><Zap className="h-6 w-6 text-primary" /> Monthly Cost (Electricity)</CardTitle>
             <CardDescription>Save monthly electricity bill. Cost per dozen calculates automatically.</CardDescription>
