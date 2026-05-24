@@ -143,7 +143,18 @@ export const STORAGE_KEYS = {
   debtPayments: "wolfion_debt_payments",
   costInputs: "wolfion_cost_inputs",
   costHistory: "wolfion_cost_history",
+  yarnTypes: "wolfion_yarn_types",
 } as const;
+
+export const defaultYarnTypes: string[] = [
+  "Spandex",
+  "Cotton",
+  "Rubber",
+  "Black yarn",
+  "White",
+  "Blue",
+  "Red",
+];
 
 export type CostHistoryEntry = {
   id: string;
@@ -231,6 +242,7 @@ const CLOUD_SYNCED_KEYS: ReadonlySet<string> = new Set<string>([
   STORAGE_KEYS.debtPayments,
   STORAGE_KEYS.costInputs,
   STORAGE_KEYS.costHistory,
+  STORAGE_KEYS.yarnTypes,
 ]);
 
 export function useStored<T>(key: string, fallback: T) {

@@ -27,7 +27,7 @@ import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Fragment, useEffect, useMemo, useState, type FormEvent } from "react";
-import { STORAGE_KEYS } from "@/lib/wolfion-store";
+import { STORAGE_KEYS, defaultYarnTypes } from "@/lib/wolfion-store";
 import { useCloudStored } from "@/lib/cloud-store";
 
 type ProductType = string;
@@ -212,7 +212,7 @@ const defaultYarnPerDozen: YarnPerDozen = {
   "others": 0.55,
 };
 const yarnPurchasesStorageKey = "wolfion_yarn_purchases";
-type YarnPurchase = { id: string; date: string; kg: number; createdAt: string; receiptImage?: string };
+type YarnPurchase = { id: string; date: string; kg: number; yarnType?: string; createdAt: string; receiptImage?: string };
 
 type CostInputs = {
   yarnCostPerDozen: number;
@@ -251,6 +251,13 @@ export default function Dashboard() {
   const [saleQuantity, setSaleQuantity] = useState("");
   const [salePrice, setSalePrice] = useState("");
   const [saleTotalAmount, setSaleTotalAmount] = useState("");
+  // Multi-product daily sales. Each row = one product sold to one customer.
+  // saleSimpleMode = true means "I don't have details, just total amount".
+  const [saleRows, setSaleRows] = useState<Array<{ id: string; productType: ProductType; qty: string; total: string }>>(
+    () => [{ id: crypto.randomUUID(), productType: "short-socks", qty: "", total: "" }],
+  );
+  const [saleSimpleMode, setSaleSimpleMode] = useState(false);
+  const [saleSimpleTotal, setSaleSimpleTotal] = useState("");
   const [saleDate, setSaleDate] = useState(getToday());
   const [saleError, setSaleError] = useState("");
   const [saleConfirm, setSaleConfirm] = useState("");
@@ -289,6 +296,14 @@ export default function Dashboard() {
   const [yarnPurchases, setYarnPurchases] = useCloudStored<YarnPurchase[]>(STORAGE_KEYS.yarnPurchases, []);
   const [yarnPurchaseDate, setYarnPurchaseDate] = useState(getToday());
   const [yarnPurchaseKg, setYarnPurchaseKg] = useState("");
+  const [yarnTypes, setYarnTypes] = useCloudStored<string[]>(STORAGE_KEYS.yarnTypes, defaultYarnTypes);
+  const [yarnPurchaseType, setYarnPurchaseType] = useState<string>("");
+  const [yarnPurchaseTypeOther, setYarnPurchaseTypeOther] = useState("");
+  const [dailyYarnType, setDailyYarnType] = useState<string>("");
+  const [dailyYarnTypeOther, setDailyYarnTypeOther] = useState("");
+  const [dailyIronStaff, setDailyIronStaff] = useState("");
+  const [dailyStaffName, setDailyStaffName] = useState("");
+  const [dailyStaffArea, setDailyStaffArea] = useState<WorkArea>("packaging");
   const [yarnPerDozen, setYarnPerDozen] = useCloudStored<YarnPerDozen>(STORAGE_KEYS.yarnPerDozen, defaultYarnPerDozen);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
   const [reportRangeMode, setReportRangeMode] = useState<"daily" | "monthly" | "yearly" | "custom">("monthly");
@@ -646,42 +661,76 @@ export default function Dashboard() {
 
   function handleAddSale(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const quantityDozen = Number(saleQuantity);
-    const totalValue = Number(saleTotalAmount);
-
-    if (!customerName.trim() || !Number.isFinite(quantityDozen) || quantityDozen <= 0 || !Number.isFinite(totalValue) || totalValue <= 0) {
-      setSaleError("Enter customer name, quantity, and total amount.");
+    if (!customerName.trim()) {
+      setSaleError("Enter customer name.");
       return;
     }
+    const nowIso = new Date().toISOString();
+    const saleDateStr = saleDate || getToday();
+    const newEntries: SaleEntry[] = [];
 
-    if (quantityDozen > inventory[saleProductType]) {
-      setSaleError(`Only ${inventory[saleProductType].toLocaleString()} dozen ${productTypeLabels[saleProductType].toLowerCase()} available.`);
-      return;
+    if (saleSimpleMode) {
+      // No per-product breakdown — record one entry under "mixed" with just the total.
+      const total = Number(saleSimpleTotal);
+      if (!Number.isFinite(total) || total <= 0) {
+        setSaleError("Enter the total sale amount.");
+        return;
+      }
+      newEntries.push({
+        id: crypto.randomUUID(),
+        customerName: customerName.trim(),
+        productType: "mixed",
+        quantityDozen: 0,
+        pricePerDozen: 0,
+        totalValue: total,
+        createdAt: nowIso,
+        date: saleDateStr,
+        ...(saleReceipt ? { receiptImage: saleReceipt } : {}),
+      });
+    } else {
+      const parsed = saleRows.map((r) => ({ ...r, qtyNum: Number(r.qty), totalNum: Number(r.total) }));
+      if (parsed.length === 0) {
+        setSaleError("Add at least one product.");
+        return;
+      }
+      for (const r of parsed) {
+        if (!r.productType || !Number.isFinite(r.qtyNum) || r.qtyNum <= 0 || !Number.isFinite(r.totalNum) || r.totalNum <= 0) {
+          setSaleError("Every product row needs product, quantity (dz) and total.");
+          return;
+        }
+        if (r.qtyNum > (inventory[r.productType] ?? 0)) {
+          setSaleError(`Only ${(inventory[r.productType] ?? 0).toLocaleString()} dz ${(productTypeLabels[r.productType] || r.productType).toLowerCase()} available.`);
+          return;
+        }
+      }
+      for (const r of parsed) {
+        newEntries.push({
+          id: crypto.randomUUID(),
+          customerName: customerName.trim(),
+          productType: r.productType,
+          quantityDozen: r.qtyNum,
+          pricePerDozen: r.totalNum / r.qtyNum,
+          totalValue: r.totalNum,
+          createdAt: nowIso,
+          date: saleDateStr,
+          ...(saleReceipt ? { receiptImage: saleReceipt } : {}),
+        });
+      }
     }
 
-    const pricePerDozen = totalValue / quantityDozen;
-    const entry: SaleEntry = {
-      id: crypto.randomUUID(),
-      customerName: customerName.trim(),
-      productType: saleProductType,
-      quantityDozen,
-      pricePerDozen,
-      totalValue,
-      createdAt: new Date().toISOString(),
-      date: saleDate || getToday(),
-      ...(saleReceipt ? { receiptImage: saleReceipt } : {}),
-    };
-
-    setSalesEntries((current) => [entry, ...current]);
+    setSalesEntries((current) => [...newEntries, ...current]);
     setCustomerName("");
     setSaleProductType("short-socks");
     setSaleQuantity("");
     setSalePrice("");
     setSaleTotalAmount("");
+    setSaleRows([{ id: crypto.randomUUID(), productType: "short-socks", qty: "", total: "" }]);
+    setSaleSimpleMode(false);
+    setSaleSimpleTotal("");
     setSaleDate(getToday());
     setSaleReceipt(undefined);
     setSaleError("");
-    setSaleConfirm("Sale saved.");
+    setSaleConfirm(newEntries.length > 1 ? `Saved ${newEntries.length} sale lines.` : "Sale saved.");
     setTimeout(() => setSaleConfirm(""), 1500);
   }
 
@@ -731,9 +780,13 @@ export default function Dashboard() {
     const yarnUsedKg = Number(dailyYarnKg);
     const machineHours = Number(dailyMachineHours);
     const yarnCostPerKg = Number(dailyYarnCostPerKg);
-    const packagingCost = Number(dailyPackagingCost);
-    const ironCost = Number(dailyIronCost);
+    // Packaging and Iron are entered PER DOZEN. Multiply by total dz.
+    const packagingPerDz = Number(dailyPackagingCost);
+    const ironPerDz = Number(dailyIronCost);
     const staffBill = Number(dailyStaffBill);
+    const totalDzForCosts = dailyRows.reduce((s, r) => s + (Number(r.qty) || 0), 0);
+    const packagingCost = (Number.isFinite(packagingPerDz) ? packagingPerDz : 0) * totalDzForCosts;
+    const ironCost = (Number.isFinite(ironPerDz) ? ironPerDz : 0) * totalDzForCosts;
     const laborCost = (Number.isFinite(packagingCost) ? packagingCost : 0)
       + (Number.isFinite(ironCost) ? ironCost : 0)
       + (Number.isFinite(staffBill) ? staffBill : 0);
@@ -821,6 +874,35 @@ export default function Dashboard() {
 
     setDailyEntries((current) => [...newDailyEntries, ...current]);
     setProductionEntries((current) => [...newProductionEntries, ...current]);
+
+    // Auto-create / update worker + workLog for iron staff and other staff
+    // so iron + staff bills flow into Labour Management automatically.
+    const now2 = new Date().toISOString();
+    const newWorkerEntries: Worker[] = [];
+    const newWorkLogEntries: WorkLog[] = [];
+    const ironName = dailyIronStaff.trim();
+    if (ironName && ironCost > 0) {
+      const existing = workers.find((w) => w.name.trim().toLowerCase() === ironName.toLowerCase());
+      const workerId = existing?.id ?? crypto.randomUUID();
+      if (!existing) {
+        newWorkerEntries.push({ id: workerId, name: ironName, payType: "daily", rate: 1, workAt: "iron", createdAt: now2 });
+      }
+      newWorkLogEntries.push({ id: crypto.randomUUID(), workerId, date: dailyDate, amount: ironCost, note: "Iron finishing", createdAt: now2 });
+    }
+    const staffName = dailyStaffName.trim();
+    if (staffName && staffBill > 0) {
+      const existing = workers.find((w) => w.name.trim().toLowerCase() === staffName.toLowerCase());
+      const workerId = existing?.id ?? crypto.randomUUID();
+      if (!existing) {
+        newWorkerEntries.push({ id: workerId, name: staffName, payType: "daily", rate: 1, workAt: dailyStaffArea, createdAt: now2 });
+      } else if (existing.workAt !== dailyStaffArea) {
+        setWorkers((cur) => cur.map((w) => w.id === existing.id ? { ...w, workAt: dailyStaffArea } : w));
+      }
+      newWorkLogEntries.push({ id: crypto.randomUUID(), workerId, date: dailyDate, amount: staffBill, note: `Staff bill (${workAreaLabels[dailyStaffArea]})`, createdAt: now2 });
+    }
+    if (newWorkerEntries.length > 0) setWorkers((cur) => [...newWorkerEntries, ...cur]);
+    if (newWorkLogEntries.length > 0) setWorkLogs((cur) => [...newWorkLogEntries, ...cur]);
+
     setDailyRows([{ id: crypto.randomUUID(), productType: "short-socks", qty: "" }]);
     setDailyYarnKg("");
     setDailyMachineHours("");
@@ -829,6 +911,8 @@ export default function Dashboard() {
     setDailyPackagingCost("");
     setDailyIronCost("");
     setDailyStaffBill("");
+    setDailyIronStaff("");
+    setDailyStaffName("");
     setDailyDate(getToday());
     setDailyReceipt(undefined);
     setDailyError("");
@@ -1155,15 +1239,30 @@ export default function Dashboard() {
     event.preventDefault();
     const kg = Number(yarnPurchaseKg);
     if (!Number.isFinite(kg) || kg <= 0) return;
+    // Yarn type: support inline "Add other" by saving custom names into yarnTypes.
+    let resolvedType = yarnPurchaseType;
+    if (resolvedType === "__other__") {
+      const name = yarnPurchaseTypeOther.trim();
+      if (!name) {
+        return;
+      }
+      if (!yarnTypes.some((y) => y.toLowerCase() === name.toLowerCase())) {
+        setYarnTypes((cur) => [...cur, name]);
+      }
+      resolvedType = name;
+    }
     const entry: YarnPurchase = {
       id: crypto.randomUUID(),
       date: yarnPurchaseDate,
       kg,
       createdAt: new Date().toISOString(),
+      ...(resolvedType ? { yarnType: resolvedType } : {}),
       ...(yarnPurchaseReceipt ? { receiptImage: yarnPurchaseReceipt } : {}),
     };
     setYarnPurchases((prev) => [entry, ...prev]);
     setYarnPurchaseKg("");
+    setYarnPurchaseType("");
+    setYarnPurchaseTypeOther("");
     setYarnPurchaseReceipt(undefined);
   }
 
@@ -1514,6 +1613,36 @@ export default function Dashboard() {
                   />
                 </div>
                 <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="daily-yarn-type">Yarn type</label>
+                  <Select value={dailyYarnType} onValueChange={(v) => { if (v === "__other__") { setDailyYarnType("__other__"); } else { setDailyYarnType(v); setDailyYarnTypeOther(""); } }}>
+                    <SelectTrigger id="daily-yarn-type" className="h-12 text-base">
+                      <SelectValue placeholder="Choose yarn" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {yarnTypes.map((t) => (
+                        <SelectItem key={t} value={t}>{t}</SelectItem>
+                      ))}
+                      <SelectItem value="__other__">+ Add other…</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {dailyYarnType === "__other__" && (
+                    <Input
+                      className="h-12 text-base"
+                      placeholder="New yarn type (e.g. Green)"
+                      value={dailyYarnTypeOther}
+                      onChange={(e) => setDailyYarnTypeOther(e.target.value)}
+                      onBlur={() => {
+                        const name = dailyYarnTypeOther.trim();
+                        if (name && !yarnTypes.some((y) => y.toLowerCase() === name.toLowerCase())) {
+                          setYarnTypes((cur) => [...cur, name]);
+                          setDailyYarnType(name);
+                          setDailyYarnTypeOther("");
+                        }
+                      }}
+                    />
+                  )}
+                </div>
+                <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="daily-machine">Machine Hours</label>
                   <Input
                     id="daily-machine"
@@ -1535,48 +1664,93 @@ export default function Dashboard() {
 
               <Separator />
 
-              <div className="grid grid-cols-3 gap-2">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-packaging">Packaging</label>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-sm font-semibold">Packaging</p>
+                  <p className="text-xs text-muted-foreground">Cost per dozen — multiplied by today's total dz.</p>
                   <Input
                     id="daily-packaging"
                     type="number"
                     min="0"
                     step="0.01"
                     inputMode="decimal"
-                    className="h-12 text-base"
-                    placeholder="0"
+                    className="h-12 text-base mt-1"
+                    placeholder="Tk per dz"
                     value={dailyPackagingCost}
                     onChange={(event) => setDailyPackagingCost(event.target.value)}
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-iron">Iron Finishing</label>
-                  <Input
-                    id="daily-iron"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    inputMode="decimal"
-                    className="h-12 text-base"
-                    placeholder="0"
-                    value={dailyIronCost}
-                    onChange={(event) => setDailyIronCost(event.target.value)}
-                  />
+
+                <div className="rounded-xl border p-3 space-y-2">
+                  <p className="text-sm font-semibold">Iron finishing</p>
+                  <p className="text-xs text-muted-foreground">Per dozen rate × today's total dz. Staff name auto-saves to Labour management.</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Input
+                      id="daily-iron"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      inputMode="decimal"
+                      className="h-12 text-base"
+                      placeholder="Tk per dz"
+                      value={dailyIronCost}
+                      onChange={(event) => setDailyIronCost(event.target.value)}
+                    />
+                    <Input
+                      id="daily-iron-staff"
+                      list="iron-staff-names"
+                      className="h-12 text-base"
+                      placeholder="Staff name"
+                      value={dailyIronStaff}
+                      onChange={(event) => setDailyIronStaff(event.target.value)}
+                    />
+                    <datalist id="iron-staff-names">
+                      {workers.filter((w) => w.workAt === "iron").map((w) => (
+                        <option key={w.id} value={w.name} />
+                      ))}
+                    </datalist>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-staff">Staff Bill</label>
-                  <Input
-                    id="daily-staff"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    inputMode="decimal"
-                    className="h-12 text-base"
-                    placeholder="0"
-                    value={dailyStaffBill}
-                    onChange={(event) => setDailyStaffBill(event.target.value)}
-                  />
+
+                <div className="rounded-xl border p-3 space-y-2">
+                  <p className="text-sm font-semibold">Staff bill (other)</p>
+                  <p className="text-xs text-muted-foreground">Total amount + who got paid + where they work. Auto-saves to Labour management.</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Input
+                      id="daily-staff"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      inputMode="decimal"
+                      className="h-12 text-base"
+                      placeholder="Total Tk"
+                      value={dailyStaffBill}
+                      onChange={(event) => setDailyStaffBill(event.target.value)}
+                    />
+                    <Input
+                      id="daily-staff-name"
+                      list="staff-names"
+                      className="h-12 text-base"
+                      placeholder="Staff name"
+                      value={dailyStaffName}
+                      onChange={(event) => setDailyStaffName(event.target.value)}
+                    />
+                    <datalist id="staff-names">
+                      {workers.map((w) => (
+                        <option key={w.id} value={w.name} />
+                      ))}
+                    </datalist>
+                    <Select value={dailyStaffArea} onValueChange={(v) => setDailyStaffArea(v as WorkArea)}>
+                      <SelectTrigger className="h-12 text-base col-span-2">
+                        <SelectValue placeholder="Work area" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {workAreaOrder.map((a) => (
+                          <SelectItem key={a} value={a}>{workAreaLabels[a]}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
 
@@ -1588,9 +1762,11 @@ export default function Dashboard() {
                 const qty = dailyRows.reduce((s, r) => s + (Number(r.qty) || 0), 0);
                 const yKg = Number(dailyYarnKg) || 0;
                 const yRate = Number(dailyYarnCostPerKg) || 0;
-                const pkg = Number(dailyPackagingCost) || 0;
-                const iron = Number(dailyIronCost) || 0;
+                const pkgPerDz = Number(dailyPackagingCost) || 0;
+                const ironPerDz = Number(dailyIronCost) || 0;
                 const staff = Number(dailyStaffBill) || 0;
+                const pkg = pkgPerDz * qty;
+                const iron = ironPerDz * qty;
                 const yarnCost = yKg * yRate;
                 const total = yarnCost + pkg + iron + staff;
                 const perDz = qty > 0 ? total / qty : 0;
@@ -1619,7 +1795,7 @@ export default function Dashboard() {
                 <p className="rounded-lg bg-green-100 px-3 py-2 text-sm font-medium text-green-800">{dailyConfirm}</p>
               )}
 
-              <ReceiptCapture value={dailyReceipt} onChange={setDailyReceipt} label="Yarn / bill photo (optional)" />
+              <ReceiptCapture value={dailyReceipt} onChange={setDailyReceipt} label="Add documents photo (optional)" />
 
               <Button type="submit" size="lg" className="h-14 w-full text-base font-semibold">
                 <Plus className="h-5 w-5" />
@@ -1813,61 +1989,127 @@ export default function Dashboard() {
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="daily-sale-product">Product type</label>
-                <Select value={saleProductType} onValueChange={(value) => setSaleProductType(value as ProductType)}>
-                  <SelectTrigger id="daily-sale-product" className="h-10 text-sm">
-                    <SelectValue placeholder="Choose product" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(productTypeLabels).map(([value, label]) => (
-                      <SelectItem key={value} value={value}>{label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="flex items-center justify-between rounded-xl border bg-muted/20 px-3 py-2">
+                <div>
+                  <p className="text-sm font-medium">Don't have full details?</p>
+                  <p className="text-xs text-muted-foreground">Just enter the total amount sold to this customer.</p>
+                </div>
+                <Button type="button" variant={saleSimpleMode ? "default" : "outline"} size="sm" onClick={() => setSaleSimpleMode((v) => !v)}>
+                  {saleSimpleMode ? "On" : "Off"}
+                </Button>
               </div>
 
-              <div className="grid grid-cols-3 gap-2">
+              {saleSimpleMode ? (
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-sale-quantity">Quantity (dz)</label>
+                  <label className="text-sm font-medium" htmlFor="daily-sale-simple-total">Total sale (Tk)</label>
                   <Input
-                    id="daily-sale-quantity"
-                    type="number"
-                    min="1"
-                    step="1"
-                    inputMode="numeric"
-                    className="h-12 text-base"
-                    placeholder="0"
-                    value={saleQuantity}
-                    onChange={(event) => setSaleQuantity(event.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-sale-total">Total sale</label>
-                  <Input
-                    id="daily-sale-total"
+                    id="daily-sale-simple-total"
                     type="number"
                     min="1"
                     step="0.01"
                     inputMode="decimal"
                     className="h-12 text-base"
                     placeholder="0"
-                    value={saleTotalAmount}
-                    onChange={(event) => setSaleTotalAmount(event.target.value)}
-                    required
+                    value={saleSimpleTotal}
+                    onChange={(e) => setSaleSimpleTotal(e.target.value)}
                   />
+                  <p className="text-xs text-muted-foreground">No product breakdown — recorded as "Mixed".</p>
                 </div>
+              ) : (
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-sale-price">Price / dozen</label>
-                  <Input
-                    id="daily-sale-price"
-                    readOnly
-                    className="h-12 text-base bg-muted/30 font-semibold"
-                    value={`Tk ${liveSalePricePerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}`}
-                  />
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium">Products sold</label>
+                    <span className="text-xs text-muted-foreground">{saleRows.length} {saleRows.length === 1 ? "item" : "items"}</span>
+                  </div>
+                  <div className="space-y-2">
+                    {saleRows.map((row, idx) => (
+                      <div key={row.id} className="rounded-xl border p-2 space-y-2">
+                        <div className="flex items-end gap-2">
+                          <div className="flex-1 space-y-1">
+                            <label className="text-xs text-muted-foreground">Product</label>
+                            <Select
+                              value={row.productType}
+                              onValueChange={(value) =>
+                                setSaleRows((rows) => rows.map((r, i) => i === idx ? { ...r, productType: value as ProductType } : r))
+                              }
+                            >
+                              <SelectTrigger className="h-12 text-base">
+                                <SelectValue placeholder="Choose product" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {Object.entries(productTypeLabels).map(([value, label]) => (
+                                  <SelectItem key={value} value={value}>{label}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          {saleRows.length > 1 && (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="icon"
+                              className="h-12 w-12 shrink-0"
+                              aria-label="Remove item"
+                              onClick={() => setSaleRows((rows) => rows.filter((_, i) => i !== idx))}
+                            >
+                              <Minus className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                        <div className="grid grid-cols-3 gap-2">
+                          <div className="space-y-1">
+                            <label className="text-xs text-muted-foreground">Qty (dz)</label>
+                            <Input
+                              type="number"
+                              min="1"
+                              step="1"
+                              inputMode="numeric"
+                              className="h-12 text-base"
+                              placeholder="0"
+                              value={row.qty}
+                              onChange={(e) =>
+                                setSaleRows((rows) => rows.map((r, i) => i === idx ? { ...r, qty: e.target.value } : r))
+                              }
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-xs text-muted-foreground">Total Tk</label>
+                            <Input
+                              type="number"
+                              min="1"
+                              step="0.01"
+                              inputMode="decimal"
+                              className="h-12 text-base"
+                              placeholder="0"
+                              value={row.total}
+                              onChange={(e) =>
+                                setSaleRows((rows) => rows.map((r, i) => i === idx ? { ...r, total: e.target.value } : r))
+                              }
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-xs text-muted-foreground">Tk / dz</label>
+                            <Input
+                              readOnly
+                              className="h-12 text-base bg-muted/30 font-semibold"
+                              value={`Tk ${(Number(row.qty) > 0 && Number(row.total) > 0 ? Number(row.total) / Number(row.qty) : 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}`}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                    onClick={() => setSaleRows((rows) => [...rows, { id: crypto.randomUUID(), productType: "short-socks", qty: "", total: "" }])}
+                  >
+                    <Plus className="h-4 w-4" /> Add another product
+                  </Button>
                 </div>
-              </div>
+              )}
 
               {saleError && (
                 <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{saleError}</p>
@@ -2164,7 +2406,24 @@ export default function Dashboard() {
                     <Plus className="h-4 w-4" /> Add
                   </Button>
                 </div>
-                <ReceiptCapture value={yarnPurchaseReceipt} onChange={setYarnPurchaseReceipt} label="Yarn purchase bill photo (optional)" />
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="yarn-purchase-type">Yarn type</label>
+                  <Select value={yarnPurchaseType} onValueChange={(v) => { setYarnPurchaseType(v); if (v !== "__other__") setYarnPurchaseTypeOther(""); }}>
+                    <SelectTrigger id="yarn-purchase-type" className="h-12 text-base">
+                      <SelectValue placeholder="Choose yarn type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {yarnTypes.map((t) => (
+                        <SelectItem key={t} value={t}>{t}</SelectItem>
+                      ))}
+                      <SelectItem value="__other__">+ Add other…</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {yarnPurchaseType === "__other__" && (
+                    <Input className="h-12 text-base" placeholder="New yarn type" value={yarnPurchaseTypeOther} onChange={(e) => setYarnPurchaseTypeOther(e.target.value)} />
+                  )}
+                </div>
+                <ReceiptCapture value={yarnPurchaseReceipt} onChange={setYarnPurchaseReceipt} label="Add documents photo (optional)" />
               </form>
               {yarnPurchases.length > 0 && (
                 <>
