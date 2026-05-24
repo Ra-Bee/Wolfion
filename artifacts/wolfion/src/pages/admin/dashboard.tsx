@@ -2508,7 +2508,7 @@ export default function Dashboard() {
 
         <Card id="electricity" className="border-2 border-primary/30 shadow-md scroll-mt-24">
           <CardHeader>
-            <CardTitle className="text-2xl flex items-center gap-2"><Zap className="h-6 w-6 text-primary" /> Monthly Cost (Electricity)</CardTitle>
+            <CardTitle className="text-2xl flex items-center gap-2"><Zap className="h-6 w-6 text-primary" /> Electricity Bill</CardTitle>
             <CardDescription>Save monthly electricity bill. Cost per dozen calculates automatically.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">

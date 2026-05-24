@@ -28,7 +28,7 @@ const ADMIN_NAV: AdminNavItem[] = [
   { path: "/admin/debts", label: "Debt Management", icon: HandCoins },
   { path: "/admin/cost-history", label: "Cost History", icon: Receipt },
   { path: "/admin/rent", label: "Rent", icon: Home },
-  { path: "/admin-dashboard#electricity", label: "Electricity Bill", icon: Zap },
+  { path: "/admin/electricity", label: "Electricity Bill", icon: Zap },
   { path: "/admin/investments", label: "Investments & Investors", icon: PiggyBank },
   { path: "/admin/documents", label: "Documents", icon: FolderArchive },
 ];
