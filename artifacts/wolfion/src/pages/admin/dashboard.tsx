@@ -1825,24 +1825,20 @@ export default function Dashboard() {
                 </Button>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="daily-machine">Machine Hours</label>
+              <div className="flex items-center gap-3">
+                <label className="text-xs font-medium text-muted-foreground whitespace-nowrap" htmlFor="daily-machine">Machine Hours</label>
                 <Input
                   id="daily-machine"
                   type="number"
                   min="0"
                   step="0.1"
                   inputMode="decimal"
-                  className="h-12 text-base"
+                  className="h-9 w-24 text-sm"
                   placeholder="0"
                   value={dailyMachineHours}
                   onChange={(event) => setDailyMachineHours(event.target.value)}
                 />
               </div>
-
-              <p className="text-xs text-muted-foreground">
-                Yarn, packaging, iron, and staff costs entered below cover the whole day and are split between products by quantity.
-              </p>
 
               <Separator />
 
