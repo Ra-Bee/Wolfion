@@ -2016,7 +2016,7 @@ export default function Dashboard() {
                 <h3 className="text-sm font-semibold">Past entries</h3>
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-muted-foreground">{sortedDailyEntries.length} records</span>
-                  <ManageEntriesDialog
+                  {sortedDailyEntries.length > 0 && <ManageEntriesDialog
                     title="Manage daily entries"
                     description="Edit date or delete a saved daily production entry. Recompute totals are derived from your inputs, so changes flow into the dashboards."
                     triggerLabel="Edit"
@@ -2031,7 +2031,7 @@ export default function Dashboard() {
                       { header: "Dz", render: (e) => e.totalProductionDozen.toLocaleString(), className: "text-right" },
                       { header: "Cost", render: (e) => `Tk ${e.totalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, className: "text-right" },
                     ]}
-                  />
+                  />}
                 </div>
               </div>
               <CompactList
@@ -2275,7 +2275,7 @@ export default function Dashboard() {
                 <h3 className="text-sm font-semibold">Sales entries</h3>
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-muted-foreground">{sortedSalesEntries.length} records</span>
-                  <ManageEntriesDialog
+                  {sortedSalesEntries.length > 0 && <ManageEntriesDialog
                     title="Manage sales"
                     description="Edit a sale's date, customer, quantity, or price. Total auto-recalculates from qty × price."
                     triggerLabel="Edit"
@@ -2301,7 +2301,7 @@ export default function Dashboard() {
                       { header: "Qty", render: (s) => `${s.quantityDozen} dz`, className: "text-right" },
                       { header: "Total", render: (s) => `Tk ${s.totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, className: "text-right" },
                     ]}
-                  />
+                  />}
                 </div>
               </div>
               <CompactList
@@ -2451,7 +2451,7 @@ export default function Dashboard() {
                 <h3 className="text-sm font-semibold">Monthly history</h3>
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-muted-foreground">{electricityWithCalc.length} months</span>
-                  <ManageEntriesDialog
+                  {sortedElectricityEntries.length > 0 && <ManageEntriesDialog
                     title="Manage electricity bills"
                     description="Edit the month or total bill, or delete a saved entry."
                     triggerLabel="Edit"
@@ -2466,7 +2466,7 @@ export default function Dashboard() {
                       { header: "Month", render: (e) => formatMonthLabel(e.month) },
                       { header: "Bill", render: (e) => `Tk ${e.totalBill.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, className: "text-right" },
                     ]}
-                  />
+                  />}
                 </div>
               </div>
               {electricityWithCalc.length > 0 ? (
@@ -2694,8 +2694,8 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center justify-end gap-2">
-              <ManageEntriesDialog
+            {(workLogs.length > 0 || workerPayments.length > 0) && <div className="flex flex-wrap items-center justify-end gap-2">
+              {workLogs.length > 0 && <ManageEntriesDialog
                 title="Manage worker bills"
                 description="Edit or delete bills (work logs). Linked totals will recalculate."
                 triggerLabel="Edit bills"
@@ -2712,8 +2712,8 @@ export default function Dashboard() {
                   { header: "Worker", render: (l) => workers.find((w) => w.id === l.workerId)?.name ?? "—" },
                   { header: "Amount", render: (l) => `Tk ${l.amount.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, className: "text-right" },
                 ]}
-              />
-              <ManageEntriesDialog
+              />}
+              {workerPayments.length > 0 && <ManageEntriesDialog
                 title="Manage payments"
                 description="Edit or delete payments made to workers."
                 triggerLabel="Edit payments"
@@ -2729,8 +2729,8 @@ export default function Dashboard() {
                   { header: "Worker", render: (p) => workers.find((w) => w.id === p.workerId)?.name ?? "—" },
                   { header: "Amount", render: (p) => `Tk ${p.amount.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, className: "text-right" },
                 ]}
-              />
-            </div>
+              />}
+            </div>}
 
             {workerStats.length > 0 && (
               <div className="rounded-2xl border bg-card/60 p-3 space-y-2">
