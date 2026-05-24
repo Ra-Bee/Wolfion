@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Activity, DollarSign, Package, Factory, TrendingUp, Plus, Minus, Zap, Users, Wrench, LogOut as LogOutIcon, ChevronRight } from "lucide-react";
 import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
+import { CompactList } from "@/components/admin/compact-list";
 import { ReceiptCapture, ReceiptThumb } from "@/components/admin/receipt-capture";
 import {
   DropdownMenu,
@@ -277,7 +278,6 @@ export default function Dashboard() {
   const [dailyStaffBill, setDailyStaffBill] = useState("");
   const [dailyError, setDailyError] = useState("");
   const [dailyConfirm, setDailyConfirm] = useState("");
-  const [showAllDailyEntries, setShowAllDailyEntries] = useState(false);
   const [costEntries, setCostEntries] = useCloudStored<CostEntry[]>(STORAGE_KEYS.costHistory, []);
   const [costEntryDate, setCostEntryDate] = useState(getToday());
   const [costEntryItem, setCostEntryItem] = useState("");
@@ -1714,42 +1714,26 @@ export default function Dashboard() {
                 <h3 className="text-sm font-semibold">Past entries</h3>
                 <span className="text-xs text-muted-foreground">{sortedDailyEntries.length} records</span>
               </div>
-              {sortedDailyEntries.length > 0 ? (
-                <>
-                  <div className="rounded-xl border divide-y overflow-hidden">
-                    {(showAllDailyEntries ? sortedDailyEntries : sortedDailyEntries.slice(0, 5)).map((entry) => (
-                      <div key={entry.id} className="flex items-center justify-between gap-3 px-3 py-2 text-sm">
-                        <div className="min-w-0 flex-1">
-                          <p className="font-medium truncate">{formatDateLabel(entry.date)}</p>
-                          <p className="text-[11px] text-muted-foreground truncate">
-                            {entry.totalProductionDozen.toLocaleString()} dz · {entry.yarnUsedKg.toLocaleString(undefined, { maximumFractionDigits: 1 })} kg
-                          </p>
-                        </div>
-                        <div className="text-right whitespace-nowrap">
-                          <p className="font-semibold">Tk {entry.totalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
-                          <p className="text-[11px] text-muted-foreground">Tk {entry.costPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}/dz</p>
-                        </div>
-                      </div>
-                    ))}
+              <CompactList
+                items={sortedDailyEntries}
+                keyOf={(e) => e.id}
+                emptyText="No daily entries yet"
+                emptyHint="Add today's entry to start tracking daily costs."
+                renderItem={(entry) => (
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium truncate">{formatDateLabel(entry.date)}</p>
+                      <p className="text-[11px] text-muted-foreground truncate">
+                        {entry.totalProductionDozen.toLocaleString()} dz · {entry.yarnUsedKg.toLocaleString(undefined, { maximumFractionDigits: 1 })} kg
+                      </p>
+                    </div>
+                    <div className="text-right whitespace-nowrap">
+                      <p className="font-semibold">Tk {entry.totalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                      <p className="text-[11px] text-muted-foreground">Tk {entry.costPerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}/dz</p>
+                    </div>
                   </div>
-                  {sortedDailyEntries.length > 5 && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="w-full"
-                      onClick={() => setShowAllDailyEntries((v) => !v)}
-                    >
-                      {showAllDailyEntries ? "Show less" : `See more (${sortedDailyEntries.length - 5})`}
-                    </Button>
-                  )}
-                </>
-              ) : (
-                <div className="rounded-xl border border-dashed p-5 text-center">
-                  <p className="text-sm font-medium">No daily entries yet</p>
-                  <p className="text-xs text-muted-foreground mt-1">Add today's entry to start tracking daily costs.</p>
-                </div>
-              )}
+                )}
+              />
             </div>
           </CardContent>
         </Card>
@@ -1905,29 +1889,23 @@ export default function Dashboard() {
                 <h3 className="text-sm font-semibold">Sales entries</h3>
                 <span className="text-xs text-muted-foreground">{sortedSalesEntries.length} records</span>
               </div>
-              {sortedSalesEntries.length > 0 ? (
-                <div className="space-y-2">
-                  {sortedSalesEntries.slice(0, 20).map((sale) => (
-                    <div key={sale.id} className="flex flex-col gap-1 rounded-xl border bg-card/60 p-4 sm:flex-row sm:items-center sm:justify-between">
-                      <div>
-                        <p className="text-base font-semibold">{formatDateLabel(sale.date)} · {sale.customerName}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {productTypeLabels[sale.productType]} · {sale.quantityDozen.toLocaleString()} dozen at Tk {sale.pricePerDozen.toLocaleString(undefined, { maximumFractionDigits: 2 })}/dz
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-muted-foreground">Total</p>
-                        <p className="text-lg font-bold">Tk {sale.totalValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                      </div>
+              <CompactList
+                items={sortedSalesEntries}
+                keyOf={(s) => s.id}
+                emptyText="No sales entered yet"
+                emptyHint="Add a sale above to update revenue and reduce stock."
+                renderItem={(sale) => (
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium truncate">{formatDateLabel(sale.date)} · {sale.customerName}</p>
+                      <p className="text-[11px] text-muted-foreground truncate">
+                        {productTypeLabels[sale.productType]} · {sale.quantityDozen.toLocaleString()} dz @ Tk {sale.pricePerDozen.toLocaleString(undefined, { maximumFractionDigits: 0 })}/dz
+                      </p>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="rounded-xl border border-dashed p-5 text-center">
-                  <p className="text-sm font-medium">No sales entered yet</p>
-                  <p className="text-xs text-muted-foreground mt-1">Add a sale above to update revenue and reduce stock.</p>
-                </div>
-              )}
+                    <p className="text-sm font-bold whitespace-nowrap">Tk {sale.totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                  </div>
+                )}
+              />
             </div>
           </CardContent>
         </Card>
@@ -2562,29 +2540,24 @@ export default function Dashboard() {
                 />
               </div>
             </div>
-            {costEntries.length > 0 ? (
-              <div className="space-y-2 max-h-[28rem] overflow-y-auto pr-1">
-                {[...costEntries]
-                  .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : (a.createdAt < b.createdAt ? 1 : -1)))
-                  .map((entry) => {
-                    const cat: CostCategory = entry.category ?? "other";
-                    return (
-                      <div key={entry.id} className="flex items-center justify-between gap-3 rounded-xl border bg-card/60 p-3">
-                        <div className="min-w-0">
-                          <p className="text-sm font-semibold truncate">{entry.item}</p>
-                          <p className="text-[11px] text-muted-foreground">{formatDateLabel(entry.date)} · {costCategoryLabels[cat]}</p>
-                        </div>
-                        <p className="text-sm font-bold whitespace-nowrap">Tk {entry.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                      </div>
-                    );
-                  })}
-              </div>
-            ) : (
-              <div className="rounded-xl border border-dashed p-5 text-center">
-                <p className="text-sm font-medium">No cost entries yet</p>
-                <p className="text-xs text-muted-foreground mt-1">Add your first cost above.</p>
-              </div>
-            )}
+            <CompactList
+              items={[...costEntries].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : (a.createdAt < b.createdAt ? 1 : -1)))}
+              keyOf={(e) => e.id}
+              emptyText="No cost entries yet"
+              emptyHint="Add your first cost above."
+              renderItem={(entry) => {
+                const cat: CostCategory = entry.category ?? "other";
+                return (
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium truncate">{entry.item}</p>
+                      <p className="text-[11px] text-muted-foreground truncate">{formatDateLabel(entry.date)} · {costCategoryLabels[cat]}</p>
+                    </div>
+                    <p className="font-bold whitespace-nowrap">Tk {entry.amount.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                  </div>
+                );
+              }}
+            />
           </CardContent>
         </Card>
 
@@ -2630,14 +2603,16 @@ export default function Dashboard() {
             {investorTotals.length > 0 && (
               <div className="space-y-3">
                 <h3 className="text-sm font-semibold">Total per investor</h3>
-                <div className="space-y-2">
-                  {investorTotals.map((it) => (
-                    <div key={it.name} className="flex items-center justify-between rounded-xl border bg-card/60 p-4">
-                      <p className="text-base font-semibold">{it.name}</p>
-                      <p className="text-lg font-bold">Tk {it.total.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                <CompactList
+                  items={investorTotals}
+                  keyOf={(it) => it.name}
+                  renderItem={(it) => (
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="font-medium truncate">{it.name}</p>
+                      <p className="font-bold whitespace-nowrap">Tk {it.total.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
                     </div>
-                  ))}
-                </div>
+                  )}
+                />
               </div>
             )}
 
@@ -2665,27 +2640,24 @@ export default function Dashboard() {
                   />
                 </div>
               </div>
-              {sortedInvestorEntries.length > 0 ? (
-                <div className="space-y-2">
-                  {sortedInvestorEntries.map((e) => (
-                    <div key={e.id} className="flex flex-col gap-1 rounded-xl border bg-card/60 p-4 sm:flex-row sm:items-center sm:justify-between">
-                      <div>
-                        <p className="text-base font-semibold">{e.name}</p>
-                        <p className="text-xs text-muted-foreground">{formatDateLabel(e.date)}</p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <p className="text-lg font-bold">Tk {e.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
-                        <ReceiptThumb src={e.receiptImage} size={36} />
-                      </div>
+              <CompactList
+                items={sortedInvestorEntries}
+                keyOf={(e) => e.id}
+                emptyText="No investor entries yet"
+                emptyHint="Add an entry above to start tracking."
+                renderItem={(e) => (
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium truncate">{e.name}</p>
+                      <p className="text-[11px] text-muted-foreground">{formatDateLabel(e.date)}</p>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="rounded-xl border border-dashed p-5 text-center">
-                  <p className="text-sm font-medium">No investor entries yet</p>
-                  <p className="text-xs text-muted-foreground mt-1">Add an entry above to start tracking.</p>
-                </div>
-              )}
+                    <div className="flex items-center gap-2 whitespace-nowrap">
+                      <p className="font-bold">Tk {e.amount.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                      <ReceiptThumb src={e.receiptImage} size={28} />
+                    </div>
+                  </div>
+                )}
+              />
             </div>
           </CardContent>
         </Card>

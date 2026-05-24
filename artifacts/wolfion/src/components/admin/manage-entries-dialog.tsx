@@ -1,5 +1,4 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { useUser } from "@clerk/react";
 import {
   Dialog,
   DialogContent,
@@ -22,6 +21,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Pencil, Trash2 } from "lucide-react";
+import {
+  hasAdminPin,
+  setAdminPin,
+  verifyAdminPin,
+} from "@/lib/admin-pin";
 
 export type ManageColumn<T> = {
   header: string;
@@ -64,12 +68,13 @@ export function ManageEntriesDialog<T extends { id: string }>({
   onSave,
   emptyText = "No saved entries yet.",
 }: Props<T>) {
-  const { user } = useUser();
   const [open, setOpen] = useState(false);
   const [confirmId, setConfirmId] = useState<string | null>(null);
-  const [password, setPassword] = useState("");
+  const [pin, setPin] = useState("");
+  const [pinConfirm, setPinConfirm] = useState("");
   const [verifying, setVerifying] = useState(false);
   const [verifyError, setVerifyError] = useState("");
+  const [needsSetup, setNeedsSetup] = useState(false);
 
   const [editingRow, setEditingRow] = useState<T | null>(null);
   const [editValues, setEditValues] = useState<Record<string, string>>({});
@@ -91,36 +96,50 @@ export function ManageEntriesDialog<T extends { id: string }>({
     }
   }, [editingRow, editFields]);
 
+  // When confirm dialog opens, decide whether user needs to set up a PIN.
+  useEffect(() => {
+    if (confirmMode !== null) {
+      setNeedsSetup(!hasAdminPin());
+      setPin("");
+      setPinConfirm("");
+      setVerifyError("");
+      setVerifying(false);
+    }
+  }, [confirmMode]);
+
   const closeConfirm = () => {
     setConfirmId(null);
     setPendingEditPatch(null);
-    setPassword("");
+    setPin("");
+    setPinConfirm("");
     setVerifyError("");
     setVerifying(false);
+    setNeedsSetup(false);
   };
 
   const handleConfirmAction = async () => {
     if (!confirmId && !pendingEditPatch) return;
-    if (!password) {
-      setVerifyError("Enter your login password to confirm.");
-      return;
-    }
-    if (!user) {
-      setVerifyError("Not signed in.");
+    if (!pin || pin.length < 4) {
+      setVerifyError("PIN must be at least 4 digits.");
       return;
     }
     setVerifying(true);
     setVerifyError("");
     try {
-      const res = await (
-        user as unknown as {
-          verifyPassword: (p: { password: string }) => Promise<{ verified: boolean }>;
+      if (needsSetup) {
+        if (pin !== pinConfirm) {
+          setVerifyError("PINs do not match.");
+          setVerifying(false);
+          return;
         }
-      ).verifyPassword({ password });
-      if (!res.verified) {
-        setVerifyError("Wrong password.");
-        setVerifying(false);
-        return;
+        await setAdminPin(pin);
+      } else {
+        const ok = await verifyAdminPin(pin);
+        if (!ok) {
+          setVerifyError("Wrong PIN.");
+          setVerifying(false);
+          return;
+        }
       }
       if (confirmId) {
         onDelete(confirmId);
@@ -130,9 +149,8 @@ export function ManageEntriesDialog<T extends { id: string }>({
       }
       closeConfirm();
     } catch (err: unknown) {
-      const msg =
-        err instanceof Error ? err.message : "Could not verify password.";
-      setVerifyError(msg.includes("password") ? "Wrong password." : msg);
+      const msg = err instanceof Error ? err.message : "Could not verify PIN.";
+      setVerifyError(msg);
       setVerifying(false);
     }
   };
@@ -309,34 +327,65 @@ export function ManageEntriesDialog<T extends { id: string }>({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {confirmMode === "edit" ? "Confirm edit with password" : "Confirm delete with password"}
+              {needsSetup
+                ? "Set your Admin PIN"
+                : confirmMode === "edit"
+                ? "Confirm edit with PIN"
+                : "Confirm delete with PIN"}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {confirmMode === "edit"
-                ? "Enter your login password to save these changes."
-                : "Enter your login password to permanently delete this entry. This cannot be undone."}
+              {needsSetup
+                ? "Create a PIN (at least 4 digits). You will need it for every edit or delete from now on. Keep it secret."
+                : confirmMode === "edit"
+                ? "Enter your Admin PIN to save these changes."
+                : "Enter your Admin PIN to permanently delete this entry. This cannot be undone."}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="space-y-2 py-2">
-            <Label htmlFor="delete-pw">Password</Label>
+            <Label htmlFor="admin-pin">{needsSetup ? "New PIN" : "PIN"}</Label>
             <Input
-              id="delete-pw"
+              id="admin-pin"
               type="password"
-              autoComplete="current-password"
-              value={password}
+              inputMode="numeric"
+              autoComplete="off"
+              value={pin}
               disabled={verifying}
               onChange={(e) => {
-                setPassword(e.target.value);
+                setPin(e.target.value);
                 if (verifyError) setVerifyError("");
               }}
               onKeyDown={(e) => {
-                if (e.key === "Enter" && !verifying) {
+                if (e.key === "Enter" && !verifying && !needsSetup) {
                   e.preventDefault();
                   handleConfirmAction();
                 }
               }}
-              placeholder="Your account password"
+              placeholder="Enter PIN"
             />
+            {needsSetup ? (
+              <>
+                <Label htmlFor="admin-pin-confirm">Confirm PIN</Label>
+                <Input
+                  id="admin-pin-confirm"
+                  type="password"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  value={pinConfirm}
+                  disabled={verifying}
+                  onChange={(e) => {
+                    setPinConfirm(e.target.value);
+                    if (verifyError) setVerifyError("");
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !verifying) {
+                      e.preventDefault();
+                      handleConfirmAction();
+                    }
+                  }}
+                  placeholder="Re-enter PIN"
+                />
+              </>
+            ) : null}
             {verifyError ? (
               <p className="text-sm text-destructive">{verifyError}</p>
             ) : null}
@@ -347,11 +396,17 @@ export function ManageEntriesDialog<T extends { id: string }>({
             </AlertDialogCancel>
             <Button
               type="button"
-              variant={confirmMode === "edit" ? "default" : "destructive"}
-              disabled={verifying || !password}
+              variant={confirmMode === "edit" || needsSetup ? "default" : "destructive"}
+              disabled={verifying || !pin || (needsSetup && !pinConfirm)}
               onClick={handleConfirmAction}
             >
-              {verifying ? "Verifying..." : confirmMode === "edit" ? "Confirm save" : "Confirm delete"}
+              {verifying
+                ? "Working..."
+                : needsSetup
+                ? "Save PIN & continue"
+                : confirmMode === "edit"
+                ? "Confirm save"
+                : "Confirm delete"}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
