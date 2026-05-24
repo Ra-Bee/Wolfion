@@ -133,6 +133,7 @@ export const STORAGE_KEYS = {
   daily: "wolfion_daily_production_entries",
   electricity: "wolfion_monthly_electricity",
   electricityRecharges: "wolfion_electricity_recharges",
+  rents: "wolfion_rents",
   workers: "wolfion_workers",
   workLogs: "wolfion_worker_logs",
   workerPayments: "wolfion_worker_payments",
@@ -162,6 +163,18 @@ export type CostHistoryEntry = {
   date: string;
   item: string;
   amount: number;
+  note?: string;
+  createdAt: string;
+  receiptImage?: string;
+};
+
+export type RentKind = "factory" | "shop";
+export type RentEntry = {
+  id: string;
+  kind: RentKind;
+  month: string;
+  amount: number;
+  paidOn?: string;
   note?: string;
   createdAt: string;
   receiptImage?: string;
@@ -233,6 +246,7 @@ const CLOUD_SYNCED_KEYS: ReadonlySet<string> = new Set<string>([
   STORAGE_KEYS.daily,
   STORAGE_KEYS.electricity,
   STORAGE_KEYS.electricityRecharges,
+  STORAGE_KEYS.rents,
   STORAGE_KEYS.workers,
   STORAGE_KEYS.workLogs,
   STORAGE_KEYS.workerPayments,
