@@ -2014,7 +2014,25 @@ export default function Dashboard() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold">Past entries</h3>
-                <span className="text-xs text-muted-foreground">{sortedDailyEntries.length} records</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">{sortedDailyEntries.length} records</span>
+                  <ManageEntriesDialog
+                    title="Manage daily entries"
+                    description="Edit date or delete a saved daily production entry. Recompute totals are derived from your inputs, so changes flow into the dashboards."
+                    triggerLabel="Edit"
+                    entries={sortedDailyEntries}
+                    onDelete={(id) => setDailyEntries((prev) => prev.filter((x) => x.id !== id))}
+                    editFields={[
+                      { key: "date", label: "Date", type: "date" },
+                    ]}
+                    onSave={(id, patch) => setDailyEntries((prev) => prev.map((e) => e.id === id ? { ...e, ...patch } : e))}
+                    columns={[
+                      { header: "Date", render: (e) => formatDateLabel(e.date) },
+                      { header: "Dz", render: (e) => e.totalProductionDozen.toLocaleString(), className: "text-right" },
+                      { header: "Cost", render: (e) => `Tk ${e.totalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, className: "text-right" },
+                    ]}
+                  />
+                </div>
               </div>
               <CompactList
                 items={sortedDailyEntries}
@@ -2255,7 +2273,36 @@ export default function Dashboard() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold">Sales entries</h3>
-                <span className="text-xs text-muted-foreground">{sortedSalesEntries.length} records</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">{sortedSalesEntries.length} records</span>
+                  <ManageEntriesDialog
+                    title="Manage sales"
+                    description="Edit a sale's date, customer, quantity, or price. Total auto-recalculates from qty × price."
+                    triggerLabel="Edit"
+                    entries={sortedSalesEntries}
+                    onDelete={(id) => setSalesEntries((prev) => prev.filter((x) => x.id !== id))}
+                    editFields={[
+                      { key: "date", label: "Date", type: "date" },
+                      { key: "customerName", label: "Customer", type: "text" },
+                      { key: "quantityDozen", label: "Qty (dz)", type: "number" },
+                      { key: "pricePerDozen", label: "Price per dozen (Tk)", type: "number" },
+                    ]}
+                    onSave={(id, patch) => setSalesEntries((prev) => prev.map((s) => {
+                      if (s.id !== id) return s;
+                      const merged = { ...s, ...patch };
+                      const qty = Number(merged.quantityDozen) || 0;
+                      const price = Number(merged.pricePerDozen) || 0;
+                      merged.totalValue = qty * price;
+                      return merged;
+                    }))}
+                    columns={[
+                      { header: "Date", render: (s) => formatDateLabel(s.date) },
+                      { header: "Customer", render: (s) => s.customerName },
+                      { header: "Qty", render: (s) => `${s.quantityDozen} dz`, className: "text-right" },
+                      { header: "Total", render: (s) => `Tk ${s.totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, className: "text-right" },
+                    ]}
+                  />
+                </div>
               </div>
               <CompactList
                 items={sortedSalesEntries}
@@ -2402,7 +2449,25 @@ export default function Dashboard() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold">Monthly history</h3>
-                <span className="text-xs text-muted-foreground">{electricityWithCalc.length} months</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">{electricityWithCalc.length} months</span>
+                  <ManageEntriesDialog
+                    title="Manage electricity bills"
+                    description="Edit the month or total bill, or delete a saved entry."
+                    triggerLabel="Edit"
+                    entries={sortedElectricityEntries}
+                    onDelete={(id) => setElectricityEntries((prev) => prev.filter((x) => x.id !== id))}
+                    editFields={[
+                      { key: "month", label: "Month (YYYY-MM)", type: "text" },
+                      { key: "totalBill", label: "Total bill (Tk)", type: "number" },
+                    ]}
+                    onSave={(id, patch) => setElectricityEntries((prev) => prev.map((e) => e.id === id ? { ...e, ...patch } : e))}
+                    columns={[
+                      { header: "Month", render: (e) => formatMonthLabel(e.month) },
+                      { header: "Bill", render: (e) => `Tk ${e.totalBill.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, className: "text-right" },
+                    ]}
+                  />
+                </div>
               </div>
               {electricityWithCalc.length > 0 ? (
                 <div className="space-y-2">
@@ -2627,6 +2692,44 @@ export default function Dashboard() {
                 <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-muted-foreground truncate">Remaining due</p>
                 <p className={`text-[13px] sm:text-base font-semibold truncate ${totalRemainingAll > 0 ? "text-orange-700" : "text-green-700"}`}>Tk {totalRemainingAll.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
               </div>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-end gap-2">
+              <ManageEntriesDialog
+                title="Manage worker bills"
+                description="Edit or delete bills (work logs). Linked totals will recalculate."
+                triggerLabel="Edit bills"
+                entries={[...workLogs].sort((a, b) => (b.date + b.createdAt).localeCompare(a.date + a.createdAt))}
+                onDelete={(id) => setWorkLogs((prev) => prev.filter((x) => x.id !== id))}
+                editFields={[
+                  { key: "date", label: "Date", type: "date" },
+                  { key: "amount", label: "Amount (Tk)", type: "number" },
+                  { key: "note", label: "Note", type: "text" },
+                ]}
+                onSave={(id, patch) => setWorkLogs((prev) => prev.map((l) => l.id === id ? { ...l, ...patch } : l))}
+                columns={[
+                  { header: "Date", render: (l) => formatDateLabel(l.date) },
+                  { header: "Worker", render: (l) => workers.find((w) => w.id === l.workerId)?.name ?? "—" },
+                  { header: "Amount", render: (l) => `Tk ${l.amount.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, className: "text-right" },
+                ]}
+              />
+              <ManageEntriesDialog
+                title="Manage payments"
+                description="Edit or delete payments made to workers."
+                triggerLabel="Edit payments"
+                entries={[...workerPayments].sort((a, b) => (b.date + b.createdAt).localeCompare(a.date + a.createdAt))}
+                onDelete={(id) => setWorkerPayments((prev) => prev.filter((x) => x.id !== id))}
+                editFields={[
+                  { key: "date", label: "Date", type: "date" },
+                  { key: "amount", label: "Amount (Tk)", type: "number" },
+                ]}
+                onSave={(id, patch) => setWorkerPayments((prev) => prev.map((p) => p.id === id ? { ...p, ...patch } : p))}
+                columns={[
+                  { header: "Date", render: (p) => formatDateLabel(p.date) },
+                  { header: "Worker", render: (p) => workers.find((w) => w.id === p.workerId)?.name ?? "—" },
+                  { header: "Amount", render: (p) => `Tk ${p.amount.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, className: "text-right" },
+                ]}
+              />
             </div>
 
             {workerStats.length > 0 && (
