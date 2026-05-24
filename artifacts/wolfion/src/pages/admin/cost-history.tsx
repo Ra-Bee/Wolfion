@@ -8,17 +8,18 @@ import { Separator } from "@/components/ui/separator";
 import { Receipt, Plus } from "lucide-react";
 import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
 import { ReceiptCapture, ReceiptThumb } from "@/components/admin/receipt-capture";
+import { EmptyState } from "@/components/admin/empty-state";
+import { ListFilter, useListFilter } from "@/components/admin/list-filter";
 import {
   STORAGE_KEYS,
   formatDateLabel,
+  formatTk,
   getToday,
   useStored,
   type CostHistoryEntry,
 } from "@/lib/wolfion-store";
 
-function money(n: number) {
-  return `Tk ${new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(n)}`;
-}
+const money = formatTk;
 
 export default function CostHistoryPage() {
   const [entries, setEntries] = useStored<CostHistoryEntry[]>(STORAGE_KEYS.costHistory, []);
@@ -33,6 +34,12 @@ export default function CostHistoryPage() {
   const sorted = useMemo(
     () => [...entries].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0)),
     [entries],
+  );
+
+  const [filter, setFilter, matches] = useListFilter();
+  const filtered = useMemo(
+    () => sorted.filter((e) => matches(e.date, e.item, e.note || "")),
+    [sorted, matches],
   );
 
   const totals = useMemo(() => {
@@ -186,9 +193,18 @@ export default function CostHistoryPage() {
           </CardHeader>
           <CardContent>
             {sorted.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8">No costs recorded yet.</p>
+              <EmptyState
+                icon={Receipt}
+                title="No costs recorded yet"
+                description="Add your first cost above (yarn, rent, electricity, repair, etc.)."
+              />
             ) : (
-              <div className="overflow-x-auto">
+              <div className="space-y-3">
+                <ListFilter state={filter} onChange={setFilter} searchPlaceholder="Search cost item or note..." />
+                <div className="overflow-x-auto">
+                {filtered.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-6">No costs match your filter.</p>
+                ) : (
                 <table className="w-full text-sm">
                   <thead className="text-left text-muted-foreground border-b">
                     <tr>
@@ -200,7 +216,7 @@ export default function CostHistoryPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {sorted.map((e) => (
+                    {filtered.map((e) => (
                       <tr key={e.id} className="border-b last:border-0" data-testid={`row-cost-${e.id}`}>
                         <td className="py-2 pr-4 whitespace-nowrap">{formatDateLabel(e.date)}</td>
                         <td className="py-2 pr-4 font-medium">{e.item}</td>
@@ -211,6 +227,8 @@ export default function CostHistoryPage() {
                     ))}
                   </tbody>
                 </table>
+                )}
+                </div>
               </div>
             )}
             <Separator className="my-4" />

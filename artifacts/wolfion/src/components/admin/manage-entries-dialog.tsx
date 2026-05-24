@@ -197,7 +197,7 @@ export function ManageEntriesDialog<T extends { id: string }>({
     <>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button variant="outline" size="sm" type="button">
+          <Button variant="outline" size="sm" type="button" className="h-10">
             {triggerLabel}
           </Button>
         </DialogTrigger>
@@ -239,22 +239,22 @@ export function ManageEntriesDialog<T extends { id: string }>({
                             variant="ghost"
                             size="icon"
                             type="button"
-                            className="h-8 w-8"
+                            className="h-11 w-11 sm:h-10 sm:w-10"
                             aria-label="Edit"
                             onClick={() => handlePencilClick(row)}
                           >
-                            <Pencil className="h-4 w-4" />
+                            <Pencil className="h-5 w-5" />
                           </Button>
                         ) : null}
                         <Button
                           variant="ghost"
                           size="icon"
                           type="button"
-                          className="h-8 w-8 text-destructive"
+                          className="h-11 w-11 sm:h-10 sm:w-10 text-destructive"
                           aria-label="Delete"
                           onClick={() => setConfirmId(row.id)}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-5 w-5" />
                         </Button>
                       </td>
                     </tr>

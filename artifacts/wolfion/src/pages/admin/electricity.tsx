@@ -4,12 +4,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Zap, Plus } from "lucide-react";
+import { Zap, Plus, Battery } from "lucide-react";
 import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
 import { ReceiptCapture, ReceiptThumb } from "@/components/admin/receipt-capture";
+import { EmptyState } from "@/components/admin/empty-state";
 import {
   STORAGE_KEYS,
   formatDateLabel,
+  formatTk,
   useStored,
   type ElectricityEntry,
 } from "@/lib/wolfion-store";
@@ -23,9 +25,7 @@ type Recharge = {
   receiptImage?: string;
 };
 
-function money(n: number) {
-  return `Tk ${new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(n)}`;
-}
+const money = formatTk;
 
 function formatMonthLabel(month: string) {
   if (!month) return "—";
@@ -214,7 +214,7 @@ export default function ElectricityPage() {
           </CardHeader>
           <CardContent>
             {sortedEntries.length === 0 ? (
-              <p className="text-muted-foreground text-center py-6 text-sm">No electricity bills saved yet.</p>
+              <EmptyState icon={Zap} title="No bills saved yet" description="Save this month's electricity bill above." />
             ) : (
               <div className="space-y-2">
                 {sortedEntries.map((e) => (
@@ -287,7 +287,7 @@ export default function ElectricityPage() {
           </CardHeader>
           <CardContent>
             {sortedRecharges.length === 0 ? (
-              <p className="text-muted-foreground text-center py-6 text-sm">No recharges yet.</p>
+              <EmptyState icon={Battery} title="No recharges yet" description="Log your first prepaid card top-up above." />
             ) : (
               <div className="space-y-2">
                 {sortedRecharges.map((r) => (

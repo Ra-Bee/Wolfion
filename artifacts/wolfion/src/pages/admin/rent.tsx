@@ -8,9 +8,12 @@ import { Separator } from "@/components/ui/separator";
 import { Home, Plus, Building2, Store } from "lucide-react";
 import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
 import { ReceiptCapture, ReceiptThumb } from "@/components/admin/receipt-capture";
+import { EmptyState } from "@/components/admin/empty-state";
+import { ListFilter, useListFilter } from "@/components/admin/list-filter";
 import {
   STORAGE_KEYS,
   formatDateLabel,
+  formatTk,
   useStored,
   type RentEntry,
   type RentKind,
@@ -21,9 +24,7 @@ const kindLabel: Record<RentKind, string> = {
   shop: "Shop",
 };
 
-function money(n: number) {
-  return `Tk ${new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(n)}`;
-}
+const money = formatTk;
 
 function formatMonth(m: string) {
   if (!m) return "—";
@@ -47,6 +48,11 @@ export default function RentPage() {
   const sorted = useMemo(
     () => [...entries].sort((a, b) => (a.month < b.month ? 1 : a.month > b.month ? -1 : a.kind.localeCompare(b.kind))),
     [entries],
+  );
+  const [filter, setFilter, matches] = useListFilter();
+  const filtered = useMemo(
+    () => sorted.filter((e) => matches(e.paidOn || `${e.month}-01`, kindLabel[e.kind], e.note || "")),
+    [sorted, matches],
   );
 
   const totals = useMemo(() => {
@@ -198,9 +204,14 @@ export default function RentPage() {
           </CardHeader>
           <CardContent>
             {sorted.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8">No rent recorded yet.</p>
+              <EmptyState icon={Home} title="No rent recorded yet" description="Save your first month of factory or shop rent above." />
             ) : (
-              <div className="overflow-x-auto">
+              <div className="space-y-3">
+                <ListFilter state={filter} onChange={setFilter} searchPlaceholder="Search kind, landlord, note..." />
+                <div className="overflow-x-auto">
+                {filtered.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-6">No rent entries match your filter.</p>
+                ) : (
                 <table className="w-full text-sm">
                   <thead className="text-left text-muted-foreground border-b">
                     <tr>
@@ -213,7 +224,7 @@ export default function RentPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {sorted.map((e) => (
+                    {filtered.map((e) => (
                       <tr key={e.id} className="border-b last:border-0">
                         <td className="py-2 pr-4 font-medium">
                           <span className="inline-flex items-center gap-1">
@@ -230,6 +241,8 @@ export default function RentPage() {
                     ))}
                   </tbody>
                 </table>
+                )}
+                </div>
               </div>
             )}
             <Separator className="my-4" />

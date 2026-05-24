@@ -9,10 +9,14 @@ import { Separator } from "@/components/ui/separator";
 import { Factory, Plus, Package } from "lucide-react";
 import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
 import { ReceiptCapture, ReceiptThumb } from "@/components/admin/receipt-capture";
+import { EmptyState } from "@/components/admin/empty-state";
+import { ListFilter, useListFilter } from "@/components/admin/list-filter";
 import {
   STORAGE_KEYS,
   defaultProductTypes,
   formatDateLabel,
+  formatNum,
+  formatTk,
   getToday,
   useStoredNumber,
   type DailyProductionEntry,
@@ -22,8 +26,8 @@ import {
 } from "@/lib/wolfion-store";
 import { useCloudStored } from "@/lib/cloud-store";
 
-function fmt(n: number) { return new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(n); }
-function money(n: number) { return `Tk ${new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(n)}`; }
+const fmt = formatNum;
+const money = formatTk;
 
 export default function DailyProductionPage() {
   const [productTypes] = useCloudStored<ProductTypeOption[]>(STORAGE_KEYS.productTypes, defaultProductTypes);
@@ -47,6 +51,12 @@ export default function DailyProductionPage() {
   const [error, setError] = useState("");
 
   const labelById = useMemo(() => Object.fromEntries(productTypes.map((p) => [p.id, p.label])), [productTypes]);
+
+  const [filter, setFilter, matches] = useListFilter();
+  const filteredDaily = useMemo(
+    () => dailyEntries.filter((e) => matches(e.date, e.productType ? labelById[e.productType] || e.productType : "")),
+    [dailyEntries, matches, labelById],
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -225,9 +235,14 @@ export default function DailyProductionPage() {
           </CardHeader>
           <CardContent>
             {dailyEntries.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8">No production entries yet.</p>
+              <EmptyState
+                icon={Factory}
+                title="No production yet"
+                description="Add your first day's production to start tracking costs and yarn usage."
+              />
             ) : (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto space-y-3">
+                <ListFilter state={filter} onChange={setFilter} searchPlaceholder="Search product type..." />
                 <table className="w-full text-xs">
                   <thead className="text-left text-muted-foreground border-b">
                     <tr>
@@ -241,7 +256,7 @@ export default function DailyProductionPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {(showAllEntries ? dailyEntries : dailyEntries.slice(0, PREVIEW_COUNT)).map((e) => (
+                    {(showAllEntries ? filteredDaily : filteredDaily.slice(0, PREVIEW_COUNT)).map((e) => (
                       <tr key={e.id} className="border-b last:border-0 hover:bg-muted/30">
                         <td className="py-1 pr-3 whitespace-nowrap">{formatDateLabel(e.date)}</td>
                         <td className="py-1 pr-3 truncate max-w-[120px]">{e.productType ? labelById[e.productType] || e.productType : "—"}</td>
@@ -254,7 +269,7 @@ export default function DailyProductionPage() {
                     ))}
                   </tbody>
                 </table>
-                {dailyEntries.length > PREVIEW_COUNT && (
+                {filteredDaily.length > PREVIEW_COUNT && (
                   <div className="mt-2 flex justify-center">
                     <Button
                       type="button"
@@ -262,9 +277,12 @@ export default function DailyProductionPage() {
                       size="sm"
                       onClick={() => setShowAllEntries((v) => !v)}
                     >
-                      {showAllEntries ? "Show less" : `See more (${dailyEntries.length - PREVIEW_COUNT})`}
+                      {showAllEntries ? "Show less" : `See more (${filteredDaily.length - PREVIEW_COUNT})`}
                     </Button>
                   </div>
+                )}
+                {filteredDaily.length === 0 && (
+                  <p className="text-sm text-muted-foreground text-center py-4">No entries match your filter.</p>
                 )}
               </div>
             )}

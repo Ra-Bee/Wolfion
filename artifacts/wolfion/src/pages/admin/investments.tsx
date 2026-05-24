@@ -8,16 +8,19 @@ import { Separator } from "@/components/ui/separator";
 import { Wallet, Plus, Users as UsersIcon } from "lucide-react";
 import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
 import { ReceiptCapture, ReceiptThumb } from "@/components/admin/receipt-capture";
+import { EmptyState } from "@/components/admin/empty-state";
+import { ListFilter, useListFilter } from "@/components/admin/list-filter";
 import {
   STORAGE_KEYS,
   formatDateLabel,
+  formatTk,
   getToday,
   useStored,
   type Investment,
   type InvestorEntry,
 } from "@/lib/wolfion-store";
 
-function money(n: number) { return `Tk ${new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(n)}`; }
+const money = formatTk;
 
 export default function InvestmentsPage() {
   const [investments, setInvestments] = useStored<Investment[]>(STORAGE_KEYS.investments, []);
@@ -41,6 +44,12 @@ export default function InvestmentsPage() {
 
   const totalInvested = investments.reduce((s, x) => s + x.amount, 0);
   const totalFromInvestors = investors.reduce((s, x) => s + x.amount, 0);
+
+  const [invFilter, setInvFilter, invMatches] = useListFilter();
+  const filteredInvestments = useMemo(
+    () => investments.filter((i) => invMatches(i.date, i.type, i.source || "", i.description || "")),
+    [investments, invMatches],
+  );
 
   const perInvestor = useMemo(() => {
     const map = new Map<string, number>();
@@ -186,9 +195,14 @@ export default function InvestmentsPage() {
           </CardHeader>
           <CardContent>
             {investments.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8">No investments yet.</p>
+              <EmptyState icon={Wallet} title="No investments yet" description="Add your first equipment, yarn, or cash investment above." />
             ) : (
-              <div className="overflow-x-auto">
+              <div className="space-y-3">
+                <ListFilter state={invFilter} onChange={setInvFilter} searchPlaceholder="Search type, source, description..." />
+                <div className="overflow-x-auto">
+                {filteredInvestments.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-6">No investments match your filter.</p>
+                ) : (
                 <table className="w-full text-sm">
                   <thead className="text-left text-muted-foreground border-b">
                     <tr>
@@ -201,7 +215,7 @@ export default function InvestmentsPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {investments.map((i) => (
+                    {filteredInvestments.map((i) => (
                       <tr key={i.id} className="border-b last:border-0">
                         <td className="py-2 pr-4 whitespace-nowrap">{formatDateLabel(i.date)}</td>
                         <td className="py-2 pr-4">{i.type}</td>
@@ -213,6 +227,8 @@ export default function InvestmentsPage() {
                     ))}
                   </tbody>
                 </table>
+                )}
+                </div>
               </div>
             )}
             <Separator className="my-4" />
@@ -227,7 +243,7 @@ export default function InvestmentsPage() {
           </CardHeader>
           <CardContent>
             {perInvestor.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8">No investor contributions yet.</p>
+              <EmptyState icon={UsersIcon} title="No investor contributions yet" description="Record contributions from people who fund the business." />
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">

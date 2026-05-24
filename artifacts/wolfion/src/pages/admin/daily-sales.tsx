@@ -9,18 +9,22 @@ import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ShoppingCart, Plus, Camera, X } from "lucide-react";
 import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
+import { EmptyState } from "@/components/admin/empty-state";
+import { ListFilter, useListFilter } from "@/components/admin/list-filter";
 import {
   STORAGE_KEYS,
   defaultProductTypes,
   formatDateLabel,
+  formatNum,
+  formatTk,
   getToday,
   type ProductTypeOption,
   type SaleEntry,
 } from "@/lib/wolfion-store";
 import { useCloudStored } from "@/lib/cloud-store";
 
-function fmt(n: number) { return new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(n); }
-function money(n: number) { return `Tk ${fmt(n)}`; }
+const fmt = formatNum;
+const money = formatTk;
 
 const MAX_RECEIPT_DIM = 1280;
 const RECEIPT_QUALITY = 0.7;
@@ -71,6 +75,12 @@ export default function DailySalesPage() {
   const PREVIEW_COUNT = 5;
 
   const labelById = useMemo(() => Object.fromEntries(productTypes.map((p) => [p.id, p.label])), [productTypes]);
+
+  const [filter, setFilter, matches] = useListFilter();
+  const filteredSales = useMemo(
+    () => sales.filter((s) => matches(s.date || s.createdAt.slice(0, 10), s.customerName, labelById[s.productType] || s.productType)),
+    [sales, matches, labelById],
+  );
 
   const totalPreview = (() => {
     const q = Number(qty); const p = Number(pricePerDozen);
@@ -294,9 +304,17 @@ export default function DailySalesPage() {
           </CardHeader>
           <CardContent>
             {sales.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8">No sales recorded yet.</p>
+              <EmptyState
+                icon={ShoppingCart}
+                title="No sales yet"
+                description="Log your first sale to start tracking revenue and customer history."
+              />
             ) : (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto space-y-3">
+                <ListFilter state={filter} onChange={setFilter} searchPlaceholder="Search customer or product..." />
+                {filteredSales.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-6">No sales match your filter.</p>
+                ) : (<>
                 <table className="w-full text-xs">
                   <thead className="text-left text-muted-foreground border-b">
                     <tr>
@@ -310,7 +328,7 @@ export default function DailySalesPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {(showAll ? sales : sales.slice(0, PREVIEW_COUNT)).map((s) => (
+                    {(showAll ? filteredSales : filteredSales.slice(0, PREVIEW_COUNT)).map((s) => (
                       <tr key={s.id} className="border-b last:border-0 hover:bg-muted/30">
                         <td className="py-1 pr-3 whitespace-nowrap">{formatDateLabel(s.date || s.createdAt.slice(0, 10))}</td>
                         <td className="py-1 pr-3 truncate max-w-[120px]">{s.customerName}</td>
@@ -335,7 +353,7 @@ export default function DailySalesPage() {
                     ))}
                   </tbody>
                 </table>
-                {sales.length > PREVIEW_COUNT && (
+                {filteredSales.length > PREVIEW_COUNT && (
                   <div className="mt-2 flex justify-center">
                     <Button
                       type="button"
@@ -343,10 +361,11 @@ export default function DailySalesPage() {
                       size="sm"
                       onClick={() => setShowAll((v) => !v)}
                     >
-                      {showAll ? "Show less" : `See more (${sales.length - PREVIEW_COUNT})`}
+                      {showAll ? "Show less" : `See more (${filteredSales.length - PREVIEW_COUNT})`}
                     </Button>
                   </div>
                 )}
+                </>)}
               </div>
             )}
             <Separator className="my-4" />

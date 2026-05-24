@@ -6,19 +6,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { HandCoins, Plus } from "lucide-react";
+import { HandCoins, Plus, Users } from "lucide-react";
 import { ManageEntriesDialog } from "@/components/admin/manage-entries-dialog";
 import { ReceiptCapture, ReceiptThumb } from "@/components/admin/receipt-capture";
+import { EmptyState } from "@/components/admin/empty-state";
+import { ListFilter, useListFilter } from "@/components/admin/list-filter";
 import {
   STORAGE_KEYS,
   formatDateLabel,
+  formatTk,
   getToday,
   useStored,
   type Debt,
   type DebtPayment,
 } from "@/lib/wolfion-store";
 
-function money(n: number) { return `Tk ${new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(n)}`; }
+const money = formatTk;
 
 export default function DebtsPage() {
   const [debts, setDebts] = useStored<Debt[]>(STORAGE_KEYS.debts, []);
@@ -51,6 +54,20 @@ export default function DebtsPage() {
     const paid = summary.reduce((s, x) => s + x.paid, 0);
     return { total, paid, remaining: Math.max(0, total - paid) };
   }, [summary]);
+
+  const [debtFilter, setDebtFilter, debtMatches] = useListFilter();
+  const filteredSummary = useMemo(
+    () => summary.filter((d) => debtMatches(d.date, d.personName, d.description || "")),
+    [summary, debtMatches],
+  );
+  const [payFilter, setPayFilter, payMatches] = useListFilter();
+  const filteredPayments = useMemo(
+    () => payments.filter((p) => {
+      const d = debts.find((x) => x.id === p.debtId);
+      return payMatches(p.date, d?.personName || "");
+    }),
+    [payments, payMatches, debts],
+  );
 
   const byPerson = useMemo(() => {
     const map = new Map<string, { total: number; paid: number; remaining: number }>();
@@ -197,9 +214,18 @@ export default function DebtsPage() {
           </CardHeader>
           <CardContent>
             {summary.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8">No debts recorded yet.</p>
+              <EmptyState
+                icon={HandCoins}
+                title="No debts recorded yet"
+                description="Add your first debt above to start tracking what you owe."
+              />
             ) : (
-              <div className="overflow-x-auto">
+              <div className="space-y-3">
+                <ListFilter state={debtFilter} onChange={setDebtFilter} searchPlaceholder="Search person or company..." />
+                <div className="overflow-x-auto">
+                {filteredSummary.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-6">No debts match your filter.</p>
+                ) : (
                 <table className="w-full text-sm">
                   <thead className="text-left text-muted-foreground border-b">
                     <tr>
@@ -212,7 +238,7 @@ export default function DebtsPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {summary.map((d) => (
+                    {filteredSummary.map((d) => (
                       <tr key={d.id} className="border-b last:border-0">
                         <td className="py-2 pr-4 whitespace-nowrap">{formatDateLabel(d.date)}</td>
                         <td className="py-2 pr-4 font-medium">{d.personName}</td>
@@ -224,6 +250,8 @@ export default function DebtsPage() {
                     ))}
                   </tbody>
                 </table>
+                )}
+                </div>
               </div>
             )}
             <Separator className="my-4" />
@@ -241,7 +269,7 @@ export default function DebtsPage() {
           </CardHeader>
           <CardContent>
             {byPerson.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8">No data.</p>
+              <EmptyState icon={Users} title="No data yet" />
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -297,9 +325,14 @@ export default function DebtsPage() {
           </CardHeader>
           <CardContent>
             {payments.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8">No payments recorded yet.</p>
+              <EmptyState icon={HandCoins} title="No payments yet" description="Record your first payment above to reduce a debt." />
             ) : (
-              <div className="overflow-x-auto">
+              <div className="space-y-3">
+                <ListFilter state={payFilter} onChange={setPayFilter} searchPlaceholder="Search person..." />
+                <div className="overflow-x-auto">
+                {filteredPayments.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-6">No payments match your filter.</p>
+                ) : (
                 <table className="w-full text-sm">
                   <thead className="text-left text-muted-foreground border-b">
                     <tr>
@@ -310,7 +343,7 @@ export default function DebtsPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {payments.map((p) => {
+                    {filteredPayments.map((p) => {
                       const d = debts.find((x) => x.id === p.debtId);
                       return (
                         <tr key={p.id} className="border-b last:border-0">
@@ -323,6 +356,8 @@ export default function DebtsPage() {
                     })}
                   </tbody>
                 </table>
+                )}
+                </div>
               </div>
             )}
           </CardContent>

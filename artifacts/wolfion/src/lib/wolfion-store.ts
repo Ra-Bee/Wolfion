@@ -207,6 +207,30 @@ export function getToday() {
   return new Date().toISOString().slice(0, 10);
 }
 
+const TK_FMT = new Intl.NumberFormat("en-US", {
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 2,
+});
+
+/** Canonical money formatter. Always "Tk 12,345" or "Tk 12,345.50". */
+export function formatTk(value: number | null | undefined): string {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return "Tk 0";
+  return `Tk ${TK_FMT.format(n)}`;
+}
+
+const QTY_FMT = new Intl.NumberFormat("en-US", {
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 2,
+});
+
+/** Canonical quantity formatter (no currency). */
+export function formatNum(value: number | null | undefined): string {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return "0";
+  return QTY_FMT.format(n);
+}
+
 export function formatDateLabel(isoDate: string) {
   if (!isoDate) return "";
   const d = new Date(isoDate);
