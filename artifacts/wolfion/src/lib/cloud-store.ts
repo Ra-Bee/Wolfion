@@ -31,6 +31,12 @@ export function useCloudStored<T>(storageKey: string, fallback: T) {
   const importedRef = useRef(false);
   const fallbackRef = useRef(fallback);
   fallbackRef.current = fallback;
+  // Holds the latest value the user wrote BEFORE Firebase auth became
+  // ready. We must flush this to cloud as soon as auth is up, otherwise
+  // the first onValue snapshot will overwrite the user's local edit
+  // with the older cloud state and the change appears to "come back"
+  // after a refresh.
+  const pendingWriteRef = useRef<{ val: T } | null>(null);
 
   // Track Firebase auth uid so we can (re)subscribe each time the
   // bridge signs in (or re-signs in after a token refresh).
@@ -51,6 +57,26 @@ export function useCloudStored<T>(storageKey: string, fallback: T) {
 
     const db = firebaseDb();
     const nodeRef = ref(db, `${CLOUD_ROOT}/${storageKey}`);
+
+    // Flush any write the user made before auth was ready. Do this
+    // BEFORE the subscription is opened so the very first snapshot we
+    // receive already reflects the user's change (or at worst we get
+    // the old value briefly, then our own write echoes back).
+    if (pendingWriteRef.current) {
+      const pending = pendingWriteRef.current.val;
+      pendingWriteRef.current = null;
+      importedRef.current = true; // we've effectively migrated
+      const payload =
+        pending === undefined ? null : stripUndefined(pending);
+      void set(nodeRef, payload as unknown).catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error(
+          `[wolfion] cloud flush failed for ${storageKey}`,
+          err,
+        );
+      });
+    }
+
     const unsub = onValue(
       nodeRef,
       (snap) => {
@@ -110,9 +136,6 @@ export function useCloudStored<T>(storageKey: string, fallback: T) {
       // Optimistic local cache update so the UI feels instant and so
       // we keep an offline copy.
       writeLocal(storageKey, resolved);
-      // If Firebase isn't ready yet, skip the cloud write — the
-      // subscription's one-time import will push our local snapshot
-      // up as soon as sign-in completes.
       if (firebaseAuth().currentUser) {
         const db = firebaseDb();
         const nodeRef = ref(db, `${CLOUD_ROOT}/${storageKey}`);
@@ -125,6 +148,12 @@ export function useCloudStored<T>(storageKey: string, fallback: T) {
             err,
           );
         });
+      } else {
+        // Auth not ready yet — remember this write so the subscribe
+        // effect can flush it the moment sign-in completes. Without
+        // this, the first cloud snapshot (older data) would clobber
+        // the user's edit/delete and it would reappear on refresh.
+        pendingWriteRef.current = { val: resolved };
       }
       return resolved;
     });
