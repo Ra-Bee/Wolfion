@@ -271,7 +271,6 @@ export default function Dashboard() {
   const [costs, setCosts] = useCloudStored<CostInputs>(STORAGE_KEYS.costInputs, defaultCosts);
   const [dailyEntries, setDailyEntries] = useCloudStored<DailyProductionEntry[]>(STORAGE_KEYS.daily, []);
   const [dailyDate, setDailyDate] = useState(getToday());
-  const [dailyYarnKg, setDailyYarnKg] = useState("");
   const [dailyMachineHours, setDailyMachineHours] = useState("");
   // Multi-product daily production. Each row = one product with its own qty.
   // Costs (yarn, packaging, iron, staff) are entered once for the day and
@@ -300,8 +299,12 @@ export default function Dashboard() {
   const [yarnTypes, setYarnTypes] = useCloudStored<string[]>(STORAGE_KEYS.yarnTypes, defaultYarnTypes);
   const [yarnPurchaseType, setYarnPurchaseType] = useState<string>("");
   const [yarnPurchaseTypeOther, setYarnPurchaseTypeOther] = useState("");
-  const [dailyYarnType, setDailyYarnType] = useState<string>("");
-  const [dailyYarnTypeOther, setDailyYarnTypeOther] = useState("");
+  // Multi-row yarn input. Each row = one yarn type + kg used.
+  // Total kg sums across rows. "__other__" lets the admin add a new
+  // yarn name inline that gets saved to yarnTypes.
+  const [dailyYarnRows, setDailyYarnRows] = useState<Array<{ id: string; yarnType: string; otherName: string; kg: string }>>(
+    () => [{ id: crypto.randomUUID(), yarnType: "", otherName: "", kg: "" }],
+  );
   const [dailyIronStaff, setDailyIronStaff] = useState("");
   const [dailyStaffName, setDailyStaffName] = useState("");
   const [dailyStaffArea, setDailyStaffArea] = useState<WorkArea>("packaging");
@@ -783,7 +786,33 @@ export default function Dashboard() {
 
   function handleAddDailyEntry(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const yarnUsedKg = Number(dailyYarnKg);
+    // Yarn rows: sum kg; collect resolved type names (auto-saving any
+    // newly-typed "+ Add other…" names into yarnTypes catalog).
+    const yarnUsedKg = dailyYarnRows.reduce((s, r) => s + (Number(r.kg) || 0), 0);
+    const resolvedYarnTypeNames: string[] = [];
+    const newYarnTypesToAdd: string[] = [];
+    for (const r of dailyYarnRows) {
+      if ((Number(r.kg) || 0) <= 0) continue;
+      let name = r.yarnType === "__other__" ? r.otherName.trim() : r.yarnType;
+      if (!name) continue;
+      if (
+        r.yarnType === "__other__"
+        && !yarnTypes.some((y) => y.toLowerCase() === name.toLowerCase())
+        && !newYarnTypesToAdd.some((y) => y.toLowerCase() === name.toLowerCase())
+      ) {
+        newYarnTypesToAdd.push(name);
+      }
+      if (!resolvedYarnTypeNames.includes(name)) resolvedYarnTypeNames.push(name);
+    }
+    if (newYarnTypesToAdd.length) {
+      setYarnTypes((cur) => {
+        const merged = [...cur];
+        for (const n of newYarnTypesToAdd) {
+          if (!merged.some((y) => y.toLowerCase() === n.toLowerCase())) merged.push(n);
+        }
+        return merged;
+      });
+    }
     const machineHours = Number(dailyMachineHours);
     const yarnCostPerKg = Number(dailyYarnCostPerKg);
     // Packaging and Iron are entered PER DOZEN. Multiply by total dz.
@@ -841,18 +870,7 @@ export default function Dashboard() {
     }
 
     // Resolve daily yarn type (support inline "Add other")
-    let resolvedDailyYarn = dailyYarnType;
-    if (resolvedDailyYarn === "__other__") {
-      const name = dailyYarnTypeOther.trim();
-      if (name) {
-        if (!yarnTypes.some((y) => y.toLowerCase() === name.toLowerCase())) {
-          setYarnTypes((cur) => [...cur, name]);
-        }
-        resolvedDailyYarn = name;
-      } else {
-        resolvedDailyYarn = "";
-      }
-    }
+    const resolvedDailyYarn = resolvedYarnTypeNames.join(", ");
 
     const now = new Date().toISOString();
     const newDailyEntries: DailyProductionEntry[] = [];
@@ -949,7 +967,7 @@ export default function Dashboard() {
     if (newWorkLogEntries.length > 0) setWorkLogs((cur) => [...newWorkLogEntries, ...cur]);
 
     setDailyRows([{ id: crypto.randomUUID(), productType: "short-socks", qty: "" }]);
-    setDailyYarnKg("");
+    setDailyYarnRows([{ id: crypto.randomUUID(), yarnType: "", otherName: "", kg: "" }]);
     setDailyMachineHours("");
     setDailyYarnCostPerKg("");
     setDailyLaborCost("");
@@ -1668,65 +1686,102 @@ export default function Dashboard() {
                 </Button>
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-yarn">Yarn (kg)</label>
-                  <Input
-                    id="daily-yarn"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    inputMode="decimal"
-                    className="h-12 text-base"
-                    placeholder="0"
-                    value={dailyYarnKg}
-                    onChange={(event) => setDailyYarnKg(event.target.value)}
-                  />
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium">Yarn used today</label>
+                  <span className="text-xs text-muted-foreground">
+                    {dailyYarnRows.reduce((s, r) => s + (Number(r.kg) || 0), 0).toLocaleString(undefined, { maximumFractionDigits: 2 })} kg total
+                  </span>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-yarn-type">Yarn type</label>
-                  <Select value={dailyYarnType} onValueChange={(v) => { if (v === "__other__") { setDailyYarnType("__other__"); } else { setDailyYarnType(v); setDailyYarnTypeOther(""); } }}>
-                    <SelectTrigger id="daily-yarn-type" className="h-12 text-base">
-                      <SelectValue placeholder="Choose yarn" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {yarnTypes.map((t) => (
-                        <SelectItem key={t} value={t}>{t}</SelectItem>
-                      ))}
-                      <SelectItem value="__other__">+ Add other…</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {dailyYarnType === "__other__" && (
-                    <Input
-                      className="h-12 text-base"
-                      placeholder="New yarn type (e.g. Green)"
-                      value={dailyYarnTypeOther}
-                      onChange={(e) => setDailyYarnTypeOther(e.target.value)}
-                      onBlur={() => {
-                        const name = dailyYarnTypeOther.trim();
-                        if (name && !yarnTypes.some((y) => y.toLowerCase() === name.toLowerCase())) {
-                          setYarnTypes((cur) => [...cur, name]);
-                          setDailyYarnType(name);
-                          setDailyYarnTypeOther("");
-                        }
-                      }}
-                    />
-                  )}
+                  {dailyYarnRows.map((row, idx) => (
+                    <div key={row.id} className="space-y-1">
+                      <div className="flex items-end gap-2">
+                        <div className="flex-1 space-y-1">
+                          <label className="text-xs text-muted-foreground" htmlFor={`daily-yarn-type-${row.id}`}>Yarn type</label>
+                          <Select
+                            value={row.yarnType}
+                            onValueChange={(v) =>
+                              setDailyYarnRows((rows) => rows.map((r, i) => i === idx ? { ...r, yarnType: v, ...(v === "__other__" ? {} : { otherName: "" }) } : r))
+                            }
+                          >
+                            <SelectTrigger id={`daily-yarn-type-${row.id}`} className="h-12 text-base">
+                              <SelectValue placeholder="Choose yarn" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {yarnTypes.map((t) => (
+                                <SelectItem key={t} value={t}>{t}</SelectItem>
+                              ))}
+                              <SelectItem value="__other__">+ Add other…</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="w-28 space-y-1">
+                          <label className="text-xs text-muted-foreground" htmlFor={`daily-yarn-kg-${row.id}`}>Kg</label>
+                          <Input
+                            id={`daily-yarn-kg-${row.id}`}
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            inputMode="decimal"
+                            className="h-12 text-base"
+                            placeholder="0"
+                            value={row.kg}
+                            onChange={(e) =>
+                              setDailyYarnRows((rows) => rows.map((r, i) => i === idx ? { ...r, kg: e.target.value } : r))
+                            }
+                          />
+                        </div>
+                        {dailyYarnRows.length > 1 && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="h-12 w-12 shrink-0 p-0 text-muted-foreground hover:text-red-600"
+                            onClick={() => setDailyYarnRows((rows) => rows.filter((_, i) => i !== idx))}
+                            aria-label="Remove yarn row"
+                          >
+                            ×
+                          </Button>
+                        )}
+                      </div>
+                      {row.yarnType === "__other__" && (
+                        <Input
+                          className="h-12 text-base"
+                          placeholder="New yarn type (e.g. Green)"
+                          value={row.otherName}
+                          onChange={(e) =>
+                            setDailyYarnRows((rows) => rows.map((r, i) => i === idx ? { ...r, otherName: e.target.value } : r))
+                          }
+                        />
+                      )}
+                    </div>
+                  ))}
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="daily-machine">Machine Hours</label>
-                  <Input
-                    id="daily-machine"
-                    type="number"
-                    min="0"
-                    step="0.1"
-                    inputMode="decimal"
-                    className="h-12 text-base"
-                    placeholder="0"
-                    value={dailyMachineHours}
-                    onChange={(event) => setDailyMachineHours(event.target.value)}
-                  />
-                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="h-10"
+                  onClick={() => setDailyYarnRows((rows) => [...rows, { id: crypto.randomUUID(), yarnType: "", otherName: "", kg: "" }])}
+                >
+                  + Add another yarn
+                </Button>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="daily-machine">Machine Hours</label>
+                <Input
+                  id="daily-machine"
+                  type="number"
+                  min="0"
+                  step="0.1"
+                  inputMode="decimal"
+                  className="h-12 text-base"
+                  placeholder="0"
+                  value={dailyMachineHours}
+                  onChange={(event) => setDailyMachineHours(event.target.value)}
+                />
               </div>
 
               <p className="text-xs text-muted-foreground">
@@ -1831,7 +1886,7 @@ export default function Dashboard() {
                   + iron + staff, divided by qty. No back-solving. */}
               {(() => {
                 const qty = dailyRows.reduce((s, r) => s + (Number(r.qty) || 0), 0);
-                const yKg = Number(dailyYarnKg) || 0;
+                const yKg = dailyYarnRows.reduce((s, r) => s + (Number(r.kg) || 0), 0);
                 const yRate = Number(dailyYarnCostPerKg) || 0;
                 const pkgPerDz = Number(dailyPackagingCost) || 0;
                 const ironPerDz = Number(dailyIronCost) || 0;
