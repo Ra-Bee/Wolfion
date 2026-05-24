@@ -123,8 +123,9 @@ export default function UsersListPage() {
   return (
     <AdminLayout>
       <PinGate
+        pinId="users-list"
         title="User List is locked"
-        description="Enter your admin PIN to view people using this app."
+        description="Enter your User List PIN to view people using this app. (Separate from your delete PIN.)"
       >
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-4xl">
         <div className="flex items-center justify-between mb-4 gap-2">

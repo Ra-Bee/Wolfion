@@ -4,36 +4,35 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  hasAdminPin,
-  setAdminPin,
-  verifyAdminPin,
-} from "@/lib/admin-pin";
-
-const UNLOCK_KEY = "wolfion_pin_unlocked";
 
 /**
- * Wraps sensitive admin content behind the existing admin PIN.
+ * Wraps sensitive admin content behind a PIN.
  *
- * - If no PIN exists on the device yet, prompts the admin to create one
- *   (two-field confirm) — reuses the same SHA-256 storage as the
- *   manage-entries-dialog, so a PIN created here also unlocks delete.
- * - Once verified, marks the gate unlocked in sessionStorage so the
- *   admin can navigate around without re-entering it every page load.
- *   The unlock clears automatically when the browser tab closes.
+ * Each gate has its own `pinId` so different sections (e.g. delete
+ * actions, user list) can have independent PINs. The PIN is stored as
+ * a SHA-256 hash in localStorage on this device only — no server copy,
+ * no recovery flow.
+ *
+ * Unlock state is per-tab via sessionStorage so admins can navigate
+ * around without re-entering the PIN every page load.
  */
 export function PinGate({
+  pinId,
   title = "Locked",
-  description = "Enter your admin PIN to continue.",
+  description = "Enter your PIN to continue.",
   children,
 }: {
+  pinId: string;
   title?: string;
   description?: string;
   children: ReactNode;
 }) {
+  const pinKey = `wolfion_pin_${pinId}`;
+  const unlockKey = `wolfion_pin_unlocked_${pinId}`;
+
   const [unlocked, setUnlocked] = useState<boolean>(() => {
     try {
-      return sessionStorage.getItem(UNLOCK_KEY) === "1";
+      return sessionStorage.getItem(unlockKey) === "1";
     } catch {
       return false;
     }
@@ -45,8 +44,22 @@ export function PinGate({
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (!unlocked) setNeedsSetup(!hasAdminPin());
-  }, [unlocked]);
+    if (!unlocked) {
+      try {
+        setNeedsSetup(!localStorage.getItem(pinKey));
+      } catch {
+        setNeedsSetup(true);
+      }
+    }
+  }, [unlocked, pinKey]);
+
+  const hashPin = async (raw: string) => {
+    const enc = new TextEncoder().encode(`wolfion::${pinId}::${raw}`);
+    const buf = await crypto.subtle.digest("SHA-256", enc);
+    return Array.from(new Uint8Array(buf))
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+  };
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -62,16 +75,28 @@ export function PinGate({
           setError("PINs do not match.");
           return;
         }
-        await setAdminPin(pin);
+        try {
+          localStorage.setItem(pinKey, await hashPin(pin));
+        } catch {
+          setError("Could not save PIN on this device.");
+          return;
+        }
       } else {
-        const ok = await verifyAdminPin(pin);
-        if (!ok) {
+        const stored = (() => {
+          try {
+            return localStorage.getItem(pinKey);
+          } catch {
+            return null;
+          }
+        })();
+        const h = await hashPin(pin);
+        if (stored !== h) {
           setError("Wrong PIN.");
           return;
         }
       }
       try {
-        sessionStorage.setItem(UNLOCK_KEY, "1");
+        sessionStorage.setItem(unlockKey, "1");
       } catch {
         // ignore
       }
@@ -97,11 +122,11 @@ export function PinGate({
 
           <form onSubmit={submit} className="space-y-3">
             <div>
-              <Label htmlFor="gate-pin">
+              <Label htmlFor={`gate-pin-${pinId}`}>
                 {needsSetup ? "Create a new PIN" : "PIN"}
               </Label>
               <Input
-                id="gate-pin"
+                id={`gate-pin-${pinId}`}
                 type="password"
                 inputMode="numeric"
                 autoComplete="off"
@@ -112,14 +137,14 @@ export function PinGate({
                   if (error) setError(null);
                 }}
                 placeholder="••••"
-                data-testid="gate-pin-input"
+                data-testid={`gate-pin-input-${pinId}`}
               />
             </div>
             {needsSetup && (
               <div>
-                <Label htmlFor="gate-pin-confirm">Confirm PIN</Label>
+                <Label htmlFor={`gate-pin-confirm-${pinId}`}>Confirm PIN</Label>
                 <Input
-                  id="gate-pin-confirm"
+                  id={`gate-pin-confirm-${pinId}`}
                   type="password"
                   inputMode="numeric"
                   autoComplete="off"
@@ -129,12 +154,15 @@ export function PinGate({
                     if (error) setError(null);
                   }}
                   placeholder="••••"
-                  data-testid="gate-pin-confirm"
+                  data-testid={`gate-pin-confirm-${pinId}`}
                 />
               </div>
             )}
             {error && (
-              <p className="text-xs text-destructive" data-testid="gate-pin-error">
+              <p
+                className="text-xs text-destructive"
+                data-testid={`gate-pin-error-${pinId}`}
+              >
                 {error}
               </p>
             )}
@@ -142,15 +170,16 @@ export function PinGate({
               type="submit"
               className="w-full"
               disabled={busy || !pin || (needsSetup && !pinConfirm)}
-              data-testid="gate-pin-submit"
+              data-testid={`gate-pin-submit-${pinId}`}
             >
               <ShieldCheck className="h-4 w-4 mr-1.5" />
               {needsSetup ? "Set PIN & unlock" : "Unlock"}
             </Button>
             {needsSetup && (
               <p className="text-[10px] text-muted-foreground">
-                You don't have a PIN yet. Set one now — you'll use it to
-                unlock sensitive admin actions on this device.
+                This PIN is separate from any other PIN you have. It only
+                unlocks this section on this device. There is no recovery
+                if you forget it.
               </p>
             )}
           </form>
