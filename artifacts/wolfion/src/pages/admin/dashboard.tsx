@@ -200,9 +200,19 @@ type CostEntry = {
   item: string;
   amount: number;
   category?: CostCategory;
+  /** Custom label used when category === "other" so admin can name it. */
+  customCategory?: string;
   createdAt: string;
   receiptImage?: string;
 };
+
+function costCategoryDisplay(entry: { category?: CostCategory; customCategory?: string }): string {
+  const cat = entry.category ?? "other";
+  if (cat === "other" && entry.customCategory && entry.customCategory.trim()) {
+    return entry.customCategory.trim();
+  }
+  return costCategoryLabels[cat];
+}
 
 type YarnPerDozen = Record<string, number>;
 const yarnPerDozenStorageKey = "wolfion_yarn_per_dozen";
@@ -290,6 +300,7 @@ export default function Dashboard() {
   const [costEntryItem, setCostEntryItem] = useState("");
   const [costEntryAmount, setCostEntryAmount] = useState("");
   const [costEntryCategory, setCostEntryCategory] = useState<CostCategory>("yarn");
+  const [costEntryCustomCategory, setCostEntryCustomCategory] = useState("");
   const [costEntryError, setCostEntryError] = useState("");
   const [quickSaleOpen, setQuickSaleOpen] = useState(false);
   const [quickSaleConfirm, setQuickSaleConfirm] = useState("");
@@ -395,6 +406,7 @@ export default function Dashboard() {
       setCostEntryError("Enter date, item name, and amount.");
       return;
     }
+    const customCat = costEntryCustomCategory.trim();
     const entry: CostEntry = {
       id: crypto.randomUUID(),
       date: costEntryDate,
@@ -402,12 +414,14 @@ export default function Dashboard() {
       amount,
       category: costEntryCategory,
       createdAt: new Date().toISOString(),
+      ...(costEntryCategory === "other" && customCat ? { customCategory: customCat } : {}),
       ...(costEntryReceipt ? { receiptImage: costEntryReceipt } : {}),
     };
     setCostEntries((current) => [entry, ...current]);
     setCostEntryDate(getToday());
     setCostEntryItem("");
     setCostEntryAmount("");
+    setCostEntryCustomCategory("");
     setCostEntryReceipt(undefined);
     setCostEntryError("");
   }
@@ -2924,6 +2938,19 @@ export default function Dashboard() {
                   </Select>
                 </div>
               </div>
+              {costEntryCategory === "other" && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="cm-custom-category">Category name (optional)</label>
+                  <Input
+                    id="cm-custom-category"
+                    type="text"
+                    className="h-12 text-base"
+                    placeholder="e.g. Transport, Repair, Tea"
+                    value={costEntryCustomCategory}
+                    onChange={(e) => setCostEntryCustomCategory(e.target.value)}
+                  />
+                </div>
+              )}
               <div className="grid grid-cols-[1fr_auto] gap-2 items-end">
                 <div className="space-y-2">
                   <label className="text-sm font-medium" htmlFor="cm-item">Item</label>
@@ -3022,7 +3049,7 @@ export default function Dashboard() {
                   columns={[
                     { header: "Date", render: (e) => formatDateLabel(e.date) },
                     { header: "Item", render: (e) => e.item },
-                    { header: "Category", render: (e) => costCategoryLabels[e.category ?? "other"] },
+                    { header: "Category", render: (e) => costCategoryDisplay(e) },
                     { header: "Amount", render: (e) => `Tk ${e.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}`, className: "text-right" },
                   ]}
                 />
@@ -3034,12 +3061,11 @@ export default function Dashboard() {
               emptyText="No cost entries yet"
               emptyHint="Add your first cost above."
               renderItem={(entry) => {
-                const cat: CostCategory = entry.category ?? "other";
                 return (
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <p className="font-medium truncate">{entry.item}</p>
-                      <p className="text-[11px] text-muted-foreground truncate">{formatDateLabel(entry.date)} · {costCategoryLabels[cat]}</p>
+                      <p className="text-[11px] text-muted-foreground truncate">{formatDateLabel(entry.date)} · {costCategoryDisplay(entry)}</p>
                     </div>
                     <p className="font-bold whitespace-nowrap">Tk {entry.amount.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
                   </div>
