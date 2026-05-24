@@ -57,12 +57,37 @@ router.get("/users", listLimiter, async (req, res) => {
       return;
     }
 
-    const list = await clerkClient.users.getUserList({
-      limit: 500,
-      orderBy: "-created_at",
-    });
+    // Paginate through Clerk to gather every user. One getUserList call
+    // is capped at 500 — without looping we'd silently truncate larger
+    // tenants and the "Total / Online / Offline" counters would lie.
+    const PAGE = 500;
+    const HARD_CAP = 10_000; // safety net against runaway loops
+    type ClerkUser = Awaited<
+      ReturnType<typeof clerkClient.users.getUserList>
+    >["data"][number];
+    const collected: ClerkUser[] = [];
+    let offset = 0;
+    let totalCount = 0;
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const page = await clerkClient.users.getUserList({
+        limit: PAGE,
+        offset,
+        orderBy: "-created_at",
+      });
+      totalCount = page.totalCount;
+      collected.push(...page.data);
+      if (
+        page.data.length < PAGE ||
+        collected.length >= totalCount ||
+        collected.length >= HARD_CAP
+      ) {
+        break;
+      }
+      offset += PAGE;
+    }
 
-    const users: UserListItem[] = list.data.map((u) => {
+    const users: UserListItem[] = collected.map((u) => {
       const email =
         u.primaryEmailAddress?.emailAddress ??
         u.emailAddresses[0]?.emailAddress ??
@@ -83,7 +108,7 @@ router.get("/users", listLimiter, async (req, res) => {
       };
     });
 
-    res.json({ users, totalCount: list.totalCount });
+    res.json({ users, totalCount });
   } catch (err) {
     req.log?.error({ err }, "users list fetch failed");
     res.status(500).json({ error: "Could not fetch users" });

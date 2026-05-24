@@ -56,33 +56,38 @@ export default function UsersListPage() {
   const [now, setNow] = useState(() => Date.now());
   const [lastUpdated, setLastUpdated] = useState<number | null>(null);
 
-  const load = async () => {
+  const load = async (signal?: AbortSignal) => {
     if (!isLoaded || !isSignedIn) return;
     setError(null);
     try {
       const token = await getToken();
       const res = await fetch(`${import.meta.env.BASE_URL}api/users`, {
         headers: token ? { authorization: `Bearer ${token}` } : {},
+        signal,
       });
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(body.error ?? `Failed (${res.status})`);
       }
       const data = (await res.json()) as { users: UserListItem[] };
+      if (signal?.aborted) return;
       setUsers(data.users);
       setLastUpdated(Date.now());
     } catch (err) {
+      if ((err as { name?: string })?.name === "AbortError") return;
       setError(err instanceof Error ? err.message : String(err));
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
   };
 
   useEffect(() => {
-    void load();
-    const poll = setInterval(() => void load(), POLL_INTERVAL_MS);
+    const ctrl = new AbortController();
+    void load(ctrl.signal);
+    const poll = setInterval(() => void load(ctrl.signal), POLL_INTERVAL_MS);
     const tick = setInterval(() => setNow(Date.now()), 15_000);
     return () => {
+      ctrl.abort();
       clearInterval(poll);
       clearInterval(tick);
     };
