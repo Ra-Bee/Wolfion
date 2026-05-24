@@ -179,6 +179,7 @@ type DailyProductionEntry = {
   totalCost: number;
   costPerDozen: number;
   productType?: ProductType;
+  yarnType?: string;
   createdAt: string;
   receiptImage?: string;
 };
@@ -698,8 +699,13 @@ export default function Dashboard() {
           setSaleError("Every product row needs product, quantity (dz) and total.");
           return;
         }
-        if (r.qtyNum > (inventory[r.productType] ?? 0)) {
-          setSaleError(`Only ${(inventory[r.productType] ?? 0).toLocaleString()} dz ${(productTypeLabels[r.productType] || r.productType).toLowerCase()} available.`);
+      }
+      // Aggregate qty per product type and validate against inventory.
+      const totalByType = new Map<ProductType, number>();
+      for (const r of parsed) totalByType.set(r.productType, (totalByType.get(r.productType) ?? 0) + r.qtyNum);
+      for (const [pt, qty] of totalByType.entries()) {
+        if (qty > (inventory[pt] ?? 0)) {
+          setSaleError(`Only ${(inventory[pt] ?? 0).toLocaleString()} dz ${(productTypeLabels[pt] || pt).toLowerCase()} available.`);
           return;
         }
       }
@@ -834,6 +840,20 @@ export default function Dashboard() {
       return;
     }
 
+    // Resolve daily yarn type (support inline "Add other")
+    let resolvedDailyYarn = dailyYarnType;
+    if (resolvedDailyYarn === "__other__") {
+      const name = dailyYarnTypeOther.trim();
+      if (name) {
+        if (!yarnTypes.some((y) => y.toLowerCase() === name.toLowerCase())) {
+          setYarnTypes((cur) => [...cur, name]);
+        }
+        resolvedDailyYarn = name;
+      } else {
+        resolvedDailyYarn = "";
+      }
+    }
+
     const now = new Date().toISOString();
     const newDailyEntries: DailyProductionEntry[] = [];
     const newProductionEntries: ProductionEntry[] = [];
@@ -845,7 +865,9 @@ export default function Dashboard() {
       const rowIron = ironCost * share;
       const rowStaff = staffBill * share;
       const rowLabor = laborCost * share;
-      const rowTotalCost = rowYarnKg * yarnCostPerKg + rowLabor + rowPackaging + rowIron + rowStaff;
+      // Avoid double-counting: laborCost already includes packaging+iron+staff,
+      // so totalCost = yarn + labor share only (which equals yarn + pkg + iron + staff per row).
+      const rowTotalCost = rowYarnKg * yarnCostPerKg + rowLabor;
       const rowCostPerDozen = r.qtyNum > 0 ? rowTotalCost / r.qtyNum : 0;
       newDailyEntries.push({
         id: crypto.randomUUID(),
@@ -861,6 +883,7 @@ export default function Dashboard() {
         totalCost: rowTotalCost,
         costPerDozen: rowCostPerDozen,
         productType: r.productType,
+        ...(resolvedDailyYarn ? { yarnType: resolvedDailyYarn } : {}),
         createdAt: now,
         ...(dailyReceipt ? { receiptImage: dailyReceipt } : {}),
       });
@@ -877,30 +900,52 @@ export default function Dashboard() {
 
     // Auto-create / update worker + workLog for iron staff and other staff
     // so iron + staff bills flow into Labour Management automatically.
+    // Use a local name->id map that includes both existing AND just-staged
+    // workers so two names that happen to match don't create duplicates.
     const now2 = new Date().toISOString();
     const newWorkerEntries: Worker[] = [];
     const newWorkLogEntries: WorkLog[] = [];
+    const workerPatches: Array<{ id: string; workAt: WorkArea }> = [];
+    const nameToId = new Map<string, string>();
+    for (const w of workers) nameToId.set(w.name.trim().toLowerCase(), w.id);
+    function resolveWorker(name: string, area: WorkArea): string {
+      const key = name.toLowerCase();
+      const existingId = nameToId.get(key);
+      if (existingId) {
+        const existing = workers.find((w) => w.id === existingId);
+        if (existing && existing.workAt !== area) {
+          workerPatches.push({ id: existingId, workAt: area });
+        }
+        return existingId;
+      }
+      const id = crypto.randomUUID();
+      nameToId.set(key, id);
+      newWorkerEntries.push({ id, name, payType: "daily", rate: 1, workAt: area, createdAt: now2 });
+      return id;
+    }
     const ironName = dailyIronStaff.trim();
     if (ironName && ironCost > 0) {
-      const existing = workers.find((w) => w.name.trim().toLowerCase() === ironName.toLowerCase());
-      const workerId = existing?.id ?? crypto.randomUUID();
-      if (!existing) {
-        newWorkerEntries.push({ id: workerId, name: ironName, payType: "daily", rate: 1, workAt: "iron", createdAt: now2 });
-      }
+      const workerId = resolveWorker(ironName, "iron");
       newWorkLogEntries.push({ id: crypto.randomUUID(), workerId, date: dailyDate, amount: ironCost, note: "Iron finishing", createdAt: now2 });
     }
     const staffName = dailyStaffName.trim();
     if (staffName && staffBill > 0) {
-      const existing = workers.find((w) => w.name.trim().toLowerCase() === staffName.toLowerCase());
-      const workerId = existing?.id ?? crypto.randomUUID();
-      if (!existing) {
-        newWorkerEntries.push({ id: workerId, name: staffName, payType: "daily", rate: 1, workAt: dailyStaffArea, createdAt: now2 });
-      } else if (existing.workAt !== dailyStaffArea) {
-        setWorkers((cur) => cur.map((w) => w.id === existing.id ? { ...w, workAt: dailyStaffArea } : w));
-      }
+      const workerId = resolveWorker(staffName, dailyStaffArea);
       newWorkLogEntries.push({ id: crypto.randomUUID(), workerId, date: dailyDate, amount: staffBill, note: `Staff bill (${workAreaLabels[dailyStaffArea]})`, createdAt: now2 });
     }
-    if (newWorkerEntries.length > 0) setWorkers((cur) => [...newWorkerEntries, ...cur]);
+    if (newWorkerEntries.length > 0 || workerPatches.length > 0) {
+      setWorkers((cur) => {
+        let next = cur;
+        if (workerPatches.length > 0) {
+          const patchMap = new Map(workerPatches.map((p) => [p.id, p.workAt]));
+          next = next.map((w) => patchMap.has(w.id) ? { ...w, workAt: patchMap.get(w.id)! } : w);
+        }
+        if (newWorkerEntries.length > 0) {
+          next = [...newWorkerEntries, ...next];
+        }
+        return next;
+      });
+    }
     if (newWorkLogEntries.length > 0) setWorkLogs((cur) => [...newWorkLogEntries, ...cur]);
 
     setDailyRows([{ id: crypto.randomUUID(), productType: "short-socks", qty: "" }]);
@@ -1315,11 +1360,37 @@ export default function Dashboard() {
               </DialogHeader>
               <form
                 onSubmit={(event) => {
-                  handleAddSale(event);
-                  if (customerName.trim() && Number(saleQuantity) > 0 && Number(saleTotalAmount) > 0 && Number(saleQuantity) <= inventory[saleProductType]) {
-                    setQuickSaleConfirm("Sale added.");
-                    setTimeout(() => { setQuickSaleConfirm(""); setQuickSaleOpen(false); }, 800);
+                  event.preventDefault();
+                  const qty = Number(saleQuantity);
+                  const total = Number(saleTotalAmount);
+                  if (!customerName.trim() || !Number.isFinite(qty) || qty <= 0 || !Number.isFinite(total) || total <= 0) {
+                    setSaleError("Enter customer, quantity, and total.");
+                    return;
                   }
+                  if (qty > (inventory[saleProductType] ?? 0)) {
+                    setSaleError(`Only ${(inventory[saleProductType] ?? 0).toLocaleString()} dz available.`);
+                    return;
+                  }
+                  const entry: SaleEntry = {
+                    id: crypto.randomUUID(),
+                    customerName: customerName.trim(),
+                    productType: saleProductType,
+                    quantityDozen: qty,
+                    pricePerDozen: total / qty,
+                    totalValue: total,
+                    createdAt: new Date().toISOString(),
+                    date: saleDate || getToday(),
+                    ...(saleReceipt ? { receiptImage: saleReceipt } : {}),
+                  };
+                  setSalesEntries((cur) => [entry, ...cur]);
+                  setCustomerName("");
+                  setSaleQuantity("");
+                  setSaleTotalAmount("");
+                  setSaleProductType("short-socks");
+                  setSaleReceipt(undefined);
+                  setSaleError("");
+                  setQuickSaleConfirm("Sale added.");
+                  setTimeout(() => { setQuickSaleConfirm(""); setQuickSaleOpen(false); }, 800);
                 }}
                 className="space-y-4"
               >
