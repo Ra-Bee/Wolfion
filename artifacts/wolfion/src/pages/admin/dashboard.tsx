@@ -27,7 +27,7 @@ import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Fragment, useEffect, useMemo, useState, type FormEvent } from "react";
-import { STORAGE_KEYS, defaultYarnTypes } from "@/lib/wolfion-store";
+import { STORAGE_KEYS, defaultYarnTypes, type RentEntry } from "@/lib/wolfion-store";
 import { useCloudStored } from "@/lib/cloud-store";
 
 type ProductType = string;
@@ -346,6 +346,7 @@ export default function Dashboard() {
   const [electricityError, setElectricityError] = useState("");
   const [electricityConfirm, setElectricityConfirm] = useState("");
   const [electricityRecharges, setElectricityRecharges] = useCloudStored<ElectricityRecharge[]>(STORAGE_KEYS.electricityRecharges, []);
+  const [rentEntries] = useCloudStored<RentEntry[]>(STORAGE_KEYS.rents, []);
   const [rechargeDate, setRechargeDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [rechargeAmount, setRechargeAmount] = useState("");
   const [rechargeNote, setRechargeNote] = useState("");
@@ -457,13 +458,18 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const hash = window.location.hash.replace(/^#/, "");
-    if (!hash) return;
-    const t = window.setTimeout(() => {
+    const scrollToHash = () => {
+      const hash = window.location.hash.replace(/^#/, "");
+      if (!hash) return;
       const el = document.getElementById(hash);
       if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 100);
-    return () => window.clearTimeout(t);
+    };
+    const t = window.setTimeout(scrollToHash, 100);
+    window.addEventListener("hashchange", scrollToHash);
+    return () => {
+      window.clearTimeout(t);
+      window.removeEventListener("hashchange", scrollToHash);
+    };
   }, []);
 
   const productTypeLabels = useMemo<Record<string, string>>(() => {
@@ -608,6 +614,15 @@ export default function Dashboard() {
       }),
     [sortedElectricityEntries, monthlyProductionByMonth],
   );
+  function rentForMonth(month: string): number {
+    return rentEntries.filter((r) => r.month === month).reduce((s, r) => s + (Number(r.amount) || 0), 0);
+  }
+  function rentPerDozenForDate(isoDate: string): number {
+    const month = isoDate.slice(0, 7);
+    const production = monthlyProductionByMonth[month] || 0;
+    if (production <= 0) return 0;
+    return rentForMonth(month) / production;
+  }
   function electricityPerDozenForDate(isoDate: string): number {
     const month = isoDate.slice(0, 7);
     const entry = electricityEntries.find((e) => e.month === month);
@@ -643,7 +658,9 @@ export default function Dashboard() {
     const baseCost = dayEntries.reduce((sum, e) => sum + e.totalCost, 0);
     const elecPerDozen = electricityPerDozenForDate(profitDate);
     const electricityCost = elecPerDozen * production;
-    const totalCost = baseCost + electricityCost;
+    const rentPerDz = rentPerDozenForDate(profitDate);
+    const rentCost = rentPerDz * production;
+    const totalCost = baseCost + electricityCost + rentCost;
     const sales = sortedSalesEntries.filter((s) => s.date === profitDate);
     const salesValue = sales.reduce((sum, s) => sum + s.totalValue, 0);
     const salesDozen = sales.reduce((sum, s) => sum + s.quantityDozen, 0);
@@ -653,10 +670,11 @@ export default function Dashboard() {
       salesDozen,
       totalCost,
       electricityCost,
+      rentCost,
       profit: salesValue - totalCost,
       costPerDozen: production > 0 ? totalCost / production : 0,
     };
-  }, [profitDate, dailyEntries, electricityEntries, monthlyProductionByMonth, sortedSalesEntries]);
+  }, [profitDate, dailyEntries, electricityEntries, rentEntries, monthlyProductionByMonth, sortedSalesEntries]);
 
   const profitMonthlyView = useMemo(() => {
     const monthEntries = dailyEntries.filter((e) => e.date.startsWith(profitMonth));
@@ -664,7 +682,8 @@ export default function Dashboard() {
     const baseCost = monthEntries.reduce((sum, e) => sum + e.totalCost, 0);
     const elec = electricityEntries.find((e) => e.month === profitMonth);
     const electricityCost = elec ? elec.totalBill : 0;
-    const totalCost = baseCost + electricityCost;
+    const rentCost = rentForMonth(profitMonth);
+    const totalCost = baseCost + electricityCost + rentCost;
     const sales = sortedSalesEntries.filter((s) => s.date.startsWith(profitMonth));
     const salesValue = sales.reduce((sum, s) => sum + s.totalValue, 0);
     const salesDozen = sales.reduce((sum, s) => sum + s.quantityDozen, 0);
@@ -674,10 +693,11 @@ export default function Dashboard() {
       salesDozen,
       totalCost,
       electricityCost,
+      rentCost,
       profit: salesValue - totalCost,
       costPerDozen: production > 0 ? totalCost / production : 0,
     };
-  }, [profitMonth, dailyEntries, electricityEntries, sortedSalesEntries]);
+  }, [profitMonth, dailyEntries, electricityEntries, rentEntries, sortedSalesEntries]);
 
   function formatMonthLabel(month: string) {
     return new Date(`${month}-01T00:00:00`).toLocaleDateString(undefined, { month: "long", year: "numeric" });

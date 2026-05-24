@@ -38,7 +38,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const { signOut } = useClerk();
   const { setRole } = useRole();
   const { preference, toggleTheme } = useTheme();
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const [adminMenuOpen, setAdminMenuOpen] = useStableDisclosure();
   // Bridge Clerk -> Firebase once at the layout level. Every admin page
   // gets cloud sync as soon as it mounts, with no per-page setup.
@@ -160,8 +160,20 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                             variant="ghost"
                             className="w-full justify-start h-11"
                             onClick={() => {
-                              if (item.path.includes("#")) {
-                                window.location.assign(item.path);
+                              const hashIdx = item.path.indexOf("#");
+                              if (hashIdx >= 0) {
+                                const targetPath = item.path.slice(0, hashIdx);
+                                const targetHash = item.path.slice(hashIdx);
+                                if (location === targetPath) {
+                                  if (window.location.hash === targetHash) {
+                                    const el = document.getElementById(targetHash.slice(1));
+                                    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                                  } else {
+                                    window.location.hash = targetHash;
+                                  }
+                                } else {
+                                  window.location.assign(item.path);
+                                }
                               } else {
                                 setLocation(item.path);
                               }
