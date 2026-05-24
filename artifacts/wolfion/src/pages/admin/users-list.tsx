@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@clerk/react";
 import { AdminLayout } from "@/components/admin-layout";
+import { PinGate } from "@/components/admin/pin-gate";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { RefreshCw, ShieldCheck, Search, Users as UsersIcon } from "lucide-react";
+import { RefreshCw, ShieldCheck, Search, Users as UsersIcon, EyeOff, Eye } from "lucide-react";
 
 type UserListItem = {
   id: string;
@@ -55,13 +56,16 @@ export default function UsersListPage() {
   const [query, setQuery] = useState("");
   const [now, setNow] = useState(() => Date.now());
   const [lastUpdated, setLastUpdated] = useState<number | null>(null);
+  const [showAll, setShowAll] = useState(false);
+  const [filteredOutCount, setFilteredOutCount] = useState(0);
 
   const load = async (signal?: AbortSignal) => {
     if (!isLoaded || !isSignedIn) return;
     setError(null);
     try {
       const token = await getToken();
-      const res = await fetch(`${import.meta.env.BASE_URL}api/users`, {
+      const url = `${import.meta.env.BASE_URL}api/users${showAll ? "?all=1" : ""}`;
+      const res = await fetch(url, {
         headers: token ? { authorization: `Bearer ${token}` } : {},
         signal,
       });
@@ -69,9 +73,13 @@ export default function UsersListPage() {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(body.error ?? `Failed (${res.status})`);
       }
-      const data = (await res.json()) as { users: UserListItem[] };
+      const data = (await res.json()) as {
+        users: UserListItem[];
+        filteredOutCount?: number;
+      };
       if (signal?.aborted) return;
       setUsers(data.users);
+      setFilteredOutCount(data.filteredOutCount ?? 0);
       setLastUpdated(Date.now());
     } catch (err) {
       if ((err as { name?: string })?.name === "AbortError") return;
@@ -92,7 +100,7 @@ export default function UsersListPage() {
       clearInterval(tick);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded, isSignedIn]);
+  }, [isLoaded, isSignedIn, showAll]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -114,6 +122,10 @@ export default function UsersListPage() {
 
   return (
     <AdminLayout>
+      <PinGate
+        title="User List is locked"
+        description="Enter your admin PIN to view people using this app."
+      >
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-4xl">
         <div className="flex items-center justify-between mb-4 gap-2">
           <div className="flex items-center gap-2 min-w-0">
@@ -278,13 +290,39 @@ export default function UsersListPage() {
           </Card>
         )}
 
-        <p className="text-[10px] text-muted-foreground text-center mt-4">
-          Updates every 30s · "Online" = active in app within last 5 min ·
-          {lastUpdated
-            ? ` Last refreshed ${formatRelative(lastUpdated, now)}`
-            : ""}
-        </p>
+        <div className="flex flex-col items-center gap-1 mt-4">
+          {!showAll && filteredOutCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setShowAll(true)}
+              className="text-[11px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1 underline-offset-2 hover:underline"
+              data-testid="show-all-users"
+            >
+              <Eye className="h-3 w-3" />
+              Show {filteredOutCount} hidden account
+              {filteredOutCount === 1 ? "" : "s"} (never signed in)
+            </button>
+          )}
+          {showAll && (
+            <button
+              type="button"
+              onClick={() => setShowAll(false)}
+              className="text-[11px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1 underline-offset-2 hover:underline"
+              data-testid="hide-ghost-users"
+            >
+              <EyeOff className="h-3 w-3" />
+              Hide accounts that never signed in
+            </button>
+          )}
+          <p className="text-[10px] text-muted-foreground text-center">
+            Updates every 30s · "Online" = active in app within last 5 min
+            {lastUpdated
+              ? ` · Last refreshed ${formatRelative(lastUpdated, now)}`
+              : ""}
+          </p>
+        </div>
       </div>
+      </PinGate>
     </AdminLayout>
   );
 }

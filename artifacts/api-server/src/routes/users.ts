@@ -87,7 +87,16 @@ router.get("/users", listLimiter, async (req, res) => {
       offset += PAGE;
     }
 
-    const users: UserListItem[] = collected.map((u) => {
+    // Only count users who actually signed in at least once. Clerk can
+    // accumulate "ghost" sign-ups (e.g. Google one-tap shows the prompt
+    // and the user closes it) that we don't want polluting the list.
+    // Client can override with ?all=1 if the admin wants to audit them.
+    const showAll = req.query.all === "1";
+    const usable = showAll
+      ? collected
+      : collected.filter((u) => u.lastSignInAt != null);
+
+    const users: UserListItem[] = usable.map((u) => {
       const email =
         u.primaryEmailAddress?.emailAddress ??
         u.emailAddresses[0]?.emailAddress ??
@@ -108,7 +117,11 @@ router.get("/users", listLimiter, async (req, res) => {
       };
     });
 
-    res.json({ users, totalCount });
+    res.json({
+      users,
+      totalCount,
+      filteredOutCount: collected.length - usable.length,
+    });
   } catch (err) {
     req.log?.error({ err }, "users list fetch failed");
     res.status(500).json({ error: "Could not fetch users" });
