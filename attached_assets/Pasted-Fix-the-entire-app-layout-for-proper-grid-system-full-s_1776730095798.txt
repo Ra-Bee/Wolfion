@@ -1,0 +1,100 @@
+Fix the entire app layout for proper grid system, full screen mobile fit, and clean header alignment.
+
+-----------------------------------
+1. GLOBAL GRID SYSTEM (IMPORTANT)
+-----------------------------------
+Apply consistent grid layout across ALL sections:
+
+Rule:
+- If items = 4 → show 4 in one row
+- If items = 3 → show 3 in one row
+- If items = 2 → show 2 in one row
+- If items = 1 → full width
+
+Use dynamic grid:
+
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+gap: 10px;
+
+-----------------------------------
+2. FORCE MAX 4 PER ROW
+-----------------------------------
+- Limit max columns to 4
+- Do NOT stack vertically unless necessary
+
+-----------------------------------
+3. MOBILE SCREEN FIT (CRITICAL)
+-----------------------------------
+Fix screen overflow issue:
+
+- No horizontal scrolling allowed
+- Everything must fit inside screen width
+
+Apply:
+
+body {
+  overflow-x: hidden;
+}
+
+Main container:
+- width: 100%
+- max-width: 100vw
+- box-sizing: border-box
+
+-----------------------------------
+4. FIX APK / WEBVIEW SCALING
+-----------------------------------
+Ensure correct viewport:
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+- Prevent zoom and overflow
+- Fit content exactly to screen
+
+-----------------------------------
+5. HEADER / MENU BAR FIX (VERY IMPORTANT)
+-----------------------------------
+Fix top bar layout:
+
+- Keep everything in ONE LINE:
+  - Logo
+  - "Admin"
+  - Menu button (top right)
+
+Use:
+display: flex;
+align-items: center;
+justify-content: space-between;
+
+-----------------------------------
+6. PREVENT TEXT OVERLAP
+-----------------------------------
+- Ensure no text goes under another
+- Reduce font size if needed
+- Add spacing between elements
+
+-----------------------------------
+7. RESPONSIVE TEXT CONTROL
+-----------------------------------
+- Adjust font sizes dynamically
+- Prevent long text from breaking layout
+
+-----------------------------------
+8. ICON / MENU VISIBILITY
+-----------------------------------
+- Ensure menu (top right) is ALWAYS visible
+- Do not allow it to go off-screen
+
+-----------------------------------
+9. CLEAN SPACING
+-----------------------------------
+- Equal padding left/right
+- No elements touching screen edges
+
+-----------------------------------
+IMPORTANT:
+- No horizontal scrolling
+- Everything must fit perfectly within phone screen
+- Clean, balanced, professional layout
+- Grid must adapt but stay structured (max 4 per row)

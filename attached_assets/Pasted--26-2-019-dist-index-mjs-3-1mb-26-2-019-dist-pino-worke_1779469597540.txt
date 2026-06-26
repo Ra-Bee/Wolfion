@@ -1,0 +1,48 @@
+#26 2.019   dist/index.mjs                       3.1mb ⚠️
+#26 2.019   dist/pino-worker.mjs               153.4kb
+#26 2.019   dist/pino-file.mjs                 142.0kb
+#26 2.019   dist/pino-pretty.mjs               114.6kb
+#26 2.019   dist/thread-stream-worker.mjs        7.3kb
+#26 2.019   dist/index.mjs.map                   6.8mb
+#26 2.019   dist/pino-worker.mjs.map           256.9kb
+#26 2.019   dist/pino-file.mjs.map             229.0kb
+#26 2.019   dist/pino-pretty.mjs.map           203.9kb
+#26 2.019   dist/thread-stream-worker.mjs.map   12.0kb
+#26 2.019 
+#26 2.019 ⚡ Done in 751ms
+#26 DONE 2.1s
+#27 [runtime 3/5] COPY --from=build /repo/artifacts/api-server/dist ./dist
+#27 DONE 0.0s
+#28 [runtime 4/5] COPY --from=build /repo/artifacts/api-server/package.json ./package.json
+#28 DONE 0.0s
+#29 [runtime 5/5] RUN npm install --omit=dev --no-package-lock --ignore-scripts       firebase-admin@^13 pdf-parse@^2 pino@^9 pino-pretty@^13
+#29 1.547 npm error code EUNSUPPORTEDPROTOCOL
+#29 1.548 npm error Unsupported URL Type "workspace:": workspace:*
+#29 1.551 npm notice
+#29 1.551 npm notice New minor version of npm available! 11.13.0 -> 11.15.0
+#29 1.551 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.15.0
+#29 1.551 npm notice To update run: npm install -g npm@11.15.0
+#29 1.551 npm notice
+#29 1.551 npm error A complete log of this run can be found in: /root/.npm/_logs/2026-05-22T17_01_51_895Z-debug-0.log
+#29 ERROR: process "/bin/sh -c npm install --omit=dev --no-package-lock --ignore-scripts       firebase-admin@^13 pdf-parse@^2 pino@^9 pino-pretty@^13" did not complete successfully: exit code: 1
+------
+ > [runtime 5/5] RUN npm install --omit=dev --no-package-lock --ignore-scripts       firebase-admin@^13 pdf-parse@^2 pino@^9 pino-pretty@^13:
+1.547 npm error code EUNSUPPORTEDPROTOCOL
+1.548 npm error Unsupported URL Type "workspace:": workspace:*
+1.551 npm notice
+1.551 npm notice New minor version of npm available! 11.13.0 -> 11.15.0
+1.551 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.15.0
+1.551 npm notice To update run: npm install -g npm@11.15.0
+1.551 npm notice
+Menu
+1.551 npm error A complete log of this run can be found in: /root/.npm/_logs/2026-05-22T17_01_51_895Z-debug-0.log
+------
+Dockerfile:67
+--------------------
+  66 |     # workspace machinery.
+  67 | >>> RUN npm install --omit=dev --no-package-lock --ignore-scripts \
+  68 | >>>       firebase-admin@^13 pdf-parse@^2 pino@^9 pino-pretty@^13
+  69 |     
+--------------------
+error: failed to solve: process "/bin/sh -c npm install --omit=dev --no-package-lock --ignore-scripts       firebase-admin@^13 pdf-parse@^2 pino@^9 pino-pretty@^13" did not complete successfully: exit code: 1
+error: exit status 1

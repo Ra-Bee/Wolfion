@@ -1,0 +1,91 @@
+import { Link } from "wouter";
+import type { Product } from "@/lib/data";
+import imgLogoMark from "@assets/Image_20260416024938_44_2_1776717019706.png";
+
+type Props = {
+  product: Product;
+  ratio?: "tall" | "square";
+};
+
+export function ProductCard({ product, ratio = "tall" }: Props) {
+  const aspect = ratio === "tall" ? "aspect-[4/5]" : "aspect-square";
+
+  return (
+    <Link
+      href={`/product/${product.id}`}
+      className="group block"
+      data-testid={`product-${product.id}`}
+    >
+      <div
+        className={`relative ${aspect} rounded-2xl mb-3 transition-all duration-500 group-hover:-translate-y-1 p-[1.5px]`}
+        style={{
+          background:
+            "linear-gradient(135deg, rgba(180,140,150,0.45) 0%, rgba(190,160,110,0.30) 50%, rgba(140,120,160,0.45) 100%)",
+        }}
+      >
+      {/* Glow halo on hover */}
+      <div
+        aria-hidden
+        className="absolute -inset-2 rounded-[1.5rem] blur-2xl opacity-0 group-hover:opacity-50 transition-opacity duration-500 pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(135deg, rgba(180,140,150,0.6) 0%, rgba(190,160,110,0.5) 50%, rgba(140,120,160,0.6) 100%)",
+        }}
+      />
+      <div
+        className="relative h-full w-full overflow-hidden rounded-[15px] bg-neutral-100 dark:bg-neutral-900 shadow-sm group-hover:shadow-2xl transition-shadow duration-500"
+      >
+        {product.image ? (
+          <img
+            src={product.image}
+            alt={product.name}
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            loading="lazy"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center text-neutral-300 dark:text-neutral-700 text-xs uppercase tracking-widest">
+            No image
+          </div>
+        )}
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none rounded-[15px]"
+          style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.04), inset 0 0 40px rgba(0,0,0,0.04)" }}
+        />
+
+        {/* Soft gradient sheen */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+        {/* Wolfion logo watermark — transparent, readable on any image */}
+        <img
+          src={imgLogoMark}
+          alt=""
+          aria-hidden
+          className="absolute top-3 right-3 h-10 w-10 object-contain pointer-events-none select-none"
+          style={{
+            filter:
+              "brightness(0) invert(1) drop-shadow(0 1px 2px rgba(0,0,0,0.85)) drop-shadow(0 0 6px rgba(0,0,0,0.55))",
+            opacity: 0.95,
+          }}
+        />
+
+        {product.inventory < 200 && (
+          <span className="absolute top-3 left-3 bg-white/85 dark:bg-neutral-950/85 backdrop-blur-md text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-full shadow-sm">
+            Low stock
+          </span>
+        )}
+      </div>
+      </div>
+
+      <div className="flex justify-between items-start gap-3 px-1">
+        <div className="min-w-0">
+          <h3 className="text-sm font-medium truncate group-hover:underline underline-offset-4 decoration-neutral-400">
+            {product.name}
+          </h3>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5 truncate">{product.color}</p>
+        </div>
+        <span className="text-sm font-semibold whitespace-nowrap">Tk {product.price.toFixed(2)}</span>
+      </div>
+    </Link>
+  );
+}

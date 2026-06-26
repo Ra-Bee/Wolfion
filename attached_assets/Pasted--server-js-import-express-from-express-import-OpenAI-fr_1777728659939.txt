@@ -1,0 +1,127 @@
+// server.js
+import express from "express";
+import OpenAI from "openai";
+import fetch from "node-fetch";
+
+const app = express();
+app.use(express.json({ limit: "20mb" }));
+
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+// ---- Helper: generic study assistant ----
+async function askAssistant(messages) {
+  const res = await client.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [
+      {
+        role: "system",
+        content:
+          "You are a university study assistant. Be clear, concise, and structured. When summarizing, include key points and optional references if available.",
+      },
+      ...messages,
+    ],
+  });
+  return res.choices[0].message.content;
+}
+
+// ---- 1) Chat ----
+app.post("/ai/chat", async (req, res) => {
+  try {
+    const { message } = req.body;
+    const reply = await askAssistant([{ role: "user", content: message }]);
+    res.json({ reply });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ---- 2) Summarize article/text ----
+app.post("/ai/summarize-text", async (req, res) => {
+  try {
+    const { text } = req.body;
+
+    const prompt = `
+Summarize the following content:
+- Give main topic
+- Key bullet points
+- Simple explanation
+- If possible, mention references or sources
+
+CONTENT:
+${text}
+    `;
+
+    const summary = await askAssistant([{ role: "user", content: prompt }]);
+    res.json({ summary });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ---- 3) Summarize article from URL ----
+app.post("/ai/summarize-url", async (req, res) => {
+  try {
+    const { url } = req.body;
+    const page = await fetch(url);
+    const html = await page.text();
+
+    // naive text extraction (replace with better parser later)
+    const text = html.replace(/<[^>]*>/g, " ").slice(0, 15000);
+
+    const summary = await askAssistant([
+      {
+        role: "user",
+        content: `Summarize this article and include key points and references:\n${text}`,
+      },
+    ]);
+
+    res.json({ summary });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ---- 4) Video summary (basic from transcript text) ----
+// NOTE: You must supply transcript or captions text
+app.post("/ai/summarize-video", async (req, res) => {
+  try {
+    const { transcript } = req.body;
+
+    const prompt = `
+Summarize this lecture/video transcript:
+- Main topic
+- Key insights
+- Important points
+- Short summary
+
+TRANSCRIPT:
+${transcript}
+    `;
+
+    const summary = await askAssistant([{ role: "user", content: prompt }]);
+    res.json({ summary });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ---- 5) Translate text ----
+app.post("/ai/translate", async (req, res) => {
+  try {
+    const { text, targetLanguage } = req.body;
+
+    const prompt = `Translate the following into ${targetLanguage} clearly:\n${text}`;
+
+    const translation = await askAssistant([
+      { role: "user", content: prompt },
+    ]);
+
+    res.json({ translation });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.listen(3000, () => console.log("UniRab AI server running on port 3000"));

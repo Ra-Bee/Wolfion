@@ -1,0 +1,92 @@
+Refine the top-right corner menu and navigation system as follows:
+
+-----------------------------------
+1. USE EXISTING TOP-RIGHT MENU
+-----------------------------------
+Do NOT create new menus.
+
+Use the existing top-right menu (where Admin, Dashboard, Switch to Customer, Sign out exist).
+
+-----------------------------------
+2. ADD FULL NAVIGATION OPTIONS
+-----------------------------------
+Update the menu with the following order:
+
+1. Home (Admin Dashboard)
+2. Daily Production Entry
+3. Daily Sales Entry
+4. Profit Dashboard
+5. Inventory Report
+6. Labor Payroll
+7. Yarn Calculation
+8. Investment & Investor
+9. Debt Management
+10. Sign out
+
+-----------------------------------
+3. PAGE NAVIGATION BEHAVIOR
+-----------------------------------
+Each menu item must:
+
+- Open its FULL page
+- Not partially render or overlap
+- Navigate cleanly between sections
+
+Examples:
+- Clicking "Daily Production Entry" → opens production page
+- Clicking "Daily Sales Entry" → opens sales page
+- Clicking "Profit Dashboard" → opens profit page
+- Clicking "Home" → returns to main dashboard
+
+-----------------------------------
+4. DEBT MANAGEMENT SYSTEM 🔥
+-----------------------------------
+Create a new section: "Debt Management"
+
+Fields for entry:
+- Date
+- Person / Company name
+- Amount
+- Description (optional)
+
+Track:
+- Total debt
+- Amount paid
+- Remaining debt
+
+Add:
+- Payment entry option (with date)
+- Full history of debt transactions
+
+Display:
+- Who you owe money to
+- How much
+- How much paid
+- Remaining due
+
+-----------------------------------
+5. INVESTMENT & INVESTOR PAGE
+-----------------------------------
+Merge both into one page:
+
+"Investment & Investor"
+
+Show:
+- All investments
+- All investors
+- Total invested
+- Per investor summary
+
+-----------------------------------
+6. CONSISTENCY
+-----------------------------------
+Ensure all pages:
+
+- Are consistent in design
+- Mobile-friendly
+- Easy to navigate
+- Fast switching between pages
+
+-----------------------------------
+IMPORTANT:
+Navigation must feel smooth and professional like a real app.

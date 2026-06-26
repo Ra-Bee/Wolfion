@@ -1,0 +1,118 @@
+Improve my Wolfion management app with the following changes and features:
+
+-----------------------------------
+1. DAILY PRODUCTION SECTION (FIX)
+-----------------------------------
+- Remove:
+  - Production over last 7 days chart
+  - Cost trend chart
+  - Any graph or chart in this section
+
+- Keep:
+  - Daily production entry form
+  - Daily summary
+  - Past entries list
+
+Make it simple and focused only on daily data entry.
+
+-----------------------------------
+2. DAILY SALES SYSTEM
+-----------------------------------
+Add a "Daily Sales Entry" section:
+
+Fields:
+- Date
+- Customer name
+- Product type
+- Quantity sold (in dozen)
+- Price per dozen
+
+Auto:
+- Calculate total sale value
+- Reduce stock from inventory
+
+Show:
+- Daily sales list
+- Today’s total sales
+- Total quantity sold
+
+-----------------------------------
+3. MONTHLY ELECTRICITY COST
+-----------------------------------
+Add "Monthly Cost (Electricity)" section:
+
+Input:
+- Month
+- Total electricity bill
+
+Auto calculate:
+- Total production of that month
+- Electricity cost per dozen
+
+Save monthly data and show history.
+
+-----------------------------------
+4. COST SYSTEM IMPROVEMENT
+-----------------------------------
+Daily cost should include:
+- Yarn cost
+- Labor cost
+- Packaging cost
+- Iron/finishing cost
+- Electricity cost (from monthly system)
+
+Show:
+- Total cost per day
+- Cost per dozen
+
+-----------------------------------
+5. LABOR MANAGEMENT SYSTEM 🔥
+-----------------------------------
+Add a "Labor Management" section:
+
+For each worker:
+- Name
+- Daily wage or per unit earning
+
+Track:
+- Work done per day
+- Total earned
+- Amount already paid
+- Remaining due
+
+Show:
+- Worker list
+- Total payable
+- Total paid
+- Remaining balance
+
+Make it simple and easy to update daily.
+
+-----------------------------------
+6. PROFIT DASHBOARD (MAIN FEATURE)
+-----------------------------------
+Add a "Profit Dashboard" section with 2 tabs:
+
+A. DAILY VIEW:
+- Production (dozen)
+- Total sales
+- Total cost
+- Profit (sales - cost)
+
+B. MONTHLY VIEW:
+- Total production
+- Total sales
+- Total cost
+- Total profit
+
+Show clear summary cards at top.
+
+-----------------------------------
+7. UI SIMPLIFICATION
+-----------------------------------
+- Make everything mobile-friendly
+- Big buttons
+- Very simple forms
+- Quick entry options
+
+This app should be extremely easy to use daily by non-technical users.

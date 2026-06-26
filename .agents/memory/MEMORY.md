@@ -1,0 +1,5 @@
+- [Wolfion deploy](wolfion-deploy.md) — ships via user-run `deploy.sh` force-push to Ra-Bee/Wolfion→Vercel; agent git is blocked; `deploy.sh` snapshots the working tree, not HEAD.
+- [Wolfion yarn-type data models](wolfion-yarn-types.md) — dashboard stores free-text `yarnType` name, calc page uses recipe `yarnTypeId`; bridge with `typeKeyOf = yarnTypeId||yarnType||OTHER`.
+- [Wolfion sales form location](wolfion-sales-form-location.md) — the live "Daily Sales Entry" form is in dashboard.tsx, not the routed daily-sales.tsx page; edit there.
+- [Wolfion dashboard retroactive recompute](wolfion-retro-recompute.md) — editing/deleting a productConfig rewrites historical daily entries; product delete must be guarded when entries reference it.
+- [Wolfion financial decisions](wolfion-financial-calc.md) — Profit is sales-based (Sales−cost of sold only); inventory seeds must be 0; recipe-less types estimate yarn (NOT 0, user-required); overhead already includes electricity.

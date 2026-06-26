@@ -1,0 +1,94 @@
+Refine dashboard cards to be compact, aligned, and clean.
+
+-----------------------------------
+1. REDUCE CARD SIZE (CRITICAL)
+-----------------------------------
+Apply to:
+- Profit Dashboard
+- Daily Production Entry
+
+Use compact sizing:
+
+padding: 8px;
+min-height: 55px;
+border-radius: 8px;
+
+- Reduce vertical height
+- Make cards tighter and more compact
+
+-----------------------------------
+2. FIX 4-COLUMN ALIGNMENT (IMPORTANT)
+-----------------------------------
+Ensure ALL 4 items stay in ONE LINE:
+
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 8px;
+
+- Prevent last item from dropping down
+- All cards must align evenly
+
+-----------------------------------
+3. FIX LAST ITEM DROPPING ISSUE
+-----------------------------------
+- Ensure equal width for all cards
+- Remove any extra margin or padding
+- No wrapping allowed
+
+-----------------------------------
+4. TEXT SIMPLIFICATION (VERY IMPORTANT)
+-----------------------------------
+Shorten long labels:
+
+Examples:
+- "Total Cost Today" → "Cost"
+- "Iron Finishing Cost" → "Iron Finishing"
+
+- Keep labels short so they fit
+
+-----------------------------------
+5. TEXT SIZE CONTROL
+-----------------------------------
+Use smaller text:
+
+Label:
+font-size: 11px;
+
+Value:
+font-size: 13px;
+font-weight: 600;
+
+-----------------------------------
+6. MULTI-LINE SUPPORT
+-----------------------------------
+If needed:
+- Allow 2 lines max inside card
+- Keep text centered
+
+-----------------------------------
+7. REMOVE OVERFLOW
+-----------------------------------
+Apply:
+
+overflow: hidden;
+text-overflow: ellipsis;
+
+-----------------------------------
+8. DAILY PRODUCTION ENTRY FIX
+-----------------------------------
+- Make same compact card style
+- Ensure all fields fit inside 4-column grid
+- No oversized boxes
+
+-----------------------------------
+9. CONSISTENCY
+-----------------------------------
+- All cards same height
+- All cards same width
+- Clean alignment
+
+-----------------------------------
+IMPORTANT:
+Cards must be small, compact, and perfectly aligned in one row.
+No item should drop below.
+No oversized boxes.
