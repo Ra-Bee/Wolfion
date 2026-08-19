@@ -1,0 +1,137 @@
+Replit Prompt — Create SEO Founder Page
+
+Create a new public SEO-friendly founder page for my existing Wolfion website/app.
+
+URL
+
+The page must have its own permanent crawlable URL:
+
+"/founder/md-rabby-bapari"
+
+Final URL:
+
+"https://wolfion.com.au/founder/md-rabby-bapari"
+
+Important
+
+Do NOT create this as a popup, modal, tab, hash route, or JavaScript-only state such as:
+
+"/#founder"
+
+It must be a real route that can be opened directly by typing the URL into a browser.
+
+The route must return HTTP 200 and work after refreshing the page directly.
+
+SEO Rendering
+
+Make the founder page as SEO-friendly as possible within the existing framework.
+
+If the project supports SSR, server-side rendering, pre-rendering, or static generation, use it for this page.
+
+The important founder information should be present in the initial HTML whenever technically possible rather than being dependent entirely on client-side JavaScript.
+
+Do NOT rebuild or break the existing application.
+
+Page title
+
+"Md Rabby Bapari | Founder of Wolfion"
+
+Meta description
+
+"Md Rabby Bapari is a textile engineer, fashion designer, entrepreneur and founder of Wolfion, an Australian fashion and textile brand."
+
+H1
+
+"Md Rabby Bapari — Founder of Wolfion"
+
+Page Content
+
+Create a professional founder profile explaining that:
+
+- Md Rabby Bapari is a textile engineer, fashion designer and entrepreneur.
+- He is the founder of Wolfion.
+- Wolfion is an Australian fashion and textile brand.
+- His background combines textile engineering, fashion design, manufacturing and entrepreneurship.
+- His work focuses on fashion, textiles, product development and manufacturing.
+
+Keep the writing professional, factual and suitable for Google search results.
+
+Structured Data
+
+Add valid Schema.org JSON-LD.
+
+Create "Person" structured data for Md Rabby Bapari containing:
+
+- name: Md Rabby Bapari
+- jobTitle: Textile Engineer, Fashion Designer and Founder
+- url: https://wolfion.com.au/founder/md-rabby-bapari
+- worksFor: Wolfion
+
+Also connect the Person entity with the Wolfion Organization/Brand entity.
+
+Do not invent social-profile URLs or personal details that are not already available in the project.
+
+Internal Links
+
+Add a normal HTML link using an "<a href>" to the founder page from:
+
+- Wolfion homepage
+- About page
+- website footer where appropriate
+
+Use anchor text such as:
+
+"Md Rabby Bapari — Founder"
+
+Do not rely only on JavaScript "onClick" navigation for these SEO links.
+
+Canonical URL
+
+Add:
+
+"https://wolfion.com.au/founder/md-rabby-bapari"
+
+as the canonical URL for the founder page.
+
+Open Graph
+
+Add appropriate:
+
+- og:title
+- og:description
+- og:url
+- og:type
+
+for sharing on Facebook, LinkedIn and other platforms.
+
+Sitemap
+
+Add this exact page to the site's XML sitemap:
+
+"https://wolfion.com.au/founder/md-rabby-bapari"
+
+If there is no sitemap yet, create:
+
+"https://wolfion.com.au/sitemap.xml"
+
+Robots
+
+Make sure the founder page is NOT blocked by "robots.txt", authentication middleware, "noindex", or "nofollow".
+
+Verification
+
+After implementing it, verify:
+
+1. "/founder/md-rabby-bapari" opens directly.
+2. Refreshing that URL does not cause a 404.
+3. It returns HTTP status 200.
+4. Page title is unique.
+5. Meta description is present.
+6. H1 is present.
+7. Canonical URL is correct.
+8. JSON-LD Person schema is valid.
+9. It appears in sitemap.xml.
+10. Googlebot is allowed to crawl it.
+11. Existing Wolfion app functionality remains unchanged.
+
+Do not redesign or replace my existing application. Only add the new public SEO page and supporting SEO configuration.

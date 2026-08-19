@@ -1,0 +1,14 @@
+- [Wolfion deploy](wolfion-deploy.md) — ships via user-run `deploy.sh` force-push to Ra-Bee/Wolfion→Vercel; agent git is blocked; `deploy.sh` snapshots the working tree, not HEAD.
+- [Wolfion Play/Android publish](wolfion-deploy.md) — Play package name is permanently `wolfion.aab` (keep that applicationId); lost upload key is recoverable at `.local/state/keystore/upload-keystore.jks` (SHA1 85:83:E1:BE…), no key reset needed; .aab built via "Build Wolfion Android AAB" GH Action.
+- [Wolfion Android icon + in-app Google login](wolfion-deploy.md) — icon lives in committed mipmaps (cap sync won't regen); Sheet menus need their own `safe-pt`; Google-in-webview via `overrideUserAgent` (no `wv`) + minimal `allowNavigation` (best-effort, fragile).
+- [Wolfion GitHub push](wolfion-github-push.md) — working token is `GITHUB_PERSONAL_ACCESSS_TOKEN` (added 2026-07-31; all older GH tokens are 401); force-push only works from an isolated task env, not main agent or Shell.
+- [Wolfion auth flow](wolfion-auth-flow.md) — sign-up must never ask an email code: custom page + Backend-API createUser (auto-verified) + instant password sign-in; legacy Clerk hooks at @clerk/react/legacy.
+- [Wolfion yarn-type data models](wolfion-yarn-types.md) — dashboard stores free-text `yarnType` name, calc page uses recipe `yarnTypeId`; bridge with `typeKeyOf = yarnTypeId||yarnType||OTHER`.
+- [Wolfion sales form location](wolfion-sales-form-location.md) — the live "Daily Sales Entry" form is in dashboard.tsx, not the routed daily-sales.tsx page; edit there.
+- [Wolfion dashboard retroactive recompute](wolfion-retro-recompute.md) — editing/deleting a productConfig rewrites historical daily entries; product delete must be guarded when entries reference it.
+- [Wolfion financial decisions](wolfion-financial-calc.md) — Profit is sales-based (Sales−cost of sold only); inventory seeds must be 0; recipe-less types estimate yarn (NOT 0, user-required); overhead already includes electricity.
+- [Wolfion cloud-list migrations](wolfion-cloud-migrations.md) — default-list changes never reach stored cloud data; migrate via cloudReady-gated append hook, flag done only after values confirm.
+- [Wolfion RTDB recovery](wolfion-data-recovery.md) — cloud store must never whole-set() shared nodes: lists and object stores sync via per-entry/field diffs so stale tabs can't erase unseen data; only true scalars remain last-write-wins.
+- [Wolfion produced-quantity source](wolfion-produced-source.md) — stock/produced metrics must sum `dailyEntries` (the audited history), NOT `productionEntries` (has legacy orphan rows that inflate stock).
+- [Wolfion touch-scroll traps](wolfion-touch-scroll.md) — full-width frames with pointer-capture tilt block mid-screen finger scroll; keep such effects mouse-only (hover:none guard).
+- [Wolfion preview screenshots](wolfion-preview-screenshots.md) — shop home is at /shop (root = splash); use /shop?__preview&__scroll=… + tall viewport + video poster.

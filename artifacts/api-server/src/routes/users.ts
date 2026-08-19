@@ -1,0 +1,151 @@
+import { Router, type IRouter } from "express";
+import rateLimit from "express-rate-limit";
+import { clerkClient, getAuth } from "@clerk/express";
+import { ADMIN_EMAILS } from "../lib/admin";
+import { firebaseDb } from "../lib/firebase";
+
+const ADMIN_EMAIL_SET = new Set(
+  ADMIN_EMAILS.map((e) => e.trim().toLowerCase()),
+);
+
+const router: IRouter = Router();
+
+const listLimiter = rateLimit({
+  windowMs: 60_000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => {
+    const auth = getAuth(req);
+    return auth?.userId ?? req.ip ?? "anon";
+  },
+  message: { error: "Too many requests" },
+});
+
+type UserListItem = {
+  id: string;
+  email: string | null;
+  fullName: string | null;
+  imageUrl: string | null;
+  isAdmin: boolean;
+  createdAt: number | null;
+  lastSignInAt: number | null;
+  lastActiveAt: number | null;
+};
+
+/**
+ * GET /api/users
+ *
+ * Admin-only. Returns every Clerk user (sign-ups) with the data needed
+ * to render an "online / offline" user list in the admin dashboard.
+ *
+ * "Online" is computed on the client as: lastActiveAt within the last
+ * ~5 minutes. Clerk updates lastActiveAt on every active session
+ * heartbeat, so anyone with the app open in the foreground will tick.
+ */
+router.get("/users", listLimiter, async (req, res) => {
+  const auth = getAuth(req);
+  if (!auth?.userId) {
+    res.status(401).json({ error: "Sign in required" });
+    return;
+  }
+  try {
+    const me = await clerkClient.users.getUser(auth.userId);
+    const myEmail =
+      me.primaryEmailAddress?.emailAddress?.toLowerCase() ?? "";
+    if (!myEmail || !ADMIN_EMAIL_SET.has(myEmail)) {
+      res.status(403).json({ error: "Admin access required" });
+      return;
+    }
+
+    // Paginate through Clerk to gather every user. One getUserList call
+    // is capped at 500 — without looping we'd silently truncate larger
+    // tenants and the "Total / Online / Offline" counters would lie.
+    const PAGE = 500;
+    const HARD_CAP = 10_000; // safety net against runaway loops
+    type ClerkUser = Awaited<
+      ReturnType<typeof clerkClient.users.getUserList>
+    >["data"][number];
+    const collected: ClerkUser[] = [];
+    let offset = 0;
+    let totalCount = 0;
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const page = await clerkClient.users.getUserList({
+        limit: PAGE,
+        offset,
+        orderBy: "-created_at",
+      });
+      totalCount = page.totalCount;
+      collected.push(...page.data);
+      if (
+        page.data.length < PAGE ||
+        collected.length >= totalCount ||
+        collected.length >= HARD_CAP
+      ) {
+        break;
+      }
+      offset += PAGE;
+    }
+
+    // Only count users who actually signed in at least once. Clerk can
+    // accumulate "ghost" sign-ups (e.g. Google one-tap shows the prompt
+    // and the user closes it) that we don't want polluting the list.
+    // Client can override with ?all=1 if the admin wants to audit them.
+    const showAll = req.query.all === "1";
+    const usable = showAll
+      ? collected
+      : collected.filter((u) => u.lastSignInAt != null);
+
+    // Live presence heartbeats (first-party). Clerk's lastActiveAt only
+    // advances ~once a day, so an actively-using person looked "offline".
+    // We merge in the freshest of the two timestamps below.
+    let presence: Record<string, { lastSeen?: number }> = {};
+    try {
+      const snap = await firebaseDb().ref("presence").get();
+      presence = (snap.val() as typeof presence) ?? {};
+    } catch (err) {
+      req.log?.warn({ err }, "presence read failed; using Clerk only");
+    }
+
+    // Coerce to a finite epoch-ms number; anything malformed becomes 0 so a
+    // bad RTDB value can never turn the merged timestamp into NaN/null.
+    const ms = (v: unknown): number => {
+      const n = typeof v === "number" ? v : Number(v);
+      return Number.isFinite(n) && n > 0 ? n : 0;
+    };
+
+    const users: UserListItem[] = usable.map((u) => {
+      const email =
+        u.primaryEmailAddress?.emailAddress ??
+        u.emailAddresses[0]?.emailAddress ??
+        null;
+      const fullName =
+        [u.firstName, u.lastName].filter(Boolean).join(" ").trim() || null;
+      return {
+        id: u.id,
+        email,
+        fullName,
+        imageUrl: u.imageUrl ?? null,
+        isAdmin: email
+          ? ADMIN_EMAIL_SET.has(email.trim().toLowerCase())
+          : false,
+        createdAt: u.createdAt ?? null,
+        lastSignInAt: u.lastSignInAt ?? null,
+        lastActiveAt:
+          Math.max(ms(u.lastActiveAt), ms(presence[u.id]?.lastSeen)) || null,
+      };
+    });
+
+    res.json({
+      users,
+      totalCount,
+      filteredOutCount: collected.length - usable.length,
+    });
+  } catch (err) {
+    req.log?.error({ err }, "users list fetch failed");
+    res.status(500).json({ error: "Could not fetch users" });
+  }
+});
+
+export default router;

@@ -1,0 +1,138 @@
+Design and generate a modern, mobile-first application called “UniRab”.
+
+CORE IDEA:
+UniRab is a next-generation social productivity platform designed specifically for university students. It combines social networking, academic management, and communication into one unified ecosystem. The app should feel like a “digital campus village” where students connect, organize, and grow.
+
+TARGET USERS:
+University students aged 18–30.
+
+DESIGN STYLE:
+- Premium, futuristic, high-end UI inspired by Apple iOS and Vision Pro
+- 3D glassmorphism (liquid glass effect)
+- Soft blur backgrounds, translucent layers, floating glass cards
+- Depth layering with subtle shadows and scaling
+- Smooth micro-interactions and animations (tap, swipe, transitions)
+- Dark mode and light mode support
+- Minimal, clean, elegant interface (avoid clutter)
+
+COLOR STYLE:
+- Deep blue (#0A1F44)
+- Neon purple (#6C4DFF)
+- Soft cyan glow (#00E5FF)
+- Glass panels with 10–20% opacity and blur effects
+
+TYPOGRAPHY:
+- Modern clean fonts (SF Pro, Inter, or Poppins)
+- Bold headings, light body text
+
+NAVIGATION SYSTEM (UNIQUE FEATURE):
+- Do NOT use traditional top or bottom navigation bars
+- Use a horizontal side-navigation system (SideFlow UI)
+- The app is structured as a series of full-height floating cards
+- Each main feature is a card placed horizontally side-by-side
+
+SECTIONS:
+- Stories
+- Home Feed
+- Dashboard
+- Messages
+- Profile
+
+INTERACTION:
+- Users swipe left/right to move between cards
+- Center card is fully visible
+- Side cards are slightly smaller, blurred, and scaled (3D depth effect)
+- Use smooth wave-like transitions instead of linear slides
+- Add parallax motion and layered movement for realism
+
+GESTURES:
+- Swipe left/right → navigate sections
+- Swipe up → expand content
+- Tap → open details
+- Edge swipe → quick access menu
+
+ONBOARDING:
+- First-time users see hint: “Swipe to explore UniRab”
+
+SIDE INDICATOR:
+- Minimal dot or bar indicator showing current position
+
+CORE FEATURES:
+
+1. SMART STUDENT PROFILE:
+- Name, university, degree, semester
+- Assignment tracker (remaining tasks)
+- Optional LinkedIn integration
+- Digital CV (private / friends / public visibility)
+- Privacy controls for all data
+
+2. SHORT-FORM POSTS:
+- Text posts with character limit
+- Categories: study, questions, events, notes
+- Clean and distraction-free feed
+
+3. STORIES:
+- 24-hour disappearing stories (images/videos)
+- Stories appear as a dedicated swipeable section (not top bar)
+
+4. SMART DASHBOARD (MAIN FEATURE):
+- Weekly class schedule
+- Assignment deadlines
+- Exam tracking
+- Personal calendar
+- University calendar (holidays, semester dates)
+- Visual timeline with cards and progress indicators
+- Add “Today’s Focus” card
+
+5. MESSAGING SYSTEM:
+- Real-time chat (similar to WhatsApp)
+- Text, images, audio, video support
+- Disappearing messages by default
+- “Save message” option before disappearing
+- Read receipts and typing indicators
+- Group chats (class, projects)
+
+6. SOCIAL SYSTEM:
+- Friend requests (like Facebook)
+- Campus-based discovery
+- Private network system
+
+7. ADDITIONAL FEATURES:
+- Study rooms (focus sessions)
+- Skill exchange between students
+- Notifications for deadlines and events
+- Basic AI assistant for reminders and summaries
+
+ANIMATION DETAILS:
+- Cards move like waves, not rigid slides
+- Soft easing transitions
+- Slight bounce on interaction
+- Blur and fade transitions for disappearing content
+- Optional haptic feedback
+
+ADVANCED VISUAL EFFECTS:
+- Parallax scrolling (background moves slightly)
+- Dynamic gradient backgrounds
+- Light glow edges on active elements
+
+USER EXPERIENCE:
+- Extremely intuitive and smooth
+- Must be understandable within 3 seconds
+- Avoid overcomplication
+- Focus on usability + premium feel
+
+SECURITY:
+- Strong privacy settings
+- User-controlled visibility
+- Secure messaging system
+
+BRANDING:
+Name: UniRab
+Concept: “A digital campus ecosystem”
+
+OUTPUT REQUIRED:
+- Full mobile UI design (multiple screens)
+- User flow
+- Navigation structure
+- Component design system
+- Interactive behavior explanation

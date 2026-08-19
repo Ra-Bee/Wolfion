@@ -1,0 +1,144 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "cd ../.. && pnpm install --frozen-lockfile && pnpm --filter @workspace/wolfion run build",
+  "outputDirectory": "dist/public",
+  "installCommand": "echo 'install handled by buildCommand'",
+  "framework": null,
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "wolfion.com.au"
+        }
+      ],
+      "destination": "https://www.wolfion.com.au/:path*",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://wolfion-api-fqmu.onrender.com/api/$1"
+    },
+    {
+      "source": "/shop",
+      "destination": "/shop/index.html"
+    },
+    {
+      "source": "/about",
+      "destination": "/about/index.html"
+    },
+    {
+      "source": "/founder/md-rabby-bapari",
+      "destination": "/founder/md-rabby-bapari/index.html"
+    },
+    {
+      "source": "/app",
+      "destination": "/app/index.html"
+    },
+    {
+      "source": "/products",
+      "destination": "/products/index.html"
+    },
+    {
+      "source": "/socks",
+      "destination": "/socks/index.html"
+    },
+    {
+      "source": "/manufacturing",
+      "destination": "/manufacturing/index.html"
+    },
+    {
+      "source": "/services",
+      "destination": "/services/index.html"
+    },
+    {
+      "source": "/contact",
+      "destination": "/contact/index.html"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/privacy/index.html"
+    },
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/sw.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/admin/:path*",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }
+      ]
+    },
+    {
+      "source": "/admin-dashboard",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }
+      ]
+    },
+    {
+      "source": "/sign-in/:path*",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }
+      ]
+    },
+    {
+      "source": "/sign-up/:path*",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }
+      ]
+    },
+    {
+      "source": "/app-sso",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }
+      ]
+    },
+    {
+      "source": "/role-select",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }
+      ]
+    },
+    {
+      "source": "/cart",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }
+      ]
+    },
+    {
+      "source": "/checkout-success",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }
+      ]
+    },
+    {
+      "source": "/settings",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }
+      ]
+    },
+    {
+      "source": "/dev-preview",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "wolfion.aab",
+      "sha256_cert_fingerprints": [
+        "FD:B0:FF:EC:AC:CF:5E:26:97:6A:B3:23:D5:37:E7:CD:1A:52:C4:50:96:53:CA:5E:CB:DE:88:55:1A:C0:5B:CB"
+      ]
+    }
+  }
+]

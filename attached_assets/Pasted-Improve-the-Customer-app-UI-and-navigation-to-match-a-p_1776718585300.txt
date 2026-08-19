@@ -1,0 +1,93 @@
+Improve the Customer app UI and navigation to match a premium fashion brand experience.
+
+-----------------------------------
+1. NAVIGATION MENU UPDATE
+-----------------------------------
+Update the top navigation menu:
+
+Replace:
+- Short
+- Ankle
+- Kids
+
+With:
+
+- Home
+- Shop
+- Bepari Shops
+- Men's Wear
+- Women's Wear
+
+-----------------------------------
+2. CATEGORY STRUCTURE
+-----------------------------------
+Inside "Bepari Shops":
+
+Show subcategories:
+- Short socks
+- Ankle socks
+- Kids socks
+- Other socks
+
+Make this a dropdown or expandable section.
+
+-----------------------------------
+3. UI STYLE (PREMIUM 3D LOOK)
+-----------------------------------
+Upgrade design to high-end fashion style:
+
+- Soft 3D depth using shadows
+- Glassmorphism (blur + transparency)
+- Rounded cards (modern look)
+- Smooth hover/touch animations
+- Clean spacing and alignment
+
+Make it look like:
+- Zara
+- Gucci
+- Calvin Klein
+
+-----------------------------------
+4. VISUAL DESIGN
+-----------------------------------
+- Use large banner images on homepage
+- Add product cards with:
+  - Image
+  - Name
+  - Price
+
+- Use high-quality sock images with Wolfion branding
+
+-----------------------------------
+5. PRODUCT IMAGES
+-----------------------------------
+For now:
+
+- Use sock images as placeholders
+- Add Wolfion logo overlay on product images
+- Keep images clean and premium
+
+-----------------------------------
+6. TYPOGRAPHY
+-----------------------------------
+- Keep font modern and minimal
+- Ultron font can be used for headings if clean
+- Ensure readability and spacing
+
+-----------------------------------
+7. ANIMATIONS
+-----------------------------------
+- Add smooth transitions
+- Slight hover lift effect on product cards
+- Button press animation
+
+-----------------------------------
+8. MOBILE RESPONSIVENESS
+-----------------------------------
+- Ensure layout works perfectly on mobile
+- No overlapping or broken UI
+
+-----------------------------------
+IMPORTANT:
+Customer UI must feel like a luxury fashion brand, not a factory system.
+Focus on visuals, simplicity, and premium experience.

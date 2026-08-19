@@ -1,0 +1,155 @@
+Refine and improve my Wolfion management app with the following exact updates:
+
+-----------------------------------
+1. DASHBOARD (TOP SUMMARY FIX)
+-----------------------------------
+Move summary to the top and simplify.
+
+Show ONLY:
+
+1. Total Stock Available:
+   - Short socks stock
+   - Ankle socks stock
+   - Kids socks stock
+
+2. Total Sold:
+   - Short socks sold
+   - Ankle socks sold
+   - Kids socks sold
+
+3. Total Profit
+4. Total Loss
+
+Remove:
+- Active production board
+- Extra inventory widgets
+- Unnecessary summary items
+
+-----------------------------------
+2. DAILY SALES ENTRY IMPROVEMENT
+-----------------------------------
+Form layout:
+
+- First line: Date
+- Second line (same row):
+  - Customer name
+  - Product type
+  - Quantity (dozen)
+  - Total sale amount
+
+Add automatic calculation:
+
+- Price per dozen = Total amount ÷ Quantity
+
+Display this value clearly (read-only).
+
+-----------------------------------
+3. LABOR MANAGEMENT (IMPORTANT FIX)
+-----------------------------------
+Improve labor system:
+
+For each worker:
+
+- Name
+- Pay type (daily or per unit)
+- Wage
+
+Add tracking:
+
+- Total earned (calculated)
+- Amount paid (manual entry with date)
+- Remaining due (auto calculation)
+
+Add:
+
+- Payment history with date
+- Show per worker:
+  - Total earned
+  - Total paid
+  - Remaining due
+
+Everything must calculate automatically.
+
+-----------------------------------
+4. INVESTMENT SECTION FIX
+-----------------------------------
+Update investment system:
+
+Fields:
+- Date
+- Investment type (Accessories, Machine, Packaging, Rent, etc.)
+- Description
+- Amount
+- Source of money
+
+Add:
+
+- Store all entries in a list
+- Show full investment history table
+- Show total investment amount
+
+-----------------------------------
+5. INVESTOR SECTION FIX
+-----------------------------------
+Update investor system:
+
+Fields:
+- Investor name
+- Date
+- Amount
+
+Add:
+
+- Store all entries
+- Show list of investors
+- Show total invested per person
+- Show total overall investment
+
+-----------------------------------
+6. DATA STORAGE & VISIBILITY (VERY IMPORTANT)
+-----------------------------------
+Ensure ALL sections store and display data:
+
+- Daily production → stored and viewable by date
+- Sales → stored and viewable
+- Labor → stored with history
+- Investment → stored with full list
+- Investor → stored with full list
+
+Every entry must be visible in a table/list format.
+
+-----------------------------------
+7. PROFIT DASHBOARD
+-----------------------------------
+Keep Profit Dashboard as a separate section.
+
+Show:
+
+- Daily profit
+- Monthly profit
+- Total profit
+- Total loss
+
+All values must be calculated correctly.
+
+-----------------------------------
+8. CALCULATION ACCURACY
+-----------------------------------
+Ensure:
+
+- Price per dozen = total ÷ quantity
+- Cost per dozen = total cost ÷ production
+- Profit = sales - total cost
+- Labor due = earned - paid
+
+No incorrect or missing calculations allowed.
+
+-----------------------------------
+9. UI SIMPLICITY
+-----------------------------------
+- Clean layout
+- Mobile-friendly
+- No duplicate sections
+- Easy daily use
+
+Make it simple, fast, and practical for real factory use.

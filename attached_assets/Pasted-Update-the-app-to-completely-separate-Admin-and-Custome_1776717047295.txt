@@ -1,0 +1,95 @@
+Update the app to completely separate Admin and Customer experience.
+
+-----------------------------------
+1. ROLE-BASED UI SEPARATION
+-----------------------------------
+After login:
+
+- If Admin:
+  → Show existing full management system (no changes)
+
+- If Customer:
+  → Show completely different UI (fashion brand app)
+
+These two must NOT look the same.
+
+-----------------------------------
+2. CUSTOMER APP DESIGN (IMPORTANT)
+-----------------------------------
+Create a premium fashion brand interface similar to high-end brands.
+
+Style:
+- Clean, minimal, luxury feel
+- Strong visual focus (images first)
+- Smooth scrolling
+- Modern typography
+
+-----------------------------------
+3. CUSTOMER HOME PAGE
+-----------------------------------
+Show:
+
+- Large banner images (hero section)
+- Brand name (Wolfion)
+- Featured products
+- Categories:
+  - Short socks
+  - Ankle socks
+  - Kids socks
+  - Others
+
+-----------------------------------
+4. PRODUCT DISPLAY
+-----------------------------------
+- Show products in grid layout
+- Each product:
+  - Image
+  - Name
+  - Price
+
+Click → opens product details page
+
+-----------------------------------
+5. PRODUCT DETAILS PAGE
+-----------------------------------
+- Large product image
+- Description
+- Price
+- Select quantity
+- Add to cart button
+
+-----------------------------------
+6. CUSTOMER FEATURES
+-----------------------------------
+- Cart system
+- Simple checkout (no payment needed now)
+- Order summary
+
+-----------------------------------
+7. UI STYLE (VERY IMPORTANT)
+-----------------------------------
+- Premium brand feel (like Zara / Calvin Klein)
+- Soft animations
+- Clean spacing
+- Minimal colors
+- Focus on visuals
+
+-----------------------------------
+8. REMOVE ADMIN ELEMENTS
+-----------------------------------
+Customer must NOT see:
+- Production
+- Sales
+- Cost
+- Dashboard
+- Any internal data
+
+-----------------------------------
+9. IMAGE SUPPORT
+-----------------------------------
+Allow uploading product images and banners.
+
+-----------------------------------
+IMPORTANT:
+Customer app should feel like a real fashion brand, not a management tool.
+Admin and Customer must feel like two completely different apps.

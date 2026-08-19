@@ -1,0 +1,60 @@
+
+# Android build outputs
+artifacts/wolfion/android/app/build/
+artifacts/wolfion/android/build/
+artifacts/wolfion/android/.gradle/
+artifacts/wolfion/android/local.properties
+.breakpoints
+.c9/
+.cache/
+.classpath
+# compiled output
+/connect.lock
+/coverage
+.cursor/rules/nx-rules.mdc
+# dependencies
+dist
+.DS_Store
+.env
+.env.*.local
+.env.local
+# env / secrets — NEVER commit real values
+.expo
+.expo-shared
+firebase-admin-*.json
+.github/instructions/nx.instructions.md
+/.idea
+# IDEs and editors
+# IDE - VSCode
+*.jks
+*.keystore
+*.launch
+/libpeerconnection.log
+.local/
+.local/state/firebase-sa.json
+# misc
+node_modules
+npm-debug.log
+out-tsc
+.project
+# Replit (kept so the project still runs here today, but not pushed to GitHub)
+/.sass-cache
+*.secret
+service-account*.json
+.settings/
+*.sublime-workspace
+# System Files
+testem.log
+Thumbs.db
+tmp
+*.tsbuildinfo
+/typings
+.upm/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/settings.json
+!.vscode/tasks.json
+yarn-error.log
+wolfion-signing/
+wolfion-build/

@@ -1,0 +1,15 @@
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: *
+Allow: /
+
+# Private and account routes return an X-Robots-Tag: noindex response header.
+# They stay crawlable here so search engines can read and obey that header.
+Sitemap: https://www.wolfion.com.au/sitemap.xml

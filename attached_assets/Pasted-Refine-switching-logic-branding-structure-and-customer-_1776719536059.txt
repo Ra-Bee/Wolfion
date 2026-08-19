@@ -1,0 +1,103 @@
+Refine switching logic, branding structure, and customer visuals.
+
+-----------------------------------
+1. SINGLE SWITCH BUTTON (CRITICAL)
+-----------------------------------
+Use ONLY ONE button in the top-right corner for switching modes.
+
+Behavior:
+
+- If user is in ADMIN MODE:
+  → Button text: "Customer Mode"
+  → On click: go to /shop-home
+
+- If user is in CUSTOMER MODE:
+  → Button text: "Admin Mode"
+  → On click: go to /admin-dashboard
+
+This must be the SAME button, just changing label and function.
+
+-----------------------------------
+2. CUSTOMER NAVIGATION BRAND STRUCTURE
+-----------------------------------
+Fix navbar:
+
+- Home
+- Shop
+- Bapari Socks
+- Collection
+
+-----------------------------------
+3. CATEGORY LOGIC
+-----------------------------------
+
+Under "Bapari Socks":
+- Short socks
+- Ankle socks
+- Kids socks
+- Other socks
+
+(This section = product category)
+
+Under "Collection":
+- Menswear
+- Womenswear
+- Kidswear
+
+(This section = fashion category)
+
+-----------------------------------
+4. BRAND USAGE RULE (IMPORTANT)
+-----------------------------------
+- Main brand name = "Wolfion"
+
+- Use "Bapari Socks" ONLY for socks category section
+
+- Menswear / Womenswear / Kidswear = under Wolfion brand
+
+-----------------------------------
+5. PRODUCT IMAGE LABELING
+-----------------------------------
+- Socks images → label "Bapari Socks"
+- Fashion category images → label "Wolfion"
+
+-----------------------------------
+6. REMOVE BAD IMAGES
+-----------------------------------
+- Remove "Editor Picks" images (current ones look low quality)
+
+-----------------------------------
+7. ADD PREMIUM CINEMATIC IMAGES 🔥
+-----------------------------------
+Replace product visuals with:
+
+- High-quality sock images
+- 3D-style product renders
+- Cinematic lighting (soft shadow, depth)
+- Clean background (black / white / minimal)
+
+Style:
+- Luxury brand feel
+- Modern fashion campaign look
+
+-----------------------------------
+8. PRODUCT CARD DESIGN
+-----------------------------------
+- Add slight 3D effect (shadow + hover lift)
+- Smooth animation on hover
+- Clean spacing
+
+-----------------------------------
+9. UI CONSISTENCY
+-----------------------------------
+- No overlapping
+- Clean alignment
+- Premium look across all pages
+
+-----------------------------------
+IMPORTANT:
+Switch button must work perfectly both directions.
+Branding must follow:
+Wolfion = main brand
+Bapari Socks = socks category only
+UI must feel premium and cinematic.

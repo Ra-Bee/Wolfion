@@ -1,0 +1,154 @@
+name: Wolfion daily RTDB backup
+
+# Dumps the whole /wolfion tree from Firebase Realtime Database once a day
+# and commits it to the "backups" branch of this repo as
+#   backups/wolfion-YYYY-MM-DD.json
+# Snapshots older than 30 days are pruned automatically.
+#
+# Required repository secret (Settings -> Secrets and variables -> Actions):
+#   FIREBASE_SERVICE_ACCOUNT_JSON - the full Firebase service-account JSON key
+#
+# Restore how-to: see WOLFION_BACKUPS.md at the repo root.
+
+on:
+  schedule:
+    - cron: "30 21 * * *"   # 21:30 UTC daily (~03:30 Asia/Dhaka)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: wolfion-daily-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout backups branch (create orphan if missing)
+        id: checkout
+        run: |
+          git config --global user.name "wolfion-backup-bot"
+          git config --global user.email "actions@github.com"
+
+          REPO="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          if git clone --depth=1 --branch=backups "$REPO" repo 2>/dev/null; then
+            echo "branch_existed=true" >> "$GITHUB_OUTPUT"
+          else
+            git clone --depth=1 "$REPO" repo
+            cd repo
+            git checkout --orphan backups
+            git rm -rf --quiet . || true
+            echo "Daily Wolfion RTDB snapshots. See WOLFION_BACKUPS.md on main for the restore how-to." > README.md
+            git add README.md
+            git commit -m "ci: init backups branch"
+            git push origin HEAD:backups
+            cd ..
+            echo "branch_existed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Obtain Firebase access token (pure Node, no extra packages)
+        id: token
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          TOKEN=$(node - <<'EOF'
+          const crypto = require("crypto");
+          const sa = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+
+          // Build JWT for OAuth2 token exchange
+          const now = Math.floor(Date.now() / 1000);
+          const header = Buffer.from(JSON.stringify({ alg: "RS256", typ: "JWT" })).toString("base64url");
+          const payload = Buffer.from(JSON.stringify({
+            iss: sa.client_email,
+            scope: "https://www.googleapis.com/auth/firebase.database https://www.googleapis.com/auth/userinfo.email",
+            aud: "https://oauth2.googleapis.com/token",
+            iat: now,
+            exp: now + 3600
+          })).toString("base64url");
+          const toSign = `${header}.${payload}`;
+          const sign = crypto.createSign("RSA-SHA256");
+          sign.update(toSign);
+          const sig = sign.sign(sa.private_key, "base64url");
+          const jwt = `${toSign}.${sig}`;
+
+          // Exchange for access token
+          const https = require("https");
+          const body = `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=${jwt}`;
+          const req = https.request({
+            hostname: "oauth2.googleapis.com", path: "/token",
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded", "Content-Length": Buffer.byteLength(body) }
+          }, res => {
+            let data = "";
+            res.on("data", c => data += c);
+            res.on("end", () => {
+              const j = JSON.parse(data);
+              if (!j.access_token) { console.error("Token exchange failed:", data); process.exit(1); }
+              process.stdout.write(j.access_token);
+            });
+          });
+          req.on("error", e => { console.error(e); process.exit(1); });
+          req.write(body); req.end();
+          EOF
+          )
+          echo "access_token=$TOKEN" >> "$GITHUB_OUTPUT"
+
+      - name: Download /wolfion snapshot and validate
+        id: snapshot
+        env:
+          ACCESS_TOKEN: ${{ steps.token.outputs.access_token }}
+        run: |
+          DATE="$(date -u +%F)"
+          OUT="repo/backups/wolfion-${DATE}.json"
+          mkdir -p repo/backups
+
+          HTTP_CODE=$(curl -sS -o "${OUT}.tmp" -w '%{http_code}' \
+            -H "Authorization: Bearer $ACCESS_TOKEN" \
+            "https://wolfion-e0df3-default-rtdb.asia-southeast1.firebasedatabase.app/wolfion.json?format=export")
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "RTDB export returned HTTP $HTTP_CODE:" >&2
+            cat "${OUT}.tmp" >&2
+            exit 1
+          fi
+
+          # Validate: non-null JSON object with at least one key
+          node -e '
+            const fs = require("fs");
+            const data = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+            if (!data || typeof data !== "object" || Array.isArray(data) || Object.keys(data).length === 0) {
+              console.error("Snapshot is empty/null — refusing to save.");
+              process.exit(1);
+            }
+            console.log("Snapshot OK:", Object.keys(data).length, "top-level keys,", fs.statSync(process.argv[1]).size, "bytes");
+          ' "${OUT}.tmp"
+
+          mv "${OUT}.tmp" "$OUT"
+          echo "snapshot_file=$OUT" >> "$GITHUB_OUTPUT"
+          echo "snapshot_date=$DATE" >> "$GITHUB_OUTPUT"
+
+      - name: Prune snapshots older than 30 days
+        run: |
+          CUTOFF="$(date -u -d '30 days ago' +%F)"
+          for f in repo/backups/wolfion-*.json; do
+            [ -e "$f" ] || continue
+            d="${f##*/wolfion-}"; d="${d%.json}"
+            if [[ "$d" < "$CUTOFF" ]]; then
+              echo "Pruning $f (older than $CUTOFF)"
+              rm -f "$f"
+            fi
+          done
+
+      - name: Commit and push to backups branch
+        run: |
+          cd repo
+          git add -A backups
+          if git diff --cached --quiet; then
+            echo "Snapshot identical to an already-committed file — skipping commit."
+            exit 0
+          fi
+          git commit -m "backup: wolfion RTDB snapshot ${{ steps.snapshot.outputs.snapshot_date }}"
+          git push origin HEAD:backups

@@ -1,0 +1,137 @@
+Design a premium, futuristic mobile application called “Rabchat”.
+
+CORE IDEA:
+Rabchat is not a typical messaging or social media app. It is a high-end AI-powered communication and student life platform that combines messaging, AI assistance, and productivity into one seamless experience. It must feel unique, intelligent, calm, and premium — not noisy or addictive like traditional social apps.
+
+DESIGN STYLE:
+- Inspired by Apple iOS, Vision Pro, and high-end fintech apps
+- 3D glassmorphism (liquid glass effect)
+- Floating translucent panels with blur (frosted glass)
+- Soft depth layering, realistic shadows, light reflections
+- Ultra-smooth animations and micro-interactions
+- Clean, minimal, luxury tech aesthetic
+
+COLOR SYSTEM:
+- Primary: Sky blue (#87CEFA)
+- Gradient: #E6F7FF → #BDEBFF → #CDEFFF
+- Accent glow: Soft cyan (#9BF6FF)
+- Depth accent: Light lavender (#CDB4FF)
+- Background: airy sky gradient with subtle movement
+- Avoid dark, heavy, or harsh colors
+- Use soft, diffused shadows (light blue/gray)
+
+VISUAL MOOD:
+- Calm, intelligent, premium
+- Floating glass UI in the sky
+- Clean, breathable layout
+- Designed for long usage without fatigue
+
+NAVIGATION (UNIQUE FEATURE):
+- Do NOT use top or bottom navigation bars
+- Use horizontal “SideFlow” navigation system
+- Each feature is a full-height floating card
+- Users swipe left/right between sections
+
+MAIN SECTIONS (CARDS):
+1. Stories / Updates
+2. Home Feed (light, minimal)
+3. AI Assistant (core feature)
+4. Messages (main communication)
+5. Dashboard (tasks, study, schedule)
+6. Profile
+
+INTERACTION:
+- Swipe left/right → move between cards
+- Center card = full size
+- Side cards = slightly scaled down + blurred (3D depth)
+- Smooth wave-like transitions (not rigid sliding)
+- Add parallax motion for depth
+
+GESTURES:
+- Swipe left/right → navigate
+- Swipe up → expand content
+- Tap → open detail
+- Edge swipe → quick actions
+
+ONBOARDING:
+- Show minimal instruction: “Swipe to explore Rabchat”
+
+UI COMPONENTS:
+- Rounded glass cards with soft edges
+- Floating panels with blur transparency
+- Subtle light reflections on edges
+- Soft glowing highlights for active elements
+- Clean typography (SF Pro / Inter / Poppins)
+
+MESSAGES (MAIN FEATURE):
+- Chat UI like WhatsApp but premium glass style
+- Transparent chat bubbles with glow edges
+- Smooth fade/blur for disappearing messages
+- Clean spacing, no clutter
+
+AI ASSISTANT (CORE FEATURE):
+- ChatGPT-style assistant inside app
+- Suggestion buttons:
+  - Summarize
+  - Explain
+  - Translate
+  - Study help
+- Minimal distraction, clean interaction
+- Feels like a smart personal assistant
+
+DASHBOARD:
+- Visual schedule and tasks
+- Assignment tracker
+- Calendar integration
+- “Today’s Focus” section
+- Designed like a control panel (not list)
+
+HOME FEED:
+- Minimal posts (short content only)
+- Clean cards with spacing
+- No addictive infinite scroll feeling
+
+PROFILE:
+- Large avatar with depth shadow
+- Glass panels for:
+  - academic info
+  - CV
+  - links
+- Strong privacy controls
+
+STORIES:
+- Not top bar
+- Side card or edge ribbon
+- Smooth transition entry
+
+ANIMATION:
+- Smooth easing animations
+- Slight bounce on interaction
+- Wave-style transitions between screens
+- Glow changes on active elements
+
+ADVANCED EFFECTS:
+- Dynamic sky gradient background (slow movement)
+- Parallax depth effect
+- Floating layered UI
+
+USER EXPERIENCE:
+- Must feel intuitive within seconds
+- No clutter, no overload
+- Focus on calm + clarity + usefulness
+- Balance beauty with usability
+
+AVOID:
+- Copying Instagram / Facebook / TikTok layouts
+- Dark heavy UI
+- Over-animation
+- Complex navigation
+
+GOAL:
+Create a next-generation AI communication app that feels premium, intelligent, and visually stunning — not like traditional social media.
+
+OUTPUT:
+- Full mobile UI design
+- Navigation flow
+- Interaction behavior
+- High-fidelity design concept

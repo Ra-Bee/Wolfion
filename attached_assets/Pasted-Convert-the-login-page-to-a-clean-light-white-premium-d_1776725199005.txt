@@ -1,0 +1,83 @@
+Convert the login page to a clean light (white) premium design.
+
+-----------------------------------
+1. BACKGROUND (IMPORTANT)
+-----------------------------------
+- Change entire page background to WHITE (#FFFFFF)
+- Remove any dark/black sections completely
+- Top to bottom must be fully white
+
+-----------------------------------
+2. BRAND NAME + LOGO
+-----------------------------------
+- Text: "WOLFION"
+- Color: BLACK (#000000)
+
+Adjust:
+- Increase font size slightly (make it more prominent)
+- Reduce letter spacing (keep letters closer, premium look)
+- Move it slightly higher (more toward top, not center)
+
+Logo:
+- Place below the text
+- Color: black or dark grey
+- Keep clean and balanced
+
+-----------------------------------
+3. TEXT COLOR FIX
+-----------------------------------
+Change all text to BLACK:
+
+- "Welcome back" → black
+- "Sign in to access your account" → black
+
+-----------------------------------
+4. TYPOGRAPHY HIERARCHY
+-----------------------------------
+- "Welcome back":
+  → Medium size (not too big)
+  → Bold or semi-bold
+
+- "Sign in to access your account":
+  → Smaller than "Welcome back"
+  → Light grey or slightly lighter black (#555 optional)
+
+-----------------------------------
+5. GOOGLE BUTTON
+-----------------------------------
+- Background: WHITE
+- Border: light grey
+- Text: BLACK
+
+- Add subtle shadow:
+  → very soft (premium feel)
+
+-----------------------------------
+6. INPUT FIELDS
+-----------------------------------
+- Background: white
+- Border: light grey (#ddd)
+- Text: black
+- Placeholder: grey
+
+-----------------------------------
+7. LOGIN BUTTON
+-----------------------------------
+- Background: BLACK
+- Text: WHITE
+
+- Add:
+  - Slight rounded corners
+  - Soft hover effect
+
+-----------------------------------
+8. SPACING
+-----------------------------------
+- Move logo + brand slightly higher
+- Keep good spacing between sections
+- Clean vertical alignment
+
+-----------------------------------
+IMPORTANT:
+Design must feel clean, minimal, and premium (like Apple / Zara).
+No dark sections, full white layout.

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      // Redirect the legacy Replit publish (wolfion-web.replit.app) to the
+      // canonical production host on Vercel. Anyone who still has the old
+      // URL bookmarked or pinned to a home screen lands on the live site.
+      (function () {
+        try {
+          var h = window.location.hostname;
+          if (h === "wolfion-web.replit.app" || h.endsWith(".replit.app")) {
+            var target = "https://www.wolfion.com.au" +
+              window.location.pathname + window.location.search + window.location.hash;
+            window.location.replace(target);
+          }
+        } catch (_) {}
+      })();
+    </script>
+    <script>
+      // Silence the benign "ResizeObserver loop completed with undelivered
+      // notifications" browser error that Radix/shadcn dropdowns can trigger.
+      // In dev, Replit's runtime-error overlay plugin listens for window
+      // "error" events and shows a scary "(unknown runtime error)" modal for
+      // it (the event has no .error object). This inline script runs before
+      // any module script, so its listener registers first and can stop the
+      // event from ever reaching the overlay. Harmless in production.
+      window.addEventListener("error", function (e) {
+        var m = e && e.message;
+        if (typeof m === "string" && m.indexOf("ResizeObserver loop") !== -1) {
+          e.stopImmediatePropagation();
+        }
+      });
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+    <!-- SEO:START -->
+    <title>WOLFION | Australian Fashion &amp; Textile Brand</title>
+    <meta name="description" content="WOLFION is an Australian fashion and textile brand combining considered design, textile engineering, product development and manufacturing knowledge." />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="https://www.wolfion.com.au/" />
+    <meta property="og:title" content="WOLFION | Australian Fashion &amp; Textile Brand" />
+    <meta property="og:description" content="WOLFION is an Australian fashion and textile brand combining considered design, textile engineering, product development and manufacturing knowledge." />
+    <meta property="og:url" content="https://www.wolfion.com.au/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="WOLFION" />
+    <meta property="og:image" content="https://www.wolfion.com.au/opengraph.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="WOLFION | Australian Fashion &amp; Textile Brand" />
+    <meta name="twitter:description" content="WOLFION is an Australian fashion and textile brand combining considered design, textile engineering, product development and manufacturing knowledge." />
+    <meta name="twitter:image" content="https://www.wolfion.com.au/opengraph.jpg" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://www.wolfion.com.au/#organization","name":"WOLFION","alternateName":"Wolfion","url":"https://www.wolfion.com.au/","logo":"https://www.wolfion.com.au/app-icon-512.png","image":"https://www.wolfion.com.au/opengraph.jpg","description":"WOLFION is an Australian fashion and textile brand combining fashion design, textile engineering, product development and manufacturing knowledge.","founder":{"@id":"https://www.wolfion.com.au/founder/md-rabby-bapari#person"}},{"@type":"WebSite","@id":"https://www.wolfion.com.au/#website","name":"WOLFION","url":"https://www.wolfion.com.au/","publisher":{"@id":"https://www.wolfion.com.au/#organization"}}]}</script>
+    <!-- SEO:END -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+    <link rel="icon" type="image/jpeg" href="/app-icon.jpg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" sizes="192x192" href="/favicon-192.png" />
+    <link rel="apple-touch-icon" href="/app-icon.jpg" />
+    <meta name="application-name" content="Wolfion" />
+    <meta name="apple-mobile-web-app-title" content="Wolfion" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      // Apply the saved theme BEFORE React mounts so the very first
+      // paint matches the user's preference — no light flash on a
+      // dark phone, no dark flash on a light phone. Mirrors the logic
+      // in src/hooks/use-theme.ts; if you change one, change the
+      // other. Only "light" and "dark" are supported now (the
+      // previous "system" option was removed); a stored "system"
+      // value is migrated by reading the OS preference once.
+      (function () {
+        try {
+          var stored = null;
+          try { stored = localStorage.getItem("wolfion_theme"); } catch (e) {}
+          var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var isDark;
+          if (stored === "dark") {
+            isDark = true;
+          } else if (stored === "light") {
+            isDark = false;
+          } else {
+            // Legacy "system" or no value → derive from OS once,
+            // then persist as a concrete mode.
+            isDark = !!prefersDark;
+            try { localStorage.setItem("wolfion_theme", isDark ? "dark" : "light"); } catch (e) {}
+          }
+          var root = document.documentElement;
+          if (isDark) root.classList.add("dark"); else root.classList.remove("dark");
+          root.style.colorScheme = isDark ? "dark" : "light";
+          root.style.background = isDark ? "#0a0a0a" : "#ffffff";
+          // Also flip the Android status-bar color in real time when running
+          // in TWA / browser, because the `media` queries on theme-color metas
+          // only respond to OS, not to the in-app override the user picked.
+          var metaLight = document.querySelector('meta[name="theme-color"][media*="light"]');
+          var metaDark = document.querySelector('meta[name="theme-color"][media*="dark"]');
+          if (metaLight) metaLight.setAttribute("content", isDark ? "#0a0a0a" : "#ffffff");
+          if (metaDark) metaDark.setAttribute("content", isDark ? "#0a0a0a" : "#ffffff");
+        } catch (e) { /* ignore — purely best-effort */ }
+      })();
+    </script>
+    <style>
+      html, body { margin: 0; padding: 0; }
+      html { background: #ffffff; }
+      html.dark { background: #0a0a0a; }
+      html.dark body { background: #0a0a0a; color: #f5f5f5; }
+      #wolfion-splash {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: #0c4f55 url("/splash.jpg") center / cover no-repeat;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 18vh;
+        opacity: 1;
+        transition: opacity 420ms ease;
+        pointer-events: auto;
+      }
+      #wolfion-splash.is-hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+      #wolfion-splash .ws-dots {
+        display: inline-flex;
+        gap: 8px;
+      }
+      #wolfion-splash .ws-dots span {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.85);
+        animation: ws-bounce 1.1s ease-in-out infinite;
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.25);
+      }
+      #wolfion-splash .ws-dots span:nth-child(2) { animation-delay: 0.18s; }
+      #wolfion-splash .ws-dots span:nth-child(3) { animation-delay: 0.36s; }
+      @keyframes ws-bounce {
+        0%, 80%, 100% { transform: translateY(0); opacity: 0.5; }
+        40% { transform: translateY(-8px); opacity: 1; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #wolfion-splash .ws-dots span { animation: none; opacity: 0.85; }
+        #wolfion-splash { transition: none; }
+      }
+      .seo-prerender {
+        min-height: 100vh;
+        padding: 34px clamp(20px, 5vw, 72px) 48px;
+        background: #fafafa;
+        color: #171717;
+        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      .dark .seo-prerender { background: #0a0a0a; color: #f5f5f5; }
+      .seo-prerender__header {
+        max-width: 1080px;
+        margin: 0 auto 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+      .seo-prerender__brand {
+        color: inherit;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 18px;
+        letter-spacing: .32em;
+        text-decoration: none;
+      }
+      .seo-prerender nav { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px 18px; }
+      .seo-prerender nav a, .seo-prerender footer a, .seo-prerender__cta a {
+        color: inherit;
+        text-underline-offset: 4px;
+      }
+      .seo-prerender nav a { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; opacity: .64; }
+      .seo-prerender main, .seo-prerender footer { max-width: 860px; margin-left: auto; margin-right: auto; }
+      .seo-prerender__eyebrow { margin: 0 0 16px; font-size: 11px; letter-spacing: .38em; text-transform: uppercase; opacity: .55; }
+      .seo-prerender h1 { max-width: 780px; margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(38px, 7vw, 72px); font-weight: 400; line-height: 1.04; }
+      .seo-prerender__lead { max-width: 690px; margin: 28px 0 46px; font-size: clamp(16px, 2vw, 20px); font-weight: 300; line-height: 1.7; opacity: .72; }
+      .seo-prerender__portrait { width: 180px; height: 180px; margin-top: 30px; border-radius: 999px; object-fit: cover; }
+      .seo-prerender__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+      .seo-prerender__grid section { padding: 26px; border: 1px solid rgba(128,128,128,.22); border-radius: 24px; }
+      .seo-prerender__grid h2 { margin: 0 0 12px; font-family: Georgia, "Times New Roman", serif; font-size: 23px; font-weight: 400; }
+      .seo-prerender__grid p { margin: 0; font-size: 15px; line-height: 1.7; opacity: .68; }
+      .seo-prerender__cta { margin-top: 32px; font-size: 13px; }
+      .seo-prerender__products { margin-top: 36px; }
+      .seo-prerender__products h2 { font-family: Georgia, "Times New Roman", serif; font-size: 26px; font-weight: 400; }
+      .seo-prerender__products ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; padding: 0; list-style: none; }
+      .seo-prerender__products li { padding: 18px; border: 1px solid rgba(128,128,128,.2); border-radius: 18px; }
+      .seo-prerender__products strong, .seo-prerender__products span { display: block; }
+      .seo-prerender__products span { margin-top: 6px; font-size: 13px; line-height: 1.55; opacity: .65; }
+      .seo-prerender__advocacy { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 24px; align-items: center; margin-top: 30px; padding: 20px; border: 1px solid rgba(128,128,128,.2); border-radius: 24px; }
+      .seo-prerender__advocacy img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 16px; filter: grayscale(1); }
+      .seo-prerender__advocacy h2 { margin: 0 0 12px; font-family: Georgia, "Times New Roman", serif; font-size: 28px; font-weight: 400; }
+      .seo-prerender__advocacy p:not(.seo-prerender__eyebrow) { margin: 0; font-size: 15px; line-height: 1.7; opacity: .68; }
+      .seo-prerender__achievement { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 24px; align-items: center; margin-top: 20px; padding: 20px; border: 1px solid rgba(128,128,128,.2); border-radius: 24px; }
+      .seo-prerender__achievement img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 16px; }
+      .seo-prerender__achievement h2 { margin: 0 0 12px; font-family: Georgia, "Times New Roman", serif; font-size: 28px; font-weight: 400; }
+      .seo-prerender__achievement p:not(.seo-prerender__eyebrow) { margin: 0; font-size: 15px; line-height: 1.7; opacity: .68; }
+      .seo-prerender__scholarship { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 24px; align-items: center; margin-top: 20px; padding: 20px; border: 1px solid rgba(128,128,128,.2); border-radius: 24px; }
+      .seo-prerender__scholarship img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 16px; }
+      .seo-prerender__scholarship h2 { margin: 0 0 12px; font-family: Georgia, "Times New Roman", serif; font-size: 28px; font-weight: 400; }
+      .seo-prerender__scholarship p:not(.seo-prerender__eyebrow) { margin: 0; font-size: 15px; line-height: 1.7; opacity: .68; }
+      .seo-prerender__fashion-scholarship { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 24px; align-items: center; margin-top: 20px; padding: 20px; border: 1px solid rgba(128,128,128,.2); border-radius: 24px; }
+      .seo-prerender__fashion-scholarship img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 16px; }
+      .seo-prerender__fashion-scholarship h2 { margin: 0 0 12px; font-family: Georgia, "Times New Roman", serif; font-size: 28px; font-weight: 400; }
+      .seo-prerender__fashion-scholarship p:not(.seo-prerender__eyebrow) { margin: 0; font-size: 15px; line-height: 1.7; opacity: .68; }
+      .seo-prerender__curtin-scholarship { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 24px; align-items: center; margin-top: 20px; padding: 20px; border: 1px solid rgba(128,128,128,.2); border-radius: 24px; }
+      .seo-prerender__curtin-scholarship img { width: 100%; aspect-ratio: 2 / 1; object-fit: cover; border-radius: 16px; }
+      .seo-prerender__curtin-scholarship h2 { margin: 0 0 12px; font-family: Georgia, "Times New Roman", serif; font-size: 28px; font-weight: 400; }
+      .seo-prerender__curtin-scholarship p:not(.seo-prerender__eyebrow) { margin: 0; font-size: 15px; line-height: 1.7; opacity: .68; }
+      .seo-prerender footer { margin-top: 72px; padding-top: 22px; border-top: 1px solid rgba(128,128,128,.2); font-size: 12px; opacity: .6; }
+      @media (max-width: 720px) {
+        .seo-prerender__header { align-items: flex-start; margin-bottom: 48px; }
+        .seo-prerender nav { max-width: 210px; }
+        .seo-prerender__grid { grid-template-columns: 1fr; }
+        .seo-prerender__products ul { grid-template-columns: 1fr; }
+        .seo-prerender__advocacy { grid-template-columns: 1fr; }
+        .seo-prerender__achievement { grid-template-columns: 1fr; }
+        .seo-prerender__scholarship { grid-template-columns: 1fr; }
+        .seo-prerender__fashion-scholarship { grid-template-columns: 1fr; }
+        .seo-prerender__curtin-scholarship { grid-template-columns: 1fr; }
+      }
+    </style>
+    <script>
+      // Only show the marble splash inside the native Android/iOS app.
+      // The browser/web version loads straight into the app.
+      (function () {
+        var isNative = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+        if (!isNative) return;
+        // In-app soft reloads (currently: pull-to-refresh) set this flag so
+        // the full-screen marble splash only appears on a true cold start —
+        // a soft reload keeps the current background instead of flashing
+        // the logo screen.
+        try {
+          if (sessionStorage.getItem("wolfion-skip-splash")) {
+            sessionStorage.removeItem("wolfion-skip-splash");
+            return;
+          }
+        } catch (_) {}
+        var splash = document.createElement("div");
+        splash.id = "wolfion-splash";
+        splash.setAttribute("aria-hidden", "true");
+        splash.innerHTML = '<div class="ws-dots" aria-label="Loading"><span></span><span></span><span></span></div>';
+        document.documentElement.appendChild(splash);
+        var MIN_VISIBLE_MS = 600;
+        var shownAt = Date.now();
+        function hide() {
+          var el = document.getElementById("wolfion-splash");
+          if (!el) return;
+          var elapsed = Date.now() - shownAt;
+          var wait = Math.max(0, MIN_VISIBLE_MS - elapsed);
+          setTimeout(function () {
+            el.classList.add("is-hidden");
+            setTimeout(function () { el.parentNode && el.parentNode.removeChild(el); }, 500);
+          }, wait);
+        }
+        window.__wolfionHideSplash = hide;
+        setTimeout(hide, 8000);
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root">
+      <!-- SEO_BODY_START -->
+      <div class="seo-prerender">
+        <header class="seo-prerender__header">
+          <a class="seo-prerender__brand" href="/">WOLFION</a>
+          <nav aria-label="Public pages">
+            <a href="/">Home</a>
+            <a href="/about">About</a>
+            <a href="/founder/md-rabby-bapari">Founder</a>
+            <a href="/app">App</a>
+            <a href="/products">Products</a>
+            <a href="/socks">Socks</a>
+            <a href="/manufacturing">Manufacturing</a>
+            <a href="/services">Services</a>
+            <a href="/contact">Contact</a>
+          </nav>
+        </header>
+        <main>
+          <p class="seo-prerender__eyebrow">Australian Fashion &amp; Textiles</p>
+          <h1>WOLFION — Fearless by Design</h1>
+          <p class="seo-prerender__lead">WOLFION is an Australian fashion and textile brand creating considered socks and apparel through design, textile knowledge and practical manufacturing experience.</p>
+          <div class="seo-prerender__grid">
+            <section><h2>Discover WOLFION</h2><p>Explore premium socks, public product collections, the WOLFION app and the story behind the brand.</p></section>
+            <section><h2>Design with intention</h2><p>WOLFION brings fashion design, textile engineering and product development together with a focus on comfort, construction and long-term wear.</p></section>
+          </div>
+          <p class="seo-prerender__cta"><a href="/products">Explore WOLFION products</a> · <a href="/contact">Contact WOLFION</a></p>
+        </main>
+        <footer>WOLFION · Australian fashion and textiles · <a href="/founder/md-rabby-bapari">Md Rabby Bapari — Founder</a></footer>
+      </div>
+      <!-- SEO_BODY_END -->
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Service worker registration. We also force a one-time reload when a
+      // brand-new worker takes control of the page so users escape any
+      // previously cached (and now-fixed) stale API responses without having
+      // to manually hard-refresh.
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", async () => {
+          try {
+            const reg = await navigator.serviceWorker.register("/sw.js");
+            // Ask the browser to re-check sw.js so a new version installs ASAP.
+            reg.update().catch(() => undefined);
+          } catch {
+            /* ignore — SW is a progressive enhancement */
+          }
+          let reloaded = false;
+          navigator.serviceWorker.addEventListener("controllerchange", () => {
+            if (reloaded) return;
+            reloaded = true;
+            window.location.reload();
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

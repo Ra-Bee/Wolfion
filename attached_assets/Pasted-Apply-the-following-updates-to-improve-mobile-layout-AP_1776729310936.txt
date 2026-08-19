@@ -1,0 +1,69 @@
+Apply the following updates to improve mobile layout, APK display, login features, and settings.
+
+-----------------------------------
+1. MOBILE & APK SCALING FIX (CRITICAL)
+-----------------------------------
+- Make mobile (APK) view match desktop layout structure
+- Do NOT stack everything vertically
+- Keep same layout, just scale down
+
+Add viewport:
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+- Set container:
+  max-width: 400px
+  margin: auto
+
+- Prevent elements from appearing oversized
+- Ensure WebView does not zoom content
+
+-----------------------------------
+2. DISABLE RESPONSIVE BREAK (IMPORTANT)
+-----------------------------------
+- Prevent layout from changing into mobile stacked version
+- Keep desktop-style layout even on phone
+
+-----------------------------------
+3. MOBILE PREVIEW MODE (IN DEVELOPMENT)
+-----------------------------------
+Add mobile preview option:
+
+- Simulate phone sizes:
+  375px, 390px, 412px
+- Allow switching between desktop and mobile preview
+- Show real-time UI
+
+-----------------------------------
+4. LOGIN PAGE — FORGOT PASSWORD
+-----------------------------------
+- Add "Forgot Password?" option below login fields
+
+Function:
+- Allow user to reset password via email
+
+-----------------------------------
+5. SETTINGS MENU (AFTER LOGIN)
+-----------------------------------
+In top-right menu bar, add:
+
+- Settings option
+
+-----------------------------------
+6. SETTINGS PAGE FEATURES
+-----------------------------------
+Inside Settings page:
+
+- Add "Change Password" option
+- Allow user to update password securely
+
+-----------------------------------
+7. UI CONSISTENCY
+-----------------------------------
+- Keep layout clean and premium
+- Maintain same structure across desktop and mobile
+- No oversized UI elements
+
+-----------------------------------
+IMPORTANT:
+Mobile app must look like a scaled version of desktop, not a broken responsive layout.
+Add proper authentication features (forgot password + change password).

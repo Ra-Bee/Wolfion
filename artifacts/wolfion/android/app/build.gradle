@@ -1,0 +1,97 @@
+apply plugin: 'com.android.application'
+
+// Load signing credentials from a local keystore.properties file (never committed)
+// or fall back to environment variables for CI/CD environments.
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.withInputStream { keystoreProperties.load(it) }
+}
+
+def releaseStoreFile     = keystoreProperties['storeFile']     ?: System.getenv('ANDROID_STORE_FILE')
+def releaseStorePassword = keystoreProperties['storePassword'] ?: System.getenv('ANDROID_STORE_PASSWORD')
+def releaseKeyAlias      = keystoreProperties['keyAlias']      ?: System.getenv('ANDROID_KEY_ALIAS')
+def releaseKeyPassword   = keystoreProperties['keyPassword']   ?: System.getenv('ANDROID_KEY_PASSWORD')
+
+// Validate that all signing credentials are present when assembling a release build.
+gradle.taskGraph.whenReady { graph ->
+    def needsSigning = graph.allTasks.any { it.name.contains('Release') }
+    if (needsSigning) {
+        def missing = []
+        if (!releaseStoreFile)     missing << 'storeFile / ANDROID_STORE_FILE'
+        if (!releaseStorePassword) missing << 'storePassword / ANDROID_STORE_PASSWORD'
+        if (!releaseKeyAlias)      missing << 'keyAlias / ANDROID_KEY_ALIAS'
+        if (!releaseKeyPassword)   missing << 'keyPassword / ANDROID_KEY_PASSWORD'
+        if (missing) {
+            throw new GradleException(
+                "Release signing credentials are missing. Set them in android/keystore.properties " +
+                "or as environment variables.\nMissing: ${missing.join(', ')}\n" +
+                "See BUILD_APK.md for setup instructions."
+            )
+        }
+    }
+}
+
+android {
+    namespace = "com.wolfion.app"
+    compileSdk = rootProject.ext.compileSdkVersion
+    defaultConfig {
+        applicationId "wolfion.aab"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 14
+        versionName "1.2.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        aaptOptions {
+             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
+             // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
+            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+    signingConfigs {
+        release {
+            if (releaseStoreFile) {
+                storeFile file(releaseStoreFile)
+                storePassword releaseStorePassword
+                keyAlias releaseKeyAlias
+                keyPassword releaseKeyPassword
+            }
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+repositories {
+    flatDir{
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
+    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
+    implementation project(':capacitor-android')
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
+    implementation project(':capacitor-cordova-android-plugins')
+}
+
+apply from: 'capacitor.build.gradle'
+
+try {
+    def servicesJSON = file('google-services.json')
+    if (servicesJSON.text) {
+        apply plugin: 'com.google.gms.google-services'
+    }
+} catch(Exception e) {
+    logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+}
